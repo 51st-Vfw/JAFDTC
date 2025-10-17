@@ -190,7 +190,7 @@ namespace JAFDTC.UI.App
 // TODO: switch to "real" tile uri...
 //          uiMapTiles.TileSource = new TileSource { UriTemplate = "https://tile.openstreetmap.org/{z}/{x}/{y}.png" };
 
-            // window setup
+            // ---- window setup
 
             string lastSetup = Settings.LastWindowSetupMap;
 

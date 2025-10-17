@@ -73,6 +73,18 @@ namespace JAFDTC.UI.App
             public POINT ptMaxTrackSize;
         }
 
+        [StructLayout(LayoutKind.Sequential)]
+        private struct WINDOWPOS
+        {
+            public nint hwnd;
+            public nint hwndInsertAfter;
+            public int x;
+            public int y;
+            public int cx;
+            public int cy;
+            public uint flags;
+        }
+
         [Flags]
         private enum WindowLongIndexFlags : int
         {
@@ -82,6 +94,7 @@ namespace JAFDTC.UI.App
         private enum WindowMessage : int
         {
             WM_GETMINMAXINFO = 0x0024,
+            WM_WINDOWPOSCHANGED = 0x0047
         }
 
         // ------------------------------------------------------------------------------------------------------------
@@ -99,10 +112,12 @@ namespace JAFDTC.UI.App
         private static WinProc _newWndProc = null;
         private static IntPtr _oldWndProc = IntPtr.Zero;
 
-        private static readonly int _minWindowWidth = 1000;
-        private static readonly int _minWindowHeight = 590;
-        private static int _maxWindowWidth = 1800;
-        private static int _maxWindowHeight = 1600;
+        private static readonly SizeInt32 _windSizeBase = new() { Width = 1000, Height = 700 };
+        private static readonly SizeInt32 _windSizeMin = new() { Width = 1000, Height = 590 };
+        private static SizeInt32 _windSizeMax = new() { Width = 1800, Height = 1600 };
+
+        private static PointInt32 _windPosnCur = new() { X = 0, Y = 0 };
+        private static SizeInt32 _windSizeCur = new() { Width = 0, Height = 0 };
 
         // ------------------------------------------------------------------------------------------------------------
         //
@@ -121,31 +136,30 @@ namespace JAFDTC.UI.App
             ExtendsContentIntoTitleBar = true;
             AppWindow.TitleBar.PreferredHeightOption = Microsoft.UI.Windowing.TitleBarHeightOption.Tall;
 
-            var hWnd = GetWindowHandleForCurrentWindow(this);
+            Closed += MainWindow_Closed;
+            SizeChanged += MainWindow_SizeChanged;
 
-            var scalingFactor = (float)GetDpiForWindow(hWnd) / 96;
-            SizeInt32 baseSize;
-            baseSize.Height = (int)(700 * scalingFactor);
-            baseSize.Width = (int)(1000 * scalingFactor);
+            // ---- window setup
+
+            string lastSetup = Settings.LastWindowSetupMain;
+
+            nint hWnd = GetWindowHandleForCurrentWindow(this);
+            SizeInt32 baseSize = Utilities.BuildWindowSize(GetDpiForWindow(hWnd), _windSizeBase, lastSetup);
             AppWindow.Resize(baseSize);
 
             Microsoft.UI.WindowId windowId = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(hWnd);
-            AppWindow appWindow = AppWindow.GetFromWindowId(windowId);
-            if (appWindow != null)
+            AppWindow appWind = AppWindow.GetFromWindowId(windowId);
+            if (appWind != null)
             {
-                DisplayArea displayArea = DisplayArea.GetFromWindowId(windowId, DisplayAreaFallback.Nearest);
-                if (displayArea != null)
+                appWind.SetIcon(@"Images/JAFDTC_Icon.ico");
+                DisplayArea dispArea = DisplayArea.GetFromWindowId(windowId, DisplayAreaFallback.Nearest);
+                if (dispArea != null)
                 {
-                    // TODO: track last window position and move to there rather than always centering?
-                    var CenteredPosition = appWindow.Position;
-                    CenteredPosition.X = ((displayArea.WorkArea.Width - appWindow.Size.Width) / 2);
-                    CenteredPosition.Y = ((displayArea.WorkArea.Height - appWindow.Size.Height) / 2);
-                    appWindow.Move(CenteredPosition);
-
-                    _maxWindowWidth = Math.Max(_maxWindowWidth, displayArea.WorkArea.Width);
-                    _maxWindowHeight = Math.Max(_maxWindowHeight, displayArea.WorkArea.Height);
+                    PointInt32 posn = Utilities.BuildWindowPosition(dispArea.WorkArea, baseSize, lastSetup);
+                    appWind.Move(posn);
+                    _windSizeMax.Width = Math.Max(_windSizeMax.Width, dispArea.WorkArea.Width);
+                    _windSizeMax.Height = Math.Max(_windSizeMax.Height, dispArea.WorkArea.Height);
                 }
-                appWindow.SetIcon(@"Images/JAFDTC_Icon.ico");
             }
 
             // sets up min/max window sizes using the right magic. code pulled from stackoverflow:
@@ -184,15 +198,20 @@ namespace JAFDTC.UI.App
         {
             switch (Msg)
             {
+                case WindowMessage.WM_WINDOWPOSCHANGED:
+                    var windPos = Marshal.PtrToStructure<WINDOWPOS>(lParam);
+                    _windPosnCur.X = windPos.x;
+                    _windPosnCur.Y = windPos.y;
+                    break;
                 case WindowMessage.WM_GETMINMAXINFO:
                     var dpi = GetDpiForWindow(hWnd);
                     var scalingFactor = (float)dpi / 96;
 
                     var minMaxInfo = Marshal.PtrToStructure<MINMAXINFO>(lParam);
-                    minMaxInfo.ptMinTrackSize.x = (int)(_minWindowWidth * scalingFactor);
-                    minMaxInfo.ptMaxTrackSize.x = (int)(_maxWindowWidth * scalingFactor);
-                    minMaxInfo.ptMinTrackSize.y = (int)(_minWindowHeight * scalingFactor);
-                    minMaxInfo.ptMaxTrackSize.y = (int)(_maxWindowHeight * scalingFactor);
+                    minMaxInfo.ptMinTrackSize.x = (int)(_windSizeMin.Width * scalingFactor);
+                    minMaxInfo.ptMaxTrackSize.y = (int)(_windSizeMax.Height * scalingFactor);
+                    minMaxInfo.ptMaxTrackSize.x = (int)(_windSizeMax.Width * scalingFactor);
+                    minMaxInfo.ptMinTrackSize.y = (int)(_windSizeMin.Height * scalingFactor);
 
                     Marshal.StructureToPtr(minMaxInfo, lParam, true);
                     break;
@@ -468,6 +487,29 @@ namespace JAFDTC.UI.App
                     $"Unable to download JAFDTC package with version “{version}”. Maybe try again later?");
             }
             return version;
+        }
+
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // handlers
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
+        /// <summary>
+        /// on window closed, persist the last window location and size to settings.
+        /// </summary>
+        private void MainWindow_Closed(object sender, WindowEventArgs args)
+        {
+            Settings.LastWindowSetupMain = Utilities.BuildWindowSetupString(_windPosnCur, _windSizeCur);
+        }
+
+        /// <summary>
+        /// on size changed, stash the current window size into our window size for later persistance.
+        /// </summary>
+        private void MainWindow_SizeChanged(object sender, WindowSizeChangedEventArgs evt)
+        {
+            _windSizeCur.Width = (int)evt.Size.Width;
+            _windSizeCur.Height = (int)evt.Size.Height;
         }
     }
 }
