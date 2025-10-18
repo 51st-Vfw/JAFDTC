@@ -29,14 +29,12 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
-using Microsoft.Windows.Storage.Pickers;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.Storage;
 
 namespace JAFDTC.UI.App
 {
@@ -544,29 +542,16 @@ namespace JAFDTC.UI.App
 
         /// <summary>
         /// import command: prompt for a configuration name and import file, deserialize a new configuration from the
-        /// specified json.
+        /// specified .jafdtc file.
         /// </summary>
         private async void CmdImport_Click(object sender, RoutedEventArgs args)
         {
             try
             {
-                FileOpenPicker picker = new((Application.Current as JAFDTC.App).Window.AppWindow.Id)
-                {
-                    // SettingsIdentifier = "JAFDTC_ImportCfg"
-                    CommitButtonText = "Import Configuration",
-                    SuggestedStartLocation = PickerLocationId.Desktop,
-                    ViewMode = PickerViewMode.List
-                };
-
-                picker.FileTypeFilter.Add(".json");
-                PickFileResult resultPick = await picker.PickSingleFileAsync();
-                if (resultPick != null)
-                {
-                    StorageFile file = await StorageFile.GetFileFromPathAsync(resultPick.Path);
-                    IConfiguration config = (IConfiguration)uiCfgListView.SelectedItem;
-                    string json = await FileIO.ReadTextAsync(file);
-                    PromptForConfigName("Name Imported Configuration", null, null, AddJSONConfigNameOpHandler, json);
-                }
+                IConfiguration config = await ConfigExchangeUIHelper.ConfigImportJAFDTC(Content.XamlRoot, ConfigList,
+                                                                                        CurAirframe);
+                if (config != null)
+                    uiCfgListView.SelectedItem = config;
             }
             catch (Exception ex)
             {

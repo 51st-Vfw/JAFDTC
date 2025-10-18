@@ -18,6 +18,8 @@
 // ********************************************************************************************************************
 
 using JAFDTC.Models;
+using JAFDTC.UI.App;
+using JAFDTC.Utilities;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.Windows.Storage.Pickers;
@@ -70,8 +72,78 @@ namespace JAFDTC.UI.Base
                 await FileIO.WriteTextAsync(file, config.Serialize());
 
                 if (root != null)
-                    await Utilities.Message1BDialog(root, "Success", $"{config.Name} exported to {path}");
+                    await Utilities.Message1BDialog(root, "Success", $"“{config.Name}” exported to “{path}”.");
             }
+        }
+
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // config import functions
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
+        /// <summary>
+        /// manage a FileSavePicker to select a .jafdtc file to load from. returns the path of the selected file,
+        /// null if no selection was made.
+        /// </summary>
+        private static async Task<string> OpenPickerUI()
+        {
+            FileOpenPicker picker = new((Application.Current as JAFDTC.App).Window.AppWindow.Id)
+            {
+                // SettingsIdentifier = "JAFDTC_ImportCfg"
+                CommitButtonText = "Import Configuration",
+                SuggestedStartLocation = PickerLocationId.Desktop,
+                ViewMode = PickerViewMode.List
+            };
+            picker.FileTypeFilter.Add(".jafdtc");
+            PickFileResult resultPick = await picker.PickSingleFileAsync();
+            return resultPick?.Path;
+        }
+
+        /// <summary>
+        /// TODO: document
+        /// </summary>
+        public static async Task<IConfiguration> ConfigImportJAFDTC(XamlRoot root, ConfigurationList configList,
+                                                                    AirframeTypes curAirframe)
+        {
+            string path = await OpenPickerUI();
+            if (path != null)
+            {
+                IConfiguration config = FileManager.ReadUnmanagedConfigurationFile(path);
+
+// TODO: what to do about mix/match airframes?
+                if (config.Airframe != curAirframe)
+                {
+                    await Utilities.Message1BDialog(root, "Mismatched Airframe", $"Cannot import that file here.");
+                    return null;
+                }
+
+                string importName = configList.UniquifyName(config.Name);
+                ImportBaseDialog importDialog = new(configList, config, importName)
+                {
+                    XamlRoot = root,
+                    Title = $"Creating New Configuration From File",
+                    PrimaryButtonText = "OK",
+                    CloseButtonText = "Cancel"
+                };
+                ContentDialogResult result = await importDialog.ShowAsync(ContentDialogPlacement.Popup);
+                if (result == ContentDialogResult.Primary)
+                {
+                    config.Name = importDialog.ConfigName;
+                    config.ResetUID();
+                    config.UnlinkSystem(null);
+                    config.AdjustForRole(importDialog.ConfigRole);
+                    IConfiguration newConfig = configList.Copy(config, config.Name);
+
+                    if (root != null)
+                    {
+                        await Utilities.Message1BDialog(root, "Success",
+                                                        $"Created new configuration “{config.Name}” from “{path}”.");
+                        return newConfig;
+                    }
+                }
+            }
+            return null;
         }
     }
 }
