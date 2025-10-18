@@ -40,6 +40,7 @@ using System.Text.Json;
 using Windows.ApplicationModel.DataTransfer;
 
 using static JAFDTC.Utilities.Networking.WyptCaptureDataRx;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace JAFDTC.UI.Base
 {
@@ -396,6 +397,8 @@ namespace JAFDTC.UI.Base
         {
             if (MapWindow == null)
             {
+                bool isLinked = !string.IsNullOrEmpty(Config.SystemLinkedTo(PageHelper.SystemTag));
+
                 Dictionary<string, List<INavpointInfo>> routes = new()
                 {
                     [ROUTE_NAME] = [.. EditNavpt ]
@@ -403,6 +406,8 @@ namespace JAFDTC.UI.Base
                 MapWindow = NavpointUIHelper.OpenMap(this, PageHelper.NavptMaxCount, PageHelper.NavptCoordFmt, routes);
                 MapWindow.MarkerExplainer = this;
                 MapWindow.Closed += MapWindow_Closed;
+                MapWindow.EditMask = ((isLinked) ? 0 : MapMarkerInfo.MarkerTypeMask.NAVPT);
+
                 NavArgs.ConfigPage.RegisterAuxWindow(MapWindow);
 
                 if (uiNavptListView.SelectedIndex != -1)
