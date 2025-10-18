@@ -687,7 +687,8 @@ namespace JAFDTC.UI.F16C
             EditStptIndex -= 1;
             CopyConfigToEdit(EditStptIndex);
             RebuildInterfaceState();
-            uiStptValueName.Focus(FocusState.Programmatic);
+            if (NavArgs.IsUnlinked)
+                uiStptValueName.Focus(FocusState.Programmatic);
         }
 
         /// <summary>
@@ -701,7 +702,8 @@ namespace JAFDTC.UI.F16C
             EditStptIndex += 1;
             CopyConfigToEdit(EditStptIndex);
             RebuildInterfaceState();
-            uiStptValueName.Focus(FocusState.Programmatic);
+            if (NavArgs.IsUnlinked)
+                uiStptValueName.Focus(FocusState.Programmatic);
         }
 
         /// <summary>
@@ -715,7 +717,8 @@ namespace JAFDTC.UI.F16C
             EditStpt.Reset();
             CopyConfigToEdit(EditStptIndex);
             RebuildInterfaceState();
-            uiStptValueName.Focus(FocusState.Programmatic);
+            if (NavArgs.IsUnlinked)
+                uiStptValueName.Focus(FocusState.Programmatic);
         }
 
         // ---- reference point type selection ------------------------------------------------------------------------
@@ -901,7 +904,9 @@ namespace JAFDTC.UI.F16C
             // We do this here (and not in OnNavigatedTo) for two reasons:
             // 1. The visual tree is done loading here.
             // 2. We want this to happen every time you click a WP from the list.
-            uiStptValueName.Focus(FocusState.Programmatic);
+            //
+            if (NavArgs.IsUnlinked)
+                uiStptValueName.Focus(FocusState.Programmatic);
         }
     }
 }

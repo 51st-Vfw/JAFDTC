@@ -184,7 +184,8 @@ namespace JAFDTC.UI.Base
                 EditNavptIndex = index;
                 CopyConfigToEdit(EditNavptIndex);
                 RebuildInterfaceState();
-                uiNavptValueName.Focus(FocusState.Programmatic);
+                if (NavArgs.IsUnlinked)
+                    uiNavptValueName.Focus(FocusState.Programmatic);
 
                 MapMarkerInfo info = new(MapMarkerInfo.MarkerType.NAVPT, EditNavpointListPage.ROUTE_NAME,
                                          EditNavptIndex + 1);
@@ -541,7 +542,8 @@ namespace JAFDTC.UI.Base
                 EditNavpt.LonUI = EditNavpt.LonUI;
                 CopyEditToConfig(EditNavptIndex, true);
                 RebuildInterfaceState();
-                uiNavptValueName.Focus(FocusState.Programmatic);
+                if (NavArgs.IsUnlinked)
+                    uiNavptValueName.Focus(FocusState.Programmatic);
 
                 MapMarkerInfo info = new(MapMarkerInfo.MarkerType.NAVPT, EditNavpointListPage.ROUTE_NAME,
                                          EditNavptIndex + 1, ll.Item1, ll.Item2);
@@ -685,7 +687,9 @@ namespace JAFDTC.UI.Base
             // We do this here (and not in OnNavigatedTo) for two reasons:
             // 1. The visual tree is done loading here.
             // 2. We want this to happen every time you click a WP from the list.
-            uiNavptValueName.Focus(FocusState.Programmatic);
+            //
+            if (NavArgs.IsUnlinked)
+                uiNavptValueName.Focus(FocusState.Programmatic);
         }
     }
 }
