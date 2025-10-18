@@ -164,6 +164,23 @@ namespace JAFDTC.Models
         public void ResetUID();
 
         /// <summary>
+        /// returns help text for valid role specifications, null if configuration does not support role adjustemnt.
+        /// </summary>
+        public string RoleHelpText();
+
+        /// <summary>
+        /// returns true if the role string is valid, false otherwise. validating an empty string should return true
+        /// if the configuration supports role adjustment, false otherwise.
+        /// </summary>
+        public bool ValidateRole(string role);
+
+        /// <summary>
+        /// adjust the systems in the configuration for a given role. along with the specific adjustments, the
+        /// information in the role is airframe-specific and may include things like slot, callsigns, etc.
+        /// </summary>
+        public void AdjustForRole(string role);
+
+        /// <summary>
         /// returns the system associated with the given tag in the configuration, null if there is no such system.
         /// </summary>
         public ISystem SystemForTag(string tag);
@@ -190,7 +207,7 @@ namespace JAFDTC.Models
         public void LinkSystemTo(string systemTag, IConfiguration linkedConfig);
 
         /// <summary>
-        /// unlink the configuration of a system with the specified tag.
+        /// unlink the configuration of a system with the specified tag. all systems are unlinked if tag is null.
         /// </summary>
         public void UnlinkSystem(string systemTag);
 

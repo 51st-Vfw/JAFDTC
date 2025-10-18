@@ -215,6 +215,12 @@ namespace JAFDTC.Models
             UID = Guid.NewGuid().ToString();
         }
 
+        public virtual string RoleHelpText() => null;
+
+        public virtual bool ValidateRole(string role) => false;
+
+        public virtual void AdjustForRole(string role) { }
+
         public virtual ISystem SystemForTag(string tag) => null;
 
         public bool IsDefault(string systemTag)
@@ -235,7 +241,12 @@ namespace JAFDTC.Models
 
         public void UnlinkSystem(string systemTag)
         {
-            if ((LinkedSysMap != null) && (LinkedSysMap.ContainsKey(systemTag)))
+            if ((LinkedSysMap != null) && (systemTag == null))
+            {
+                LinkedSysMap.Clear();
+                ConfigurationUpdated();
+            }
+            else if ((LinkedSysMap != null) && (LinkedSysMap.ContainsKey(systemTag)))
             {
                 LinkedSysMap.Remove(systemTag);
                 ConfigurationUpdated();
