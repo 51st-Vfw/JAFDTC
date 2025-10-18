@@ -215,6 +215,18 @@ namespace JAFDTC.Models
             UID = Guid.NewGuid().ToString();
         }
 
+        public void Sanitize(bool isResetUID = false)
+        {
+            UID = null;
+            Filename = null;
+            IsFavorite = false;
+            UnlinkSystem(null);
+            LastSystemEdited = 0;
+
+            if (isResetUID)
+                ResetUID();
+        }
+
         public virtual string RoleHelpText() => null;
 
         public virtual bool ValidateRole(string role) => false;

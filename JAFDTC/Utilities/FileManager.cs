@@ -335,8 +335,7 @@ namespace JAFDTC.Utilities
                 if (airframe != null)
                 {
                     IConfiguration config = Configuration.FactoryJSON((AirframeTypes)airframe, json);
-                    config.ResetUID();
-                    config.Filename = null;
+                    config.Sanitize();
                     return config;
                 }
             }
