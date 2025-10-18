@@ -149,7 +149,7 @@ https://www.gnu.org/licenses/.
                           VerticalAlignment="Center"
                           IsEnabled="True"
                           Click="HdrBtnExport_Click"
-                          ToolTipService.ToolTip="Export configuration to file">
+                          ToolTipService.ToolTip="Export configuration to JAFDTC file">
                 <SymbolIcon Symbol="Upload"/>
             </AppBarButton>
         </Grid>

@@ -18,6 +18,7 @@
 // ********************************************************************************************************************
 
 using JAFDTC.Models;
+using JAFDTC.UI.Base;
 using JAFDTC.Utilities;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
@@ -268,27 +269,13 @@ namespace JAFDTC.UI.App
 
         /// <summary>
         /// export button: prompt for a filename, serialize the selected configuration to json, and write it to the
-        /// specified file.
+        /// specified .jafdtc file.
         /// </summary>
         private async void HdrBtnExport_Click(object sender, RoutedEventArgs args)
         {
             try
             {
-                FileSavePicker picker = new((Application.Current as JAFDTC.App).Window.AppWindow.Id)
-                {
-                    // SettingsIdentifier = "JAFDTC_ExportCfg",
-                    CommitButtonText = "Export Configuration",
-                    SuggestedStartLocation = PickerLocationId.Desktop,
-                    SuggestedFileName = "Configuration"
-                };
-                picker.FileTypeChoices.Add("JSON", [".json"]);
-
-                PickFileResult resultPick = await picker.PickSaveFileAsync();
-                if (resultPick != null)
-                {
-                    StorageFile file = await StorageFile.GetFileFromPathAsync(resultPick.Path);
-                    await FileIO.WriteTextAsync(file, Config.Serialize());
-                }
+                ConfigExchangeUIHelper.ConfigExportJAFDTC(Content.XamlRoot, Config);
             }
             catch (Exception ex)
             {

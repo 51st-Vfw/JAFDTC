@@ -18,6 +18,7 @@
 // ********************************************************************************************************************
 
 using JAFDTC.Models;
+using JAFDTC.UI.Base;
 using JAFDTC.Utilities;
 using JAFDTC.Utilities.Networking;
 using Microsoft.UI.Dispatching;
@@ -576,28 +577,17 @@ namespace JAFDTC.UI.App
 
         /// <summary>
         /// export command: prompt for a filename, serialize the selected configuration to json, and write it to the
-        /// specified file.
+        /// specified .jafdtc file.
         /// </summary>
         private async void CmdExport_Click(object sender, RoutedEventArgs argse)
         {
             try
             {
-                FileSavePicker picker = new((Application.Current as JAFDTC.App).Window.AppWindow.Id)
-                {
-                    // SettingsIdentifier = "JAFDTC_ExportCfg",
-                    CommitButtonText = "Export Configuration",
-                    SuggestedStartLocation = PickerLocationId.Desktop,
-                    SuggestedFileName = "Configuration"
-                };
-                picker.FileTypeChoices.Add("JSON", [ ".json" ]);
+                IConfiguration configClean = ((IConfiguration)uiCfgListView.SelectedItem).Clone();
+                configClean.ResetUID();
+                configClean.UnlinkSystem(null);
 
-                PickFileResult resultPick = await picker.PickSaveFileAsync();
-                if (resultPick != null)
-                {
-                    StorageFile file = await StorageFile.GetFileFromPathAsync(resultPick.Path);
-                    IConfiguration config = (IConfiguration)uiCfgListView.SelectedItem;
-                    await FileIO.WriteTextAsync(file, config.Serialize());
-                }
+                ConfigExchangeUIHelper.ConfigExportJAFDTC(Content.XamlRoot, configClean);
             }
             catch (Exception ex)
             {

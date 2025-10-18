@@ -111,7 +111,7 @@ https://www.gnu.org/licenses/.
                               ToolTipService.ToolTip="Create new configuration from file"/>
                 <AppBarButton x:Name="uiBarBtnExport" Icon="Upload" Label="Export"
                               Click="CmdExport_Click"
-                              ToolTipService.ToolTip="Export selected configuration to file"/>
+                              ToolTipService.ToolTip="Export selected configuration to JAFDTC file"/>
                 <AppBarSeparator/>
                 <AppBarButton x:Name="uiBarBtnLoadJet" Label="Load to Jet"
                               Click="CmdLoadJet_Click"
