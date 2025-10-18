@@ -195,7 +195,6 @@ namespace JAFDTC.Models.A10C
             // TODO: if the version number is older than current, may need to update object
             Version = _versionCfg;
 
-            Save(this);
             DSMS.FixupMunitionReferences(); // TODO use JsonConstructer like HMCSSystem
             ConfigurationUpdated();
         }
@@ -235,7 +234,6 @@ namespace JAFDTC.Models.A10C
                 if (isHandled)
                 {
                     ConfigurationUpdated();
-                    Save(this);
                     isSuccess = true;
                 }
             }

@@ -197,7 +197,6 @@ namespace JAFDTC.Models.F15E
             // TODO: if the version number is older than current, may need to update object
             Version = _versionCfg;
 
-            Save(this);
             ConfigurationUpdated();
         }
 
@@ -232,7 +231,6 @@ namespace JAFDTC.Models.F15E
                 if (isHandled)
                 {
                     ConfigurationUpdated();
-                    Save(this);
                     isSuccess = true;
                 }
             }

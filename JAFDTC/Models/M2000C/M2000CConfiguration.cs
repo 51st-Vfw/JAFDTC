@@ -133,7 +133,6 @@ namespace JAFDTC.Models.M2000C
             // TODO: if the version number is older than current, may need to update object
             Version = _versionCfg;
 
-            Save(this);
             ConfigurationUpdated();
         }
 
@@ -158,7 +157,6 @@ namespace JAFDTC.Models.M2000C
                 if (isHandled)
                 {
                     ConfigurationUpdated();
-                    Save(this);
                     isSuccess = true;
                 }
             }

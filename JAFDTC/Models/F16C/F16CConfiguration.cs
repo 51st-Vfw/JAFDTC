@@ -310,7 +310,6 @@ namespace JAFDTC.Models.F16C
                 SMS.UpdateFrom10to11();
             Version = _versionCfg;
 
-            Save(this);
             ConfigurationUpdated();
         }
 
@@ -354,7 +353,6 @@ namespace JAFDTC.Models.F16C
                 if (isHandled)
                 {
                     ConfigurationUpdated();
-                    Save(this);
                     isSuccess = true;
                 }
             }
