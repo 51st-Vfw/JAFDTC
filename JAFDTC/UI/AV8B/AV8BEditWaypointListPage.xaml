@@ -78,9 +78,6 @@ https://www.gnu.org/licenses/.
             <AppBarButton x:Name="uiBarImport" Icon="Download" Label="Import"
                           Click="CmdImport_Click"
                           ToolTipService.ToolTip="Import navpoints from a file"/>
-            <AppBarButton x:Name="uiBarExport" Icon="Upload" Label="Export"
-                          Click="CmdExport_Click"
-                          ToolTipService.ToolTip="Export all navpoints to a file"/>
             <AppBarSeparator/>
         </CommandBar>
 

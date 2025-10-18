@@ -227,7 +227,6 @@ namespace JAFDTC.UI.F15E
 
             Utilities.SetEnableState(uiBarCapture, isEditable && isDCSListening);
             Utilities.SetEnableState(uiBarImport, isEditable);
-            Utilities.SetEnableState(uiBarExport, isEditable && (EditSTPT.Count > 0));
             Utilities.SetEnableState(uiBarRenumber, isEditable && (EditSTPT.Count > 0));
 
             uiStptListView.CanReorderItems = isEditable;
@@ -417,16 +416,6 @@ namespace JAFDTC.UI.F15E
                 Config.Save(this, STPTSystem.SystemTag);
                 CopyConfigToEditState();
             }
-        }
-
-        /// <summary>
-        /// export command: prompt the user for a path to save the steerpoints to, then serialize the steerpoints and
-        /// save them to the requested file.
-        /// </summary>
-        private async void CmdExport_Click(object sender, RoutedEventArgs args)
-        {
-            // TODO: should export operate on all steerpoints, or just current route?
-            await NavpointUIHelper.Export(Content.XamlRoot, Config.Name, EditSTPT.SerializeNavpoints(), "Steerpoint");
         }
 
         /// <summary>

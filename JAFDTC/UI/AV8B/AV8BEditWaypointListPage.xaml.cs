@@ -175,7 +175,6 @@ namespace JAFDTC.UI.AV8B
 
             Utilities.SetEnableState(uiBarCapture, isEditable && isDCSListening);
             Utilities.SetEnableState(uiBarImport, isEditable);
-            Utilities.SetEnableState(uiBarExport, isEditable && (EditNavpt.Count > 0));
             Utilities.SetEnableState(uiBarRenumber, isEditable && (EditNavpt.Count > 0));
 
             Utilities.SetEnableState(uiMiscCkbxAddMode, isEditable && (EditNavpt.Count > 0));
@@ -321,16 +320,6 @@ namespace JAFDTC.UI.AV8B
                 Config.Save(this, PageHelper.SystemTag);
                 CopyConfigToEditState();
             }
-        }
-
-        /// <summary>
-        /// export command: prompt the user for a path to save the waypoints to, then serialize the waypoints and
-        /// save them to the requested file.
-        /// </summary>
-        private async void CmdExport_Click(object sender, RoutedEventArgs args)
-        {
-            await NavpointUIHelper.Export(Content.XamlRoot, Config.Name,
-                                          PageHelper.ExportNavpoints(Config), PageHelper.NavptName);
         }
 
         // ---- navigation point list ---------------------------------------------------------------------------------
