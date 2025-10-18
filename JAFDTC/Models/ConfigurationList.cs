@@ -25,7 +25,8 @@ using System.Diagnostics;
 namespace JAFDTC.Models
 {
     /// <summary>
-    /// TODO: document
+    /// model object to manage a list of configurations for a specific airframe. the class supports a name-based
+    /// filter to select only a subset of known configurations.
     /// </summary>
     public class ConfigurationList
     {
@@ -35,9 +36,15 @@ namespace JAFDTC.Models
         //
         // ------------------------------------------------------------------------------------------------------------
 
+        // ---- public properties
+
         public ObservableCollection<IConfiguration> ConfigsFiltered { get; private set; }
 
         public Dictionary<string, IConfiguration> UIDtoConfigMap { get; private set; }
+
+        // ---- private properties
+
+        private AirframeTypes Airframe { get; set; }
 
         private List<IConfiguration> Configs { get; set; }
 
@@ -51,7 +58,8 @@ namespace JAFDTC.Models
 
         public ConfigurationList(AirframeTypes airframe)
         {
-            Configs = [];
+            Airframe = airframe;
+            Configs = [ ];
             ConfigsFiltered = [ ];
             UIDtoConfigMap = [ ];
             CurFilterText = "";
@@ -159,10 +167,10 @@ namespace JAFDTC.Models
         /// add a new configuration to the model by creating a new configuration instance for the given airframe
         /// and saving it to the filesystem.
         ///
-        /// this method implicitly clears any filtering that is in place so we don't have configurations disappearing
-        /// from the ui on adds.
+        /// this method implicitly clears any filtering that is in place so we don't have configurations
+        /// disappearing from the ui on creates.
         /// </summary>
-        public IConfiguration Add(AirframeTypes airframe, string name)
+        public IConfiguration Create(AirframeTypes airframe, string name)
         {
             IConfiguration config = Configuration.Factory(airframe, name);
             config.ConfigurationSaved += ConfigurationSavedHandler;
@@ -174,24 +182,35 @@ namespace JAFDTC.Models
         }
 
         /// <summary>
-        /// add a new configuration to the model from json by deserializing the json string into a new instance
-        /// for the given airframe and saving it to the filesystem. resets any uid from the json.
-        ///
-        /// this method implicitly clears any filtering that is in place so we don't have configurations disappearing
-        /// from the ui on adds.
+        /// inject a configuration from an external source into the system. here, "external" implies that the
+        /// configuration is not currently part of the config database the FileManager maintains. as injected
+        /// configurations are external, before handling, their uids are reset and their system linkages and
+        /// filename is cleared. the injected configuration is then persisted via IConfiguration.Save().
+        /// 
+        /// if the configuration's airframe matches the airframe of this instance, we will also add the
+        /// configuration to the list we track and set it up appropriately. in this case, any filtering is
+        /// implicitly cleared so we don't have configurations disappearing from the ui on injects.
+        /// 
+        /// returns the configuration if it was added to this list, null if not.
         /// </summary>
-        public IConfiguration AddJSON(AirframeTypes airframe, string name, string json)
+        public IConfiguration Inject(IConfiguration config)
         {
-            IConfiguration config = Configuration.FactoryJSON(airframe, json, name);
-            if (config != null)
+            config.ResetUID();
+            config.UnlinkSystem(null);
+            config.Filename = null;
+
+            if (config.Airframe == Airframe)
             {
-                config.ResetUID();
                 config.ConfigurationSaved += ConfigurationSavedHandler;
+                config.Save(this);
                 Configs.Add(config);
                 UIDtoConfigMap[config.UID] = config;
                 FilterConfigs(null);
-
-                // json factory will take care of the save for us as part of the post-json cleanup.
+            }
+            else
+            {
+                config.Save(this);
+                config = null;
             }
             return config;
         }

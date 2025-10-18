@@ -171,16 +171,7 @@ namespace JAFDTC.UI.App
         /// </summary>
         private bool AddConfigNameOpHandler(string name, object arg = null)
         {
-            return (ConfigList.Add(CurAirframe, name) != null);
-        }
-
-        /// <summary>
-        /// ConfigOpHandler to add a new configuration for the selected airframe with the given name that is cloned
-        /// from a json description. the name is assumed to be legal (e.g., not a duplicate, non-zero length, etc.).
-        /// </summary>
-        private bool AddJSONConfigNameOpHandler(string name, object json)
-        {
-            return (ConfigList.AddJSON(CurAirframe, name, (string)json) != null);
+            return (ConfigList.Create(CurAirframe, name) != null);
         }
 
         /// <summary>
