@@ -28,12 +28,12 @@ using JAFDTC.Models.F16C.Misc;
 using JAFDTC.Models.F16C.Radio;
 using JAFDTC.Models.F16C.SMS;
 using JAFDTC.Models.F16C.STPT;
-using JAFDTC.UI.App;
 using JAFDTC.UI.F16C;
 using JAFDTC.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -44,7 +44,7 @@ namespace JAFDTC.Models.F16C
     /// up. this object is serialized to/from json when persisting configurations. configuration supports navigation,
     /// countermeasure, datalink, harm, hts, mfd, radio, and miscellaneous systems.
     /// </summary>
-    public class F16CConfiguration : Configuration
+    public partial class F16CConfiguration : Configuration
     {
         private const string _versionCfg = "F16C-1.1";          // current version
 
@@ -80,11 +80,11 @@ namespace JAFDTC.Models.F16C
         public SimDTCSystem DTE { get; set; }
 
         [JsonIgnore]
-        public override List<string> MergeableSysTagsForDTC => new()
-        {
+        public override List<string> MergeableSysTagsForDTC =>
+        [
             RadioSystem.SystemTag,
             CMDSSystem.SystemTag
-        };
+        ];
 
         [JsonIgnore]
         public override IUploadAgent UploadAgent => new F16CUploadAgent(this);
@@ -113,7 +113,7 @@ namespace JAFDTC.Models.F16C
 
         public override IConfiguration Clone()
         {
-            Dictionary<string, string> linkedSysMap = new();
+            Dictionary<string, string> linkedSysMap = [ ];
             foreach (KeyValuePair<string, string> kvp in LinkedSysMap)
                 linkedSysMap[new(kvp.Key)] = new(kvp.Value);
             F16CConfiguration clone = new("", Name, linkedSysMap)
@@ -155,9 +155,89 @@ namespace JAFDTC.Models.F16C
 
         // ------------------------------------------------------------------------------------------------------------
         //
+        // internal methods
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
+        private static Dictionary<string, string> ParseRole(string role)
+        {
+            Dictionary<string, string> info = [ ];
+            List<string> fields = [.. role.ToUpper().Split(' ') ];
+            foreach (string field in fields)
+            {
+                if ((field.Length > 2) &&
+                    ((field[^1] == 'X') || (field[^1] == 'Y')) &&
+                    (int.TryParse(field[..^1], out int channel) && ((channel >= 1) && (channel <= 63))))
+                {
+                    info["TACAN_CHAN"] = $"{channel}";
+                    info["TACAN_BAND"] = $"{field[^1]}";
+                }
+                else if ((field.Length == 4) &&
+                         (int.TryParse($"{field[^2]}", out int flight) && ((flight >= 1) && (flight <= 9))) &&
+                         (int.TryParse($"{field[^1]}", out int elem) && ((elem >= 1) && (elem <= 4))) &&
+                         ($"{field[..1]}".All(char.IsLetter)))
+                {
+                    info["CALLSIGN"] = $"{field[..2]}";
+                    info["FLIGHT"] = $"{flight}";
+                    info["ELEM"] = $"{elem}";
+                }
+                else if (field.Length > 0)
+                {
+                    return null;
+                }
+            }
+            return info;
+        }
+
+        // ------------------------------------------------------------------------------------------------------------
+        //
         // overriden class methods
         //
         // ------------------------------------------------------------------------------------------------------------
+
+        public override bool ValidateRole(string role) => (ParseRole(role) != null);
+
+        public override void AdjustForRole(string role)
+        {
+            Dictionary<string, string> roleInfo = ParseRole(role);
+
+            string feNum = DLNK.OwnshipFENumber;
+            if (roleInfo.TryGetValue("FLIGHT", out string f) && roleInfo.TryGetValue("ELEM", out string e))
+                feNum = $"{f}{e}";
+            if (!string.IsNullOrEmpty(feNum))
+            {
+                DLNK.OwnshipFENumber = feNum;
+                if (roleInfo.TryGetValue("CALLSIGN", out string cs))
+                    DLNK.OwnshipCallsign = cs;
+                DLNK.IsOwnshipLead = (feNum[1] == '1');
+            }
+
+            string tcnChan = Misc.TACANChannel;
+            if (roleInfo.TryGetValue("TACAN_CHAN", out string c) && roleInfo.TryGetValue("TACAN_BAND", out string b))
+            {
+                if (!string.IsNullOrEmpty(feNum) && (feNum[1] == '1'))
+                    tcnChan = c;
+                else if (!string.IsNullOrEmpty(feNum))
+                    tcnChan = $"{int.Parse(c) + 63}";
+
+                Misc.TACANChannel = tcnChan;
+                Misc.TACANBand = (b == "X") ? $"{(int)TACANBands.X}" : $"{(int)TACANBands.Y}";
+                Misc.TACANMode = $"{(int)TACANModes.AA_TR}";
+            }
+            else if (!string.IsNullOrEmpty(feNum))
+            {
+                int tcnChanNum = int.Parse(tcnChan);
+                if ((feNum[1] == '1') && (tcnChanNum > 63))
+                    tcnChanNum -= 63;
+                else if ((feNum[1] != '1') && (tcnChanNum <= 63))
+                    tcnChanNum += 63;
+
+                Misc.TACANChannel = $"{tcnChanNum}";
+                Misc.TACANMode = $"{(int)TACANModes.AA_TR}";
+            }
+        }
+
+        public override string RoleHelpText() => "Can include callsign and lead TACAN; for exmaple, “CY11 38Y”";
 
         public override ISystem SystemForTag(string tag)
         {
