@@ -2,7 +2,7 @@
 //
 // ConfigurationListModel.cs -- model for a list of configurations for a particualr airframe.
 //
-// Copyright(C) 2023 ilominar/raven
+// Copyright(C) 2023-2025 ilominar/raven
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 // Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -51,9 +51,9 @@ namespace JAFDTC.Models
 
         public ConfigurationList(AirframeTypes airframe)
         {
-            Configs = new List<IConfiguration>();
-            ConfigsFiltered = new ObservableCollection<IConfiguration>();
-            UIDtoConfigMap = new Dictionary<string, IConfiguration>();
+            Configs = [];
+            ConfigsFiltered = [ ];
+            UIDtoConfigMap = [ ];
             CurFilterText = "";
             LoadConfigurationsForAirframe(airframe);
         }
@@ -71,31 +71,24 @@ namespace JAFDTC.Models
         /// </summary>
         private List<IConfiguration> FindConfigsLinking(IConfiguration srcConfig, string systemTag)
         {
-            List<IConfiguration> listLinks = new();
+            List<IConfiguration> listLinks = [ ];
             foreach (IConfiguration config in Configs)
-            {
-                if (config.LinkedSysMap.ContainsKey(systemTag) && (config.LinkedSysMap[systemTag] == srcConfig.UID) &&
+                if (config.LinkedSysMap.TryGetValue(systemTag, out string value) &&
+                    (value == srcConfig.UID) &&
                     (config.UID != srcConfig.UID))
                 {
                     listLinks.Add(config);
                 }
-            }
 
-            List<IConfiguration> list = new();
+            List<IConfiguration> list = [ ];
             foreach (IConfiguration link in listLinks)
             {
                 if (!list.Contains(link))
-                {
                     list.Add(link);
-                }
                 List<IConfiguration> listChild = FindConfigsLinking(link, systemTag);
                 foreach (IConfiguration child in listChild)
-                {
                     if (!list.Contains(child))
-                    {
                         list.Add(child);
-                    }
-                }
             }
             return list;
         }
@@ -134,9 +127,7 @@ namespace JAFDTC.Models
             sortableList.Sort((a, b)
                 => (a.IsFavorite == b.IsFavorite) ? a.Name.CompareTo(b.Name) : ((a.IsFavorite) ? -1 : 1));
             for (int i = 0; i < sortableList.Count; i++)
-            {
                 ConfigsFiltered.Move(ConfigsFiltered.IndexOf(sortableList[i]), i);
-            }
         }
 
         /// <summary>
@@ -146,13 +137,22 @@ namespace JAFDTC.Models
         public bool IsNameUnique(string name)
         {
             foreach (IConfiguration config in Configs)
-            {
-                if (config.Name.ToLower() == name.ToLower())
-                {
+                if (config.Name.Equals(name, System.StringComparison.CurrentCultureIgnoreCase))
                     return false;
-                }
-            }
             return true;
+        }
+
+        /// <summary>
+        /// returns a unique name based on the starting base name. if the base name is unique, we're done. if not,
+        /// we add a sequence number to the end of the base until we're unique.
+        /// </summary>
+        public string UniquifyName(string baseName)
+        {
+            string uniqueName = baseName;
+            int index = 1;
+            while (!IsNameUnique(uniqueName))
+                uniqueName = $"{baseName} {index++}";
+            return uniqueName;
         }
 
         /// <summary>
@@ -210,12 +210,12 @@ namespace JAFDTC.Models
 
         /// <summary>
         /// clone an existing configuration and add it to the configuration list under a new name. the caller must
-        /// guarantee that the new name is unique prior to calling this method.
+        /// guarantee that the new name is unique prior to calling this method. returns the new config.
         /// 
         /// this method implicitly clears any filtering that is in place so we don't have configurations disappearing
         /// from the ui on copies.
         /// </summary>
-        public void Copy(IConfiguration config, string newName)
+        public IConfiguration Copy(IConfiguration config, string newName)
         {
             IConfiguration clone = config.Clone();
             clone.Name = newName;
@@ -225,6 +225,7 @@ namespace JAFDTC.Models
             Configs.Add(clone);
             UIDtoConfigMap[clone.UID] = clone;
             FilterConfigs(null);
+            return clone;
         }
 
         /// <summary>
@@ -236,7 +237,7 @@ namespace JAFDTC.Models
         /// </summary>
         public void Rename(IConfiguration config, string newName)
         {
-            if (config.Name.ToLower() != newName.ToLower())
+            if (!config.Name.Equals(newName, System.StringComparison.CurrentCultureIgnoreCase))
             {
                 string oldFilename = config.Filename;
                 config.Name = newName;
@@ -255,9 +256,7 @@ namespace JAFDTC.Models
         public void Reinsert(IConfiguration config)
         {
             if (ConfigsFiltered.IndexOf(config) != -1)
-            {
                 ConfigsFiltered[ConfigsFiltered.IndexOf(config)] = config;
-            }
         }
 
         /// <summary>
@@ -272,17 +271,14 @@ namespace JAFDTC.Models
             {
                 ConfigsFiltered.Clear();
                 foreach (IConfiguration config in Configs)
-                {
-                    if (string.IsNullOrEmpty(filter) || config.Name.ToLower().Contains(filter.ToLower()))
+                    if (string.IsNullOrEmpty(filter) ||
+                        config.Name.Contains(filter, System.StringComparison.CurrentCultureIgnoreCase))
                     {
                         ConfigsFiltered.Add(config);
                     }
-                }
                 SortConfigsFiltered();
                 if (filter != null)
-                {
                     CurFilterText = filter;
-                }
             }
         }
 
@@ -291,14 +287,13 @@ namespace JAFDTC.Models
         /// </summary>
         public List<string> FilterHits(string filter)
         {
-            List<string> hits = new();
+            List<string> hits = [ ];
             foreach (IConfiguration config in Configs)
-            {
-                if (string.IsNullOrEmpty(filter) || config.Name.ToLower().Contains(filter.ToLower()))
+                if (string.IsNullOrEmpty(filter) ||
+                    config.Name.Contains(filter, System.StringComparison.CurrentCultureIgnoreCase))
                 {
                     hits.Add(config.Name);
                 }
-            }
             hits.Sort();
             return hits;
         }
@@ -309,20 +304,18 @@ namespace JAFDTC.Models
         public void LoadConfigurationsForAirframe(AirframeTypes airframe)
         {
             foreach (IConfiguration config in Configs)
-            {
                 config.ConfigurationSaved -= ConfigurationSavedHandler;
-            }
             Configs.Clear();
             ConfigsFiltered.Clear();
             UIDtoConfigMap.Clear();
 
             Dictionary<string, IConfiguration> fileDict = FileManager.LoadConfigurationFiles(airframe);
-            List<string> uidBlacklist = new();
+            List<string> uidBlacklist = [ ];
             foreach (KeyValuePair<string, IConfiguration> kvp in fileDict)
             {
                 kvp.Value.ConfigurationSaved += ConfigurationSavedHandler;
                 Configs.Add(kvp.Value);
-                if (UIDtoConfigMap.ContainsKey(kvp.Value.UID))
+                if (UIDtoConfigMap.TryGetValue(kvp.Value.UID, out IConfiguration dupUIDConfig))
                 {
                     // CYA: possible uids might be duplicated (eg, by directly moving around configuration .json
                     // CYA: files in the configuration area). this can move links around to different targets.
@@ -332,7 +325,6 @@ namespace JAFDTC.Models
                     uidBlacklist.Add(kvp.Value.UID);
 
                     string dupUID = kvp.Value.UID;
-                    IConfiguration dupUIDConfig = UIDtoConfigMap[kvp.Value.UID];
                     while (UIDtoConfigMap.ContainsKey(dupUIDConfig.UID))
                         dupUIDConfig.ResetUID();
                     UIDtoConfigMap.Remove(dupUID);
