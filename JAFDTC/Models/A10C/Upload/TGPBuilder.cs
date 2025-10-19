@@ -53,8 +53,8 @@ namespace JAFDTC.Models.A10C.Upload
             AirframeDevice rmfd = _aircraft.GetDevice("RMFD");
             AirframeDevice ahcp = _aircraft.GetDevice("AHCP");
 
-			// Ensure TGP is on default MFD button and warmed up.
-			AddIfBlock("IsTGPInDefaultMFDPosition", true, null, delegate ()
+            // Ensure TGP is on default MFD button and warmed up.
+            AddIfBlock("IsTGPInDefaultMFDPosition", true, null, delegate ()
             {
                 AddAction(rmfd, "RMFD_15", WAIT_BASE); // Go to TGP page
                 AddIfBlock("IsTGPReady", true, null, delegate () { BuildTGP(hotas, cdu, rmfd, ahcp); });
@@ -64,18 +64,18 @@ namespace JAFDTC.Models.A10C.Upload
         private void BuildTGP(AirframeDevice hotas, AirframeDevice cdu, AirframeDevice rmfd, AirframeDevice ahcp)
         {
             int clicks;
-			
+
             // Designator: setting appears on MFD in standby mode, not in CTRL page, so we do it first
-			if (!_cfg.TGP.LaserDesignatorIsDefault)
-			{
-				AddAction(ahcp, "LASER_ON");
+            if (!_cfg.TGP.LaserDesignatorIsDefault)
+            {
+                AddAction(ahcp, "LASER_ON");
 
-				clicks = GetNumClicksForWraparoundSetting<LaserDesignatorOptions>(TGPSystem.ExplicitDefaults.LaserDesignatorValue, _cfg.TGP.LaserDesignatorValue);
-				AddActions(rmfd, "RMFD_07", clicks);
+                clicks = GetNumClicksForWraparoundSetting<LaserDesignatorOptions>(TGPSystem.ExplicitDefaults.LaserDesignatorValue, _cfg.TGP.LaserDesignatorValue);
+                AddActions(rmfd, "RMFD_07", clicks);
 
-				AddAction(ahcp, "LASER_SAFE");
-			}
-			
+                AddAction(ahcp, "LASER_SAFE");
+            }
+            
             AddAction(rmfd, "RMFD_02", 1200); // A-G, wait to go active
 
             // Video Mode
@@ -132,7 +132,7 @@ namespace JAFDTC.Models.A10C.Upload
             clicks = GetNumClicksForWraparoundSetting<YardstickOptions>(TGPSystem.ExplicitDefaults.YardstickValue, _cfg.TGP.YardstickValue);
             AddActions(rmfd, "RMFD_09", clicks);
 
-			AddAction(rmfd, "RMFD_01"); // RTN
+            AddAction(rmfd, "RMFD_01"); // RTN
             AddAction(rmfd, "RMFD_03"); // STBY
         }
     }

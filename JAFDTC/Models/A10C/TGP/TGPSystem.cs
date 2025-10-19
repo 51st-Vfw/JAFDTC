@@ -51,16 +51,16 @@ namespace JAFDTC.Models.A10C.TGP
         OFF = 2
     }
 
-	// defines the laser designator options
+    // defines the laser designator options
     //
-	public enum LaserDesignatorOptions
+    public enum LaserDesignatorOptions
     {
         LASER = 0, // laser only designation
-		IR = 1,    // infrared only designation 
-		BTH = 2    // both laser and infrared designation
-	}
+        IR = 1,    // infrared only designation 
+        BTH = 2    // both laser and infrared designation
+    }
 
-	public class TGPSystem : SystemBase
+    public class TGPSystem : SystemBase
     {
         public const string SystemTag = "JAFDTC:A10C:TGP";
 
@@ -160,31 +160,31 @@ namespace JAFDTC.Models.A10C.TGP
             }
         }
 
-		private string _yardstick;                              // integer [0, 2]
-		public string Yardstick
-		{
-			get => _yardstick;
-			set
-			{
-				string error = (string.IsNullOrEmpty(value) || IsIntegerFieldValid(value, 0, 2) ? null : "Invalid format");
-				SetProperty(ref _yardstick, value, error);
-			}
-		}
+        private string _yardstick;                              // integer [0, 2]
+        public string Yardstick
+        {
+            get => _yardstick;
+            set
+            {
+                string error = (string.IsNullOrEmpty(value) || IsIntegerFieldValid(value, 0, 2) ? null : "Invalid format");
+                SetProperty(ref _yardstick, value, error);
+            }
+        }
 
-		private string _laserDesignator;                              // integer [0, 2]
-		public string LaserDesignator
-		{
-			get => _laserDesignator;
-			set
-			{
-				string error = (string.IsNullOrEmpty(value) || IsIntegerFieldValid(value, 0, 2) ? null : "Invalid format");
-				SetProperty(ref _laserDesignator, value, error);
-			}
-		}
+        private string _laserDesignator;                              // integer [0, 2]
+        public string LaserDesignator
+        {
+            get => _laserDesignator;
+            set
+            {
+                string error = (string.IsNullOrEmpty(value) || IsIntegerFieldValid(value, 0, 2) ? null : "Invalid format");
+                SetProperty(ref _laserDesignator, value, error);
+            }
+        }
 
-		// ---- synthesized properties
+        // ---- synthesized properties
 
-		[JsonIgnore]
+        [JsonIgnore]
         public override bool IsDefault => CoordDisplayIsDefault && VideoModeIsDefault && LaserCodeIsDefault && LSSIsDefault && LatchIsDefault
             && TAAFIsDefault && FrndIsDefault && YardstickIsDefault && LaserDesignatorIsDefault;
 
@@ -219,23 +219,23 @@ namespace JAFDTC.Models.A10C.TGP
         [JsonIgnore]
         public bool FRNDValue => string.IsNullOrEmpty(FRND) ? true : FRND == ExplicitDefaults.FRND;
 
-		[JsonIgnore]
-		public bool YardstickIsDefault => string.IsNullOrEmpty(Yardstick) || Yardstick == ExplicitDefaults.Yardstick;
-		[JsonIgnore]
-		public int YardstickValue => string.IsNullOrEmpty(Yardstick) ? int.Parse(ExplicitDefaults.Yardstick) : int.Parse(Yardstick);
+        [JsonIgnore]
+        public bool YardstickIsDefault => string.IsNullOrEmpty(Yardstick) || Yardstick == ExplicitDefaults.Yardstick;
+        [JsonIgnore]
+        public int YardstickValue => string.IsNullOrEmpty(Yardstick) ? int.Parse(ExplicitDefaults.Yardstick) : int.Parse(Yardstick);
 
-		[JsonIgnore]
-		public bool LaserDesignatorIsDefault => string.IsNullOrEmpty(LaserDesignator) || LaserDesignator == ExplicitDefaults.LaserDesignator;
-		[JsonIgnore]
-		public int LaserDesignatorValue => string.IsNullOrEmpty(LaserDesignator) ? int.Parse(ExplicitDefaults.LaserDesignator) : int.Parse(LaserDesignator);
+        [JsonIgnore]
+        public bool LaserDesignatorIsDefault => string.IsNullOrEmpty(LaserDesignator) || LaserDesignator == ExplicitDefaults.LaserDesignator;
+        [JsonIgnore]
+        public int LaserDesignatorValue => string.IsNullOrEmpty(LaserDesignator) ? int.Parse(ExplicitDefaults.LaserDesignator) : int.Parse(LaserDesignator);
 
-		// ------------------------------------------------------------------------------------------------------------
-		//
-		// construction
-		//
-		// ------------------------------------------------------------------------------------------------------------
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // construction
+        //
+        // ------------------------------------------------------------------------------------------------------------
 
-		public TGPSystem()
+        public TGPSystem()
         {
             Reset();
         }
@@ -251,7 +251,7 @@ namespace JAFDTC.Models.A10C.TGP
             FRND = other.FRND;
             Yardstick = other.Yardstick;
             LaserDesignator = other.LaserDesignator;
-		}
+        }
 
         public virtual object Clone() => new TGPSystem(this);
 
@@ -297,6 +297,6 @@ namespace JAFDTC.Models.A10C.TGP
             tgp.FRND = "True";      // ON
             tgp.Yardstick = "0";    // METRIC
             tgp.LaserDesignator = "0"; // LASER
-		}
+        }
     }
 }
