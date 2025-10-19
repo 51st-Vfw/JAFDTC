@@ -22,6 +22,7 @@ using JAFDTC.Models.DCS;
 using JAFDTC.Models.F16C;
 using JAFDTC.Models.F16C.STPT;
 using JAFDTC.UI.Base;
+using JAFDTC.UI.Controls.Map;
 using JAFDTC.Utilities;
 using JAFDTC.Utilities.Networking;
 using Microsoft.UI.Dispatching;
@@ -48,17 +49,20 @@ namespace JAFDTC.UI.F16C
     /// </summary>
     public sealed class F16CEditStptPageNavArgs
     {
-        public F16CConfiguration Config { get; set; }
-
         public F16CEditSteerpointListPage ParentEditor { get; set; }
+
+        public IMapControlVerbMirror VerbMirror { get; set; }   // map window (may be null)
+
+        public F16CConfiguration Config { get; set; }
 
         public int IndexStpt { get; set; }
 
         public bool IsUnlinked { get; set; }
 
-        public F16CEditStptPageNavArgs(F16CEditSteerpointListPage parentEditor, F16CConfiguration config, int indexStpt,
-                                       bool isUnlinked)
-            => (ParentEditor, Config, IndexStpt, IsUnlinked) = (parentEditor, config, indexStpt, isUnlinked);
+        public F16CEditStptPageNavArgs(F16CEditSteerpointListPage parent, IMapControlVerbMirror mirror,
+                                       F16CConfiguration config, int indexStpt, bool isUnlinked)
+            => (ParentEditor, VerbMirror,
+                Config, IndexStpt, IsUnlinked) = (parent, mirror, config, indexStpt, isUnlinked);
     }
 
     // ================================================================================================================
@@ -171,7 +175,7 @@ namespace JAFDTC.UI.F16C
                 ["LonUI"] = uiStptValueLon,
                 ["TOS"] = uiStptValueTOS
             };
-            _oap0FieldTitles = 
+            _oap0FieldTitles =
             [
                 uiStptOAP0TextTitle
             ];
@@ -181,11 +185,15 @@ namespace JAFDTC.UI.F16C
             ];
             _oap0FieldValueMap = new Dictionary<string, TextBox>()
             {
-                ["Range"] = uiStptOAPValueRange0, ["Brng"] = uiStptOAPValueBrng0, ["Elev"] = uiStptOAPValueElev0,
+                ["Range"] = uiStptOAPValueRange0,
+                ["Brng"] = uiStptOAPValueBrng0,
+                ["Elev"] = uiStptOAPValueElev0,
             };
             _oap1FieldValueMap = new Dictionary<string, TextBox>()
             {
-                ["Range"] = uiStptOAPValueRange1, ["Brng"] = uiStptOAPValueBrng1, ["Elev"] = uiStptOAPValueElev1
+                ["Range"] = uiStptOAPValueRange1,
+                ["Brng"] = uiStptOAPValueBrng1,
+                ["Elev"] = uiStptOAPValueElev1
             };
             _vxpFieldTitles =
             [
@@ -193,11 +201,15 @@ namespace JAFDTC.UI.F16C
             ];
             _vxp0FieldValueMap = new Dictionary<string, TextBox>()
             {
-                ["Range"] = uiStptVxPValueRange0, ["Brng"] = uiStptVxPValueBrng0, ["Elev"] = uiStptVxPValueElev0,
+                ["Range"] = uiStptVxPValueRange0,
+                ["Brng"] = uiStptVxPValueBrng0,
+                ["Elev"] = uiStptVxPValueElev0,
             };
             _vxp1FieldValueMap = new Dictionary<string, TextBox>()
             {
-                ["Range"] = uiStptVxPValueRange1, ["Brng"] = uiStptVxPValueBrng1, ["Elev"] = uiStptVxPValueElev1
+                ["Range"] = uiStptVxPValueRange1,
+                ["Brng"] = uiStptVxPValueBrng1,
+                ["Elev"] = uiStptVxPValueElev1
             };
             _defaultBorderBrush = uiStptOAPValueBrng1.BorderBrush;
             _defaultBkgndBrush = uiStptOAPValueBrng1.Background;
@@ -273,6 +285,50 @@ namespace JAFDTC.UI.F16C
             }
         }
 
+        /// <summary>
+        /// change the editor to edit the navpoint at the given index.
+        /// </summary>
+        public void ChangeToEditNavpointAtIndex(int index)
+        {
+            if (!CurStateHasErrors())
+            {
+                CurSelectedPoI = null;
+                uiPoINameFilterBox.Text = null;
+                CopyEditToConfig(EditStptIndex, true);
+                EditStptIndex = index;
+                CopyConfigToEdit(EditStptIndex);
+                RebuildInterfaceState();
+                if (NavArgs.IsUnlinked)
+                    uiStptValueName.Focus(FocusState.Programmatic);
+
+                MapMarkerInfo info = new(MapMarkerInfo.MarkerType.NAVPT, EditNavpointListPage.ROUTE_NAME,
+                                         EditStptIndex + 1);
+                NavArgs.VerbMirror?.MirrorVerbMarkerSelected(NavArgs.ParentEditor as IMapControlVerbHandler, info);
+            }
+        }
+
+        /// <summary>
+        /// copy config to edit if editing the navpoint at a given index (as this navpoint is being deleted).
+        /// </summary>
+        public void CopyConfigToEditIfEditingNavpointAtIndex(int index)
+        {
+            if (index == EditStptIndex)
+            {
+                CopyConfigToEdit(EditStptIndex);
+                EditStpt.LatUI = EditStpt.LatUI;                // clears transient false positive errors
+                EditStpt.LonUI = EditStpt.LonUI;
+            }
+        }
+
+        /// <summary>
+        /// cancel the current editor if editing the navpoint at a given index (as this navpoint is being deleted).
+        /// </summary>
+        public void CancelIfEditingNavpointAtIndex(int index)
+        {
+            if (index == EditStptIndex)
+                Frame.GoBack();
+        }
+
         // ------------------------------------------------------------------------------------------------------------
         //
         // field validation
@@ -294,7 +350,7 @@ namespace JAFDTC.UI.F16C
 
         private void ValidateAllFields(Dictionary<string, TextBox> fields, IEnumerable errors)
         {
-            Dictionary<string, bool> map = [ ];
+            Dictionary<string, bool> map = [];
             foreach (string error in errors)
                 map[error] = true;
             foreach (KeyValuePair<string, TextBox> kvp in fields)
@@ -789,7 +845,7 @@ namespace JAFDTC.UI.F16C
                         result = await Utilities.Message2BDialog(
                             Content.XamlRoot,
                             $"{rpString} Defined",
-                            $"A {rpString} is already defined on Steerpoint {sp+1}. Would you like to remove it and reference {rpString} to this steerpoint instead?",
+                            $"A {rpString} is already defined on Steerpoint {sp + 1}. Would you like to remove it and reference {rpString} to this steerpoint instead?",
                             "Remove");
                     }
                     if (result == ContentDialogResult.Primary)

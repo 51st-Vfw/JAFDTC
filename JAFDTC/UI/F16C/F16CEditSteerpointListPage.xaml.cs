@@ -18,15 +18,18 @@
 // ********************************************************************************************************************
 
 using JAFDTC.Models;
+using JAFDTC.Models.Base;
 using JAFDTC.Models.F16C;
 using JAFDTC.Models.F16C.STPT;
 using JAFDTC.UI.App;
 using JAFDTC.UI.Base;
+using JAFDTC.UI.Controls.Map;
 using JAFDTC.Utilities;
 using JAFDTC.Utilities.Networking;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
@@ -35,7 +38,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Diagnostics;
-using System.Linq;
 using System.Text.Json;
 using Windows.ApplicationModel.DataTransfer;
 
@@ -46,10 +48,18 @@ namespace JAFDTC.UI.F16C
     /// <summary>
     /// editor for steerpoints in the viper.
     /// </summary>
-    public sealed partial class F16CEditSteerpointListPage : Page
+    public sealed partial class F16CEditSteerpointListPage : Page, IMapControlVerbHandler, IMapControlMarkerExplainer
     {
         public static ConfigEditorPageInfo PageInfo
             => new(STPTSystem.SystemTag, "Steerpoints", "STPT", Glyphs.STPT, typeof(F16CEditSteerpointListPage));
+
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // constants
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
+        public readonly static string ROUTE_NAME = "Primary";
 
         // ------------------------------------------------------------------------------------------------------------
         //
@@ -71,6 +81,27 @@ namespace JAFDTC.UI.F16C
         private bool IsClipboardValid { get; set; }
 
         private int CaptureIndex { get; set; }
+
+        // ---- internal properties
+
+        private MapWindow _mapWindow;
+        private MapWindow MapWindow
+        {
+            get => _mapWindow;
+            set
+            {
+                if (_mapWindow != value)
+                {
+                    _mapWindow = value;
+                    VerbMirror = value;
+                }
+            }
+        }
+
+        private F16CEditSteerpointPage EditStptDetailPage { get; set; }
+
+        private bool _isVerbEvent;
+        private bool _isMarshalling;
 
         // ---- read-only properties
 
@@ -104,14 +135,18 @@ namespace JAFDTC.UI.F16C
         /// </summary>
         private void CopyConfigToEdit()
         {
+            _isMarshalling = true;
             EditSTPT.Points.Clear();
             foreach (SteerpointInfo stpt in Config.STPT.Points)
                 EditSTPT.Add(new SteerpointInfo(stpt));
+            _isMarshalling = false;
         }
 
         private void CopyEditToConfig(bool isPersist = false)
         {
+            _isMarshalling = true;
             Config.STPT = (STPTSystem)EditSTPT.Clone();
+            _isMarshalling = false;
 
             if (isPersist)
                 Config.Save(this, STPTSystem.SystemTag);
@@ -131,7 +166,7 @@ namespace JAFDTC.UI.F16C
             NavArgs.BackButton.IsEnabled = false;
             bool isUnlinked = string.IsNullOrEmpty(Config.SystemLinkedTo(STPTSystem.SystemTag));
             Frame.Navigate(typeof(F16CEditSteerpointPage),
-                           new F16CEditStptPageNavArgs(this, Config, EditSTPT.IndexOf(stpt), isUnlinked),
+                           new F16CEditStptPageNavArgs(this, VerbMirror, Config, EditSTPT.IndexOf(stpt), isUnlinked),
                            new SlideNavigationTransitionInfo() { Effect = SlideNavigationTransitionEffect.FromRight });
         }
 
@@ -222,6 +257,10 @@ namespace JAFDTC.UI.F16C
                 EditSTPT.Points[index].Lon = ll.Item2;
                 CopyEditToConfig(true);
                 RebuildInterfaceState();
+
+                MapMarkerInfo info = new(MapMarkerInfo.MarkerType.NAVPT, ROUTE_NAME, index + 1, ll.Item1, ll.Item2);
+                VerbMirror?.MirrorVerbMarkerAdded(this, info);
+                VerbMirror?.MirrorVerbMarkerSelected(this, info);
             }
         }
 
@@ -261,12 +300,22 @@ namespace JAFDTC.UI.F16C
 
             if (await NavpointUIHelper.DeleteDialog(Content.XamlRoot, "Steerpoint", uiStptListView.SelectedItems.Count))
             {
-                List<SteerpointInfo> deleteList = [ ];
-                foreach (SteerpointInfo item in uiStptListView.SelectedItems.Cast<SteerpointInfo>())
-                    deleteList.Add(item);
+                _isMarshalling = true;
+
+                List<int> selectedIndices = [];
+                foreach (ItemIndexRange range in uiStptListView.SelectedRanges)
+                    for (int i = range.FirstIndex; i <= range.LastIndex; i++)
+                        selectedIndices.Add(i);
+                selectedIndices.Sort((a, b) => b.CompareTo(a));
                 uiStptListView.SelectedItems.Clear();
-                foreach (SteerpointInfo stpt in deleteList)
-                    EditSTPT.Delete(stpt);
+                foreach (int index in selectedIndices)
+                {
+                    EditSTPT.Points.RemoveAt(index);
+                    VerbMirror?.MirrorVerbMarkerDeleted(this, new(MapMarkerInfo.MarkerType.NAVPT, ROUTE_NAME, index + 1));
+                }
+                VerbMirror?.MirrorVerbMarkerSelected(this, new());
+
+                _isMarshalling = false;
 
                 // steerpoint renumbering should be handled by observer to EditSTPT changes...
                 //
@@ -359,6 +408,39 @@ namespace JAFDTC.UI.F16C
             }
         }
 
+        /// <summary>
+        /// map command: if the map window is not currently open, build out the data source and so on necessary for
+        /// the window and create it. otherwise, activate the window.
+        /// </summary>
+        private void CmdMap_Click(object sender, RoutedEventArgs args)
+        {
+            if (MapWindow == null)
+            {
+                bool isLinked = !string.IsNullOrEmpty(Config.SystemLinkedTo(STPTSystem.SystemTag));
+
+                Dictionary<string, List<INavpointInfo>> routes = new()
+                {
+                    [ROUTE_NAME] = [.. EditSTPT.Points ]
+                };
+// TODO: fix max navpoint count
+                MapWindow = NavpointUIHelper.OpenMap(this, 20, LLFormat.DDM_P3ZF, routes);
+                MapWindow.MarkerExplainer = this;
+                MapWindow.Closed += MapWindow_Closed;
+                MapWindow.EditMask = ((isLinked) ? 0 : MapMarkerInfo.MarkerTypeMask.NAVPT) |
+                                     ((isLinked) ? 0 : MapMarkerInfo.MarkerTypeMask.NAVPT_HANDLE);
+
+                NavArgs.ConfigPage.RegisterAuxWindow(MapWindow);
+
+                if (uiStptListView.SelectedIndex != -1)
+                    VerbMirror?.MirrorVerbMarkerSelected(this, new(MapMarkerInfo.MarkerType.ANY, ROUTE_NAME,
+                                                         uiStptListView.SelectedIndex + 1));
+            }
+            else
+            {
+                MapWindow.Activate();
+            }
+        }
+
         // ---- buttons -----------------------------------------------------------------------------------------------
 
         /// <summary>
@@ -404,7 +486,16 @@ namespace JAFDTC.UI.F16C
         /// </summary>
         private void StptList_SelectionChanged(object sender, SelectionChangedEventArgs args)
         {
-            RebuildInterfaceState();
+            Debug.WriteLine(">>>> StptList_SelectionChanged");
+            if (!_isMarshalling)
+            {
+                ListView list = sender as ListView;
+                if (!_isVerbEvent)
+                    VerbMirror?.MirrorVerbMarkerSelected(this, new(MapMarkerInfo.MarkerType.ANY,
+                                                                   ROUTE_NAME, list.SelectedIndex + 1));
+                RebuildInterfaceState();
+            }
+            Debug.WriteLine("<<<< StptList_SelectionChanged");
         }
 
         /// <summary>
@@ -451,6 +542,159 @@ namespace JAFDTC.UI.F16C
 
         // ------------------------------------------------------------------------------------------------------------
         //
+        // IMapControlMarkerExplainer
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
+        /// <summary>
+        /// returns the display name of the marker with the specified information.
+        /// </summary>
+        public string MarkerDisplayName(MapMarkerInfo info)
+        {
+            if (info.Type == MapMarkerInfo.MarkerType.NAVPT)
+            {
+                if (EditStptDetailPage != null)
+                    CopyConfigToEdit();                                 // just in case editor is FA, so it won't FO
+                string name = EditSTPT.Points[info.TagInt - 1].Name;
+                if (string.IsNullOrEmpty(name))
+                    name = $"Steerpoint {info.TagInt}";
+                return name;
+            }
+            else
+            {
+                return NavpointUIHelper.MarkerDisplayName(info);
+            }
+        }
+
+        /// <summary>
+        /// returns the elevation of the marker with the specified information.
+        /// </summary>
+        public string MarkerDisplayElevation(MapMarkerInfo info, string units = "")
+        {
+            if (info.Type == MapMarkerInfo.MarkerType.NAVPT)
+            {
+                if (EditStptDetailPage != null)
+                    CopyConfigToEdit();                                 // just in case editor is FA, so it won't FO
+                string elev = EditSTPT.Points[info.TagInt - 1].Alt;
+                if (string.IsNullOrEmpty(elev))
+                    elev = "0";
+                return $"{elev}{units}";
+            }
+            else
+            {
+                return NavpointUIHelper.MarkerDisplayElevation(info, units);
+            }
+        }
+
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // IWorldMapControlVerbHandler
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
+        public string VerbHandlerTag => "F16CEditSteerpointListPage";
+
+        public IMapControlVerbMirror VerbMirror { get; set; }
+
+        /// <summary>
+        /// TODO: document
+        /// </summary>
+        public void VerbMarkerSelected(IMapControlVerbHandler sender, MapMarkerInfo info)
+        {
+            Debug.WriteLine($"VSLP:VerbMarkerSelected {info.Type}, {info.TagStr}, {info.TagInt}");
+            if ((info.TagStr != ROUTE_NAME) || (info.Type == MapMarkerInfo.MarkerType.UNKNOWN))
+            {
+                _isVerbEvent = true;
+                uiStptListView.SelectedIndex = -1;
+                _isVerbEvent = false;
+            }
+            else if ((info.TagStr == ROUTE_NAME) && (info.Type == MapMarkerInfo.MarkerType.NAVPT))
+            {
+                _isVerbEvent = true;
+                uiStptListView.SelectedIndex = info.TagInt - 1;
+                _isVerbEvent = false;
+
+                EditStptDetailPage?.ChangeToEditNavpointAtIndex(info.TagInt - 1);
+            }
+        }
+
+        /// <summary>
+        /// TODO: document
+        /// </summary>
+        public void VerbMarkerOpened(IMapControlVerbHandler sender, MapMarkerInfo info)
+        {
+            Debug.WriteLine($"VSLP:MarkerOpen {info.Type}, {info.TagStr}, {info.TagInt}");
+            if (info.TagStr == ROUTE_NAME)
+            {
+                if (EditStptDetailPage == null)
+                    EditSteerpoint(EditSTPT.Points[info.TagInt - 1]);
+                else
+                    EditStptDetailPage?.ChangeToEditNavpointAtIndex(info.TagInt - 1);
+            }
+            // TODO: handle other types of markers (user pois?)
+        }
+
+        /// <summary>
+        /// TODO: document
+        /// </summary>
+        public void VerbMarkerMoved(IMapControlVerbHandler sender, MapMarkerInfo info)
+        {
+            Debug.WriteLine($"VSLP:VerbMarkerMoved {info.Type}, {info.TagStr}, {info.TagInt}, {info.Lat}, {info.Lon}");
+            if (info.TagStr == ROUTE_NAME)
+            {
+                EditSTPT.Points[info.TagInt - 1].Lat = info.Lat;
+                EditSTPT.Points[info.TagInt - 1].Lon = info.Lon;
+                CopyEditToConfig(true);
+
+                EditStptDetailPage?.CopyConfigToEditIfEditingNavpointAtIndex(info.TagInt - 1);
+            }
+            // TODO: handle other types of markers (user pois?)
+        }
+
+        /// <summary>
+        /// TODO: document
+        /// </summary>
+        public void VerbMarkerAdded(IMapControlVerbHandler sender, MapMarkerInfo info)
+        {
+            Debug.WriteLine($"VSLP:VerbMarkerAdded {info.Type}, {info.TagStr}, {info.TagInt}, {info.Lat}, {info.Lon}");
+            if (info.TagStr == ROUTE_NAME)
+            {
+                SteerpointInfo stpt = EditSTPT.Add(null, info.TagInt - 1);
+                int index = EditSTPT.Points.IndexOf(stpt);
+                CopyConfigToEdit();
+                EditSTPT.Points[index].Lat = info.Lat;
+                EditSTPT.Points[index].Lon = info.Lon;
+                CopyEditToConfig(true);
+
+                RenumberSteerpoints();
+                RebuildInterfaceState();
+            }
+            // TODO: handle other types of markers (user pois?)
+        }
+
+        /// <summary>
+        /// TODO: document
+        /// </summary>
+        public void VerbMarkerDeleted(IMapControlVerbHandler sender, MapMarkerInfo info)
+        {
+            Debug.WriteLine($"VSLP:VerbMarkerDeleted {info.Type}, {info.TagStr}, {info.TagInt}");
+            if (info.TagStr == ROUTE_NAME)
+            {
+                uiStptListView.SelectedIndex = -1;
+
+                EditSTPT.Points.RemoveAt(info.TagInt - 1);
+                CopyEditToConfig(true);
+
+                EditStptDetailPage?.CancelIfEditingNavpointAtIndex(info.TagInt - 1);
+
+                RenumberSteerpoints();
+                RebuildInterfaceState();
+            }
+            // TODO: handle other types of markers (user pois?)
+        }
+
+        // ------------------------------------------------------------------------------------------------------------
+        //
         // handlers
         //
         // ------------------------------------------------------------------------------------------------------------
@@ -490,6 +734,15 @@ namespace JAFDTC.UI.F16C
             }
         }
 
+        /// <summary>
+        /// TODO: document
+        /// </summary>
+        private void MapWindow_Closed(object sender, WindowEventArgs args)
+        {
+            MapWindow.Closed -= MapWindow_Closed;
+            MapWindow = null;
+        }
+
         // ------------------------------------------------------------------------------------------------------------
         //
         // events
@@ -521,6 +774,8 @@ namespace JAFDTC.UI.F16C
             StartingStptNum = (Config.STPT.Points.Count > 0) ? Config.STPT.Points[0].Number : 1;
             CopyConfigToEdit();
 
+            EditStptDetailPage = null;
+
             NavArgs.BackButton.IsEnabled = true;
 
             Config.ConfigurationSaved += ConfigurationSavedHandler;
@@ -539,6 +794,13 @@ namespace JAFDTC.UI.F16C
 
         protected override void OnNavigatedFrom(NavigationEventArgs args)
         {
+            // we can navigate from here by pushing to a navpoint detail editor (F16CEditSteerpointPage) or by
+            // pushing to a add poi list page (AddNavpointsFromPOIsPage). we use F16CEditSteerpointPage to
+            // determine when we have pushed the former and not the latter so we can correctly work with any
+            // map window.
+            //
+            EditStptDetailPage = args.Content as F16CEditSteerpointPage;
+
             Config.ConfigurationSaved -= ConfigurationSavedHandler;
             EditSTPT.Points.CollectionChanged -= CollectionChangedHandler;
             Clipboard.ContentChanged -= ClipboardChangedHandler;

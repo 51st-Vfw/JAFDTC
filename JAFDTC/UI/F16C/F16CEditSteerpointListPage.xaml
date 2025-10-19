@@ -66,6 +66,13 @@ https://www.gnu.org/licenses/.
                           Click="CmdRenumber_Click"
                           ToolTipService.ToolTip="Renumber the list of steerpoints"/>
             <AppBarSeparator/>
+            <AppBarButton x:Name="uiBarMap" Label="Map"
+                          Click="CmdMap_Click"
+                          ToolTipService.ToolTip="Show map window to edit locations">
+                <AppBarButton.Icon>
+                    <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE707;"/>
+                </AppBarButton.Icon>
+            </AppBarButton>
             <AppBarButton x:Name="uiBarCapture" Label="Capture"
                           Click="CmdCapture_Click"
                           ToolTipService.ToolTip="Capture steerpoints(s) from DCS">
@@ -170,7 +177,7 @@ https://www.gnu.org/licenses/.
                             <TextBlock Grid.Column="2" Margin="6,0,0,0"
                                        VerticalAlignment="Center"
                                        HorizontalTextAlignment="Center"
-                                       Text="{x:Bind LocationUI}"/>
+                                       Text="{x:Bind LocationUI, Mode=TwoWay}"/>
                             <TextBlock Grid.Column="3" Margin="6,0,0,0"
                                        VerticalAlignment="Center"
                                        HorizontalTextAlignment="Center"

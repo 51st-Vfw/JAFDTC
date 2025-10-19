@@ -276,6 +276,7 @@ https://www.gnu.org/licenses/.
                 <TextBox Grid.Row="0" Grid.Column="2" Margin="24,0,0,0" x:Name="uiStptValueAlt"
                          Tag="Alt"
                          Style="{StaticResource EditorParamEditTextBoxStyle}"
+                         PlaceholderText="0"
                          Text="{x:Bind EditStpt.Alt, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                          ToolTipService.ToolTip="Elevation of steerpoint in feet"/>
                 <TextBlock Grid.Row="0" Grid.Column="3" Margin="6,0,4,0" x:Name="uiStptAltitudeUnitsText"
