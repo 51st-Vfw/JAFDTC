@@ -3,7 +3,7 @@
 // SteerpointInfo.cs -- f-16c steerpoint base information
 //
 // Copyright(C) 2021-2023 the-paid-actor & others
-// Copyright(C) 2023-2024 ilominar/raven
+// Copyright(C) 2023-2025 ilominar/raven
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 // Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -31,7 +31,7 @@ namespace JAFDTC.Models.F16C.STPT
     /// for viper lat/lon format, tos, and offset points. as in base navpoints, the ui views of the lat/lon
     /// (LatUI/LonUI) are layered on top of the persisted DD format lat/lon (Lat/Lon).
     /// </summary>
-    public class SteerpointInfo : NavpointInfoBase
+    public partial class SteerpointInfo : NavpointInfoBase
     {
         // ------------------------------------------------------------------------------------------------------------
         //
@@ -98,7 +98,7 @@ namespace JAFDTC.Models.F16C.STPT
             set
             {
                 string error = "Invalid altitude format";
-                if (IsIntegerFieldValid(value, -1500, 80000, false))
+                if (IsIntegerFieldValid(value, -1500, 80000))
                 {
                     value = FixupIntegerField(value);
                     error = null;
