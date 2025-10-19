@@ -396,6 +396,22 @@ namespace JAFDTC.UI.F16C
         }
 
         /// <summary>
+        /// import poi command: navigate to the poi list to pull in pois. implicitly closes any open map window to
+        /// avoid having to do the coordination/coherency thing.
+        /// </summary>
+        private void CmdImportPOIs_Click(object sender, RoutedEventArgs args)
+        {
+            MapWindow?.Close();
+
+            CopyEditToConfig();
+            NavArgs.BackButton.IsEnabled = false;
+            Frame.Navigate(typeof(AddNavpointsFromPOIsPage),
+                           new AddNavpointsFromPOIsPage.NavigationArg(this, Config, new F16CEditSteerpointListHelper()),
+                           new SlideNavigationTransitionInfo() {
+                                Effect = SlideNavigationTransitionEffect.FromRight });
+        }
+
+        /// <summary>
         /// TODO: document
         /// </summary>
         private async void CmdImport_Click(object sender, RoutedEventArgs args)
