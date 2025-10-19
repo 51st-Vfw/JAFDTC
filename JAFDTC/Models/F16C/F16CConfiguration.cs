@@ -201,7 +201,28 @@ namespace JAFDTC.Models.F16C
         {
             Dictionary<string, string> roleInfo = ParseRole(role);
 
+            // determine ownship flight/element number. we will check (in order): (1) value in config, (2) value
+            // inferred from position of pilot matching callsign from settings in team list, or (3) value from
+            // role specification string. later over-rides earlier, so (3) is selected if both (2) and (3) exist.
+            //
+            string myUid = null;
+            foreach (ViperDriver driver in F16CPilotsDbase.LoadDbase())
+                if (driver.Name == Settings.Callsign)
+                {
+                    myUid = driver.UID;
+                    break;
+                }
             string feNum = DLNK.OwnshipFENumber;
+            for (int i = 0; i < DLNK.TeamMembers.Length; i++)
+                if (DLNK.TeamMembers[i].DriverUID == myUid)
+                {
+                    int flight = (i / 4) + 1;
+                    int elem = (i % 4) + 1;
+                    if (string.IsNullOrEmpty(feNum))
+                        feNum = $"{flight}{elem}";
+                    else
+                        feNum = $"{feNum[0]}{elem}";
+                }
             if (roleInfo.TryGetValue("FLIGHT", out string f) && roleInfo.TryGetValue("ELEM", out string e))
                 feNum = $"{f}{e}";
             if (!string.IsNullOrEmpty(feNum))
@@ -212,6 +233,10 @@ namespace JAFDTC.Models.F16C
                 DLNK.IsOwnshipLead = (feNum[1] == '1');
             }
 
+            // determine tacan setup. if we have tacan in role spec string, use that value as lead tacan and
+            // adjust based on flight/element determined above. if we don't have tacan in role spec string but we
+            // do have flight/element number, we'll infer from the tacan value in the config.
+            //
             string tcnChan = Misc.TACANChannel;
             if (roleInfo.TryGetValue("TACAN_CHAN", out string c) && roleInfo.TryGetValue("TACAN_BAND", out string b))
             {
