@@ -490,29 +490,19 @@ namespace JAFDTC.UI.Base
         /// </summary>
         public string MarkerDisplayName(MapMarkerInfo info)
         {
-            string name = null;
             if (info.Type == MapMarkerInfo.MarkerType.NAVPT)
             {
                 if (EditNavptDetailPage != null)
                     CopyConfigToEditState();                            // just in case editor is FA, so it won't FO
-                name = EditNavpt[info.TagInt - 1].Name;
+                string name = EditNavpt[info.TagInt - 1].Name;
                 if (string.IsNullOrEmpty(name))
                     name = $"{PageHelper.NavptName} {info.TagInt}";
+                return name;
             }
-            else if ((info.Type == MapMarkerInfo.MarkerType.DCS_CORE) ||
-                     (info.Type == MapMarkerInfo.MarkerType.USER) ||
-                     (info.Type == MapMarkerInfo.MarkerType.CAMPAIGN))
+            else
             {
-                string[] fields = info.TagStr.Split('|');
-                name = info.Type switch
-                {
-                    MapMarkerInfo.MarkerType.DCS_CORE => $"POI: {fields[2]}",
-                    MapMarkerInfo.MarkerType.USER => $"U: {fields[2]}",
-                    MapMarkerInfo.MarkerType.CAMPAIGN => $"{fields[1]}: {fields[2]}",
-                    _ => throw new NotImplementedException(),
-                };
+                return NavpointUIHelper.MarkerDisplayName(info);
             }
-            return name;
         }
 
         /// <summary>
@@ -520,27 +510,19 @@ namespace JAFDTC.UI.Base
         /// </summary>
         public string MarkerDisplayElevation(MapMarkerInfo info, string units = "")
         {
-            string elev = null;
             if (info.Type == MapMarkerInfo.MarkerType.NAVPT)
             {
                 if (EditNavptDetailPage != null)
                     CopyConfigToEditState();                            // just in case editor is FA, so it won't FO
-                elev = EditNavpt[info.TagInt - 1].Alt;
+                string elev = EditNavpt[info.TagInt - 1].Alt;
                 if (string.IsNullOrEmpty(elev))
                     elev = "0";
-                elev = $"{elev}{units}";
+                return $"{elev}{units}";
             }
-            else if ((info.Type == MapMarkerInfo.MarkerType.DCS_CORE) ||
-                     (info.Type == MapMarkerInfo.MarkerType.USER) ||
-                     (info.Type == MapMarkerInfo.MarkerType.CAMPAIGN))
+            else
             {
-                string[] fields = info.TagStr.Split('|');
-                PointOfInterestDbQuery query = new((PointOfInterestTypeMask)(1 << (int)info.Type), fields[0], fields[1], fields[2]);
-                List<PointOfInterest> pois = PointOfInterestDbase.Instance.Find(query);
-                if (pois.Count == 1)
-                    elev = $"{pois[0].Elevation}{units}";
+                return NavpointUIHelper.MarkerDisplayElevation(info, units);
             }
-            return elev;
         }
 
         // ------------------------------------------------------------------------------------------------------------

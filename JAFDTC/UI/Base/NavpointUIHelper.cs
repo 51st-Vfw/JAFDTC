@@ -32,6 +32,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using Windows.Storage;
 
 namespace JAFDTC.UI.Base
@@ -506,43 +507,45 @@ namespace JAFDTC.UI.Base
         }
 
         /// <summary>
-        /// TODO: document
+        /// returns the display name of the marker with the specified information.
         /// </summary>
-        public static PointOfInterest SummaryForMarkerOnMap(MapWindow mapWindow, string tag, int index = -1)
+        public static string MarkerDisplayName(MapMarkerInfo info)
         {
-#if NOPE
-            WorldMapDataSource ds = mapWindow.DataSource;
+            string name = null;
+            if ((info.Type == MapMarkerInfo.MarkerType.DCS_CORE) ||
+                (info.Type == MapMarkerInfo.MarkerType.USER) ||
+                (info.Type == MapMarkerInfo.MarkerType.CAMPAIGN))
+            {
+                string[] fields = info.TagStr.Split('|');
+                name = info.Type switch
+                {
+                    MapMarkerInfo.MarkerType.DCS_CORE => $"POI: {fields[2]}",
+                    MapMarkerInfo.MarkerType.USER => $"User: {fields[2]}",
+                    MapMarkerInfo.MarkerType.CAMPAIGN => $"{fields[1]}: {fields[2]}",
+                    _ => throw new NotImplementedException(),
+                };
+            }
+            return name;
+        }
 
-            PointOfInterest navpt = null;
-            if (ds.Routes.TryGetValue(tag, out List<INavpointInfo> routes) && (index < routes.Count))
+        /// <summary>
+        /// returns the elevation of the marker with the specified information.
+        /// </summary>
+        public static string MarkerDisplayElevation(MapMarkerInfo info, string units = "")
+        {
+            string elev = null;
+            if ((info.Type == MapMarkerInfo.MarkerType.DCS_CORE) ||
+                (info.Type == MapMarkerInfo.MarkerType.USER) ||
+                (info.Type == MapMarkerInfo.MarkerType.CAMPAIGN))
             {
-                string pfx = (ds.Routes.Count > 1) ? $"{tag}: " : $"";
-                navpt = new()
-                {
-                    Name = (string.IsNullOrEmpty(routes[index].Name)) ? $"{pfx}{index}" : $"{pfx}{routes[index].Name}",
-                    Latitude = routes[index].Lat,
-                    Longitude = routes[index].Lon,
-                    Elevation = routes[index].Alt
-                };
+                string[] fields = info.TagStr.Split('|');
+                PointOfInterestDbQuery query = new((PointOfInterestTypeMask)(1 << (int)info.Type), fields[0],
+                                                   fields[1], fields[2]);
+                List<PointOfInterest> pois = PointOfInterestDbase.Instance.Find(query);
+                if (pois.Count == 1)
+                    elev = $"{pois[0].Elevation}{units}";
             }
-            else if (ds.Marks.TryGetValue(tag, out PointOfInterest poi))
-            {
-                navpt = new()
-                {
-                    Name = poi.Type switch
-                    {
-                        PointOfInterestType.CAMPAIGN => $"PoI {poi.Campaign}: {poi.Name}",
-                        PointOfInterestType.USER => $"PoI User: {poi.Name}",
-                        _ => $"PoI: {poi.Name}"
-                    },
-                    Latitude = poi.Latitude,
-                    Longitude = poi.Longitude,
-                    Elevation = poi.Elevation
-                };
-            }
-            return navpt;
-#endif
-            return null;
+            return elev;
         }
     }
 }
