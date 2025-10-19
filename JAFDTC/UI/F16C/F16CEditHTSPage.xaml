@@ -4,7 +4,7 @@
     
 F16CEditHTSPage.xaml : ui xaml for viper hts editor page
 
-Copyright(C) 2023-2024 ilominar/raven
+Copyright(C) 2023-2025 ilominar/raven
 
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -141,7 +141,7 @@ https://www.gnu.org/licenses/.
             <TextBox Grid.Row="1" Grid.Column="2" Margin="6,6,0,0" Tag="0.Code"  x:Name="uiT1ValueCode"
                      Style="{StaticResource EditorParamEditTextBoxStyle}" MaxLength="4"
                      LostFocus="TextBox_LostFocus" GotFocus="TextBox_GotFocus"
-                     ToolTipService.ToolTip="Set the Code for Entry T1 of the HTS MAN Table"/>
+                     ToolTipService.ToolTip="Set the code for entry T1 of the HTS MAN table"/>
             <TextBlock Grid.Row="1" Grid.Column="3" Margin="6,6,0,0" x:Name="uiT1RWRText"
                        Style="{StaticResource EditorParamStaticCenterTextBlockStyle}">
                 FX
@@ -161,7 +161,7 @@ https://www.gnu.org/licenses/.
             <Button Grid.Row="1" Grid.Column="7" Margin="24,6,0,0" Tag="0" x:Name="uiT1BtnAdd"
                     VerticalAlignment="Center"
                     Click="MANBtnAdd_Click"
-                    ToolTipService.ToolTip="Set the Entry in T1 of the HTS MAN Table from the Emitter List">
+                    ToolTipService.ToolTip="Set the entry in T1 of the HTS MAN table from the emitter list">
                 <FontIcon FontFamily="Segoe Fluent Icons" FontSize="14" Glyph="&#xE701;"/>
             </Button>
 
@@ -177,7 +177,7 @@ https://www.gnu.org/licenses/.
             <TextBox Grid.Row="2" Grid.Column="2" Margin="6,12,0,0" Tag="1.Code" x:Name="uiT2ValueCode"
                      Style="{StaticResource EditorParamEditTextBoxStyle}" MaxLength="4"
                      LostFocus="TextBox_LostFocus" GotFocus="TextBox_GotFocus"
-                     ToolTipService.ToolTip="Set the Code for Entry T2 of the HTS MAN Table"/>
+                     ToolTipService.ToolTip="Set the code for entry T2 of the HTS MAN table"/>
             <TextBlock Grid.Row="2" Grid.Column="3" Margin="6,12,0,0" x:Name="uiT2RWRText"
                        Style="{StaticResource EditorParamStaticCenterTextBlockStyle}">
                 FX
@@ -197,7 +197,7 @@ https://www.gnu.org/licenses/.
             <Button Grid.Row="2" Grid.Column="7" Margin="24,12,0,0" Tag="1" x:Name="uiT2BtnAdd"
                     VerticalAlignment="Center"
                     Click="MANBtnAdd_Click"
-                    ToolTipService.ToolTip="Set the Entry in T2 of the HTS MAN Table from the Emitter List">
+                    ToolTipService.ToolTip="Set the entry in T2 of the HTS MAN table from the emitter list">
                 <FontIcon FontFamily="Segoe Fluent Icons" FontSize="14" Glyph="&#xE701;"/>
             </Button>
 
@@ -213,7 +213,7 @@ https://www.gnu.org/licenses/.
             <TextBox Grid.Row="3" Grid.Column="2" Margin="6,12,0,0" Tag="2.Code" x:Name="uiT3ValueCode"
                      Style="{StaticResource EditorParamEditTextBoxStyle}" MaxLength="4"
                      LostFocus="TextBox_LostFocus" GotFocus="TextBox_GotFocus"
-                     ToolTipService.ToolTip="Set the Code for Entry T3 of the HTS MAN Table"/>
+                     ToolTipService.ToolTip="Set the code for entry T3 of the HTS MAN table"/>
             <TextBlock Grid.Row="3" Grid.Column="3" Margin="6,12,0,0" x:Name="uiT3RWRText"
                        Style="{StaticResource EditorParamStaticCenterTextBlockStyle}">
                 FX
@@ -233,7 +233,7 @@ https://www.gnu.org/licenses/.
             <Button Grid.Row="3" Grid.Column="7" Margin="24,12,0,0" Tag="2" x:Name="uiT3BtnAdd"
                     VerticalAlignment="Center"
                     Click="MANBtnAdd_Click"
-                    ToolTipService.ToolTip="Set the Entry in T3 of the HTS MAN Table from the Emitter List">
+                    ToolTipService.ToolTip="Set the entry in T3 of the HTS MAN table from the emitter list">
                 <FontIcon FontFamily="Segoe Fluent Icons" FontSize="14" Glyph="&#xE701;"/>
             </Button>
 
@@ -249,7 +249,7 @@ https://www.gnu.org/licenses/.
             <TextBox Grid.Row="4" Grid.Column="2" Margin="6,12,0,0" Tag="3.Code" x:Name="uiT4ValueCode"
                      Style="{StaticResource EditorParamEditTextBoxStyle}" MaxLength="4"
                      LostFocus="TextBox_LostFocus" GotFocus="TextBox_GotFocus"
-                     ToolTipService.ToolTip="Set the Code for Entry T4 of the HTS MAN Table"/>
+                     ToolTipService.ToolTip="Set the code for entry T4 of the HTS MAN table"/>
             <TextBlock Grid.Row="4" Grid.Column="3" Margin="6,12,0,0" x:Name="uiT4RWRText"
                        Style="{StaticResource EditorParamStaticCenterTextBlockStyle}">
                 FX
@@ -269,7 +269,7 @@ https://www.gnu.org/licenses/.
             <Button Grid.Row="4" Grid.Column="7" Margin="24,12,0,0" Tag="3" x:Name="uiT4BtnAdd"
                     VerticalAlignment="Center"
                     Click="MANBtnAdd_Click"
-                    ToolTipService.ToolTip="Set the Entry in T4 of the HTS MAN Table from the Emitter List">
+                    ToolTipService.ToolTip="Set the entry in T4 of the HTS MAN table from the emitter eist">
                 <FontIcon FontFamily="Segoe Fluent Icons" FontSize="14" Glyph="&#xE701;"/>
             </Button>
 
@@ -285,7 +285,7 @@ https://www.gnu.org/licenses/.
             <TextBox Grid.Row="5" Grid.Column="2" Margin="6,12,0,0" Tag="4.Code" x:Name="uiT5ValueCode"
                      Style="{StaticResource EditorParamEditTextBoxStyle}" MaxLength="4"
                      LostFocus="TextBox_LostFocus" GotFocus="TextBox_GotFocus"
-                     ToolTipService.ToolTip="Set the Code for Entry T5 of the HTS MAN Table"/>
+                     ToolTipService.ToolTip="Set the code for entry T5 of the HTS MAN table"/>
             <TextBlock Grid.Row="5" Grid.Column="3" Margin="6,12,0,0" x:Name="uiT5RWRText"
                        Style="{StaticResource EditorParamStaticCenterTextBlockStyle}">
                 FX
@@ -305,7 +305,7 @@ https://www.gnu.org/licenses/.
             <Button Grid.Row="5" Grid.Column="7" Margin="24,12,0,0" Tag="4" x:Name="uiT5BtnAdd"
                     VerticalAlignment="Center"
                     Click="MANBtnAdd_Click"
-                    ToolTipService.ToolTip="Set the Entry in T5 of the HTS MAN Table from the Emitter List">
+                    ToolTipService.ToolTip="Set the entry in T5 of the HTS MAN table from the emitter list">
                 <FontIcon FontFamily="Segoe Fluent Icons" FontSize="14" Glyph="&#xE701;"/>
             </Button>
 
@@ -321,7 +321,7 @@ https://www.gnu.org/licenses/.
             <TextBox Grid.Row="6" Grid.Column="2" Margin="6,12,0,0" Tag="5.Code" x:Name="uiT6ValueCode"
                      Style="{StaticResource EditorParamEditTextBoxStyle}" MaxLength="4"
                      LostFocus="TextBox_LostFocus" GotFocus="TextBox_GotFocus"
-                     ToolTipService.ToolTip="Set the Code for Entry T6 of the HTS MAN Table"/>
+                     ToolTipService.ToolTip="Set the code for entry T6 of the HTS MAN table"/>
             <TextBlock Grid.Row="6" Grid.Column="3" Margin="6,12,0,0" x:Name="uiT6RWRText"
                        Style="{StaticResource EditorParamStaticCenterTextBlockStyle}">
                 FX
@@ -341,7 +341,7 @@ https://www.gnu.org/licenses/.
             <Button Grid.Row="6" Grid.Column="7" Margin="24,12,0,0" Tag="5" x:Name="uiT6BtnAdd"
                     VerticalAlignment="Center"
                     Click="MANBtnAdd_Click"
-                    ToolTipService.ToolTip="Set the Entry in T6 of the HTS MAN Table from the Emitter List">
+                    ToolTipService.ToolTip="Set the entry in T6 of the HTS MAN table from the emitter list">
                 <FontIcon FontFamily="Segoe Fluent Icons" FontSize="14" Glyph="&#xE701;"/>
             </Button>
 
@@ -357,7 +357,7 @@ https://www.gnu.org/licenses/.
             <TextBox Grid.Row="7" Grid.Column="2" Margin="6,12,0,0" Tag="6.Code" x:Name="uiT7ValueCode"
                      Style="{StaticResource EditorParamEditTextBoxStyle}" MaxLength="4"
                      LostFocus="TextBox_LostFocus" GotFocus="TextBox_GotFocus"
-                     ToolTipService.ToolTip="Set the Code for Entry T7 of the HTS MAN Table"/>
+                     ToolTipService.ToolTip="Set the code for entry T7 of the HTS MAN table"/>
             <TextBlock Grid.Row="7" Grid.Column="3" Margin="6,12,0,0" x:Name="uiT7RWRText"
                        Style="{StaticResource EditorParamStaticCenterTextBlockStyle}">
                 FX
@@ -377,7 +377,7 @@ https://www.gnu.org/licenses/.
             <Button Grid.Row="7" Grid.Column="7" Margin="24,12,0,0" Tag="6" x:Name="uiT7BtnAdd"
                     VerticalAlignment="Center"
                     Click="MANBtnAdd_Click"
-                    ToolTipService.ToolTip="Set the Entry in T7 of the HTS MAN Table from the Emitter List">
+                    ToolTipService.ToolTip="Set the entry in T7 of the HTS MAN table from the emitter list">
                 <FontIcon FontFamily="Segoe Fluent Icons" FontSize="14" Glyph="&#xE701;"/>
             </Button>
 
@@ -393,7 +393,7 @@ https://www.gnu.org/licenses/.
             <TextBox Grid.Row="8" Grid.Column="2" Margin="6,12,0,0" Tag="7.Code" x:Name="uiT8ValueCode"
                      Style="{StaticResource EditorParamEditTextBoxStyle}" MaxLength="4"
                      LostFocus="TextBox_LostFocus" GotFocus="TextBox_GotFocus"
-                     ToolTipService.ToolTip="Set the Code for Entry T8 of the HTS MAN Table"/>
+                     ToolTipService.ToolTip="Set the code for entry T8 of the HTS MAN table"/>
             <TextBlock Grid.Row="8" Grid.Column="3" Margin="6,12,0,0" x:Name="uiT8RWRText"
                        Style="{StaticResource EditorParamStaticCenterTextBlockStyle}">
                 FX
@@ -413,7 +413,7 @@ https://www.gnu.org/licenses/.
             <Button Grid.Row="8" Grid.Column="7" Margin="24,12,0,0" Tag="7" x:Name="uiT8BtnAdd"
                     VerticalAlignment="Center"
                     Click="MANBtnAdd_Click"
-                    ToolTipService.ToolTip="Set the Entry in T8 of the HTS MAN Table from the Emitter List">
+                    ToolTipService.ToolTip="Set the entry in T8 of the HTS MAN table from the emitter list">
                 <FontIcon FontFamily="Segoe Fluent Icons" FontSize="14" Glyph="&#xE701;"/>
             </Button>
 

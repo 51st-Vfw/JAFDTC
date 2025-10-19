@@ -4,7 +4,7 @@
     
 F16CEditHARMPage.xaml : ui xaml for viper harm alic editor page
 
-Copyright(C) 2023-2024 ilominar/raven
+Copyright(C) 2023-2025 ilominar/raven
 
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -58,24 +58,24 @@ https://www.gnu.org/licenses/.
         -->
         <StackPanel Grid.Row="0" Margin="0,18,0,0" Orientation="Horizontal" HorizontalAlignment="Center">
             <TextBlock Margin="0,0,12,0" VerticalAlignment="Center">
-                ALIC Table
+                ALIC table
             </TextBlock>
             <ComboBox Margin="0,0,0,0" Width="150"
                       x:Name="uiALICSelectCombo"
                       VerticalAlignment="Center"
-                      ToolTipService.ToolTip="Selects ALIC Table to Edit"
+                      ToolTipService.ToolTip="Select ALIC table to edit"
                       SelectionChanged="ALICSelectCombo_SelectionChanged">
                 <!-- ComboBox items are built when page is displayed, Tag is enum TableNumbers -->
             </ComboBox>
             <Button Margin="24,0,6,0" VerticalAlignment="Center"
                     x:Name="uiALICBtnPrev"
-                    ToolTipService.ToolTip="Selects Previous ALIC Table"
+                    ToolTipService.ToolTip="Select previous ALIC table"
                     Click="ALICBtnPrev_Click">
                 <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE70E;"/>
             </Button>
             <Button VerticalAlignment="Center"
                     x:Name="uiALICBtnNext"
-                    ToolTipService.ToolTip="Selects Next ALIC Table"
+                    ToolTipService.ToolTip="Select next ALIC table"
                     Click="ALICBtnNext_Click">
                 <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE70D;"/>
             </Button>
@@ -89,7 +89,7 @@ https://www.gnu.org/licenses/.
         <StackPanel Grid.Row="1" Margin="12,24,12,0">
             <TextBlock Style="{StaticResource EditorTitleTextBlockStyle}"
                        VerticalAlignment="Center">
-                ALIC Table Programming:
+                ALIC table Programming:
             </TextBlock>
         </StackPanel>
 
@@ -169,7 +169,7 @@ https://www.gnu.org/licenses/.
             <TextBox Grid.Row="1" Grid.Column="2" Margin="6,6,0,0" Tag="0.Code" x:Name="uiT1ValueCode"
                      Style="{StaticResource EditorParamEditTextBoxStyle}" MaxLength="3"
                      LostFocus="TextBox_LostFocus" GotFocus="TextBox_GotFocus"
-                     ToolTipService.ToolTip="Set the Code for Entry T1 of the ALIC Table"/>
+                     ToolTipService.ToolTip="Set the code for entry T1 of the ALIC table"/>
             <TextBlock Grid.Row="1" Grid.Column="3" Margin="6,6,0,0" x:Name="uiT1RWRText"
                        Style="{StaticResource EditorParamStaticCenterTextBlockStyle}">
                 FX
@@ -189,7 +189,7 @@ https://www.gnu.org/licenses/.
             <Button Grid.Row="1" Grid.Column="7" Margin="24,6,0,0" Tag="0" x:Name="uiT1BtnAdd"
                     VerticalAlignment="Center"
                     Click="ALICBtnAdd_Click"
-                    ToolTipService.ToolTip="Set the Entry in T1 of the ALIC Table from the Emitter List">
+                    ToolTipService.ToolTip="Set the entry in T1 of the ALIC table from the emitter list">
                 <FontIcon FontFamily="Segoe Fluent Icons" FontSize="14" Glyph="&#xE701;"/>
             </Button>
 
@@ -205,7 +205,7 @@ https://www.gnu.org/licenses/.
             <TextBox Grid.Row="2" Grid.Column="2" Margin="6,12,0,0" Tag="1.Code" x:Name="uiT2ValueCode"
                      Style="{StaticResource EditorParamEditTextBoxStyle}" MaxLength="3"
                      LostFocus="TextBox_LostFocus" GotFocus="TextBox_GotFocus"
-                     ToolTipService.ToolTip="Set the Code for Entry T2 of the ALIC Table"/>
+                     ToolTipService.ToolTip="Set the code for entry T2 of the ALIC table"/>
             <TextBlock Grid.Row="2" Grid.Column="3" Margin="6,12,0,0" x:Name="uiT2RWRText"
                        Style="{StaticResource EditorParamStaticCenterTextBlockStyle}">
                 FX
@@ -225,7 +225,7 @@ https://www.gnu.org/licenses/.
             <Button Grid.Row="2" Grid.Column="7" Margin="24,12,0,0" Tag="1" x:Name="uiT2BtnAdd"
                     VerticalAlignment="Center"
                     Click="ALICBtnAdd_Click"
-                    ToolTipService.ToolTip="Set the Entry in T2 of the ALIC Table from the Emitter List">
+                    ToolTipService.ToolTip="Set the entry in T2 of the ALIC table from the emitter list">
                 <FontIcon FontFamily="Segoe Fluent Icons" FontSize="14" Glyph="&#xE701;"/>
             </Button>
 
@@ -241,7 +241,7 @@ https://www.gnu.org/licenses/.
             <TextBox Grid.Row="3" Grid.Column="2" Margin="6,12,0,0" Tag="2.Code" x:Name="uiT3ValueCode"
                      Style="{StaticResource EditorParamEditTextBoxStyle}" MaxLength="3"
                      LostFocus="TextBox_LostFocus" GotFocus="TextBox_GotFocus"
-                     ToolTipService.ToolTip="Set the Code for Entry T3 of the ALIC Table"/>
+                     ToolTipService.ToolTip="Set the code for entry T3 of the ALIC table"/>
             <TextBlock Grid.Row="3" Grid.Column="3" Margin="6,12,0,0" x:Name="uiT3RWRText"
                        Style="{StaticResource EditorParamStaticCenterTextBlockStyle}">
                 FX
@@ -261,7 +261,7 @@ https://www.gnu.org/licenses/.
             <Button Grid.Row="3" Grid.Column="7" Margin="24,12,0,0" Tag="2" x:Name="uiT3BtnAdd"
                     VerticalAlignment="Center"
                     Click="ALICBtnAdd_Click"
-                    ToolTipService.ToolTip="Set the Entry in T3 of the ALIC Table from the Emitter List">
+                    ToolTipService.ToolTip="Set the entry in T3 of the ALIC table from the emitter list">
                 <FontIcon FontFamily="Segoe Fluent Icons" FontSize="14" Glyph="&#xE701;"/>
             </Button>
 
@@ -277,7 +277,7 @@ https://www.gnu.org/licenses/.
             <TextBox Grid.Row="4" Grid.Column="2" Margin="6,12,0,0" Tag="3.Code" x:Name="uiT4ValueCode"
                      Style="{StaticResource EditorParamEditTextBoxStyle}" MaxLength="3"
                      LostFocus="TextBox_LostFocus" GotFocus="TextBox_GotFocus"
-                     ToolTipService.ToolTip="Set the Code for Entry T4 of the ALIC Table"/>
+                     ToolTipService.ToolTip="Set the code for entry T4 of the ALIC table"/>
             <TextBlock Grid.Row="4" Grid.Column="3" Margin="6,12,0,0" x:Name="uiT4RWRText"
                        Style="{StaticResource EditorParamStaticCenterTextBlockStyle}">
                 FX
@@ -297,7 +297,7 @@ https://www.gnu.org/licenses/.
             <Button Grid.Row="4" Grid.Column="7" Margin="24,12,0,0" Tag="3" x:Name="uiT4BtnAdd"
                     VerticalAlignment="Center"
                     Click="ALICBtnAdd_Click"
-                    ToolTipService.ToolTip="Set the Entry in T4 of the ALIC Table from the Emitter List">
+                    ToolTipService.ToolTip="Set the entry in T4 of the ALIC table from the emitter list">
                 <FontIcon FontFamily="Segoe Fluent Icons" FontSize="14" Glyph="&#xE701;"/>
             </Button>
 
@@ -313,7 +313,7 @@ https://www.gnu.org/licenses/.
             <TextBox Grid.Row="5" Grid.Column="2" Margin="6,12,0,0" Tag="4.Code" x:Name="uiT5ValueCode"
                      Style="{StaticResource EditorParamEditTextBoxStyle}" MaxLength="3"
                      LostFocus="TextBox_LostFocus" GotFocus="TextBox_GotFocus"
-                     ToolTipService.ToolTip="Set the Code for Entry T5 of the ALIC Table"/>
+                     ToolTipService.ToolTip="Set the code for entry T5 of the ALIC table"/>
             <TextBlock Grid.Row="5" Grid.Column="3" Margin="6,12,0,0" x:Name="uiT5RWRText"
                        Style="{StaticResource EditorParamStaticCenterTextBlockStyle}">
                 FX
@@ -333,7 +333,7 @@ https://www.gnu.org/licenses/.
             <Button Grid.Row="5" Grid.Column="7" Margin="24,12,0,0" Tag="4" x:Name="uiT5BtnAdd"
                     VerticalAlignment="Center"
                     Click="ALICBtnAdd_Click"
-                    ToolTipService.ToolTip="Set the Entry in T5 of the ALIC Table from the Emitter List">
+                    ToolTipService.ToolTip="Set the entry in T5 of the ALIC table from the emitter list">
                 <FontIcon FontFamily="Segoe Fluent Icons" FontSize="14" Glyph="&#xE701;"/>
             </Button>
 
@@ -343,7 +343,7 @@ https://www.gnu.org/licenses/.
                 <Button x:Name="uiALICBtnResetTable"
                         HorizontalAlignment="Right" VerticalAlignment="Center"
                         Click="ALICBtnResetTable_Click"
-                        ToolTipService.ToolTip="Clear the Entry in T5 of the ALIC Table">
+                        ToolTipService.ToolTip="Clear the Entry in T5 of the ALIC table">
                     <StackPanel Orientation="Horizontal">
                         <FontIcon Margin="0,0,6,0"
                                   FontFamily="Segoe Fluent Icons" FontSize="14" Glyph="&#xE894;"/>

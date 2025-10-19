@@ -4,7 +4,7 @@
     
 F16CEditCMDSPage.xaml : ui xaml for viper cmds editor page
 
-Copyright(C) 2023-2024 ilominar/raven
+Copyright(C) 2023-2025 ilominar/raven
 
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -136,19 +136,19 @@ https://www.gnu.org/licenses/.
             <ComboBox Margin="0,0,0,0" Width="150" x:Name="uiPgmSelectCombo"
                       VerticalAlignment="Center"
                       SelectionChanged="PgmSelectCombo_SelectionChanged"
-                      ToolTipService.ToolTip="Selects CMDS Program to Edit">
+                      ToolTipService.ToolTip="Select CMDS program to edit">
                 <!-- ComboBox items are built when page is displayed, Tag is enum ProgramNumbers -->
             </ComboBox>
             <Button Margin="24,0,6,0" x:Name="uiPgmPrevBtn"
                     VerticalAlignment="Center"
                     Click="PgmBtnPrev_Click"
-                    ToolTipService.ToolTip="Selects Previous CMDS Program">
+                    ToolTipService.ToolTip="Select previous CMDS program">
                 <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE70E;"/>
             </Button>
             <Button x:Name="uiPgmNextBtn"
                     VerticalAlignment="Center"
                     Click="PgmBtnNext_Click"
-                    ToolTipService.ToolTip="Selects Next CMDS Program">
+                    ToolTipService.ToolTip="Select next CMDS program">
                 <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE70D;"/>
             </Button>
         </StackPanel>

@@ -74,17 +74,17 @@ https://www.gnu.org/licenses/.
             <ComboBox Grid.Row="0" Grid.Column="0" x:Name="uiComboTemplate"
                       Margin="0,12,0,0" HorizontalAlignment="Stretch"
                       SelectionChanged="ComboTemplate_SelectionChanged"
-                      ToolTipService.ToolTip="Selects DTC base tape to use for the merged tape"/>
+                      ToolTipService.ToolTip="Select DTC base tape to use for the merged tape"/>
             <Button Grid.Row="0" Grid.Column="1" x:Name="uiBtnAddTmplt"
                     Margin="12,12,0,0" VerticalAlignment="Center"
                     Click="BtnAddTmplt_Click"
-                    ToolTipService.ToolTip="Imports a DCS .dtc file for use as a base tape for the current airframe">
+                    ToolTipService.ToolTip="Import a DCS .dtc file for use as a base tape for the current airframe">
                 <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE896;"/>
             </Button>
             <Button Grid.Row="0" Grid.Column="2" x:Name="uiBtnDelTmplt"
                     Margin="6,12,0,0" VerticalAlignment="Center"
                     Click="BtnDelTmplt_Click"
-                    ToolTipService.ToolTip="Deletes the selected DTC base tape">
+                    ToolTipService.ToolTip="Delete the selected DTC base tape">
                 <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE74D;"/>
             </Button>
         </Grid>
@@ -151,13 +151,13 @@ https://www.gnu.org/licenses/.
             <Button Grid.Row="0" Grid.Column="1" x:Name="uiBtnSetOutput"
                     Margin="12,12,0,0" VerticalAlignment="Center"
                     Click="BtnSetOutput_Click"
-                    ToolTipService.ToolTip="Selects the save path for the merged DTC tape and generates the merged .dtc file">
+                    ToolTipService.ToolTip="Select the save path for the merged DTC tape and generates the merged .dtc file">
                 <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE74E;"/>
             </Button>
             <Button Grid.Row="0" Grid.Column="2" x:Name="uiBtnClearOutput"
                     Margin="6,12,0,0" VerticalAlignment="Center"
                     Click="BtnClearOutput_Click"
-                    ToolTipService.ToolTip="Clears the save path for the merged DTC tape">
+                    ToolTipService.ToolTip="Clear the save path for the merged DTC tape">
                 <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE894;"/>
             </Button>
         </Grid>

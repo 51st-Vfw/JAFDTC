@@ -61,25 +61,25 @@ https://www.gnu.org/licenses/.
                       x:Name="uiRadSelectCombo"
                       VerticalAlignment="Center"
                       SelectionChanged="RadSelectCombo_SelectionChanged"
-                      ToolTipService.ToolTip="Selects radio to edit">
+                      ToolTipService.ToolTip="Select radio to edit">
                 <!-- ComboBox items are built when the page is displayed according to the radio -->
             </ComboBox>
             <Button Margin="24,0,6,0" VerticalAlignment="Center"
                     x:Name="uiRadPrevBtn"
-                    ToolTipService.ToolTip="Selects previous radio on airframe"
+                    ToolTipService.ToolTip="Select previous radio on airframe"
                     Click="RadBtnPrev_Click">
                 <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE70E;"/>
             </Button>
             <Button VerticalAlignment="Center"
                     x:Name="uiRadNextBtn"
-                    ToolTipService.ToolTip="Selects next radio on airframe"
+                    ToolTipService.ToolTip="Select next radio on airframe"
                     Click="RadBtnNext_Click">
                 <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE70D;"/>
             </Button>
             <CommandBar Margin="56,0,0,0" HorizontalAlignment="Center">
                 <AppBarButton x:Name="uiBarAdd" Icon="Add" Label="Add"
                               Click="CmdAdd_Click"
-                              ToolTipService.ToolTip="Adds new preset to selected radio"/>
+                              ToolTipService.ToolTip="Add new preset to selected radio"/>
                 <AppBarSeparator/>
             </CommandBar>
         </StackPanel>
@@ -165,7 +165,7 @@ https://www.gnu.org/licenses/.
                                      VerticalAlignment="Center"
                                      IsEnabled="{x:Bind IsEnabled, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
                                      Tag="{x:Bind Tag}"
-                                     ToolTipService.ToolTip="Deletes this preset"
+                                     ToolTipService.ToolTip="Delete this preset"
                                      Click="PreListBtnDelete_Click">
                                 <FontIcon FontFamily="Segoe Fluent Icons" FontSize="14" Glyph="&#xE894;"/>
                             </Button>
