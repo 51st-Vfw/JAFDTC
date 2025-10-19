@@ -42,9 +42,9 @@ namespace JAFDTC.Models
 
         public Dictionary<string, IConfiguration> UIDtoConfigMap { get; private set; }
 
+        public AirframeTypes Airframe { get; private set; }
+        
         // ---- private properties
-
-        private AirframeTypes Airframe { get; set; }
 
         private List<IConfiguration> Configs { get; set; }
 
@@ -195,9 +195,7 @@ namespace JAFDTC.Models
         /// </summary>
         public IConfiguration Inject(IConfiguration config)
         {
-            config.ResetUID();
-            config.UnlinkSystem(null);
-            config.Filename = null;
+            config.Sanitize(true);
 
             if (config.Airframe == Airframe)
             {
@@ -332,6 +330,13 @@ namespace JAFDTC.Models
             List<string> uidBlacklist = [ ];
             foreach (KeyValuePair<string, IConfiguration> kvp in fileDict)
             {
+                Debug.WriteLine($"{kvp.Key}: {kvp.Value.Name}");
+                if (kvp.Value.UID == null)
+                {
+                    FileManager.Log($"Configuration {kvp.Value.Name} in {kvp.Value.Filename} has invalid UID");
+                    continue;
+                }
+
                 kvp.Value.ConfigurationSaved += ConfigurationSavedHandler;
                 Configs.Add(kvp.Value);
                 if (UIDtoConfigMap.TryGetValue(kvp.Value.UID, out IConfiguration dupUIDConfig))

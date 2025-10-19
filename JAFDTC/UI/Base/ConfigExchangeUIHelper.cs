@@ -49,7 +49,6 @@ namespace JAFDTC.UI.Base
         {
             FileSavePicker picker = new((Application.Current as JAFDTC.App).Window.AppWindow.Id)
             {
-                // SettingsIdentifier = "JAFDTC_ExportCfg",
                 CommitButtonText = "Export Configuration",
                 SuggestedStartLocation = PickerLocationId.Desktop,
                 SuggestedFileName = "Configuration"
@@ -69,10 +68,14 @@ namespace JAFDTC.UI.Base
             if (path != null)
             {
                 StorageFile file = await StorageFile.GetFileFromPathAsync(path);
-                await FileIO.WriteTextAsync(file, config.Serialize());
+
+                IConfiguration cleanConfig = config.Clone();
+                cleanConfig.Sanitize();
+                await FileIO.WriteTextAsync(file, cleanConfig.Serialize());
 
                 if (root != null)
-                    await Utilities.Message1BDialog(root, "Success", $"“{config.Name}” exported to “{path}”.");
+                    await Utilities.Message1BDialog(root, "Success",
+                                                    $"Exported configuration “{config.Name}” to the file at:\n\n“{path}”.");
             }
         }
 
@@ -90,7 +93,6 @@ namespace JAFDTC.UI.Base
         {
             FileOpenPicker picker = new((Application.Current as JAFDTC.App).Window.AppWindow.Id)
             {
-                // SettingsIdentifier = "JAFDTC_ImportCfg"
                 CommitButtonText = "Import Configuration",
                 SuggestedStartLocation = PickerLocationId.Desktop,
                 ViewMode = PickerViewMode.List
@@ -103,47 +105,92 @@ namespace JAFDTC.UI.Base
         /// <summary>
         /// TODO: document
         /// </summary>
-        public static async Task<IConfiguration> ConfigImportJAFDTC(XamlRoot root, ConfigurationList configList,
-                                                                    AirframeTypes curAirframe)
+        private static async Task<ContentDialogResult> ImportDissimilarAirframeUI(XamlRoot root,
+                                                                                  ConfigurationList configList,
+                                                                                  IConfiguration config)
         {
-            string path = await OpenPickerUI();
+// TODO: on disimilar imports, may want to prompt for config to merge with or allow direct import?
+            await Utilities.Message1BDialog(root, "Mismatched Airframe", $"Cannot import that file here.");
+            return ContentDialogResult.None;
+        }
+
+        /// <summary>
+        /// handle the ui for importing a configuration for an airframe that matches that of the configuration
+        /// list. updates the input configuration with the new name and adjusts it based on any role adjustements
+        /// specified. returns the result of the dialog.
+        /// </summary>
+        private static async Task<ContentDialogResult> ImportSimilarAirframeUI(XamlRoot root,
+                                                                               ConfigurationList configList,
+                                                                               IConfiguration config)
+        {
+            string importName = configList.UniquifyName(config.Name);
+            ImportBaseDialog importDialog = new(configList, config, importName)
+            {
+                XamlRoot = root,
+                Title = $"Creating New Configuration From File",
+                PrimaryButtonText = "OK",
+                CloseButtonText = "Cancel"
+            };
+            ContentDialogResult result = await importDialog.ShowAsync(ContentDialogPlacement.Popup);
+            if (result == ContentDialogResult.Primary)
+            {
+                config.Name = importDialog.ConfigName;
+                config.AdjustForRole(importDialog.ConfigRole);
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// TODO: document
+        /// </summary>
+        public static async Task<IConfiguration> ConfigImportJAFDTC(XamlRoot root, ConfigurationList configList,
+                                                                    string path = null)
+        {
+            path ??= await OpenPickerUI();
             if (path != null)
             {
                 IConfiguration config = FileManager.ReadUnmanagedConfigurationFile(path);
 
-// TODO: what to do about mix/match airframes?
-                if (config.Airframe != curAirframe)
-                {
-                    await Utilities.Message1BDialog(root, "Mismatched Airframe", $"Cannot import that file here.");
-                    return null;
-                }
+                ContentDialogResult result;
+                if (config.Airframe != configList.Airframe)
+                    result = await ImportDissimilarAirframeUI(root, configList, config);
+                else
+                    result = await ImportSimilarAirframeUI(root, configList, config);
 
-                string importName = configList.UniquifyName(config.Name);
-                ImportBaseDialog importDialog = new(configList, config, importName)
-                {
-                    XamlRoot = root,
-                    Title = $"Creating New Configuration From File",
-                    PrimaryButtonText = "OK",
-                    CloseButtonText = "Cancel"
-                };
-                ContentDialogResult result = await importDialog.ShowAsync(ContentDialogPlacement.Popup);
                 if (result == ContentDialogResult.Primary)
                 {
-                    config.Name = importDialog.ConfigName;
-                    config.ResetUID();
-                    config.UnlinkSystem(null);
-                    config.AdjustForRole(importDialog.ConfigRole);
-                    IConfiguration newConfig = configList.Copy(config, config.Name);
-
+                    IConfiguration newConfig = configList.Inject(config);
                     if (root != null)
                     {
                         await Utilities.Message1BDialog(root, "Success",
-                                                        $"Created new configuration “{config.Name}” from “{path}”.");
+                                                        $"Created a new configuration named “{config.Name}” " +
+                                                        $"from the file at:\n\n{path}");
                         return newConfig;
                     }
                 }
             }
             return null;
+        }
+
+        /// <summary>
+        /// TODO: document
+        /// </summary>
+        public static IConfiguration ConfigSilentImportJAFDTC(string path, ConfigurationList configList = null)
+        {
+            IConfiguration config = FileManager.ReadUnmanagedConfigurationFile(path);
+            if (configList == null)
+            {
+                configList = new(config.Airframe);
+                config.Name = configList.UniquifyName(config.Name);
+                config.Sanitize(true);
+                config.Save();
+            }
+            else
+            {
+                config.Name = configList.UniquifyName(config.Name);
+                configList.Inject(config);
+            }
+            return config;
         }
     }
 }

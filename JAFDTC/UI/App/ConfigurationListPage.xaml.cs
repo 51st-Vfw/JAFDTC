@@ -158,6 +158,42 @@ namespace JAFDTC.UI.App
 
         // ------------------------------------------------------------------------------------------------------------
         //
+        // file activations
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
+        /// <summary>
+        /// TODO: document
+        /// </summary>
+        public async void FileActivations(List<string> paths, bool isNoUI = false)
+        {
+            try
+            {
+                IConfiguration lastConfig = null;
+                foreach (string path in paths)
+                {
+                    FileManager.Log($"ConfigurationListPage:FileActivations noui={isNoUI}, {path}");
+                    IConfiguration curConfig;
+                    if (isNoUI)
+                        curConfig = ConfigExchangeUIHelper.ConfigSilentImportJAFDTC(path, ConfigList);
+                    else
+                        curConfig = await ConfigExchangeUIHelper.ConfigImportJAFDTC(Content.XamlRoot, ConfigList, path);
+                    lastConfig = (curConfig != null) ? curConfig : lastConfig;
+                }
+                if (lastConfig != null)
+                    uiCfgListView.SelectedItem = lastConfig;
+            }
+            catch (Exception ex)
+            {
+                FileManager.Log($"ConfigurationListPage:FileActivations exception {ex}");
+                if (!isNoUI)
+                    await Utilities.Message1BDialog(Content.XamlRoot, "Import Failed",
+                                                    "Unable to import into a new configuration.");
+            }
+        }
+
+        // ------------------------------------------------------------------------------------------------------------
+        //
         // configuration operations
         //
         // ------------------------------------------------------------------------------------------------------------
@@ -539,8 +575,7 @@ namespace JAFDTC.UI.App
         {
             try
             {
-                IConfiguration config = await ConfigExchangeUIHelper.ConfigImportJAFDTC(Content.XamlRoot, ConfigList,
-                                                                                        CurAirframe);
+                IConfiguration config = await ConfigExchangeUIHelper.ConfigImportJAFDTC(Content.XamlRoot, ConfigList);
                 if (config != null)
                     uiCfgListView.SelectedItem = config;
             }

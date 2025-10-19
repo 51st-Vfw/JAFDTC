@@ -17,6 +17,7 @@
 //
 // ********************************************************************************************************************
 
+using JAFDTC.UI.Base;
 using JAFDTC.Utilities;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
@@ -253,18 +254,25 @@ namespace JAFDTC.UI.App
 
         /// <summary>
         /// content frame loaded: check for and handle the dcs lua install along with splash now that we have a
-        /// xamlroot at which we can target dialogs. hand off the config filter control to teh config list page.
+        /// xamlroot at which we can target dialogs. hand off the config filter control to the config list page.
         /// </summary>
         private async void AppContentFrame_Loaded(object sender, RoutedEventArgs args)
         {
-            if ((Application.Current as JAFDTC.App).IsAppStartupGood)
+            JAFDTC.App app = Application.Current as JAFDTC.App;
+            if (app.IsAppStartupGood)
             {
                 ConfigListPage.ConfigFilterBox = uiAppConfigFilterBox;
-                await CheckForPulledPork((Application.Current as JAFDTC.App).CmdLnArgs.ArgValuePack);
-                if (!Settings.IsNewVersCheckDisabled)
-                    await CheckForUpdates();
+
                 if (Settings.IsVersionUpdated)
                     await Utilities.Message1BDialog(Content.XamlRoot, "Welcome to JAFDTC!", $"Version {Settings.VersionJAFDTC}");
+
+                await CheckForPulledPork(app.CmdLnArgs.ArgValuePack);
+
+                ConfigListPage.FileActivations(app.CmdLnArgs.ArgPaths);
+
+                if (!Settings.IsNewVersCheckDisabled)
+                    await CheckForUpdates();
+
                 Sploosh(DCSLuaManager.LuaCheck());
             }
             else
@@ -423,10 +431,10 @@ namespace JAFDTC.UI.App
         /// </summary>
         private async Task<string> CheckForPulledPork(string version)
         {
-            if (version != null)
+            if (!string.IsNullOrEmpty(version))
             {
                 FileManager.Log($"Command line request to pull \"{version}\"");
-                await PullPackage(version);
+                version = await PullPackage(version);
             }
             return version;
         }
