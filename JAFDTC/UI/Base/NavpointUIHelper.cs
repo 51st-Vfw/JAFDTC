@@ -363,7 +363,7 @@ namespace JAFDTC.UI.Base
         // ------------------------------------------------------------------------------------------------------------
 
         /// <summary>
-        /// present and handle a file open picker to select a .json/.cf/.miz file to import from. returns the result
+        /// present and handle a file open picker to select a .cf/.miz file to import from. returns the result
         /// of FileOpenPicker.PickSingleFileAsync.
         /// </summary>
         private static async Task<StorageFile> ImportFileOpenPicker()
@@ -375,7 +375,6 @@ namespace JAFDTC.UI.Base
                 SuggestedStartLocation = PickerLocationId.Desktop,
                 ViewMode = PickerViewMode.List
             };
-            picker.FileTypeFilter.Add(".json");
             picker.FileTypeFilter.Add(".cf");
             picker.FileTypeFilter.Add(".miz");
 
@@ -393,7 +392,7 @@ namespace JAFDTC.UI.Base
         }
 
         /// <summary>
-        /// present and handle the ui to import from the contents of a .json/.cf/.miz file. the navpoints either
+        /// present and handle the ui to import from the contents of a .cf/.miz file. the navpoints either
         /// replace or are appended to the current list of navpoints. what parameter should be capitalized and
         /// singular (e.g., "Steerpoints"). returns true on success, false on failure (user is notified on failures).
         /// </summary>
@@ -409,7 +408,6 @@ namespace JAFDTC.UI.Base
                 }
                 IImportHelper importer = file.FileType.ToLower() switch
                 {
-                    ".json" => new ImportHelperJSON(airframe, file.Path),
                     ".miz" => new ImportHelperMIZ(airframe, file.Path),
                     ".cf" => new ImportHelperCF(airframe, file.Path),
                     _ => null
