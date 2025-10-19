@@ -62,7 +62,7 @@ https://www.gnu.org/licenses/.
                      x:Name="uiPDbValueCallsign"
                      VerticalAlignment="Center"
                      TextChanged="PDbValue_TextChanged"
-                     ToolTipService.ToolTip="Callsign, Must be Unique (Case-Insensitive)">
+                     ToolTipService.ToolTip="Callsign, must be unique (case-insensitive)">
             </TextBox>
             <TextBlock Margin="24,0,0,0" VerticalAlignment="Center">
                 TNDL
@@ -72,7 +72,7 @@ https://www.gnu.org/licenses/.
                      VerticalAlignment="Center"
                      MaxLength="5"
                      TextChanged="PDbValue_TextChanged"
-                     ToolTipService.ToolTip="TNDL Value for Pilot (5-digit Octal)">
+                     ToolTipService.ToolTip="TNDL value for pilot (5-digit octal)">
             </TextBox>
             <Button Width="44" Height="34" Margin="20,0,0,0"
                     x:Name="uiPDbBtnAdd"
@@ -164,19 +164,19 @@ https://www.gnu.org/licenses/.
                 <Button Width="44" Height="34" Grid.Row="0" Margin="0,12,0,0"
                         x:Name="uiPDbBtnExport"
                         Click="PDbBtnExport_Click"
-                        ToolTipService.ToolTip="Export the Selected Pilots to a File">
+                        ToolTipService.ToolTip="Export the selected pilots to a file">
                     <FontIcon FontFamily="Segoe Fluent Icons" FontSize="16" Glyph="&#xE898;"/>
                 </Button>
                 <Button Width="44" Height="34" Grid.Row="1" Margin="0,12,0,0"
                         x:Name="uiPDbBtnImport"
                         Click="PDbBtnImport_Click"
-                        ToolTipService.ToolTip="Import Pilots from an Export File">
+                        ToolTipService.ToolTip="Import pilots from an export file">
                     <FontIcon FontFamily="Segoe Fluent Icons" FontSize="16" Glyph="&#xE896;"/>
                 </Button>
                 <Button Width="44" Height="34" Grid.Row="2" Margin="0,24,0,12"
                         x:Name="uiPDbBtnDelete"
                         Click="PDbBtnDelete_Click"
-                        ToolTipService.ToolTip="Delete the Selected Pilots from the Database">
+                        ToolTipService.ToolTip="Delete the selected pilots from the database">
                     <FontIcon FontFamily="Segoe Fluent Icons" FontSize="16" Glyph="&#xE74D;"/>
                 </Button>
             </Grid>

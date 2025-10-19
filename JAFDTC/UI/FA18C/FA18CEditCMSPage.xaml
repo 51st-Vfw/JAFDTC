@@ -4,7 +4,7 @@
     
 FA18CEditCMSPage.xaml : ui xaml for hornet cms editor page
 
-Copyright(C) 2023-2024 ilominar/raven
+Copyright(C) 2023-2025 ilominar/raven
 
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -78,18 +78,18 @@ https://www.gnu.org/licenses/.
                       x:Name="uiPgmSelectCombo"
                       VerticalAlignment="Center"
                       SelectionChanged="PgmSelectCombo_SelectionChanged"
-                      ToolTipService.ToolTip="Selects CMS Program to Edit">
+                      ToolTipService.ToolTip="Select CMS program to edit">
                 <!-- ComboBox items are built when page is displayed, Tag is enum ProgramNumbers -->
             </ComboBox>
             <Button Margin="24,0,6,0" VerticalAlignment="Center"
                     x:Name="uiPgmPrevBtn"
-                    ToolTipService.ToolTip="Selects Previous CMS Program"
+                    ToolTipService.ToolTip="Select previous CMS program"
                     Click="PgmBtnPrev_Click">
                 <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE70E;"/>
             </Button>
             <Button VerticalAlignment="Center"
                     x:Name="uiPgmNextBtn"
-                    ToolTipService.ToolTip="Selects Next CMS Program"
+                    ToolTipService.ToolTip="Select next CMS program"
                     Click="PgmBtnNext_Click">
                 <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE70D;"/>
             </Button>

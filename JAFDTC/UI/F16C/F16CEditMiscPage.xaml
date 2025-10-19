@@ -92,7 +92,7 @@ https://www.gnu.org/licenses/.
                          HorizontalAlignment="Left"
                          Style="{StaticResource EditorParamEditTextBoxStyle}" MaxLength="3"
                          LostFocus="TextBox_LostFocus" GotFocus="TextBox_GotFocus"
-                         ToolTipService.ToolTip="TACAN Channel Selection"/>
+                         ToolTipService.ToolTip="TACAN channel selection"/>
                 <ComboBox Width="64" Tag="TACANBand" x:Name="uiTACANComboBand"
                           Margin="6,0,0,0" VerticalAlignment="Center"
                           SelectionChanged="ComboBox_SelectionChanged"
@@ -138,7 +138,7 @@ https://www.gnu.org/licenses/.
                          HorizontalAlignment="Left"
                          Style="{StaticResource EditorParamEditTextBoxStyle}" MaxLength="5"
                          LostFocus="TextBox_LostFocus" GotFocus="TextBox_GotFocus"
-                         ToolTipService.ToolTip="ALOW DED Page: CARA ALLOW Setting (feet, AGL)"/>
+                         ToolTipService.ToolTip="ALOW DED page: CARA ALLOW setting (feet, AGL)"/>
                 <TextBlock Margin="6,0,0,0" HorizontalTextAlignment="Right"
                            Style="{StaticResource EditorParamStaticTextBlockStyle}">
                     feet
@@ -155,7 +155,7 @@ https://www.gnu.org/licenses/.
                          HorizontalAlignment="Left"
                          Style="{StaticResource EditorParamEditTextBoxStyle}" MaxLength="5"
                          LostFocus="TextBox_LostFocus" GotFocus="TextBox_GotFocus"
-                         ToolTipService.ToolTip="ALOW DED Page: MSL FLOOR Setting (feet, MSL)"/>
+                         ToolTipService.ToolTip="ALOW DED page: MSL FLOOR setting (feet, MSL)"/>
                 <TextBlock Margin="6,0,0,0"
                            HorizontalTextAlignment="Right"
                            Style="{StaticResource EditorParamStaticTextBlockStyle}">
@@ -181,7 +181,7 @@ https://www.gnu.org/licenses/.
                          HorizontalAlignment="Left"
                          Style="{StaticResource EditorParamEditTextBoxStyle}" MaxLength="5"
                          LostFocus="TextBox_LostFocus" GotFocus="TextBox_GotFocus"
-                         ToolTipService.ToolTip="BINGO Setting (lbs.)"/>
+                         ToolTipService.ToolTip="BINGO setting (lbs.)"/>
                 <TextBlock Margin="6,0,0,0" HorizontalTextAlignment="Right"
                            Style="{StaticResource EditorParamStaticTextBlockStyle}">
                     pounds
@@ -203,7 +203,7 @@ https://www.gnu.org/licenses/.
             <CheckBox Grid.Row="9" Grid.Column="1" Tag="BullseyeMode" x:Name="uiBULLCkboxShowRefs"
                       Margin="12,12,0,0" VerticalAlignment="Center"
                       Click="CheckBox_Clicked"
-                      ToolTipService.ToolTip="Show BULLS information in FCR, HAD, and HSD MFD Formats"/>
+                      ToolTipService.ToolTip="Show BULLS information in FCR, HAD, and HSD MFD formats"/>
 
             <TextBlock Grid.Row="10" Grid.Column="0"
                        Margin="16,12,0,0" HorizontalTextAlignment="Right"
@@ -214,7 +214,7 @@ https://www.gnu.org/licenses/.
                      Margin="12,12,0,0" HorizontalAlignment="Left"
                      Style="{StaticResource EditorParamEditTextBoxStyle}" MaxLength="3"
                      LostFocus="TextBox_LostFocus" GotFocus="TextBox_GotFocus"
-                     ToolTipService.ToolTip="BULLSEYE BULL Steerpoint"/>
+                     ToolTipService.ToolTip="BULLSEYE BULL steerpoint"/>
         </Grid>
 
         <!--
@@ -260,7 +260,7 @@ https://www.gnu.org/licenses/.
                          HorizontalAlignment="Left"
                          Style="{StaticResource EditorParamEditTextBoxStyle}" MaxLength="6"
                          LostFocus="TextBox_LostFocus" GotFocus="TextBox_GotFocus"
-                         ToolTipService.ToolTip="ILS Localizer Frequency (MHz)"/>
+                         ToolTipService.ToolTip="ILS localizer frequency (MHz)"/>
                 <TextBlock Margin="6,0,12,0"
                            Style="{StaticResource EditorParamStaticTextBlockStyle}">
                     MHz,
@@ -269,7 +269,7 @@ https://www.gnu.org/licenses/.
                          HorizontalAlignment="Left"
                          Style="{StaticResource EditorParamEditTextBoxStyle}" MaxLength="3"
                          LostFocus="TextBox_LostFocus" GotFocus="TextBox_GotFocus"
-                         ToolTipService.ToolTip="ILS Final Approach Course"/>
+                         ToolTipService.ToolTip="ILS final approach course"/>
                 <TextBlock Margin="6,0,0,0"
                            Style="{StaticResource EditorParamStaticTextBlockStyle}">
                     °
@@ -292,7 +292,7 @@ https://www.gnu.org/licenses/.
                      Margin="12,12,0,0" HorizontalAlignment="Left"
                      Style="{StaticResource EditorParamEditTextBoxStyle}" MaxLength="4"
                      LostFocus="TextBox_LostFocus" GotFocus="TextBox_GotFocus"
-                     ToolTipService.ToolTip="TGP Laser Code"/>
+                     ToolTipService.ToolTip="TGP/ATP laser code"/>
 
             <TextBlock Grid.Row="4" Grid.Column="0"
                        Margin="16,12,0,0" HorizontalTextAlignment="Right"
@@ -303,7 +303,7 @@ https://www.gnu.org/licenses/.
                      Margin="12,12,0,0" HorizontalAlignment="Left"
                      Style="{StaticResource EditorParamEditTextBoxStyle}" MaxLength="4"
                      LostFocus="TextBox_LostFocus" GotFocus="TextBox_GotFocus"
-                     ToolTipService.ToolTip="TGP LST Laser Code"/>
+                     ToolTipService.ToolTip="TGP/ATP LST laser code"/>
 
             <TextBlock Grid.Row="5" Grid.Column="0"
                        Margin="16,12,0,0" HorizontalTextAlignment="Right"
@@ -316,7 +316,7 @@ https://www.gnu.org/licenses/.
                          HorizontalAlignment="Left"
                          Style="{StaticResource EditorParamEditTextBoxStyle}" MaxLength="3"
                      LostFocus="TextBox_LostFocus" GotFocus="TextBox_GotFocus"
-                         ToolTipService.ToolTip="Auto Lase at Time To Impact (Seconds)"/>
+                         ToolTipService.ToolTip="Auto lase at time To impact (Seconds)"/>
                 <TextBlock Margin="6,0,0,0"
                            HorizontalTextAlignment="Right"
                            Style="{StaticResource EditorParamStaticTextBlockStyle}">
@@ -339,7 +339,7 @@ https://www.gnu.org/licenses/.
             <CheckBox Grid.Row="7" Grid.Column="1" Tag="HMCSBlankHUD" x:Name="uiHMCSCkboxBlankHUD"
                       Margin="12,6,0,0" VerticalAlignment="Center"
                       Click="CheckBox_Clicked"
-                      ToolTipService.ToolTip="Blank the JHMCS in HUD Region"/>
+                      ToolTipService.ToolTip="Blank the JHMCS in HUD region"/>
 
             <TextBlock Grid.Row="8" Grid.Column="0" Margin="16,6,0,0"
                        Style="{StaticResource EditorParamStaticTextBlockStyle}"
@@ -350,7 +350,7 @@ https://www.gnu.org/licenses/.
             <CheckBox Grid.Row="8" Grid.Column="1" Tag="HMCSBlankCockpit" x:Name="uiHMCSCkboxBlankCock"
                       Margin="12,6,0,0" VerticalAlignment="Center"
                       Click="CheckBox_Clicked"
-                      ToolTipService.ToolTip="Blank the JHMCS in Cockpit Region"/>
+                      ToolTipService.ToolTip="Blank the JHMCS in cockpit region"/>
 
             <TextBlock Grid.Row="9" Grid.Column="0" Margin="16,6,0,0"
                        Style="{StaticResource EditorParamStaticTextBlockStyle}"
@@ -361,7 +361,7 @@ https://www.gnu.org/licenses/.
             <CheckBox Grid.Row="9" Grid.Column="1" Tag="HMCSDisplayRWR" x:Name="uiHMCSCkboxShowRWR"
                       Margin="12,6,0,0" VerticalAlignment="Center"
                       Click="CheckBox_Clicked"
-                      ToolTipService.ToolTip="Show RWR Information in JHMCS"/>
+                      ToolTipService.ToolTip="Show RWR information in JHMCS"/>
 
             <TextBlock Grid.Row="10" Grid.Column="0"
                        Margin="12,12,0,0" HorizontalTextAlignment="Right" VerticalAlignment="Center"
@@ -371,7 +371,7 @@ https://www.gnu.org/licenses/.
             <ComboBox Grid.Row="10" Grid.Column="1" Width="125" Tag="HMCSDeclutterLvl" x:Name="uiHMCSComboDeclutSelect"
                       Margin="12,12,0,0" VerticalAlignment="Center"
                       SelectionChanged="ComboBox_SelectionChanged"
-                      ToolTipService.ToolTip="Select Declutter Mode for JHMCS (1 Least, 3 Most)">
+                      ToolTipService.ToolTip="Select declutter mode for JHMCS (1 least, 3 most)">
                 <ComboBox.Items>
                     <!-- tag is enum HMCSDeclutterLevels, default is HMCSDeclutterLevels.LVL1 -->
                     <TextBlock Text="LVL1 (Least)" Tag="+0"/>

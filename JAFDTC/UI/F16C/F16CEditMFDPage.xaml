@@ -4,7 +4,7 @@
     
 F16CEditMFDPage.xaml.cs : ui xaml for viper mfd setup editor page
 
-Copyright(C) 2023-2024 ilominar/raven
+Copyright(C) 2023-2025 ilominar/raven
 
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -54,7 +54,7 @@ https://www.gnu.org/licenses/.
                       x:Name="uiModeSelectCombo"
                       VerticalAlignment="Center"
                       SelectionChanged="ModeSelectCombo_SelectionChanged"
-                      ToolTipService.ToolTip="Selects Master Mode to Edit">
+                      ToolTipService.ToolTip="Select master mode to edit">
                 <!-- Tag is enum JAFDTC.Models.F16C.MFD.Modes -->
                 <ComboBox.Items>
                     <Grid Tag="0">
@@ -131,13 +131,13 @@ https://www.gnu.org/licenses/.
             </ComboBox>
             <Button Margin="24,0,6,0" VerticalAlignment="Center"
                     x:Name="uiModePrevBtn"
-                    ToolTipService.ToolTip="Selects Previous Master Mode"
+                    ToolTipService.ToolTip="Select previous master mode"
                     Click="BtnModePrev_Click">
                 <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE70E;"/>
             </Button>
             <Button VerticalAlignment="Center"
                     x:Name="uiModeNextBtn"
-                    ToolTipService.ToolTip="Selects Next Master Mode"
+                    ToolTipService.ToolTip="Select next master mode"
                     Click="BtnModeNext_Click">
                 <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE70D;"/>
             </Button>
@@ -210,7 +210,7 @@ https://www.gnu.org/licenses/.
                         VerticalAlignment="Center"
                         HorizontalAlignment="Stretch"
                         SelectionChanged="FormatSelectCombo_SelectionChanged"
-                        ToolTipService.ToolTip="Left MFD Format, OSB 14">
+                        ToolTipService.ToolTip="Left MFD format, OSB 14">
             </ComboBox>
             <ToggleButton Grid.Row="2" Grid.Column="1" Margin="0,8,0,0"
                             x:Name="uiInitLOSB14Toggle"
@@ -227,7 +227,7 @@ https://www.gnu.org/licenses/.
                         VerticalAlignment="Center"
                         HorizontalAlignment="Stretch"
                         SelectionChanged="FormatSelectCombo_SelectionChanged"
-                        ToolTipService.ToolTip="Left MFD Format, OSB 13">
+                        ToolTipService.ToolTip="Left MFD format, OSB 13">
             </ComboBox>
             <ToggleButton Grid.Row="2" Grid.Column="2" Margin="12,8,0,0"
                             x:Name="uiInitLOSB13Toggle"
@@ -244,7 +244,7 @@ https://www.gnu.org/licenses/.
                         VerticalAlignment="Center"
                         HorizontalAlignment="Stretch"
                         SelectionChanged="FormatSelectCombo_SelectionChanged"
-                        ToolTipService.ToolTip="Left MFD Format, OSB 12">
+                        ToolTipService.ToolTip="Left MFD format, OSB 12">
             </ComboBox>
             <ToggleButton Grid.Row="2" Grid.Column="3" Margin="12,8,0,0"
                             x:Name="uiInitLOSB12Toggle"
@@ -285,7 +285,7 @@ https://www.gnu.org/licenses/.
                       VerticalAlignment="Center"
                       HorizontalAlignment="Stretch"
                       SelectionChanged="FormatSelectCombo_SelectionChanged"
-                      ToolTipService.ToolTip="Right MFD Format, OSB 14">
+                      ToolTipService.ToolTip="Right MFD format, OSB 14">
             </ComboBox>
             <ToggleButton Grid.Row="2" Grid.Column="5" Margin="0,8,0,0"
                             x:Name="uiInitROSB14Toggle"
@@ -302,7 +302,7 @@ https://www.gnu.org/licenses/.
                       VerticalAlignment="Center"
                       HorizontalAlignment="Stretch"
                       SelectionChanged="FormatSelectCombo_SelectionChanged"
-                      ToolTipService.ToolTip="Right MFD Format, OSB 13">
+                      ToolTipService.ToolTip="Right MFD format, OSB 13">
             </ComboBox>
             <ToggleButton Grid.Row="2" Grid.Column="6" Margin="12,8,0,0"
                           x:Name="uiInitROSB13Toggle"
@@ -319,7 +319,7 @@ https://www.gnu.org/licenses/.
                       VerticalAlignment="Center"
                       HorizontalAlignment="Stretch"
                       SelectionChanged="FormatSelectCombo_SelectionChanged"
-                      ToolTipService.ToolTip="Right MFD Format, OSB 12">
+                      ToolTipService.ToolTip="Right MFD format, OSB 12">
             </ComboBox>
             <ToggleButton Grid.Row="2" Grid.Column="7" Margin="12,8,0,0"
                           x:Name="uiInitROSB12Toggle"

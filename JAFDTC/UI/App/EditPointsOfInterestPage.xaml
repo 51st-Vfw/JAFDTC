@@ -137,14 +137,14 @@ https://www.gnu.org/licenses/.
                 <CommandBar.SecondaryCommands>
                     <AppBarButton x:Name="uiBarBtnAddCamp" Label="Add Campaign..."
                                   Click="CmdAddCampaign_Click"
-                                  ToolTipService.ToolTip="TODO">
+                                  ToolTipService.ToolTip="Add campaign to point of interest database">
                         <AppBarButton.Icon>
                             <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE710;"/>
                         </AppBarButton.Icon>
                     </AppBarButton>
                     <AppBarButton x:Name="uiBarBtnDeleteCamp" Label="Delete Campaign..."
                                   Click="CmdDeleteCampaign_Click"
-                                  ToolTipService.ToolTip="TODO">
+                                  ToolTipService.ToolTip="Delete campaign from point of interest database">
                         <AppBarButton.Icon>
                             <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE74D;"/>
                         </AppBarButton.Icon>

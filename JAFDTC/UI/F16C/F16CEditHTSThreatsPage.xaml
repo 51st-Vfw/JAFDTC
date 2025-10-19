@@ -4,7 +4,7 @@
     
 F16CEditHTSThreatsPage.xaml : ui xaml for viper hts threat editor page
 
-Copyright(C) 2023 ilominar/raven
+Copyright(C) 2023-2025 ilominar/raven
 
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -196,7 +196,7 @@ https://www.gnu.org/licenses/.
                     x:Name="uiPageBtnDone"
                     VerticalAlignment="Center"
                     Click="PageBtnDone_Click"
-                    ToolTipService.ToolTip="Done Making Changes to the Threats">
+                    ToolTipService.ToolTip="Done making changes to the threats">
                 Done
             </Button>
         </StackPanel>
