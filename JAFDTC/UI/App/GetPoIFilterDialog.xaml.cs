@@ -19,7 +19,7 @@
 
 using JAFDTC.Models.DCS;
 using Microsoft.UI.Xaml.Controls;
-using System.Diagnostics;
+using System.Collections.Generic;
 
 namespace JAFDTC.UI.App
 {
@@ -28,13 +28,20 @@ namespace JAFDTC.UI.App
     /// </summary>
     public sealed partial class GetPoIFilterDialog : ContentDialog
     {
+        public enum Mode
+        {
+            Filter,
+            Choose
+        }
+        private readonly Mode _mode;
+
         // ------------------------------------------------------------------------------------------------------------
         //
         // properties
         //
         // ------------------------------------------------------------------------------------------------------------
 
-        public string Theater => (uiComboTheater.SelectedIndex == 0) ? null : uiComboTheater.SelectedItem.ToString();
+        public string Theater => (_mode == Mode.Filter && uiComboTheater.SelectedIndex == 0) ? null : uiComboTheater.SelectedItem.ToString();
 
         public string Campaign => (uiComboCampaign.SelectedIndex == 0) ? null : uiComboCampaign.SelectedItem.ToString();
 
@@ -52,19 +59,33 @@ namespace JAFDTC.UI.App
         // ------------------------------------------------------------------------------------------------------------
 
         public GetPoIFilterDialog(string theater = null, string campaign = null, string tags = null,
-                                  PointOfInterestTypeMask includeTypes = PointOfInterestTypeMask.ANY)
+                                  PointOfInterestTypeMask includeTypes = PointOfInterestTypeMask.ANY,
+                                  Mode mode = Mode.Filter, List<string> allowedTheaters = null)
         {
             InitializeComponent();
+            _mode = mode;
 
-            uiComboTheater.Items.Add("Any Theater");
-            foreach (string name in PointOfInterestDbase.KnownTheaters)
-                uiComboTheater.Items.Add(name);
-            if (string.IsNullOrEmpty(theater))
-                uiComboTheater.SelectedIndex = 0;
+            if (mode == Mode.Filter)
+            {
+                uiComboTheater.Items.Add("Any Theater");
+                foreach (string name in PointOfInterestDbase.KnownTheaters)
+                    uiComboTheater.Items.Add(name);
+                if (string.IsNullOrEmpty(theater))
+                    uiComboTheater.SelectedIndex = 0;
+                else
+                    uiComboTheater.SelectedItem = theater;
+            }
             else
-                uiComboTheater.SelectedItem = theater;
+            {
+                foreach (string name in allowedTheaters)
+                    uiComboTheater.Items.Add(name);
+                uiComboTheater.SelectedIndex = 0;
+            }
 
-            uiComboCampaign.Items.Add("Any Campaign");
+            if (mode == Mode.Filter)
+                uiComboCampaign.Items.Add("Any Campaign");
+            else
+                uiComboCampaign.Items.Add("None (User Point of Interest)");
             foreach (string name in PointOfInterestDbase.Instance.KnownCampaigns)
                 uiComboCampaign.Items.Add(name);
             if (string.IsNullOrEmpty(campaign) || !PointOfInterestDbase.Instance.KnownCampaigns.Contains(campaign))
@@ -73,9 +94,19 @@ namespace JAFDTC.UI.App
                 uiComboCampaign.SelectedItem = campaign;
 
             uiTextBoxTags.Text = tags;
-            uiCkbxDCSPoI.IsChecked = ((includeTypes & PointOfInterestTypeMask.DCS_CORE) != 0);
-            uiCkbxUserPoI.IsChecked = ((includeTypes & PointOfInterestTypeMask.USER) != 0);
-            uiCkbxCampaignPoI.IsChecked = ((includeTypes & PointOfInterestTypeMask.CAMPAIGN) != 0);
+
+            if (mode == Mode.Choose)
+            {
+                uiCkbxDCSPoI.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
+                uiCkbxUserPoI.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
+                uiCkbxCampaignPoI.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
+            }
+            else
+            {
+                uiCkbxDCSPoI.IsChecked = ((includeTypes & PointOfInterestTypeMask.DCS_CORE) != 0);
+                uiCkbxUserPoI.IsChecked = ((includeTypes & PointOfInterestTypeMask.USER) != 0);
+                uiCkbxCampaignPoI.IsChecked = ((includeTypes & PointOfInterestTypeMask.CAMPAIGN) != 0);
+            }
         }
     }
 }
