@@ -294,6 +294,9 @@ namespace JAFDTC.UI.App
             double width = CoordFormat switch
             {
                 LLFormat.DDM_P1ZF => (6.0 + (5.0 * 0.5)) * 8.0,             // M 00 00.0, M 000 00.0
+                LLFormat.DDM_P2ZF => (7.0 + (5.0 * 0.5)) * 8.0,             // M 00 00.000, M 000 00.00
+                LLFormat.DDM_P3ZF => (8.0 + (5.0 * 0.5)) * 8.0,             // M 00 00.000, M 000 00.000
+                LLFormat.DMS => (7.0 + (4.0 * 0.5)) * 8.0,                  // M 00 00 00, M 000 00 00
                 _ => 100.0
             };
             uiTxtMouseLat.Width = width;
