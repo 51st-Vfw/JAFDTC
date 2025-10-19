@@ -734,7 +734,10 @@ namespace JAFDTC.UI.Controls.Map
             {
                 CrackMarkerTag(_selectedMarker, out MapMarkerInfo.MarkerType type, out string tagStr, out int _);
                 if (tagStr == info.TagStr)
+                {
+                    UnselectMarker(_selectedMarker);
                     _selectedMarker = null;
+                }
                 MapMarkerControl marker = routeInfo.Points[info.TagInt - 1];
                 Children.Remove(marker);
 
@@ -747,7 +750,10 @@ namespace JAFDTC.UI.Controls.Map
             {
                 CrackMarkerTag(_selectedMarker, out MapMarkerInfo.MarkerType _, out string tagStr, out int _);
                 if (tagStr == info.TagStr)
+                {
+                    UnselectMarker(_selectedMarker);
                     _selectedMarker = null;
+                }
                 Children.Remove(marker);
                 _marks.Remove(info.TagStr);
             }
