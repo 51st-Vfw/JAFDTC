@@ -406,7 +406,8 @@ namespace JAFDTC.UI.Base
                 MapWindow = NavpointUIHelper.OpenMap(this, PageHelper.NavptMaxCount, PageHelper.NavptCoordFmt, routes);
                 MapWindow.MarkerExplainer = this;
                 MapWindow.Closed += MapWindow_Closed;
-                MapWindow.EditMask = ((isLinked) ? 0 : MapMarkerInfo.MarkerTypeMask.NAVPT);
+                MapWindow.EditMask = ((isLinked) ? 0 : MapMarkerInfo.MarkerTypeMask.NAVPT) |
+                                     ((isLinked) ? 0 : MapMarkerInfo.MarkerTypeMask.NAVPT_HANDLE);
 
                 NavArgs.ConfigPage.RegisterAuxWindow(MapWindow);
 
@@ -541,13 +542,13 @@ namespace JAFDTC.UI.Base
         public void VerbMarkerSelected(IMapControlVerbHandler sender, MapMarkerInfo info)
         {
             Debug.WriteLine($"ENLP:VerbMarkerSelected {info.Type}, {info.TagStr}, {info.TagInt}");
-            if ((info.Type == MapMarkerInfo.MarkerType.UNKNOWN) || (info.TagStr != ROUTE_NAME))
+            if ((info.TagStr != ROUTE_NAME) || (info.Type == MapMarkerInfo.MarkerType.UNKNOWN))
             {
                 _isVerbEvent = true;
                 uiNavptListView.SelectedIndex = -1;
                 _isVerbEvent = false;
             }
-            else if (info.TagStr == ROUTE_NAME)
+            else if ((info.TagStr == ROUTE_NAME) && (info.Type == MapMarkerInfo.MarkerType.NAVPT))
             {
                 _isVerbEvent = true;
                 uiNavptListView.SelectedIndex = info.TagInt - 1;
