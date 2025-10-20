@@ -75,6 +75,7 @@
     <SolidColorBrush x:Key="WarningFieldBorderBrush" Color="Orange"/>
     <SolidColorBrush x:Key="WarningFieldBackgroundBrush" Color="LightYellow"/>
     <Style x:Key="WarningTextBoxStyle" TargetType="TextBox" BasedOn="{StaticResource EditorParamEditTextBoxStyle}">
+        <Setter Property="Foreground" Value="{ThemeResource TextBoxForegroundThemeBrush}" />
         <Setter Property="Background" Value="{ThemeResource WarningFieldBackgroundBrush}" />
         <Setter Property="BorderBrush" Value="{ThemeResource WarningFieldBorderBrush}" />
         <Setter Property="Template">
