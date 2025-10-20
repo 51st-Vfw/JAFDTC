@@ -412,9 +412,10 @@ namespace JAFDTC.UI.Base
                     itemsToExport = uiNavptListView.SelectedItems;
 
                 // save POIs
+                List<string> dupes = new();
                 foreach (NavpointInfoBase nav in itemsToExport)
                 {
-                    PointOfInterestDbase.Instance.AddPointOfInterest(new()
+                    bool success = PointOfInterestDbase.Instance.AddPointOfInterest(new()
                     {
                         Type = poiType,
                         Theater = filterDialog.Theater,
@@ -425,8 +426,18 @@ namespace JAFDTC.UI.Base
                         Longitude = nav.Lon,
                         Elevation = nav.Alt
                     });
+                    if (!success)
+                        dupes.Add(nav.Name);
                 }
                 PointOfInterestDbase.Instance.Save(filterDialog.Campaign);
+
+                if (dupes.Count > 0)
+                {
+                    string dupeMsg = (dupes.Count == 1) ?
+                        $"The point of interest \"{dupes[0]}\" already exists and was not copied." :
+                        $"The following points of interest already exist and were not copied:\n- {string.Join("\n- ", dupes)}";
+                    await Utilities.Message1BDialog(Content.XamlRoot, "Duplicate Points of Interest", dupeMsg);
+                }
             }
         }
 

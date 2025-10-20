@@ -110,6 +110,7 @@ namespace JAFDTC.Models.DCS
         // note that auxiliary keys are case-insensitive. callers are responsible for managing capitalization.
 
         private readonly Dictionary<PointOfInterestType, Dictionary<string, List<PointOfInterest>>> _dbase;
+        private readonly Dictionary<string, PointOfInterest> _uniqueIDs;
 
         /// <summary>
         /// return a list of the names of known campaigns.
@@ -135,6 +136,7 @@ namespace JAFDTC.Models.DCS
         private PointOfInterestDbase()
         {
             _dbase = [ ];
+            _uniqueIDs = [ ];
             Reset();
         }
 
@@ -352,8 +354,15 @@ namespace JAFDTC.Models.DCS
         /// <summary>
         /// add a point of interest to the database, persisting the database to storage if requested.
         /// </summary>
-        public void AddPointOfInterest(PointOfInterest poi, bool isPersist = true)
+        public bool AddPointOfInterest(PointOfInterest poi, bool isPersist = true)
         {
+            if (_uniqueIDs.ContainsKey(poi.UniqueID))
+            {
+                FileManager.Log($"PointOfInterestDbase.AddPointOfInterest(): warning: poi with unique id '{poi.UniqueID}'" +
+                                " already exists in database; skipping add.");
+                return false;
+            }
+
             string auxKey = AuxKey(poi);
 
             if (!_dbase.ContainsKey(poi.Type))
@@ -362,8 +371,12 @@ namespace JAFDTC.Models.DCS
                 _dbase[poi.Type][auxKey] = [ ];
             _dbase[poi.Type][auxKey].Add(poi);
 
+            _uniqueIDs.Add(poi.UniqueID, poi);
+
             if (isPersist)
                 Save(poi.Campaign);
+
+            return true;
         }
 
         /// <summary>
@@ -373,6 +386,7 @@ namespace JAFDTC.Models.DCS
         {
             string campaign = poi.Campaign;
             _dbase[poi.Type][AuxKey(poi)].Remove(poi);
+            _uniqueIDs.Remove(poi.UniqueID);
 
             if (isPersist)
                 Save(campaign);
