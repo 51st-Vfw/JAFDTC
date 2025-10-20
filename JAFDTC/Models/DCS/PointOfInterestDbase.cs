@@ -342,6 +342,8 @@ namespace JAFDTC.Models.DCS
         /// </summary>
         public int CountPoIInCampaign(string campaign)
         {
+            if (campaign == null)
+                return 0;
             PointOfInterestType type = PointOfInterestType.CAMPAIGN;
             return (_dbase.TryGetValue(type, out Dictionary<string, List<PointOfInterest>> dbType) &&
                     dbType.TryGetValue(campaign, out List<PointOfInterest> list)) ? list.Count : 0;
