@@ -42,13 +42,22 @@ namespace JAFDTC.Models.A10C.TGP
         BHOT = 2
     }
 
-    // defines the video mode options
+    // defines the yardstick unit options
     //
     public enum YardstickOptions
     {
         METRIC = 0,
         USA = 1,
         OFF = 2
+    }
+
+    // defines the laser designator options
+    //
+    public enum LaserDesignatorOptions
+    {
+        LASER = 0, // laser only designation
+        IR = 1,    // infrared only designation 
+        BTH = 2    // both laser and infrared designation
     }
 
     public class TGPSystem : SystemBase
@@ -162,11 +171,22 @@ namespace JAFDTC.Models.A10C.TGP
             }
         }
 
+        private string _laserDesignator;                              // integer [0, 2]
+        public string LaserDesignator
+        {
+            get => _laserDesignator;
+            set
+            {
+                string error = (string.IsNullOrEmpty(value) || IsIntegerFieldValid(value, 0, 2) ? null : "Invalid format");
+                SetProperty(ref _laserDesignator, value, error);
+            }
+        }
+
         // ---- synthesized properties
 
         [JsonIgnore]
         public override bool IsDefault => CoordDisplayIsDefault && VideoModeIsDefault && LaserCodeIsDefault && LSSIsDefault && LatchIsDefault
-            && TAAFIsDefault && FrndIsDefault && YardstickIsDefault;
+            && TAAFIsDefault && FrndIsDefault && YardstickIsDefault && LaserDesignatorIsDefault;
 
         [JsonIgnore]
         public bool CoordDisplayIsDefault => string.IsNullOrEmpty(CoordDisplay) || CoordDisplay == ExplicitDefaults.CoordDisplay;
@@ -204,6 +224,11 @@ namespace JAFDTC.Models.A10C.TGP
         [JsonIgnore]
         public int YardstickValue => string.IsNullOrEmpty(Yardstick) ? int.Parse(ExplicitDefaults.Yardstick) : int.Parse(Yardstick);
 
+        [JsonIgnore]
+        public bool LaserDesignatorIsDefault => string.IsNullOrEmpty(LaserDesignator) || LaserDesignator == ExplicitDefaults.LaserDesignator;
+        [JsonIgnore]
+        public int LaserDesignatorValue => string.IsNullOrEmpty(LaserDesignator) ? int.Parse(ExplicitDefaults.LaserDesignator) : int.Parse(LaserDesignator);
+
         // ------------------------------------------------------------------------------------------------------------
         //
         // construction
@@ -225,6 +250,7 @@ namespace JAFDTC.Models.A10C.TGP
             TAAF = other.TAAF;
             FRND = other.FRND;
             Yardstick = other.Yardstick;
+            LaserDesignator = other.LaserDesignator;
         }
 
         public virtual object Clone() => new TGPSystem(this);
@@ -270,6 +296,7 @@ namespace JAFDTC.Models.A10C.TGP
             tgp.TAAF = "0";
             tgp.FRND = "True";      // ON
             tgp.Yardstick = "0";    // METRIC
+            tgp.LaserDesignator = "0"; // LASER
         }
     }
 }

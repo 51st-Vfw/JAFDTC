@@ -51,17 +51,31 @@ namespace JAFDTC.Models.A10C.Upload
             AirframeDevice hotas = _aircraft.GetDevice("HOTAS");
             AirframeDevice cdu = _aircraft.GetDevice("CDU");
             AirframeDevice rmfd = _aircraft.GetDevice("RMFD");
+            AirframeDevice ahcp = _aircraft.GetDevice("AHCP");
 
             // Ensure TGP is on default MFD button and warmed up.
             AddIfBlock("IsTGPInDefaultMFDPosition", true, null, delegate ()
             {
                 AddAction(rmfd, "RMFD_15", WAIT_BASE); // Go to TGP page
-                AddIfBlock("IsTGPReady", true, null, delegate () { BuildTGP(hotas, cdu, rmfd); });
+                AddIfBlock("IsTGPReady", true, null, delegate () { BuildTGP(hotas, cdu, rmfd, ahcp); });
             });
         }
 
-        private void BuildTGP(AirframeDevice hotas, AirframeDevice cdu, AirframeDevice rmfd)
+        private void BuildTGP(AirframeDevice hotas, AirframeDevice cdu, AirframeDevice rmfd, AirframeDevice ahcp)
         {
+            int clicks;
+
+            // Designator: setting appears on MFD in standby mode, not in CTRL page, so we do it first
+            if (!_cfg.TGP.LaserDesignatorIsDefault)
+            {
+                AddAction(ahcp, "LASER_ON");
+
+                clicks = GetNumClicksForWraparoundSetting<LaserDesignatorOptions>(TGPSystem.ExplicitDefaults.LaserDesignatorValue, _cfg.TGP.LaserDesignatorValue);
+                AddActions(rmfd, "RMFD_07", clicks);
+
+                AddAction(ahcp, "LASER_SAFE");
+            }
+            
             AddAction(rmfd, "RMFD_02", 1200); // A-G, wait to go active
 
             // Video Mode
@@ -82,9 +96,8 @@ namespace JAFDTC.Models.A10C.Upload
             AddAction(rmfd, "RMFD_01", WAIT_BASE); // CNTL
 
             // Coordinate Display
-            int clicks = GetNumClicksForWraparoundSetting<CoordDisplayOptions>(TGPSystem.ExplicitDefaults.CoordDisplayValue, _cfg.TGP.CoordDisplayValue);
-            for (int i = 0; i < clicks; i++)
-                AddAction(rmfd, "RMFD_07");
+            clicks = GetNumClicksForWraparoundSetting<CoordDisplayOptions>(TGPSystem.ExplicitDefaults.CoordDisplayValue, _cfg.TGP.CoordDisplayValue);
+            AddActions(rmfd, "RMFD_07", clicks);
 
             // Laser Code
             if (!_cfg.TGP.LaserCodeIsDefault)
@@ -117,8 +130,7 @@ namespace JAFDTC.Models.A10C.Upload
 
             // Yardstick
             clicks = GetNumClicksForWraparoundSetting<YardstickOptions>(TGPSystem.ExplicitDefaults.YardstickValue, _cfg.TGP.YardstickValue);
-            for (int i = 0; i < clicks; i++)
-                AddAction(rmfd, "RMFD_09");
+            AddActions(rmfd, "RMFD_09", clicks);
 
             AddAction(rmfd, "RMFD_01"); // RTN
             AddAction(rmfd, "RMFD_03"); // STBY

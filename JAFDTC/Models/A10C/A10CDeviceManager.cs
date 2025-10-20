@@ -357,6 +357,11 @@ namespace JAFDTC.Models.A10C
             // ---- AHCP (armament HUD control panel)
 
             AirframeDevice ahcp = new(7, "AHCP");
+
+            ahcp.AddAction(3003, "LASER_OFF", delay, 0, 0);
+            ahcp.AddAction(3003, "LASER_SAFE", delay, 0.1, 0.1);
+            ahcp.AddAction(3003, "LASER_ON", delay, 0.2, 0.2);
+
             ahcp.AddAction(3010, "IFFCC_OFF", delay, 0, 0);
             ahcp.AddAction(3010, "IFFCC_TEST", delay, 0.1, 0.1);
             ahcp.AddAction(3010, "IFFCC_ON", delay, 0.2, 0.2);

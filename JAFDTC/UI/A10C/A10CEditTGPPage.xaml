@@ -68,6 +68,7 @@ https://www.gnu.org/licenses/.
                 <RowDefinition/>
                 <RowDefinition/>
                 <RowDefinition/>
+                <RowDefinition/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
@@ -103,13 +104,33 @@ https://www.gnu.org/licenses/.
                      LostFocus="TextBox_LostFocus" GotFocus="TextBox_GotFocus" Tag="LSS"
                      ToolTipService.ToolTip="Laser spot search PRF code"/>
 
-            <!-- Latch -->
+            <!-- Designator Mode -->
             <TextBlock Grid.Row="3" Grid.Column="0" Margin="12,12,0,0"
+                       Style="{StaticResource EditorParamStaticTextBlockStyle}"
+                       HorizontalTextAlignment="Right">
+                       Designator Selection
+            </TextBlock>
+            <ComboBox Grid.Row="3" Grid.Column="1" Margin="12,12,0,0"
+                      x:Name="uiComboLaserDesignatorMode"
+                      VerticalAlignment="Center"
+                      HorizontalAlignment="Stretch"
+                      ToolTipService.ToolTip="Select designator"
+                      SelectionChanged="ComboBox_SelectionChanged" Tag="LaserDesignator">
+                <ComboBox.Items>
+                    <!-- Must match enum order -->
+                    <TextBlock Text="LSR"/>
+                    <TextBlock Text="IR"/>
+                    <TextBlock Text="BTH"/>
+                </ComboBox.Items>
+            </ComboBox>
+            
+            <!-- Latch -->
+            <TextBlock Grid.Row="4" Grid.Column="0" Margin="12,12,0,0"
                        Style="{StaticResource EditorParamStaticTextBlockStyle}"
                        HorizontalTextAlignment="Right">
                 Latch
             </TextBlock>
-            <CheckBox Grid.Row="3" Grid.Column="1" Margin="12,12,0,0"
+            <CheckBox Grid.Row="4" Grid.Column="1" Margin="12,12,0,0"
                       x:Name="uiCheckLatch"
                       VerticalAlignment="Center"
                       Click="CheckBox_Clicked"
@@ -117,18 +138,18 @@ https://www.gnu.org/licenses/.
                       ToolTipService.ToolTip="When disabled, the laser fires only while the switch is depressed">
             </CheckBox>
 
-            <TextBlock Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,24,0,0"
+            <TextBlock Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,24,0,0"
                        Style="{StaticResource EditorTitleTextBlockStyle}">
                 Other TGP Settings:
             </TextBlock>
 
             <!-- Video Mode -->
-            <TextBlock Grid.Row="5" Grid.Column="0" Margin="12,12,0,0"
+            <TextBlock Grid.Row="6" Grid.Column="0" Margin="12,12,0,0"
                        Style="{StaticResource EditorParamStaticTextBlockStyle}"
                        HorizontalTextAlignment="Right">
                        Video Mode
             </TextBlock>
-            <ComboBox Grid.Row="5" Grid.Column="1" Margin="12,12,0,0"
+            <ComboBox Grid.Row="6" Grid.Column="1" Margin="12,12,0,0"
                       x:Name="uiComboVideoMode"
                       VerticalAlignment="Center"
                       HorizontalAlignment="Stretch"
@@ -143,12 +164,12 @@ https://www.gnu.org/licenses/.
             </ComboBox>
 
             <!-- Coordinate Display -->
-            <TextBlock Grid.Row="6" Grid.Column="0" Margin="12,12,0,0"
+            <TextBlock Grid.Row="7" Grid.Column="0" Margin="12,12,0,0"
                        Style="{StaticResource EditorParamStaticTextBlockStyle}"
                        HorizontalTextAlignment="Right">
                        Coordinate Display
             </TextBlock>
-            <ComboBox Grid.Row="6" Grid.Column="1" Margin="12,12,0,0"
+            <ComboBox Grid.Row="7" Grid.Column="1" Margin="12,12,0,0"
                       x:Name="uiComboCoordDisplay"
                       VerticalAlignment="Center"
                       HorizontalAlignment="Stretch"
@@ -163,12 +184,12 @@ https://www.gnu.org/licenses/.
             </ComboBox>
 
             <!-- Yardstick -->
-            <TextBlock Grid.Row="7" Grid.Column="0" Margin="12,12,0,0"
+            <TextBlock Grid.Row="8" Grid.Column="0" Margin="12,12,0,0"
                        Style="{StaticResource EditorParamStaticTextBlockStyle}"
                        HorizontalTextAlignment="Right">
                        Yardstick
             </TextBlock>
-            <ComboBox Grid.Row="7" Grid.Column="1" Margin="12,12,0,0"
+            <ComboBox Grid.Row="8" Grid.Column="1" Margin="12,12,0,0"
                       x:Name="uiComboYardstick"
                       VerticalAlignment="Center"
                       HorizontalAlignment="Stretch"
@@ -183,11 +204,11 @@ https://www.gnu.org/licenses/.
             </ComboBox>
 
             <!-- TAAF -->
-            <TextBlock Grid.Row="8" Grid.Column="0" Margin="12,12,0,0" VerticalAlignment="Center"
+            <TextBlock Grid.Row="9" Grid.Column="0" Margin="12,12,0,0" VerticalAlignment="Center"
                        Style="{ThemeResource EditorParamStaticTextBlockStyle}">
                 TAAF
             </TextBlock>
-            <TextBox Grid.Row="8" Grid.Column="1" Margin="12,12,0,0" x:Name="uiTextTAAF"
+            <TextBox Grid.Row="9" Grid.Column="1" Margin="12,12,0,0" x:Name="uiTextTAAF"
                      HorizontalAlignment="Stretch" VerticalAlignment="Center"
                      Style="{StaticResource EditorParamEditTextBoxStyle}"
                      MaxLength="5" PlaceholderText="0"
@@ -195,12 +216,12 @@ https://www.gnu.org/licenses/.
                      ToolTipService.ToolTip="TGP Attitude Advisory Function: below this altitude, warn at high bank angles. 0 disables."/>
 
             <!-- FRND -->
-            <TextBlock Grid.Row="9" Grid.Column="0" Margin="12,12,0,0"
+            <TextBlock Grid.Row="10" Grid.Column="0" Margin="12,12,0,0"
                        Style="{StaticResource EditorParamStaticTextBlockStyle}"
                        HorizontalTextAlignment="Right">
                 FRND
             </TextBlock>
-            <CheckBox Grid.Row="9" Grid.Column="1" Margin="12,12,0,0"
+            <CheckBox Grid.Row="10" Grid.Column="1" Margin="12,12,0,0"
                       x:Name="uiCheckFRND"
                       VerticalAlignment="Center"
                       Click="CheckBox_Clicked"
