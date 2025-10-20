@@ -199,6 +199,7 @@ namespace JAFDTC.UI.Base
             Utilities.SetEnableState(uiBarImport, isEditable);
             Utilities.SetEnableState(uiBarMap, true);
             Utilities.SetEnableState(uiBarRenumber, isEditable && (EditNavpt.Count > 0));
+            Utilities.SetEnableState(uiBarExportPOIs, isEditable && (EditNavpt.Count > 0));
 
             uiNavptListView.CanReorderItems = isEditable;
             uiNavptListView.ReorderMode = (isEditable) ? ListViewReorderMode.Enabled : ListViewReorderMode.Disabled;
@@ -371,6 +372,73 @@ namespace JAFDTC.UI.Base
             NavArgs.BackButton.IsEnabled = false;
             Frame.Navigate(typeof(AddNavpointsFromPOIsPage), new AddNavpointsFromPOIsPage.NavigationArg(this, Config, PageHelper),
                 new SlideNavigationTransitionInfo() { Effect = SlideNavigationTransitionEffect.FromRight });
+        }
+
+        /// <summary>
+        /// export poi command: copy from current navpoints to POIs. Opens modal to prompt for campaign, tags, etc.
+        /// </summary>
+        private async void CmdExportPOIs_Click(object sender, RoutedEventArgs args)
+        {
+            if (uiNavptListView.Items.Count == 0)
+                return;
+            NavpointInfoBase navpt = uiNavptListView.Items[0] as NavpointInfoBase;
+            List<string> allowedTheaters = PointOfInterest.TheatersForCoords(navpt.Lat, navpt.Lon);
+
+            GetPoIFilterDialog filterDialog = new(
+                Settings.LastPoIFilterTheater, Settings.LastPoIFilterCampaign, Settings.LastPoIFilterTags,
+                mode: GetPoIFilterDialog.Mode.Choose, allowedTheaters: allowedTheaters)
+            {
+                XamlRoot = Content.XamlRoot,
+                Title = $"Copy to Points of Interest",
+                PrimaryButtonText = uiNavptListView.SelectedItems.Count > 0 ? "Copy Selected" : "Copy All",
+                CloseButtonText = "Cancel",
+            };
+            ContentDialogResult result = await filterDialog.ShowAsync(ContentDialogPlacement.Popup);
+            if (result == ContentDialogResult.Primary)
+            {
+                // Persist POI filters
+                Settings.LastPoIFilterTheater = filterDialog.Theater;
+                Settings.LastPoIFilterCampaign = filterDialog.Campaign;
+                Settings.LastPoIFilterTags = filterDialog.Tags;
+
+                // set common POI properties
+                PointOfInterestType poiType = PointOfInterestType.USER;
+                if (filterDialog.Campaign != null)
+                    poiType = PointOfInterestType.CAMPAIGN;
+
+                // get the list of navpoints to save as POIs
+                IList<object> itemsToExport = uiNavptListView.Items;
+                if (uiNavptListView.SelectedItems.Count > 0)
+                    itemsToExport = uiNavptListView.SelectedItems;
+
+                // save POIs
+                List<string> dupes = new();
+                foreach (NavpointInfoBase nav in itemsToExport)
+                {
+                    bool success = PointOfInterestDbase.Instance.AddPointOfInterest(new()
+                    {
+                        Type = poiType,
+                        Theater = filterDialog.Theater,
+                        Campaign = filterDialog.Campaign,
+                        Tags = PointOfInterest.SanitizedTags(filterDialog.Tags),
+                        Name = nav.Name,
+                        Latitude = nav.Lat,
+                        Longitude = nav.Lon,
+                        Elevation = nav.Alt
+                    });
+                    if (!success)
+                        dupes.Add(nav.Name);
+                }
+                PointOfInterestDbase.Instance.Save(filterDialog.Campaign);
+
+                if (dupes.Count > 0)
+                {
+                    string dupeMsg = (dupes.Count == 1) ?
+                        $"The point of interest \"{dupes[0]}\" already exists and was not copied." :
+                        $"The following points of interest already exist and were not copied:\n- {string.Join("\n- ", dupes)}";
+                    await Utilities.Message1BDialog(Content.XamlRoot, "Duplicate Points of Interest", dupeMsg);
+                }
+            }
         }
 
         /// <summary>

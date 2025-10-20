@@ -87,12 +87,21 @@ https://www.gnu.org/licenses/.
                           Click="CmdImportPOIs_Click"
                           ToolTipService.ToolTip="Add multiple navpoints from POIs">
                 <AppBarButton.Icon>
-                    <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xECAF;"/>
+                    <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE826;"/>
                 </AppBarButton.Icon>
             </AppBarButton>
             <AppBarButton x:Name="uiBarImport" Icon="Download" Label="Import"
                           Click="CmdImport_Click"
                           ToolTipService.ToolTip="Import navpoints from a file"/>
+            <CommandBar.SecondaryCommands>
+                <AppBarButton x:Name="uiBarExportPOIs" Label="Save to POIs"
+                          Click="CmdExportPOIs_Click"
+                          ToolTipService.ToolTip="Copy navpoints to POIs">
+                    <AppBarButton.Icon>
+                        <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE7AC;"/>
+                    </AppBarButton.Icon>
+                </AppBarButton>
+            </CommandBar.SecondaryCommands>
         </CommandBar>
 
         <!--
