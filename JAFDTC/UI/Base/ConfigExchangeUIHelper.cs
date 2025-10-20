@@ -24,7 +24,10 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.Windows.Storage.Pickers;
 using System;
+using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using Windows.Storage;
 
 namespace JAFDTC.UI.Base
@@ -45,13 +48,13 @@ namespace JAFDTC.UI.Base
         /// manage a FileSavePicker to select a .jafdtc file to save to. returns the path of the selected file,
         /// null if no selection was made.
         /// </summary>
-        private static async Task<string> SavePickerUI()
+        private static async Task<string> SavePickerUI(string filename = "Configuration")
         {
             FileSavePicker picker = new((Application.Current as JAFDTC.App).Window.AppWindow.Id)
             {
                 CommitButtonText = "Export Configuration",
                 SuggestedStartLocation = PickerLocationId.Desktop,
-                SuggestedFileName = "Configuration"
+                SuggestedFileName = filename
             };
             picker.FileTypeChoices.Add("JAFDTC", [".jafdtc"]);
             PickFileResult resultPick = await picker.PickSaveFileAsync();
@@ -64,7 +67,10 @@ namespace JAFDTC.UI.Base
         /// </summary>
         public static async void ConfigExportJAFDTC(XamlRoot root, IConfiguration config, string path = null)
         {
-            path ??= await SavePickerUI();
+            char[] invalidChars = Path.GetInvalidFileNameChars();
+            string cleanConfigName = new([.. config.Name.Where(m => !invalidChars.Contains(m)) ]);
+
+            path ??= await SavePickerUI(cleanConfigName);
             if (path != null)
             {
                 StorageFile file = await StorageFile.GetFileFromPathAsync(path);
