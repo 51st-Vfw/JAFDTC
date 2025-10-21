@@ -38,6 +38,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Diagnostics;
+using System.Linq;
 using System.Text.Json;
 using Windows.ApplicationModel.DataTransfer;
 
@@ -208,6 +209,8 @@ namespace JAFDTC.UI.F16C
             Utilities.SetEnableState(uiBarCapture, isEditable && isDCSListening);
             Utilities.SetEnableState(uiBarImport, isEditable);
             Utilities.SetEnableState(uiBarRenumber, isEditable && (EditSTPT.Count > 0));
+            Utilities.SetEnableState(uiBarImportPOIs, true);
+            Utilities.SetEnableState(uiBarExportPOIs, isEditable && (EditSTPT.Count > 0));
 
             Utilities.SetEnableState(uiPageBtnLink, _configNameList.Count > 0);
 
@@ -409,6 +412,19 @@ namespace JAFDTC.UI.F16C
                            new AddNavpointsFromPOIsPage.NavigationArg(this, Config, new F16CEditSteerpointListHelper()),
                            new SlideNavigationTransitionInfo() {
                                 Effect = SlideNavigationTransitionEffect.FromRight });
+        }
+
+        /// <summary>
+        /// export poi command: copy from current navpoints to POIs. Opens modal to prompt for campaign, tags, etc.
+        /// </summary>
+        private void CmdExportPOIs_Click(object sender, RoutedEventArgs args)
+        {
+            if ((uiStptListView.Items.Count > 0) && (uiStptListView.SelectedItems.Count == 0))
+                NavpointUIHelper.CopyNavpointsAsPoIs(Content.XamlRoot,
+                                                     [.. uiStptListView.SelectedItems.OfType<INavpointInfo>() ], true);
+            else if (uiStptListView.Items.Count > 0)
+                NavpointUIHelper.CopyNavpointsAsPoIs(Content.XamlRoot,
+                                                     [.. uiStptListView.Items.OfType<INavpointInfo>() ], false);
         }
 
         /// <summary>
