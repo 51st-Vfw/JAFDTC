@@ -157,9 +157,9 @@ namespace JAFDTC.UI.Base
                 ContentDialogResult result = await theaterDialog.ShowAsync(ContentDialogPlacement.Popup);
                 if (result == ContentDialogResult.Primary)
                 {
-                    TheaterBounds bounds = PointOfInterest.TheaterBounds[theaterDialog.SelectedItem];
-                    lat = bounds.LatMin + ((bounds.LatMax - bounds.LatMin) / 2.0);
-                    lon = bounds.LonMin + ((bounds.LonMax - bounds.LonMin) / 2.0);
+                    TheaterInfo info = PointOfInterest.TheaterInfo[theaterDialog.SelectedItem];
+                    lat = info.LatMin + ((info.LatMax - info.LatMin) / 2.0);
+                    lon = info.LonMin + ((info.LonMax - info.LonMin) / 2.0);
                 }
                 else
                 {
@@ -249,59 +249,6 @@ namespace JAFDTC.UI.Base
             foreach (PointOfInterest poi in PointOfInterestDbase.Instance.Find(query, true))
                 suitableItems.Add(new PoIListItem(poi));
             return suitableItems;
-        }
-
-        /// <summary>
-        /// create a poi from a navpoint with the specified name and position. if the poi exists and can be edited,
-        /// it is updated to match the name/position based on user feedback; if the poi does not exist, it is added.
-        /// returns true if changes were made to the poi database, false otherwise. the function returns false if the
-        /// name or position are invalid and will inform the user if unable to add/update due to name collision.
-        /// </summary>
-        public static async Task<bool> CreatePoIAt(XamlRoot root, string name, string lat, string lon, string elev)
-        {
-            string theater = PointOfInterest.TheaterForCoords(lat, lon);
-            if (string.IsNullOrEmpty(name) || (theater == null))
-            {
-                await Utilities.Message1BDialog(
-                    root,
-                    "Unable to Create Point of Interest",
-                    $"The name or coordinates are invalid or do not match a known DCS theater.");
-            }
-            else
-            {
-                PointOfInterestDbQuery query = new(PointOfInterestTypeMask.ANY, null, null, name);
-                List<PointOfInterest> pois = PointOfInterestDbase.Instance.Find(query);
-                if (pois.Count == 0)
-                {
-                    PointOfInterest poi = new(PointOfInterestType.USER, theater, "", name, "", lat, lon, elev);
-                    PointOfInterestDbase.Instance.AddPointOfInterest(poi);
-                    return true;
-                }
-                else if ((pois.Count == 1) && (pois[0].IsMatchTypeMask(PointOfInterestTypeMask.USER)))
-                {
-                    ContentDialogResult result = await Utilities.Message2BDialog(
-                        root,
-                        "Point of Interest Already Defined",
-                        $"The database already contains a point of interest with the name “{name}”. Would you like to replace it?",
-                        "Replace");
-                    if (result == ContentDialogResult.Primary)
-                    {
-                        pois[0].Name = name;
-                        pois[0].Latitude = lat;
-                        pois[0].Longitude = lon;
-                        pois[0].Elevation = elev;
-                        return true;
-                    }
-                }
-                else
-                {
-                    await Utilities.Message1BDialog(
-                        root,
-                        "Point of Interest Already Defined",
-                        $"The database already contains a point of interest with the name “{name}”.");
-                }
-            }
-            return false;
         }
 
         // ------------------------------------------------------------------------------------------------------------

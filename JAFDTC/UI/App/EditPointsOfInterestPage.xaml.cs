@@ -475,7 +475,9 @@ namespace JAFDTC.UI.App
             if (double.TryParse(EditPoI.LL[index].Lat, out double lat) &&
                 double.TryParse(EditPoI.LL[index].Lon, out double lon))
             {
-                theater = PointOfInterest.TheaterForCoords(lat, lon);
+// TODO: what to do when we have multiple hits here?
+                List<string> theaters = PointOfInterest.TheatersForCoords(lat, lon);
+                theater = (theaters.Count == 1) ? theaters[0] : "";
             }
             return theater;
         }

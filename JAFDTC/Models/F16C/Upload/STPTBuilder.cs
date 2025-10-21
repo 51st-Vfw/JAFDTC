@@ -3,7 +3,7 @@
 // STPTBuilder.cs -- f-16c steerpoint command builder
 //
 // Copyright(C) 2021-2023 the-paid-actor & others
-// Copyright(C) 2023-2024 ilominar/raven
+// Copyright(C) 2023-2025 ilominar/raven
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 // Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -18,11 +18,13 @@
 //
 // ********************************************************************************************************************
 
+using JAFDTC.Models.Base;
 using JAFDTC.Models.DCS;
 using JAFDTC.Models.F16C.STPT;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Text;
 
 namespace JAFDTC.Models.F16C.Upload
@@ -32,7 +34,8 @@ namespace JAFDTC.Models.F16C.Upload
     /// F16CConfiguration. the stream returns the ded to its default page. the builder does not require any state to
     /// function.
     /// </summary>
-    internal class STPTBuilder : F16CBuilderBase, IBuilder
+    internal class STPTBuilder(F16CConfiguration cfg, F16CDeviceManager dm, StringBuilder sb)
+                   : F16CBuilderBase(cfg, dm, sb), IBuilder
     {
         // ------------------------------------------------------------------------------------------------------------
         //
@@ -40,7 +43,6 @@ namespace JAFDTC.Models.F16C.Upload
         //
         // ------------------------------------------------------------------------------------------------------------
 
-        public STPTBuilder(F16CConfiguration cfg, F16CDeviceManager dm, StringBuilder sb) : base(cfg, dm, sb) { }
 
         // ------------------------------------------------------------------------------------------------------------
         //
@@ -59,15 +61,18 @@ namespace JAFDTC.Models.F16C.Upload
             if (stpts.Count == 0)
                 return;
 
-            AddExecFunction("NOP", new() { "==== STPTBuilder:Build()" });
+            AddExecFunction("NOP", [ "==== STPTBuilder:Build()" ]);
 
             AirframeDevice ufc = _aircraft.GetDevice("UFC");
 
-            Dictionary<string, SteerpointInfo> jetStpts = new();
+            Dictionary<string, SteerpointInfo> jetStpts = [ ];
             for (var i = 0; i < stpts.Count; i++)
                 jetStpts.Add(stpts[i].Number.ToString(), stpts[i]);
 
-            BuildWaypoints(ufc, jetStpts, -GetZuluDelta(stpts[0]));     // negate to get offset from local to zulu
+            List<string> theaters = TheatersForNavpoints([.. stpts ]);
+            int zulu = (theaters.Count > 0) ? PointOfInterest.TheaterInfo[theaters[0]].Zulu : 0;
+
+            BuildWaypoints(ufc, jetStpts, -zulu);     // negate zulu to get offset from local to zulu
             BuildVIP(ufc, jetStpts);
             BuildVRP(ufc, jetStpts);
 
@@ -81,7 +86,7 @@ namespace JAFDTC.Models.F16C.Upload
         /// <summary>
         private void BuildWaypoints(AirframeDevice ufc, Dictionary<string, SteerpointInfo> jetStpts, int dZ)
         {
-            AddActions(ufc, new() { "LIST", "1", "SEQ" });
+            AddActions(ufc, [ "LIST", "1", "SEQ" ]);
 
             foreach (KeyValuePair<string, SteerpointInfo> kv in jetStpts)
             {
@@ -92,29 +97,25 @@ namespace JAFDTC.Models.F16C.Upload
                 {
                     string tos = AdjustHMSForZulu(stpt.TOS, dZ);
 
-                    AddActions(ufc, PredActionsForNumAndEnter(stptId), new() { "DOWN" });
-                    AddActions(ufc, ActionsFor2864CoordinateString(stpt.LatUI), new() { "ENTR", "DOWN" });
-                    AddActions(ufc, ActionsFor2864CoordinateString(stpt.LonUI), new() { "ENTR", "DOWN" });
-                    AddActions(ufc, PredActionsForNumAndEnter(stpt.Alt), new() { "DOWN" });
-                    AddActions(ufc, PredActionsForNumAndEnter(tos, false, true), new() { "DOWN" });
+                    AddActions(ufc, PredActionsForNumAndEnter(stptId), [ "DOWN" ]);
+                    AddActions(ufc, ActionsFor2864CoordinateString(stpt.LatUI), [ "ENTR", "DOWN" ]);
+                    AddActions(ufc, ActionsFor2864CoordinateString(stpt.LonUI), [ "ENTR", "DOWN" ]);
+                    AddActions(ufc, PredActionsForNumAndEnter(stpt.Alt), [ "DOWN" ]);
+                    AddActions(ufc, PredActionsForNumAndEnter(tos, false, true), [ "DOWN" ]);
 
                     if ((stpt.OAP[0].Type == RefPointTypes.OAP) || (stpt.OAP[1].Type == RefPointTypes.OAP))
                     {
                         AddAction(ufc, "SEQ");
                         if (stpt.OAP[0].Type == RefPointTypes.OAP)
-                        {
                             BuildOA(ufc, stptId, stpt.OAP[0].Range, stpt.OAP[0].Brng, stpt.OAP[0].Elev);
-                        }
                         AddAction(ufc, "SEQ");
                         if (stpt.OAP[1].Type == RefPointTypes.OAP)
-                        {
                             BuildOA(ufc, stptId, stpt.OAP[1].Range, stpt.OAP[1].Brng, stpt.OAP[1].Elev);
-                        }
-                        AddActions(ufc, new() { "SEQ", "SEQ" });
+                        AddActions(ufc, [ "SEQ", "SEQ" ]);
                     }
                 }
             }
-            AddActions(ufc, new() { "1", "ENTR", "RTN" });
+            AddActions(ufc, [ "1", "ENTR", "RTN" ]);
         }
 
         /// <summary>
@@ -122,10 +123,10 @@ namespace JAFDTC.Models.F16C.Upload
         /// <summary>
         private void BuildOA(AirframeDevice ufc, string stptNum, string range, string brng, string elev)
         {
-            AddActions(ufc, PredActionsForNumAndEnter(stptNum), new() { "DOWN" });
-            AddActions(ufc, PredActionsForNumAndEnter(range, false, true), new() { "DOWN" });
-            AddActions(ufc, PredActionsForNumAndEnter(brng, false, true), new() { "DOWN" });
-            AddActions(ufc, PredActionsForNumAndEnter(elev, false, true), new() { "DOWN" });
+            AddActions(ufc, PredActionsForNumAndEnter(stptNum), [ "DOWN" ]);
+            AddActions(ufc, PredActionsForNumAndEnter(range, false, true), [ "DOWN" ]);
+            AddActions(ufc, PredActionsForNumAndEnter(brng, false, true), [ "DOWN" ]);
+            AddActions(ufc, PredActionsForNumAndEnter(elev, false, true), [ "DOWN" ]);
         }
 
         /// <summary>
@@ -147,7 +148,7 @@ namespace JAFDTC.Models.F16C.Upload
             }
             if (stptNum != null)
             {
-                AddActions(ufc, new() { "RTN", "RTN", "LIST", "3" }, null, WAIT_BASE);
+                AddActions(ufc, [ "RTN", "RTN", "LIST", "3" ], null, WAIT_BASE);
 
                 AddIfBlock("IsI2TNotSelected", true, null, delegate () { AddAction(ufc, "SEQ"); });
                 AddIfBlock("IsI2TNotHighlighted", true, null, delegate () { AddAction(ufc, "0"); });
@@ -170,10 +171,10 @@ namespace JAFDTC.Models.F16C.Upload
         private void BuildVIPDetail(AirframeDevice ufc, string stptNum, string range, string brng, string elev)
         {
             AddAction(ufc, "DOWN");
-            AddActions(ufc, PredActionsForNumAndEnter(stptNum), new() { "DOWN" });
-            AddActions(ufc, PredActionsForNumAndEnter(brng, false, true), new() { "DOWN" });
-            AddActions(ufc, PredActionsForNumAndEnter(range, false, true), new() { "DOWN" });
-            AddActions(ufc, PredActionsForNumAndEnter(elev, false, true), new() { "DOWN" });
+            AddActions(ufc, PredActionsForNumAndEnter(stptNum), [ "DOWN" ]);
+            AddActions(ufc, PredActionsForNumAndEnter(brng, false, true), [ "DOWN" ]);
+            AddActions(ufc, PredActionsForNumAndEnter(range, false, true), [ "DOWN" ]);
+            AddActions(ufc, PredActionsForNumAndEnter(elev, false, true), [ "DOWN" ]);
         }
 
         /// <summary>
@@ -194,7 +195,7 @@ namespace JAFDTC.Models.F16C.Upload
             }
             if (stptNum != null)
             {
-                AddActions(ufc, new() { "RTN", "RTN", "LIST", "9" }, null, WAIT_BASE);
+                AddActions(ufc, [ "RTN", "RTN", "LIST", "9" ], null, WAIT_BASE);
 
                 AddIfBlock("IsT2RNotSelected", true, null, delegate () { AddAction(ufc, "SEQ"); });
                 AddIfBlock("IsT2RNotHighlighted", true, null, delegate () { AddAction(ufc, "0"); });
@@ -205,7 +206,7 @@ namespace JAFDTC.Models.F16C.Upload
                 AddIfBlock("IsT2PNotHighlighted", true, null, delegate () { AddAction(ufc, "0"); });
 
                 BuildVRPDetail(ufc, stptNum, stpt.VxP[1].Range, stpt.VxP[1].Brng, stpt.VxP[1].Elev);
-                AddActions(ufc, new() { "SEQ", "RTN" });
+                AddActions(ufc, [ "SEQ", "RTN" ]);
             }
         }
 
@@ -216,37 +217,36 @@ namespace JAFDTC.Models.F16C.Upload
         private void BuildVRPDetail(AirframeDevice ufc, string stptNum, string range, string brng, string elev)
         {
             AddAction(ufc, "DOWN");
-            AddActions(ufc, PredActionsForNumAndEnter(stptNum), new() { "DOWN" });
-            AddActions(ufc, PredActionsForNumAndEnter(brng, false, true), new() { "DOWN" });
-            AddActions(ufc, PredActionsForNumAndEnter(range, false, true), new() { "DOWN" });
-            AddActions(ufc, PredActionsForNumAndEnter(elev, true, true), new() { "DOWN" });
+            AddActions(ufc, PredActionsForNumAndEnter(stptNum), [ "DOWN" ]);
+            AddActions(ufc, PredActionsForNumAndEnter(brng, false, true), [ "DOWN" ]);
+            AddActions(ufc, PredActionsForNumAndEnter(range, false, true), [ "DOWN" ]);
+            AddActions(ufc, PredActionsForNumAndEnter(elev, true, true), [ "DOWN" ]);
         }
 
         /// <summary>
-        /// return the zulu offset for the steerpoint, 0 if location is unknown. uses the poi database to determine
-        /// the theater and from there the proper offset. local_time = zulu + GetZuluDelta().
+        /// returns a list of theaters that cover the list of navpoints. the list is sorted in order of membership:
+        /// first index is the theater with the most matches, last index is the theater with the least.
         /// </summary>
-        private static int GetZuluDelta(SteerpointInfo stpt)
+        public static List<string> TheatersForNavpoints(List<INavpointInfo> navpts)
         {
-            if (double.TryParse(stpt.Lat, out double lat) && double.TryParse(stpt.Lon, out double lon))
-            {
-                return PointOfInterest.TheaterForCoords(lat, lon) switch
-                {
-                    "Marianas"          => 10,  // UTC +10
-                    "Afghanistan"       => 5,   // UTC +5
-                    "Caucasus"          => 4,   // UTC +4
-                    "Germany"           => 2,   // UTC +2
-                    "Iraq"              => 4,   // UTC +4
-                    "Persian Gulf"      => 4,   // UTC +4
-                    "Kola"              => 3,   // UTC +3
-                    "Sinai"             => 3,   // UTC +3
-                    "Syria"             => 3,   // UTC +3
-                    "South Atlantic"    => -3,  // UTC -3
-                    "Nevada"            => -8,  // UTC -8
-                    _                   => 0
-                };
-            }
-            return 0;
+            Dictionary<string, int> theaterMap = [];
+            foreach (INavpointInfo navpt in navpts)
+                foreach (string theater in PointOfInterest.TheatersForCoords(navpt.Lat, navpt.Lon))
+                    theaterMap[theater] = theaterMap.GetValueOrDefault(theater, 0) + 1;
+
+            Dictionary<int, List<string>> freqMap = [];
+            foreach (KeyValuePair<string, int> kvp in theaterMap)
+                if (freqMap.ContainsKey(kvp.Value))
+                    freqMap[kvp.Value].Add(kvp.Key);
+                else
+                    freqMap[kvp.Value] = [kvp.Key];
+
+            List<string> theaters = [];
+            foreach (int freq in freqMap.Keys.OrderByDescending(k => k))
+                foreach (string theater in freqMap[freq])
+                    theaters.Add(theater);
+
+            return theaters;
         }
     }
 }

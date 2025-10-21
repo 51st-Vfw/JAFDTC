@@ -51,17 +51,20 @@ namespace JAFDTC.Models.DCS
     // ================================================================================================================
 
     /// <summary>
-    /// defines the boundary of a theater on the map in terms of a min/max latitude and longitude.
+    /// defines information on a theater including the boundary of a theater on the map in terms of a min/max latitude
+    /// and longitude along with time zone information.
     /// </summary>
-    public sealed class TheaterBounds
+    public sealed class TheaterInfo
     {
         public double LatMin { get; }
         public double LatMax { get; }
         public double LonMin { get; }
         public double LonMax { get; }
 
-        public TheaterBounds(double latMin, double latMax, double lonMin, double lonMax)
-            => (LatMin, LatMax, LonMin, LonMax) = (latMin, latMax, lonMin, lonMax);
+        public int Zulu { get;  }
+
+        public TheaterInfo(double latMin, double latMax, double lonMin, double lonMax, int zulu)
+            => (LatMin, LatMax, LonMin, LonMax, Zulu) = (latMin, latMax, lonMin, lonMax, 0);
 
         public bool Contains(double lat, double lon)
             => ((LatMin <= lat) && (lat <= LatMax) && (LonMin <= lon) && (lon <= LonMax));
@@ -101,21 +104,22 @@ namespace JAFDTC.Models.DCS
         
         public string Elevation { get; set; }                   // elevation (feet)
 
-        public static Dictionary<string, TheaterBounds> TheaterBounds => new()
+        public static Dictionary<string, TheaterInfo> TheaterInfo => new()
         {
-            ["Afghanistan"]     = new( 23.00,  38.75,   60.25,   73.25),
-            ["Caucasus"]        = new( 40.00,  46.00,   33.00,   46.00),
-            ["Germany"]         = new( 49.50,  54.50,    6.50,   16.00),
-            ["Iraq"]            = new( 26.25,  37.00,   38.50,   52.00),
-            ["Kola"]            = new( 64.00,  71.25,   12.00,   39.00),
-            ["Marianas"]        = new( 11.75,  22.00,  141.00,  149.00),
-            ["Nevada"]          = new( 34.50,  38.75, -118.50, -113.00),
-            ["Persian Gulf"]    = new( 22.00,  30.75,   50.00,   59.00),
-            ["Sinai"]           = new( 26.50,  32.00,   29.50,   35.75),
-            ["South Atlantic"]  = new(-57.00, -48.00,  -77.00,  -55.00),
-            ["Syria"]           = new( 31.25,  37.50,   30.75,   41.00)
+            //                         lat-    lat+     lon-     lon+    z
+            ["Afghanistan"]     = new( 23.00,  38.75,   60.25,   73.25,  5),    // UTC +5
+            ["Caucasus"]        = new( 40.00,  46.00,   33.00,   46.00,  4),    // UTC +4
+            ["Germany"]         = new( 49.50,  54.50,    6.50,   16.00,  2),    // UTC +2
+            ["Iraq"]            = new( 26.25,  37.00,   38.50,   52.00,  4),    // UTC +4
+            ["Kola"]            = new( 64.00,  71.25,   12.00,   39.00,  3),    // UTC +3
+            ["Marianas"]        = new( 11.75,  22.00,  141.00,  149.00, 10),    // UTC +10
+            ["Nevada"]          = new( 34.50,  38.75, -118.50, -113.00, -8),    // UTC -8
+            ["Persian Gulf"]    = new( 22.00,  30.75,   50.00,   59.00,  4),    // UTC +4
+            ["Sinai"]           = new( 26.50,  32.00,   29.50,   35.75,  3),    // UTC +3
+            ["South Atlantic"]  = new(-57.00, -48.00,  -77.00,  -55.00, -3),    // UTC -3
+            ["Syria"]           = new( 31.25,  37.50,   30.75,   41.00,  3)     // UTC +3
         };
-        public static List<string> Theaters => [.. TheaterBounds.Keys ];
+        public static List<string> Theaters => [.. TheaterInfo.Keys ];
 
         public string UniqueID => $"{(int)Type}:{Theater}:{Name}";
 
@@ -167,11 +171,12 @@ namespace JAFDTC.Models.DCS
             {
                 string lat = cols[4].Trim();
                 string lon = cols[5].Trim();
-                string theater = TheaterForCoords(lat, lon);
-                if (int.TryParse(cols[0].Trim(), out int type) && (theater != null))
+// TODO: overlapping theaters need some help here, likely to put theater in the csv, but that creates other issues
+                List<string> theaters = TheatersForCoords(lat, lon);
+                if (int.TryParse(cols[0].Trim(), out int type) && (theaters.Count == 1))
                 {
                     Type = (PointOfInterestType)type;
-                    Theater = theater;
+                    Theater = theaters[0];
                     Campaign = cols[1].Trim();
                     Name = cols[2].Trim();
                     Tags = cols[3].Trim();
@@ -204,7 +209,7 @@ namespace JAFDTC.Models.DCS
         public static List<string> TheatersForCoords(double lat, double lon)
         {
             List<string> theaters = [ ];
-            foreach (KeyValuePair<string, TheaterBounds> kvp in TheaterBounds)
+            foreach (KeyValuePair<string, TheaterInfo> kvp in TheaterInfo)
                 if (kvp.Value.Contains(lat, lon))
                     theaters.Add(kvp.Key);
             return theaters;
@@ -218,29 +223,6 @@ namespace JAFDTC.Models.DCS
         public static List<string> TheatersForCoords(string lat, string lon)
             => TheatersForCoords(double.Parse(lat), double.Parse(lon));
         
-// TODO: deprecate?
-        /// <summary>
-        /// return the name of the dcs theater that contains the given coordinate, null if no theater matches the
-        /// coordinates. the match is based on approximate lat/lon bounds of the theaters.
-        /// </summary>
-        public static string TheaterForCoords(double lat, double lon)
-        {
-// TODO: this is kinda broken, theaters in dcs can overlap. use TheatersForCoords instead?
-            foreach (KeyValuePair<string, TheaterBounds> kvp in TheaterBounds)
-                if (kvp.Value.Contains(lat, lon))
-                    return kvp.Key;
-            return null;
-        }
-
-// TODO: deprecate?
-        /// <summary>
-        /// return the name of the dcs theater that contains the given coordinate, null if no theater matches the
-        /// coordinates. the match is based on approximate lat/lon bounds of the theaters.
-        /// </summary>
-        public static string TheaterForCoords(string lat, string lon)
-// TODO: this is kinda broken, theaters in dcs can overlap. use TheatersForCoords instead?
-            => TheaterForCoords(double.Parse(lat), double.Parse(lon));
-
         /// <summary>
         /// return sanitized tag string with empty tags removed, extra spaces removed, etc.
         /// </summary>
