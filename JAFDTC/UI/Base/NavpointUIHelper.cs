@@ -251,6 +251,65 @@ namespace JAFDTC.UI.Base
             return suitableItems;
         }
 
+        /// <summary>
+        /// copy list of navpoints to POIs. Opens modal to prompt for campaign, tags, etc.
+        /// </summary>
+        public static async void CopyNavpointsAsPoIs(XamlRoot root, List<INavpointInfo> navpts, bool isCopyAll)
+        {
+            List<string> allowedTheaters = TheatersForNavpoints(navpts);
+
+            GetPoIFilterDialog filterDialog = new(
+                Settings.LastPoIFilterTheater, Settings.LastPoIFilterCampaign, Settings.LastPoIFilterTags,
+                mode: GetPoIFilterDialog.Mode.Choose, allowedTheaters: allowedTheaters)
+            {
+                XamlRoot = root,
+                Title = $"Copy to Points of Interest",
+                PrimaryButtonText = isCopyAll ? "Copy All" : "Copy Selected",
+                CloseButtonText = "Cancel",
+            };
+            ContentDialogResult result = await filterDialog.ShowAsync(ContentDialogPlacement.Popup);
+            if (result == ContentDialogResult.Primary)
+            {
+                // Persist POI filters
+                Settings.LastPoIFilterTheater = filterDialog.Theater;
+                Settings.LastPoIFilterCampaign = filterDialog.Campaign;
+                Settings.LastPoIFilterTags = filterDialog.Tags;
+
+                // set common POI properties
+                PointOfInterestType poiType = PointOfInterestType.USER;
+                if (filterDialog.Campaign != null)
+                    poiType = PointOfInterestType.CAMPAIGN;
+
+                // save POIs
+                List<string> dupes = [ ];
+                foreach (INavpointInfo nav in navpts)
+                {
+                    bool success = PointOfInterestDbase.Instance.AddPointOfInterest(new()
+                    {
+                        Type = poiType,
+                        Theater = filterDialog.Theater,
+                        Campaign = filterDialog.Campaign,
+                        Tags = PointOfInterest.SanitizedTags(filterDialog.Tags),
+                        Name = nav.Name,
+                        Latitude = nav.Lat,
+                        Longitude = nav.Lon,
+                        Elevation = nav.Alt
+                    });
+                    if (!success)
+                        dupes.Add(nav.Name);
+                }
+                PointOfInterestDbase.Instance.Save(filterDialog.Campaign);
+
+                if (dupes.Count > 0)
+                {
+                    string dupeMsg = (dupes.Count == 1) ?
+                        $"The point of interest \"{dupes[0]}\" already exists and was not copied." :
+                        $"The following points of interest already exist and were not copied:\n- {string.Join("\n- ", dupes)}";
+                    await Utilities.Message1BDialog(root, "Duplicate Points of Interest", dupeMsg);
+                }
+            }
+        }
+
         // ------------------------------------------------------------------------------------------------------------
         //
         // navpoint command functions
