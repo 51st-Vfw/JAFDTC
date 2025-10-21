@@ -399,30 +399,6 @@ namespace JAFDTC.UI.F15E
         // ------------------------------------------------------------------------------------------------------------
 
         /// <summary>
-        /// return true if the current edit steerpoint is a valid poi, false otherwise. a valid poi has a name,
-        /// latitude, and longitude. the name should be unique within the poi database.
-        /// </summary>
-        private bool IsEditCoordValidPoI()
-        {
-            if (string.IsNullOrEmpty(EditStpt.Name) || string.IsNullOrEmpty(EditStpt.Alt) ||
-                !double.TryParse(EditStpt.Lat, out double lat) || !double.TryParse(EditStpt.Lon, out double lon))
-            {
-                return false;
-            }
-            string theater = PointOfInterest.TheaterForCoords(lat, lon);
-            PointOfInterestDbQuery query = new(PointOfInterestTypeMask.ANY, theater, null, EditStpt.Name);
-            List<PointOfInterest> pois = PointOfInterestDbase.Instance.Find(query);
-            foreach (PointOfInterest poi in pois)
-            {
-                if (poi.Type != PointOfInterestType.USER)
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        /// <summary>
         /// load the internal edit copy of the currently selected reference point from the edit copy of the current
         /// steerpoint, creating a new empty reference point if it does not yet exist.
         /// </summary>
@@ -533,7 +509,6 @@ namespace JAFDTC.UI.F15E
                 Utilities.SetEnableState(kvp.Value, isEditable);
             }
 
-            Utilities.SetEnableState(uiStptBtnAddPoI, isEditable && IsEditCoordValidPoI());
             Utilities.SetEnableState(uiStptBtnPrev, !isErrorsInUI && (EditStptIndex > 0));
             Utilities.SetEnableState(uiStptBtnAdd, isEditable && !isErrorsInUI);
             Utilities.SetEnableState(uiStptBtnNext, !isErrorsInUI && (EditStptIndex < (Config.STPT.Points.Count - 1)));
@@ -725,19 +700,6 @@ namespace JAFDTC.UI.F15E
         }
 
         // ---- steerpoint management ---------------------------------------------------------------------------------
-
-        /// <summary>
-        /// steerpoint add poi click: add current steerpoint to the poi database or update a matching editable poi.
-        /// </summary>
-        private async void StptBtnAddPoI_Click(object sender, RoutedEventArgs args)
-        {
-            if (EditStpt.IsValid && await NavpointUIHelper.CreatePoIAt(Content.XamlRoot, EditStpt.Name, EditStpt.Lat,
-                                                                       EditStpt.Lon, EditStpt.Alt))
-            {
-                RebuildPointsOfInterest();
-                RebuildInterfaceState();
-            }
-        }
 
         /// <summary>
         /// steerpoint previous click: save the current steerpoint and move to the previous steerpoint.
