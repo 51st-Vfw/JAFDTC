@@ -114,7 +114,7 @@ namespace JAFDTC.UI.App
         private static IntPtr _oldWndProc = IntPtr.Zero;
 
         private static readonly SizeInt32 _windSizeBase = new() { Width = 1000, Height = 700 };
-        private static readonly SizeInt32 _windSizeMin = new() { Width = 1000, Height = 590 };
+        private static readonly SizeInt32 _windSizeMin = new() { Width = 1000, Height = 660 };
         private static SizeInt32 _windSizeMax = new() { Width = 1800, Height = 1600 };
 
         private static PointInt32 _windPosnCur = new() { X = 0, Y = 0 };
