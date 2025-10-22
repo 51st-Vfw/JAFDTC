@@ -4,7 +4,7 @@
     
 ConfigurationListPage.xaml : ui xaml for configuration list page that provides the top-level ui
 
-Copyright(C) 2023 ilominar/raven
+Copyright(C) 2023-2025 ilominar/raven
 
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -277,38 +277,39 @@ https://www.gnu.org/licenses/.
             <TextBlock Grid.Column="1" Margin="12,6,0,6"
                        Foreground="{ThemeResource TextFillColorTertiary}"
                        VerticalAlignment="Center">
-                Pilot in Pit
+                Lua Installed
             </TextBlock>
             <FontIcon Grid.Column="2" Margin="6,1,0,0"
+                      x:Name="uiStatsIconLua"
+                      VerticalAlignment="Center"
+                      FontSize="14" FontFamily="Segoe Fluent Icons"/>
+
+            <TextBlock Grid.Column="3" Margin="12,6,0,6"
+                       Foreground="{ThemeResource TextFillColorTertiary}"
+                       VerticalAlignment="Center">
+                Running
+            </TextBlock>
+            <FontIcon Grid.Column="4" Margin="6,1,0,0"
+                      x:Name="uiStatsIconLaunch"
+                      VerticalAlignment="Center"
+                      FontSize="14" FontFamily="Segoe Fluent Icons"/>
+
+            <TextBlock Grid.Column="5" Margin="12,6,0,6"
+                       Foreground="{ThemeResource TextFillColorTertiary}"
+                       VerticalAlignment="Center">
+                Pilot in Pit
+            </TextBlock>
+            <FontIcon Grid.Column="6" Margin="6,1,0,0"
                       x:Name="uiStatsIconExport"
                       VerticalAlignment="Center"
                       FontSize="14" FontFamily="Segoe Fluent Icons"/>
-            <TextBlock Grid.Column="3" Margin="2,6,0,6"
+            <TextBlock Grid.Column="7" Margin="2,6,0,6"
                        x:Name="uiStatsAirframe"
                        Foreground="{ThemeResource TextFillColorTertiary}"
                        VerticalAlignment="Center">
                 FIXUP
             </TextBlock>
 
-            <TextBlock Grid.Column="4" Margin="12,6,0,6"
-                       Foreground="{ThemeResource TextFillColorTertiary}"
-                       VerticalAlignment="Center">
-                Running
-            </TextBlock>
-            <FontIcon Grid.Column="5" Margin="6,1,0,0"
-                      x:Name="uiStatsIconLaunch"
-                      VerticalAlignment="Center"
-                      FontSize="14" FontFamily="Segoe Fluent Icons"/>
-
-            <TextBlock Grid.Column="6" Margin="12,6,0,6"
-                       Foreground="{ThemeResource TextFillColorTertiary}"
-                       VerticalAlignment="Center">
-                Lua Installed
-            </TextBlock>
-            <FontIcon Grid.Column="7" Margin="6,1,0,0"
-                      x:Name="uiStatsIconLua"
-                      VerticalAlignment="Center"
-                      FontSize="14" FontFamily="Segoe Fluent Icons"/>
             <TextBlock Grid.Column="9" Margin="0,0,12,0"
                        x:Name="uiStatsValuePilot"
                        Foreground="{ThemeResource TextFillColorTertiary}"
