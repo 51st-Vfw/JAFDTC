@@ -573,7 +573,7 @@ namespace JAFDTC.Models.A10C.Misc
             misc.TACANBand = "0";                    // X
             misc.TACANChannel = "0";
             misc.IFFMasterMode = "0";                // Off
-            misc.IFFMode3Code = "0000";
+            misc.IFFMode3Code = "";
             misc.IFFMode4On = false.ToString();
             misc.AGLFloor = "500";
             misc.MSLFloor = "0";
