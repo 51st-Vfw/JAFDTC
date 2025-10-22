@@ -380,12 +380,15 @@ namespace JAFDTC.UI.Base
         /// </summary>
         private void CmdExportPOIs_Click(object sender, RoutedEventArgs args)
         {
-            if ((uiNavptListView.Items.Count > 0) && (uiNavptListView.SelectedItems.Count == 0))
-                NavpointUIHelper.CopyNavpointsAsPoIs(Content.XamlRoot,
-                                                     [.. uiNavptListView.SelectedItems.OfType<INavpointInfo>() ], true);
-            else if (uiNavptListView.Items.Count > 0)
-                NavpointUIHelper.CopyNavpointsAsPoIs(Content.XamlRoot,
-                                                     [.. uiNavptListView.Items.OfType<INavpointInfo>() ], false);
+            if (uiNavptListView.Items.Count > 0)
+            {
+                if (uiNavptListView.SelectedItems.Count == 0)
+                    NavpointUIHelper.CopyNavpointsAsPoIs(Content.XamlRoot,
+                                                         [.. uiNavptListView.Items.OfType<INavpointInfo>()], true);
+                else
+                    NavpointUIHelper.CopyNavpointsAsPoIs(Content.XamlRoot,
+                                                         [.. uiNavptListView.SelectedItems.OfType<INavpointInfo>()], false);
+            }
         }
 
         /// <summary>
