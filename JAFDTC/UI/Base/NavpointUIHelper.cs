@@ -492,7 +492,7 @@ namespace JAFDTC.UI.Base
             Dictionary<string, PointOfInterest> marks = [];
             PointOfInterestDbQuery query = new(PointOfInterestTypeMask.ANY, theater);
             foreach (PointOfInterest poi in PointOfInterestDbase.Instance.Find(query))
-                marks[$"{poi.Theater}|{poi.Campaign}|{poi.Name}"] = poi;
+                marks[poi.UniqueID] = poi;
 
             MapWindow mapWindow = new()
             {
@@ -520,14 +520,15 @@ namespace JAFDTC.UI.Base
                 (info.Type == MapMarkerInfo.MarkerType.USER) ||
                 (info.Type == MapMarkerInfo.MarkerType.CAMPAIGN))
             {
-                string[] fields = info.TagStr.Split('|');
-                name = info.Type switch
-                {
-                    MapMarkerInfo.MarkerType.DCS_CORE => $"POI: {fields[2]}",
-                    MapMarkerInfo.MarkerType.USER => $"User: {fields[2]}",
-                    MapMarkerInfo.MarkerType.CAMPAIGN => $"{fields[1]}: {fields[2]}",
-                    _ => throw new NotImplementedException(),
-                };
+                PointOfInterest poi = PointOfInterestDbase.Instance.Find(info.TagStr);
+                if (poi != null)
+                    name = poi.Type switch
+                    {
+                        PointOfInterestType.DCS_CORE => $"POI: {poi.Name}",
+                        PointOfInterestType.USER => $"User: {poi.Name}",
+                        PointOfInterestType.CAMPAIGN => $"{poi.Campaign}: {poi.Name}",
+                        _ => throw new NotImplementedException(),
+                    };
             }
             return name;
         }
@@ -542,12 +543,9 @@ namespace JAFDTC.UI.Base
                 (info.Type == MapMarkerInfo.MarkerType.USER) ||
                 (info.Type == MapMarkerInfo.MarkerType.CAMPAIGN))
             {
-                string[] fields = info.TagStr.Split('|');
-                PointOfInterestDbQuery query = new((PointOfInterestTypeMask)(1 << (int)info.Type), fields[0],
-                                                   fields[1], fields[2]);
-                List<PointOfInterest> pois = PointOfInterestDbase.Instance.Find(query);
-                if (pois.Count == 1)
-                    elev = $"{pois[0].Elevation}{units}";
+                PointOfInterest poi = PointOfInterestDbase.Instance.Find(info.TagStr);
+                if (poi != null)
+                    elev = $"{poi.Elevation}{units}";
             }
             return elev;
         }

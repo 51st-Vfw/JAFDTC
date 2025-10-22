@@ -22,6 +22,7 @@ using JAFDTC.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Xml.Linq;
 
 namespace JAFDTC.Models.DCS
 {
@@ -151,6 +152,12 @@ namespace JAFDTC.Models.DCS
         /// </summary>
         private static string AuxKey(PointOfInterest poi)
             => (poi.Type == PointOfInterestType.CAMPAIGN) ? poi.Campaign : poi.Theater;
+
+        /// <summary>
+        /// return the single poi that matches a uid, null if no such poi exists
+        /// </summary>
+        public PointOfInterest Find(string uid)
+            => _uniqueIDs.GetValueOrDefault(uid, null);
 
         /// <summary>
         /// return list of points of interest containing all points of interest that match the specified query

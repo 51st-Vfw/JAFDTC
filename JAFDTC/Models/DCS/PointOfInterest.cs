@@ -18,9 +18,15 @@
 //
 // ********************************************************************************************************************
 
+// define this to use human-readalbe tags.
+//
+#define noDEBUG_POI_UID_HUMAN_FRIENDLY
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace JAFDTC.Models.DCS
 {
@@ -64,7 +70,7 @@ namespace JAFDTC.Models.DCS
         public int Zulu { get;  }
 
         public TheaterInfo(double latMin, double latMax, double lonMin, double lonMax, int zulu)
-            => (LatMin, LatMax, LonMin, LonMax, Zulu) = (latMin, latMax, lonMin, lonMax, 0);
+            => (LatMin, LatMax, LonMin, LonMax, Zulu) = (latMin, latMax, lonMin, lonMax, zulu);
 
         public bool Contains(double lat, double lon)
             => ((LatMin <= lat) && (lat <= LatMax) && (LonMin <= lon) && (lon <= LonMax));
@@ -121,7 +127,23 @@ namespace JAFDTC.Models.DCS
         };
         public static List<string> Theaters => [.. TheaterInfo.Keys ];
 
-        public string UniqueID => $"{(int)Type}:{Theater}:{Name}";
+#if DEBUG_POI_UID_HUMAN_FRIENDLY
+
+        public string UniqueID => $"{(int)Type}:{Theater.ToLower()}:{Name.ToLower()}:{Tags.ToLower()}";
+
+#else
+
+        public string UniqueID
+        {
+            get
+            {
+                string uid = $"{(int)Type}:{Theater.ToLower()}:{Name.ToLower()}:{SanitizedTags(Tags).ToLower()}";
+                byte[] hashBytes = SHA1.HashData(Encoding.UTF8.GetBytes(uid));
+                return Convert.ToHexString(hashBytes).ToLower();
+            }
+        }
+
+#endif
 
         public override string ToString()
         {
