@@ -98,6 +98,18 @@ function JAFDTC_F16CM_Fn_QueryNOP()
     return "NOP"
 end
 
+-- return altitude in m at specified lat/lon.
+--
+function JAFDTC_F16CM_Fn_QueryAltAtLatLon(lat, lon)
+    local numLat = tonumber(lat)
+    local numLon = tonumber(lon)
+    local v3PosLo = LoGeoCoordinatesToLoCoordinates(lon, lat)
+
+    local numX = tonumber(v3PosLo.x)
+    local numZ = tonumber(v3PosLo.z)
+    return LoGetAltitude(numX, numZ)
+end
+
 function JAFDTC_F16CM_Fn_NOP(msg)
     -- do nothing...
 end
