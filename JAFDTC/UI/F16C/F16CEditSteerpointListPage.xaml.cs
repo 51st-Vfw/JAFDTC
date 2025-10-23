@@ -518,7 +518,6 @@ namespace JAFDTC.UI.F16C
         /// </summary>
         private void StptList_SelectionChanged(object sender, SelectionChangedEventArgs args)
         {
-            Debug.WriteLine(">>>> StptList_SelectionChanged");
             if (!_isMarshalling)
             {
                 ListView list = sender as ListView;
@@ -527,7 +526,6 @@ namespace JAFDTC.UI.F16C
                                                                    ROUTE_NAME, list.SelectedIndex + 1));
                 RebuildInterfaceState();
             }
-            Debug.WriteLine("<<<< StptList_SelectionChanged");
         }
 
         /// <summary>
