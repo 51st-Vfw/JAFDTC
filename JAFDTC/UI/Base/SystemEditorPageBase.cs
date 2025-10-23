@@ -512,7 +512,7 @@ namespace JAFDTC.UI.Base
                 foreach (KeyValuePair<string, ComboBox> kv in PageComboBoxes)
                 {
                     GetControlEditStateProperty(kv.Value, out PropertyInfo property, out BindableObject editState);
-                    if (property == null)
+                    if (property == null || editState == null)
                         continue;
 
                     string value = (string)property.GetValue(editState);
@@ -545,7 +545,7 @@ namespace JAFDTC.UI.Base
                 foreach (KeyValuePair<string, CheckBox> kv in PageCheckBoxes)
                 {
                     GetControlEditStateProperty(kv.Value, out PropertyInfo property, out BindableObject editState);
-                    if (property == null)
+                    if (property == null || editState == null)
                         continue;
 
                     if (!bool.TryParse((string)property.GetValue(editState), out bool isChecked))
