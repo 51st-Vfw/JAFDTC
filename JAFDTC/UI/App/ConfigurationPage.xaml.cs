@@ -340,7 +340,7 @@ namespace JAFDTC.UI.App
         /// <summary>
         /// nav left panel selection change: navigate to the corresponding editor page.
         ///
-        /// NavigationEventArgs.Parameter will be the configuaraiont object conforming to IConfiguration.
+        /// NavigationEventArgs.Parameter will be the configuaration object conforming to IConfiguration.
         /// </summary>
         private void NavListEditors_SelectionChanged(object sender, RoutedEventArgs args)
         {
