@@ -703,14 +703,7 @@ namespace JAFDTC.UI.F16C
         /// </summary>
         private void StptBtnPrev_Click(object sender, RoutedEventArgs args)
         {
-            CurSelectedPoI = null;
-            uiPoINameFilterBox.Text = null;
-            CopyEditToConfig(EditStptIndex, true);
-            EditStptIndex -= 1;
-            CopyConfigToEdit(EditStptIndex);
-            RebuildInterfaceState();
-            if (NavArgs.IsUnlinked)
-                uiStptValueName.Focus(FocusState.Programmatic);
+            ChangeToEditNavpointAtIndex(EditStptIndex - 1);
         }
 
         /// <summary>
@@ -718,14 +711,7 @@ namespace JAFDTC.UI.F16C
         /// </summary>
         private void StptBtnNext_Click(object sender, RoutedEventArgs args)
         {
-            CurSelectedPoI = null;
-            uiPoINameFilterBox.Text = null;
-            CopyEditToConfig(EditStptIndex, true);
-            EditStptIndex += 1;
-            CopyConfigToEdit(EditStptIndex);
-            RebuildInterfaceState();
-            if (NavArgs.IsUnlinked)
-                uiStptValueName.Focus(FocusState.Programmatic);
+            ChangeToEditNavpointAtIndex(EditStptIndex + 1);
         }
 
         /// <summary>
