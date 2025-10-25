@@ -18,10 +18,12 @@
 //
 // ********************************************************************************************************************
 
+using JAFDTC.Models.Base;
 using JAFDTC.Models.DCS;
 using JAFDTC.Models.F16C.MFD;
 using JAFDTC.Models.F16C.Upload;
 using JAFDTC.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection.Emit;
@@ -163,11 +165,19 @@ namespace JAFDTC.Models.F16C
 
         public override void BuildSystems(StringBuilder sb)
         {
+            // perform a state query to determine the altitude of the steerpoints marked with an Alt of "ground"
+            // and update the configuration accordingly.
+            //
+            NavptAltitudeQueryBuilder queryAlt = new(_dm, null);
+            Dictionary<string, object> state = queryAlt.QueryNavpointAltitudes([.. _cfg.STPT.Points ], true);
+            if (Convert.ToInt32(state.GetValueOrDefault("NavPtElev.conversions", 0)) > 0)
+                _cfg.Save(this);
+
             // perform state queries to capture current avionics state that we are interested in including the mfd
             // format setup and the munitions on jet according to sms pages.
             //
             MFDStateQueryBuilder queryMFD = new(_dm, null);
-            Dictionary<string, object> state = queryMFD.QueryCurrentMFDStateForAllModes();
+            state = queryMFD.QueryCurrentMFDStateForAllModes(state);
 
             SMSStateQueryBuilder querySMS = new(_dm, null);
             state = querySMS.QuerySMSMunitionsForMode(MFDSystem.MasterModes.ICP_AG, state);

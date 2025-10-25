@@ -130,6 +130,21 @@ namespace JAFDTC.Models.F16C.STPT
                                     ((VxP[0].Type == RefPointTypes.VIP) ? "\xF138 " : "") +         // circle
                                     ((VxP[0].Type == RefPointTypes.VRP) ? "\xF16B " : "");          // square
 
+        [JsonIgnore]
+        public override string LocationUI
+        {
+            get => ((string.IsNullOrEmpty(Lat)) ? "Unknown" : Coord.RemoveLLDegZeroFill(LatUI)) + ", " +
+                   ((string.IsNullOrEmpty(Lon)) ? "Unknown" : Coord.RemoveLLDegZeroFill(LonUI)) + " / " +
+                   ((string.IsNullOrEmpty(Alt)) ? "Ground" : Alt + "’");
+            set
+            {
+                // NOTE: set value is ignored to ensure consistency with the lat/lon/alt properties, setting just
+                // NOTE: generates the property changed event.
+
+                OnPropertyChanged();
+            }
+        }
+
         // ------------------------------------------------------------------------------------------------------------
         //
         // construction

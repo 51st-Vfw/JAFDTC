@@ -606,9 +606,7 @@ namespace JAFDTC.UI.F16C
                 if (EditStptDetailPage != null)
                     CopyConfigToEdit();                                 // just in case editor is FA, so it won't FO
                 string elev = EditSTPT.Points[info.TagInt - 1].Alt;
-                if (string.IsNullOrEmpty(elev))
-                    elev = "0";
-                return $"{elev}{units}";
+                return (string.IsNullOrEmpty(elev)) ? "Ground" : $"{elev}{units}";
             }
             else
             {
