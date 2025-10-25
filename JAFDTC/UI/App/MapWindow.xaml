@@ -245,20 +245,32 @@ https://www.gnu.org/licenses/.
             <StackPanel Grid.Column="0" Margin="16,6,16,6"
                         Orientation="Horizontal"
                         VerticalAlignment="Center">
-                <TextBlock x:Name="uiTxtTheater" Margin="0,0,0,0">THEATER</TextBlock>
+                <TextBlock x:Name="uiTxtTheater" Margin="0,0,0,0"
+                           Foreground="{ThemeResource TextFillColorTertiary}">
+                    THEATER
+                </TextBlock>
 
-                <TextBlock x:Name="uiTxtMouseLat" Width="90" Margin="12,0,0,0"/>
-                <TextBlock x:Name="uiTxtMouseLon" Width="90" Margin="8,0,0,0"/>
+                <TextBlock x:Name="uiTxtMouseLat" Width="90" Margin="12,0,0,0"
+                           Foreground="{ThemeResource TextFillColorTertiary}"/>
+                <TextBlock x:Name="uiTxtMouseLon" Width="90" Margin="8,0,0,0"
+                           Foreground="{ThemeResource TextFillColorTertiary}"/>
             </StackPanel>
             <StackPanel Grid.Column="2" Margin="16,6,16,6"
                         Orientation="Vertical"
                         VerticalAlignment="Center">
-                <TextBlock x:Name="uiTxtSelName" Margin="0,0,0,0">NAME</TextBlock>
+                <TextBlock x:Name="uiTxtSelName" Margin="0,0,0,0"
+                           Foreground="{ThemeResource TextFillColorTertiary}">
+                    NAME
+                </TextBlock>
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock x:Name="uiTxtSelLat" Margin="0,0,0,0"/>
-                    <TextBlock x:Name="uiTxtSelLon" Margin="8,0,0,0"/>
-                    <TextBlock x:Name="uiLblSelAlt" Margin="10,0,0,0">ALT:</TextBlock>
-                    <TextBlock x:Name="uiTxtSelAlt" Margin="8,0,0,0">0'</TextBlock>
+                    <TextBlock x:Name="uiTxtSelLat" Margin="0,0,0,0"
+                               Foreground="{ThemeResource TextFillColorTertiary}"/>
+                    <TextBlock x:Name="uiTxtSelLon" Margin="8,0,0,0"
+                               Foreground="{ThemeResource TextFillColorTertiary}"/>
+                    <TextBlock x:Name="uiLblSelAlt" Margin="10,0,0,0"
+                               Foreground="{ThemeResource TextFillColorTertiary}">ALT:</TextBlock>
+                    <TextBlock x:Name="uiTxtSelAlt" Margin="8,0,0,0"
+                               Foreground="{ThemeResource TextFillColorTertiary}">0'</TextBlock>
                 </StackPanel>
             </StackPanel>
         </Grid>
