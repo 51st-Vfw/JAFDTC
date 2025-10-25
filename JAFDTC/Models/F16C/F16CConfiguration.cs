@@ -338,6 +338,12 @@ namespace JAFDTC.Models.F16C
             ConfigurationUpdated();
         }
 
+        public override void AfterSystemEditorCompletes(string systemTag)
+        {
+            if (!DTE.IsDefault && DTE.EnableRebuildValue && MergeableSysTagsForDTC.Contains(systemTag))
+                SaveMergedSimDTC(DTE.Template, DTE.OutputPath);
+        }
+
         public override bool CanAcceptPasteForSystem(string cboardTag, string systemTag = null)
         {
             return (!string.IsNullOrEmpty(cboardTag) &&

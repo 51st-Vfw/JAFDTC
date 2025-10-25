@@ -38,11 +38,11 @@ namespace JAFDTC.UI.F16C
 
         public SystemBase GetSystemConfig(IConfiguration config) => ((F16CConfiguration)config).DTE;
 
-        public List<ConfigEditorPageInfo> MergableSystems => new()
-        {
+        public List<ConfigEditorPageInfo> MergableSystems =>
+        [
             F16CEditRadioPageHelper.PageInfo,
             F16CEditCMDSPage.PageInfo
-        };
+        ];
 
         /// <summary>
         /// validate the dtc configuration is correct. this checks to ensure the output path is valid and
@@ -61,9 +61,10 @@ namespace JAFDTC.UI.F16C
         {
             editDTC.Template = new(((F16CConfiguration)config).DTE.Template);
             editDTC.OutputPath = new(((F16CConfiguration)config).DTE.OutputPath);
-            editDTC.MergedSystemTags = new();
+            editDTC.MergedSystemTags = [ ];
             foreach (string tag in ((F16CConfiguration)config).DTE.MergedSystemTags)
                 editDTC.MergedSystemTags.Add(tag);
+            editDTC.EnableRebuild = new(((F16CConfiguration)config).DTE.EnableRebuild);
             editDTC.EnableLoad = new(((F16CConfiguration)config).DTE.EnableLoad);
         }
 
@@ -75,9 +76,10 @@ namespace JAFDTC.UI.F16C
         {
             ((F16CConfiguration)config).DTE.Template = new(editDTC.Template);
             ((F16CConfiguration)config).DTE.OutputPath = new(editDTC.OutputPath);
-            ((F16CConfiguration)config).DTE.MergedSystemTags = new();
+            ((F16CConfiguration)config).DTE.MergedSystemTags = [ ];
             foreach (string tag in editDTC.MergedSystemTags)
                 ((F16CConfiguration)config).DTE.MergedSystemTags.Add(tag);
+            ((F16CConfiguration)config).DTE.EnableRebuild = new(editDTC.EnableRebuild);
             ((F16CConfiguration)config).DTE.EnableLoad = new(editDTC.EnableLoad);
         }
     }

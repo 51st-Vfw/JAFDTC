@@ -201,8 +201,8 @@ namespace JAFDTC.UI.Base
             Utilities.SetEnableState(uiBtnDelTmplt, (uiComboTemplate.SelectedIndex > 0));
             Utilities.SetEnableState(uiBtnClearOutput, (uiValueOutput.Text.Length > 0));
 
-            // TODO: permanently disable this until rebuild is supported...
-            Utilities.SetEnableState(uiCkbxEnableRebuild, false);
+            Utilities.SetEnableState(uiCkbxEnableRebuild, (EditDTC.MergedSystemTags.Count > 0));
+            Utilities.SetEnableState(uiCkbxEnableLoad, true);
         }
 
         /// <summary>
@@ -386,15 +386,17 @@ namespace JAFDTC.UI.Base
         {
             ToggleButton tbtn = (ToggleButton)sender;
             if ((tbtn.IsChecked == true) && !EditDTC.MergedSystemTags.Contains(tbtn.Tag.ToString()))
-            {
                 EditDTC.MergedSystemTags.Add(tbtn.Tag.ToString());
-                SaveEditStateToConfig();
-            }
             else if ((tbtn.IsChecked == false) && EditDTC.MergedSystemTags.Contains((string)tbtn.Tag.ToString()))
-            {
                 EditDTC.MergedSystemTags.Remove(tbtn.Tag.ToString());
-                SaveEditStateToConfig();
+
+            if (EditDTC.MergedSystemTags.Count == 0)
+            {
+                EditDTC.EnableRebuild = bool.FalseString;
+                uiCkbxEnableRebuild.IsChecked = false;
             }
+
+            SaveEditStateToConfig();
         }
 
         // ---- combos ------------------------------------------------------------------------------------------------

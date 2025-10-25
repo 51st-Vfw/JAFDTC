@@ -278,9 +278,9 @@ namespace JAFDTC.Models
             try
             {
                 string json = FileManager.LoadDTCTemplate(Airframe, template)
-                    ?? throw new Exception("TODO: FAILED TO LOAD");
+                    ?? throw new Exception($"Cannot load DTC template {template}");
                 JsonNode dom = JsonNode.Parse(json)
-                    ?? throw new Exception("TODO: FAILED TO PARSE");
+                    ?? throw new Exception($"Cannot parse DTC template {template}");
 
                 dom["name"] = name;
                 dom["data"]["name"] = name;
@@ -292,8 +292,10 @@ namespace JAFDTC.Models
                 }
 
                 json = dom.ToJsonString(Globals.JSONOptions)
-                    ?? throw new Exception("TODO: FAILED TO SERIALIZE");
+                    ?? throw new Exception($"Cannot create DTC file");
                 FileManager.WriteFile(outputPath, json);
+
+                FileManager.Log($"Successfully merged \"{Name}\" into {outputPath}");
             }
             catch (Exception ex)
             {
