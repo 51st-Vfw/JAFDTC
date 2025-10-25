@@ -90,11 +90,6 @@ namespace JAFDTC.UI.Base
         public bool CopyEditToConfig(int indexNavpt, INavpointInfo edit, IConfiguration config);
 
         /// <summary>
-        // returns true if the edit navpoint has errors; false otherwise.
-        /// <summary>
-        public bool HasErrors(INavpointInfo edit);
-
-        /// <summary>
         /// returns a list of properties that currently have erorrs in the edit navpoint. the check may be lmited to
         /// a specific property (propertyName != null) or may apply to all properties (propertyName == null). if there
         /// are no errors, the returned list will be empty.

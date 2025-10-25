@@ -289,7 +289,7 @@ namespace JAFDTC.UI.Base
             foreach (KeyValuePair<string, TextBox> kvp in _curNavptTxtBoxExtMap)
                 if (!TextBoxExtensions.GetIsValid(kvp.Value))
                     return true;
-            return PageHelper.HasErrors(EditNavpt);
+            return PageHelper.GetErrors(EditNavpt, null).Count > 0;
         }
 
         // ------------------------------------------------------------------------------------------------------------

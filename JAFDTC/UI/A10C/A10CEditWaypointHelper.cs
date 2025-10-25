@@ -101,11 +101,6 @@ namespace JAFDTC.UI.A10C
             return false;
         }
 
-        public bool HasErrors(INavpointInfo edit)
-        {
-            return ((WaypointInfo)edit).HasErrors;
-        }
-
         public List<string> GetErrors(INavpointInfo edit, string propertyName)
         {
             return [.. ((WaypointInfo)edit).GetErrors(propertyName).Cast<string>() ];
