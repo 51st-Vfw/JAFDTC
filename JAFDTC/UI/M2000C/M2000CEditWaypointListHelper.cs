@@ -91,7 +91,23 @@ namespace JAFDTC.UI.M2000C
             return true;
         }
 
-        public override void AppendFromPOIsToConfig(IEnumerable<PointOfInterest> pois, IConfiguration config)
+        public override INavpointSystemImport NavptSystem(IConfiguration config)
+        {
+            return ((M2000CConfiguration)config).WYPT;
+        }
+
+        public override void ResetSystem(IConfiguration config)
+        {
+            ((M2000CConfiguration)config).WYPT.Reset();
+        }
+
+        public override int AddNavpoint(IConfiguration config, int atIndex = -1)
+        {
+            WaypointInfo wypt = ((M2000CConfiguration)config).WYPT.Add(null, atIndex);
+            return ((M2000CConfiguration)config).WYPT.Points.IndexOf(wypt);
+        }
+
+        public override void AddNavpointsFromPOIs(IEnumerable<PointOfInterest> pois, IConfiguration config)
         {
             M2000CConfiguration m2kConfig = (M2000CConfiguration)config;
             ObservableCollection<WaypointInfo> points = m2kConfig.WYPT.Points;
@@ -108,22 +124,6 @@ namespace JAFDTC.UI.M2000C
                 };
                 m2kConfig.WYPT.Points.Add(new WaypointInfo(wypt));
             }
-        }
-
-        public override INavpointSystemImport NavptSystem(IConfiguration config)
-        {
-            return ((M2000CConfiguration)config).WYPT;
-        }
-
-        public override void ResetSystem(IConfiguration config)
-        {
-            ((M2000CConfiguration)config).WYPT.Reset();
-        }
-
-        public override int AddNavpoint(IConfiguration config, int atIndex = -1)
-        {
-            WaypointInfo wypt = ((M2000CConfiguration)config).WYPT.Add(null, atIndex);
-            return ((M2000CConfiguration)config).WYPT.Points.IndexOf(wypt);
         }
 
         public override bool PasteNavpoints(IConfiguration config, string cbData, bool isReplace = false)

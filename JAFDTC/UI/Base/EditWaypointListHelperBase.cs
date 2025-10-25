@@ -43,7 +43,7 @@ namespace JAFDTC.UI.Base
         public abstract int NavptCurrentCount(IConfiguration config);
         public virtual int NavptRemainingCount(IConfiguration config) => NavptMaxCount - NavptCurrentCount(config);
         public abstract int AddNavpoint(IConfiguration config, int atIndex = -1);
-        public abstract void AppendFromPOIsToConfig(IEnumerable<PointOfInterest> pois, IConfiguration config);
+        public abstract void AddNavpointsFromPOIs(IEnumerable<PointOfInterest> pois, IConfiguration config);
         public abstract void CaptureNavpoints(IConfiguration config, WyptCaptureDataRx.WyptCaptureData[] wypts, int startIndex);
         public abstract void CopyConfigToEdit(IConfiguration config, ObservableCollection<INavpointInfo> edit);
         public abstract bool CopyEditToConfig(ObservableCollection<INavpointInfo> edit, IConfiguration config);

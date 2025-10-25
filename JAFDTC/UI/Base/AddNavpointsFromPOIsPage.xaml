@@ -139,7 +139,7 @@ https://www.gnu.org/licenses/.
 
             <ListView Grid.Row="1" x:Name="uiPoIListView"
                       SelectionMode="Extended"
-                      SelectionChanged="uiPoIListView_SelectionChanged"
+                      SelectionChanged="PoIListView_SelectionChanged"
                       ItemsSource="{x:Bind CurPoIItems}">
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="local:PoIListItem">

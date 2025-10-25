@@ -91,25 +91,6 @@ namespace JAFDTC.UI.FA18C
             return true;
         }
 
-        public override void AppendFromPOIsToConfig(IEnumerable<PointOfInterest> pois, IConfiguration config)
-        {
-            FA18CConfiguration hornetConfig = (FA18CConfiguration)config;
-            ObservableCollection<WaypointInfo> points = hornetConfig.WYPT.Points;
-            int startNumber = (points.Count == 0) ? 1 : points[^1].Number + 1;
-            foreach (Models.DCS.PointOfInterest poi in pois)
-            {
-                WaypointInfo wypt = new()
-                {
-                    Number = startNumber++,
-                    Name = poi.Name,
-                    Lat = poi.Latitude,
-                    Lon = poi.Longitude,
-                    Alt = poi.Elevation
-                };
-                hornetConfig.WYPT.Points.Add(new WaypointInfo(wypt));
-            }
-        }
-
         public override INavpointSystemImport NavptSystem(IConfiguration config)
         {
             return ((FA18CConfiguration)config).WYPT;
@@ -124,6 +105,25 @@ namespace JAFDTC.UI.FA18C
         {
             WaypointInfo wypt = ((FA18CConfiguration)config).WYPT.Add(null, atIndex);
             return ((FA18CConfiguration)config).WYPT.Points.IndexOf(wypt);
+        }
+
+        public override void AddNavpointsFromPOIs(IEnumerable<PointOfInterest> pois, IConfiguration config)
+        {
+            FA18CConfiguration hornetConfig = (FA18CConfiguration)config;
+            ObservableCollection<WaypointInfo> points = hornetConfig.WYPT.Points;
+            int startNumber = (points.Count == 0) ? 1 : points[^1].Number + 1;
+            foreach (PointOfInterest poi in pois)
+            {
+                WaypointInfo wypt = new()
+                {
+                    Number = startNumber++,
+                    Name = poi.Name,
+                    Lat = poi.Latitude,
+                    Lon = poi.Longitude,
+                    Alt = poi.Elevation
+                };
+                hornetConfig.WYPT.Points.Add(new WaypointInfo(wypt));
+            }
         }
 
         public override bool PasteNavpoints(IConfiguration config, string cbData, bool isReplace = false)

@@ -92,25 +92,6 @@ namespace JAFDTC.UI.AV8B
             return true;
         }
 
-        public override void AppendFromPOIsToConfig(IEnumerable<PointOfInterest> pois, IConfiguration config)
-        {
-            AV8BConfiguration av8bConfig = (AV8BConfiguration)config;
-            ObservableCollection<WaypointInfo> points = av8bConfig.WYPT.Points;
-            int startNumber = (points.Count == 0) ? 1 : points[^1].Number + 1;
-            foreach (Models.DCS.PointOfInterest poi in pois)
-            {
-                WaypointInfo wypt = new()
-                {
-                    Number = startNumber++,
-                    Name = poi.Name,
-                    Lat = poi.Latitude,
-                    Lon = poi.Longitude,
-                    Alt = poi.Elevation
-                };
-                av8bConfig.WYPT.Points.Add(new WaypointInfo(wypt));
-            }
-        }
-
         public override INavpointSystemImport NavptSystem(IConfiguration config)
         {
             return ((AV8BConfiguration)config).WYPT;
@@ -125,6 +106,25 @@ namespace JAFDTC.UI.AV8B
         {
             WaypointInfo wypt = ((AV8BConfiguration)config).WYPT.Add(null, atIndex);
             return ((AV8BConfiguration)config).WYPT.Points.IndexOf(wypt);
+        }
+
+        public override void AddNavpointsFromPOIs(IEnumerable<PointOfInterest> pois, IConfiguration config)
+        {
+            AV8BConfiguration av8bConfig = (AV8BConfiguration)config;
+            ObservableCollection<WaypointInfo> points = av8bConfig.WYPT.Points;
+            int startNumber = (points.Count == 0) ? 1 : points[^1].Number + 1;
+            foreach (PointOfInterest poi in pois)
+            {
+                WaypointInfo wypt = new()
+                {
+                    Number = startNumber++,
+                    Name = poi.Name,
+                    Lat = poi.Latitude,
+                    Lon = poi.Longitude,
+                    Alt = poi.Elevation
+                };
+                av8bConfig.WYPT.Points.Add(new WaypointInfo(wypt));
+            }
         }
 
         public override bool PasteNavpoints(IConfiguration config, string cbData, bool isReplace = false)

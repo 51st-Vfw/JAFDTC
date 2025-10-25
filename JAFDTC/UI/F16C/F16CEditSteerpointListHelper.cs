@@ -53,25 +53,6 @@ namespace JAFDTC.UI.F16C
             return false;
         }
 
-        public override void AppendFromPOIsToConfig(IEnumerable<PointOfInterest> pois, IConfiguration config)
-        {
-            F16CConfiguration f16Config = (F16CConfiguration)config;
-            ObservableCollection<SteerpointInfo> points = f16Config.STPT.Points;
-            int startNumber = (points.Count == 0) ? 1 : points[^1].Number + 1;
-            foreach (Models.DCS.PointOfInterest poi in pois)
-            {
-                SteerpointInfo wypt = new()
-                {
-                    Number = startNumber++,
-                    Name = poi.Name,
-                    Lat = poi.Latitude,
-                    Lon = poi.Longitude,
-                    Alt = poi.Elevation
-                };
-                f16Config.STPT.Points.Add(new SteerpointInfo(wypt));
-            }
-        }
-
         public override INavpointSystemImport NavptSystem(IConfiguration config)
         {
             return ((F16CConfiguration)config).STPT;
@@ -86,6 +67,24 @@ namespace JAFDTC.UI.F16C
         {
             Debug.Assert(false);
             return 0;
+        }
+        public override void AddNavpointsFromPOIs(IEnumerable<PointOfInterest> pois, IConfiguration config)
+        {
+            F16CConfiguration f16Config = (F16CConfiguration)config;
+            ObservableCollection<SteerpointInfo> points = f16Config.STPT.Points;
+            int startNumber = (points.Count == 0) ? 1 : points[^1].Number + 1;
+            foreach (PointOfInterest poi in pois)
+            {
+                SteerpointInfo wypt = new()
+                {
+                    Number = startNumber++,
+                    Name = poi.Name,
+                    Lat = poi.Latitude,
+                    Lon = poi.Longitude,
+                    Alt = poi.Elevation
+                };
+                f16Config.STPT.Points.Add(new SteerpointInfo(wypt));
+            }
         }
 
         public override bool PasteNavpoints(IConfiguration config, string cbData, bool isReplace = false)

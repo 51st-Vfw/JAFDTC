@@ -19,6 +19,7 @@
 
 using JAFDTC.Models;
 using JAFDTC.Models.Base;
+using JAFDTC.Models.DCS;
 using JAFDTC.UI.Controls.Map;
 using JAFDTC.Utilities;
 using Microsoft.UI.Xaml.Controls;
@@ -100,8 +101,6 @@ namespace JAFDTC.UI.Base
         /// </summary>
         public bool CopyEditToConfig(ObservableCollection<INavpointInfo> edit, IConfiguration config);
 
-        public void AppendFromPOIsToConfig(IEnumerable<Models.DCS.PointOfInterest> pois, IConfiguration config);
-
         /// <summary>
         /// return the navpoint system.
         /// </summary>
@@ -117,6 +116,12 @@ namespace JAFDTC.UI.Base
         /// end of list). this updates (but does not save) the configuration. returns index of added navpoint.
         /// </summary>
         public int AddNavpoint(IConfiguration config, int atIndex = -1);
+
+        /// <summary>
+        /// add navpoints from a list of pois to the end of the navpoint list in the configuration. this updates
+        /// (but does not save) the configuration. 
+        /// </summary>
+        public void AddNavpointsFromPOIs(IEnumerable<PointOfInterest> pois, IConfiguration config);
 
         /// <summary>
         /// paste navpoints from the clipboard data. pasted navpoints can replace or append to the current navpoint

@@ -27,6 +27,7 @@ using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace JAFDTC.UI.Base
@@ -93,7 +94,7 @@ namespace JAFDTC.UI.Base
         {
             InitializeComponent();
 
-            CurPoIItems = new ObservableCollection<App.PoIListItem>();
+            CurPoIItems = [ ];
 
             // NOTE: these need to be kept in sync with PoIDetails and the xaml.
             //
@@ -160,14 +161,14 @@ namespace JAFDTC.UI.Base
         //
         // ------------------------------------------------------------------------------------------------------------
 
-        private void uiPoIListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void PoIListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             UpdateAcceptButtons();
         }
 
         private void UpdateAcceptButtons()
         {
-            ToolTip tip = new ToolTip();
+            ToolTip tip = new();
             int remainingCount = NavArgs.PageHelper.NavptRemainingCount(NavArgs.Config);
             if (uiPoIListView.SelectedItems.Count > 0)
             {
@@ -208,20 +209,21 @@ namespace JAFDTC.UI.Base
         /// </summary>
         private async void AcceptBtnOk_Click(object sender, RoutedEventArgs args)
         {
+            string navptName = NavArgs.PageHelper.NavptName.ToLower();
             if (uiPoIListView.SelectedItems.Count > 0)
             {
                 ContentDialogResult result = await Utilities.Message2BDialog(
                     Content.XamlRoot,
                     "Append Selected?",
-                    $"Are you sure you want to append {uiPoIListView.SelectedItems.Count} selected POIs as {NavArgs.PageHelper.NavptName}s?",
+                    $"Are you sure you want to append {uiPoIListView.SelectedItems.Count} selected POIs as {navptName}s?",
                     $"Append Selected"
                 );
                 if (result == ContentDialogResult.Primary)
                 {
-                    List<PointOfInterest> pois = new List<PointOfInterest>(uiPoIListView.SelectedItems.Count);
-                    foreach (App.PoIListItem item in uiPoIListView.SelectedItems)
+                    List<PointOfInterest> pois = new(uiPoIListView.SelectedItems.Count);
+                    foreach (App.PoIListItem item in uiPoIListView.SelectedItems.Cast<App.PoIListItem>())
                         pois.Add(item.PoI);
-                    NavArgs.PageHelper.AppendFromPOIsToConfig(pois, NavArgs.Config);
+                    NavArgs.PageHelper.AddNavpointsFromPOIs(pois, NavArgs.Config);
                     Frame.GoBack();
                 }
             }
@@ -230,15 +232,15 @@ namespace JAFDTC.UI.Base
                 ContentDialogResult result = await Utilities.Message2BDialog(
                     Content.XamlRoot,
                     "Append All?",
-                    $"Are you sure you want to append all {CurPoIItems.Count} listed POIs as {NavArgs.PageHelper.NavptName}s?",
+                    $"Are you sure you want to append all {CurPoIItems.Count} listed POIs as {navptName}s?",
                     $"Append All"
                 );
                 if (result == ContentDialogResult.Primary)
                 {
-                    List<PointOfInterest> pois = new List<PointOfInterest>(CurPoIItems.Count);
+                    List<PointOfInterest> pois = new(CurPoIItems.Count);
                     foreach (App.PoIListItem item in CurPoIItems)
                         pois.Add(item.PoI);
-                    NavArgs.PageHelper.AppendFromPOIsToConfig(pois, NavArgs.Config);
+                    NavArgs.PageHelper.AddNavpointsFromPOIs(pois, NavArgs.Config);
                     Frame.GoBack();
                 }
             }
@@ -261,7 +263,7 @@ namespace JAFDTC.UI.Base
         {
             if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
             {
-                List<string> suitableItems = new();
+                List<string> suitableItems = [ ];
                 List<PointOfInterest> pois = GetPoIsMatchingFilter(sender.Text);
                 if (pois.Count == 0)
                     suitableItems.Add("No Matching Points of Interest Found");
@@ -338,7 +340,7 @@ namespace JAFDTC.UI.Base
         /// </summary>
         private async void CmdCoords_Click(object sender, RoutedEventArgs args)
         {
-            List<string> items = new(_llFmtTextToFmtMap.Keys);
+            List<string> items = [.. _llFmtTextToFmtMap.Keys ];
             GetListDialog coordList = new(items, null, 0, _llFmtToIndexMap[LLDisplayFmt])
             {
                 XamlRoot = Content.XamlRoot,
