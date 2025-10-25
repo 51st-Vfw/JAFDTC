@@ -328,6 +328,8 @@ namespace JAFDTC.Models
 
         public abstract void AfterLoadFromJSON();
 
+        public virtual void AfterSystemEditorCompletes(string systemTag) { }
+
         public abstract bool CanAcceptPasteForSystem(string cboardTag, string systemTag = null);
 
         // ------------------------------------------------------------------------------------------------------------

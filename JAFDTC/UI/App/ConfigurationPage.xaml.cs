@@ -349,6 +349,9 @@ namespace JAFDTC.UI.App
             {
                 ConfigEditorPageNavArgs navArgs = new(this, Config, info.EditorHelperType, UIDtoConfigMap, uiHdrBtnBack);
                 ((Frame)uiNavSplitView.Content).Navigate(info.EditorPageType, navArgs);
+
+                if (uiNavListEditors.SelectedIndex != Config.LastSystemEdited)
+                    Config.AfterSystemEditorCompletes(EditorPages[Config.LastSystemEdited].Tag);
                 Config.LastSystemEdited = uiNavListEditors.SelectedIndex;
 
                 CloseAuxWindows();
@@ -536,6 +539,8 @@ namespace JAFDTC.UI.App
 
         protected override void OnNavigatedFrom(NavigationEventArgs args)
         {
+            Config.AfterSystemEditorCompletes(EditorPages[uiNavListEditors.SelectedIndex].Tag);
+
             CloseAuxWindows();
 
             Config.ConfigurationSaved -= ConfigurationSavedHandler;

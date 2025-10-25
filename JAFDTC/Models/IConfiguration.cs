@@ -250,7 +250,8 @@ namespace JAFDTC.Models
         public bool SaveMergedSimDTC(string template, string outputPath);
 
         /// <summary>
-        /// TODO: document
+        /// updates the UpdatesInfoTextUI, UpdatesIconsUI, and UpdatesIconBadgesUI properties in response to an update
+        /// to the configuration.
         /// </summary>
         public void ConfigurationUpdated();
 
@@ -270,6 +271,11 @@ namespace JAFDTC.Models
         /// called after deserializing a configuration from json to allow opportunities to update versions, etc.
         /// </summary>
         public void AfterLoadFromJSON();
+
+        /// <summary>
+        /// called after the indicated system editor has finished operating on the configuration.
+        /// </summary>
+        public void AfterSystemEditorCompletes(string systemTag);
 
         /// <summary>
         /// returns true if the given clipboard content can be consumed by the configuration or system (as identified
