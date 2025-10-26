@@ -265,16 +265,30 @@ namespace JAFDTC.UI.Controls.Map
         }
 
         /// <summary>
-        /// configure the control from the data source by copying over the marks and routes from the data source to
-        /// the control's internal state. this implicitly clears any existing marks or routes.
+        /// configure the control from the dictionaries for routes and marks. any selection is cleared and any
+        /// previous routes or marks are removed form the map.
         /// </summary>
         public void SetupMapContent(Dictionary<string, List<INavpointInfo>> routes,
                                     Dictionary<string, PointOfInterest> marks)
         {
+            if (SelectedMarkerInfo != null)
+                VerbMirror?.MirrorVerbMarkerSelected(this, new());
+
+            foreach (MapMarkerControl marker in _marks.Values)
+                Children.Remove(marker);
             _marks.Clear();
             foreach (KeyValuePair<string, PointOfInterest> kvp in marks)
                 AddMark(kvp.Key, kvp.Value);
 
+            foreach (RouteInfo routeInfo in _routes.Values)
+            {
+                Children.Remove(routeInfo.EditHandlePos);
+                Children.Remove(routeInfo.EditHandleNeg);
+                Children.Remove(routeInfo.Path.ControlFg);
+                Children.Remove(routeInfo.Path.ControlBg);
+                foreach (MapMarkerControl marker in routeInfo.Points)
+                    Children.Remove(marker);
+            }
             _routes.Clear();
             foreach (KeyValuePair<string, List<INavpointInfo>> kvp in routes)
                 AddRoute(kvp.Key, kvp.Value);
@@ -391,10 +405,12 @@ namespace JAFDTC.UI.Controls.Map
                         Visibility = Visibility.Collapsed
                     },
                 MapMarkerInfo.MarkerType.DCS_CORE
-                    => new MapMarkerSquareControl(brush, brush, new Size(18.0, 18.0)),
+                    => new MapMarkerSquareControl(brush, brush, new Size(20.0, 20.0)),
                 MapMarkerInfo.MarkerType.USER
-                or MapMarkerInfo.MarkerType.CAMPAIGN
-                or MapMarkerInfo.MarkerType.IMPORT_GEN
+                    => new MapMarkerTriangleControl(brush, brush, new Size(20.0, 20.0)),
+                MapMarkerInfo.MarkerType.CAMPAIGN
+                    => new MapMarkerCircleControl(brush, brush, new Size(20.0, 20.0)),
+                MapMarkerInfo.MarkerType.IMPORT_GEN
                 or MapMarkerInfo.MarkerType.IMPORT_S2A
                 or MapMarkerInfo.MarkerType.BULLSEYE
                     => new MapMarkerCircleControl(brush, brush, new Size(20.0, 20.0)),
