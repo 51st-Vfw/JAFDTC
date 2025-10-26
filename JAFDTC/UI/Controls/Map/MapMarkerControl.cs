@@ -204,9 +204,10 @@ namespace JAFDTC.UI.Controls.Map
                 VerticalAlignment = VerticalAlignment.Center,
                 HorizontalAlignment = HorizontalAlignment.Center,
                 Stretch = Stretch.None,
-                Stroke = stroke,
                 Fill = fill,
-                StrokeThickness = thickness
+                Stroke = stroke,
+                StrokeThickness = thickness,
+                StrokeLineJoin = PenLineJoin.Round
             };
 
         /// <summary>
