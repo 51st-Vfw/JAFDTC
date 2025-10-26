@@ -25,6 +25,11 @@ namespace JAFDTC.UI.Controls.Map
     public interface IMapControlMarkerExplainer
     {
         /// <summary>
+        /// returns the display type of the marker with the specified information.
+        /// </summary>
+        public string MarkerDisplayType(MapMarkerInfo info);
+
+        /// <summary>
         /// returns the display name of the marker with the specified information.
         /// </summary>
         public string MarkerDisplayName(MapMarkerInfo info);

@@ -19,6 +19,7 @@
 
 using JAFDTC.Models.Base;
 using JAFDTC.Models.DCS;
+using JAFDTC.UI.Base;
 using JAFDTC.UI.Controls.Map;
 using JAFDTC.Utilities;
 using MapControl;
@@ -466,11 +467,15 @@ namespace JAFDTC.UI.App
         /// <summary>
         /// delete command: delete selected marker.
         /// </summary>
-        public void CmdDelete_Click(object sender, RoutedEventArgs args)
+        public async void CmdDelete_Click(object sender, RoutedEventArgs args)
         {
-            MapMarkerInfo info = uiMap.SelectedMarkerInfo;
-            MirrorVerbMarkerSelected(null, new());
-            MirrorVerbMarkerDeleted(null, info);
+            string type = MarkerExplainer.MarkerDisplayType(uiMap.SelectedMarkerInfo);
+            if (await NavpointUIHelper.DeleteDialog(Content.XamlRoot, type, 1))
+            {
+                MapMarkerInfo info = uiMap.SelectedMarkerInfo;
+                MirrorVerbMarkerSelected(null, new());
+                MirrorVerbMarkerDeleted(null, info);
+            }
         }
 
         /// <summary>

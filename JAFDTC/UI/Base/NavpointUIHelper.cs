@@ -511,6 +511,19 @@ namespace JAFDTC.UI.Base
         }
 
         /// <summary>
+        /// returns the display type of the marker with the specified information. this only handles poi marker
+        /// types, reuturning null for other types
+        /// </summary>
+        public static string MarkerDisplayType(MapMarkerInfo info)
+            => info.Type switch
+            {
+                MapMarkerInfo.MarkerType.DCS_CORE => $"Core POI",
+                MapMarkerInfo.MarkerType.USER => $"User POI",
+                MapMarkerInfo.MarkerType.CAMPAIGN => $"Campaign POI",
+                _ => null
+            };
+
+        /// <summary>
         /// returns the display name of the marker with the specified information.
         /// </summary>
         public static string MarkerDisplayName(MapMarkerInfo info)
