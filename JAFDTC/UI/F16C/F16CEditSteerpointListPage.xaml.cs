@@ -650,6 +650,7 @@ namespace JAFDTC.UI.F16C
             {
                 _isVerbEvent = true;
                 uiStptListView.SelectedIndex = info.TagInt - 1;
+                uiStptListView.ScrollIntoView(uiStptListView.SelectedItem);
                 _isVerbEvent = false;
 
                 EditStptDetailPage?.ChangeToEditNavpointAtIndex(info.TagInt - 1);
