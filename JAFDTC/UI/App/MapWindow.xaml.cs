@@ -126,7 +126,16 @@ namespace JAFDTC.UI.App
 
         public string Theater { get; set; }
 
-        public LLFormat CoordFormat { get; set; }
+        private LLFormat _coordFormat;
+        public LLFormat CoordFormat
+        {
+            get => _coordFormat;
+            set
+            {
+                _coordFormat = value;
+                RebuildInterfaceState();
+            }
+        }
 
         public MapMarkerInfo.MarkerTypeMask OpenMask { get; set; }
 
