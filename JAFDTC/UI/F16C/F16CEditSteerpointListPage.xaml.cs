@@ -332,8 +332,9 @@ namespace JAFDTC.UI.F16C
         /// </summary>
         private async void CmdRenumber_Click(object sender, RoutedEventArgs args)
         {
-            // TODO: check navpoint min/max range
-            int newStartNum = await NavpointUIHelper.RenumberDialog(Content.XamlRoot, "Steerpoint", 1, 700);
+            int maxNavptNum = STPTSystem.SystemInfo.NavptMaxCount - EditSTPT.Points.Count + 1;
+            int newStartNum = await NavpointUIHelper.RenumberDialog(Content.XamlRoot, STPTSystem.SystemInfo.NavptName,
+                                                                    1, maxNavptNum);
             if (newStartNum != -1)
             {
                 StartingStptNum = newStartNum;
