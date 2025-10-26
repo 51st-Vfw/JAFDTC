@@ -28,6 +28,7 @@ using Microsoft.UI.Input;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Input;
 using System;
 using System.Collections.Generic;
@@ -198,7 +199,11 @@ namespace JAFDTC.UI.App
             uiMap.ViewportChanged += Map_ViewportChanged;
 
 // TODO: switch to "real" tile uri...
-//          uiMapTiles.TileSource = new TileSource { UriTemplate = "https://tile.openstreetmap.org/{z}/{x}/{y}.png" };
+//          uiMapTiles.TileSource = new TileSource { UriTemplate = "https://tile.openstreetmap.org/{z}/{x}/{y}.png" Description = "DESCRIPTION HERE" };
+// Map tiles © [MapTiles](https://www.maptilesapi.com/) API | Map data © [OpenStreetMap](https://www.openstreetmap.org/copyright) contributors
+
+            foreach (Inline inline in Utilities.TextToInlines(uiMapTiles.Description))
+                uiMapTextAttribution.Inlines.Add(inline);
 
             // ---- window setup
 

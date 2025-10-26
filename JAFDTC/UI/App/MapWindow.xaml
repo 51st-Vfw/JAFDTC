@@ -231,8 +231,17 @@ https://www.gnu.org/licenses/.
                 <map:MapTileLayer x:Name="uiMapTiles"
                                   TileSource="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
                                   SourceName="OpenStreetMap"
-                                  Description="© [OpenStreetMap contributors](http://www.openstreetmap.org/copyright)"/>
+                                  Description="Map Data © [OpenStreetMap](http://www.openstreetmap.org/copyright) contributors"/>
             </ctrl:MapControl>
+            <StackPanel Background="#A0C8C8C8"
+                        VerticalAlignment="Bottom"
+                        HorizontalAlignment="Right">
+                <TextBlock x:Name="uiMapTextAttribution" Margin="12,4,12,4"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Right"
+                           FontSize="12"
+                           Foreground="#FF000000"/>
+            </StackPanel>
         </Grid>
 
         <!-- command bar bottom area -->

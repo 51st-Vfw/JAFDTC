@@ -31,6 +31,8 @@ https://www.gnu.org/licenses/.
                 <!-- Other merged dictionaries here -->
             </ResourceDictionary.MergedDictionaries>
             <!-- Other app resources here -->
+            <SolidColorBrush x:Key="HyperlinkForeground" Color="#FF0000FF"/>
+            <SolidColorBrush x:Key="HyperlinkForegroundPointerOver" Color="#FFB000FF"/>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

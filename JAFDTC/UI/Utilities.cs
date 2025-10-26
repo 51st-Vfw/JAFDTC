@@ -22,6 +22,7 @@ using JAFDTC.UI.App;
 using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Markup;
 using Microsoft.UI.Xaml.Media;
 using System;
@@ -32,6 +33,7 @@ using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Graphics;
 using Windows.System;
+using Windows.UI;
 using Windows.UI.Core;
 
 namespace JAFDTC.UI
@@ -45,6 +47,9 @@ namespace JAFDTC.UI
         private static readonly Regex regexInts = new("^[\\-]{0,1}[0-9]*$");
 // TODO: DEPRECATE
         private static readonly Regex regexTwoNegs = new("[^\\-]*[\\-][^\\-]*[\\-].*");
+
+        private static readonly Regex regexMdHyperlink = new Regex(@"\[([^\]]+)\]\(([^\)]+)\)");
+
 
         // ------------------------------------------------------------------------------------------------------------
         //
@@ -577,6 +582,43 @@ namespace JAFDTC.UI
                 return (await dialog.ShowAsync() == ContentDialogResult.Primary) ? dialog.SelectedItem : "";
             }
             return null;
+        }
+
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // text span support
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
+        /// <summary>
+        /// converts text containing hyperlinks in markdown syntax [text](url) to a collection of Run and Hyperlink
+        /// inlines. adapted from HyperlinkText class in XAML-Map-Control (see Map code for attribution).
+        /// </summary>
+        public static IEnumerable<Inline> TextToInlines(string text)
+        {
+            List<Inline> inlines = [ ];
+            while (!string.IsNullOrEmpty(text))
+            {
+                Match match = regexMdHyperlink.Match(text);
+
+                if (match.Success &&
+                    (match.Groups.Count == 3) &&
+                    Uri.TryCreate(match.Groups[2].Value, UriKind.Absolute, out Uri uri))
+                {
+                    inlines.Add(new Run { Text = text[..match.Index] });
+                    text = text[(match.Index + match.Length)..];
+
+                    Hyperlink link = new() { NavigateUri = uri };
+                    link.Inlines.Add(new Run { Text = match.Groups[1].Value });
+                    inlines.Add(link);
+                }
+                else
+                {
+                    inlines.Add(new Run { Text = text });
+                    text = null;
+                }
+            }
+            return inlines;
         }
     }
 }
