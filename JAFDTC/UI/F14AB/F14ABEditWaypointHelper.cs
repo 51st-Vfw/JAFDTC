@@ -40,13 +40,18 @@ namespace JAFDTC.UI.F14AB
     /// </summary>
     internal class F14ABEditWaypointHelper : IEditNavpointPageHelper
     {
-        public string SystemTag => WYPTSystem.SystemTag;
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // IEditNavpointPageHelper
+        //
+        // ------------------------------------------------------------------------------------------------------------
 
-        public string NavptName => "Waypoint";
+        public INavpointSystemImport NavptSystem(IConfiguration config)
+        {
+            return ((F14ABConfiguration)config).WYPT;
+        }
 
-        public LLFormat NavptCoordFmt => LLFormat.DDM_P1ZF;
-
-        public int MaxNameLength => 0;
+        public NavpointSystemInfo SystemInfo => WYPTSystem.SystemInfo;
 
         public Dictionary<string, string> LatExtProperties
             => new()

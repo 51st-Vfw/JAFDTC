@@ -2,7 +2,7 @@
 //
 // IEditNavpointHelper.cs : interface for EditNavPointPage helper classes
 //
-// Copyright(C) 2023 ilominar/raven
+// Copyright(C) 2023-2025 ilominar/raven
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 // Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -20,10 +20,10 @@
 using JAFDTC.Models;
 using JAFDTC.Models.Base;
 using JAFDTC.Models.DCS;
-using JAFDTC.Utilities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+
 using static JAFDTC.Utilities.Networking.WyptCaptureDataRx;
 
 namespace JAFDTC.UI.Base
@@ -35,26 +35,14 @@ namespace JAFDTC.UI.Base
     public interface IEditNavpointPageHelper
     {
         /// <summary>
-        /// return the system tag for the navpoint system.
+        /// return the navpoint system from a configuration.
         /// </summary>
-        public string SystemTag { get; }
+        public abstract INavpointSystemImport NavptSystem(IConfiguration config);
 
         /// <summary>
-        /// return the name to refer to a navpoint (waypoint, steerpoint, etc.) by in the user interface. the string
-        /// should be singular and capitalized.
+        /// return an object defining key navpoint system parameters.
         /// </summary>
-        public string NavptName { get; }
-
-        /// <summary>
-        /// return the coordinate format used by navpoints in the navigation system.
-        /// </summary>
-        public LLFormat NavptCoordFmt { get; }
-
-        /// <summary>
-        /// Returns the maximum number of characters the jet will allow for a navpoint name.
-        /// If zero, the UI will not indicate a limit.
-        /// </summary>
-        public int MaxNameLength { get; }
+        public NavpointSystemInfo SystemInfo { get; }
 
         /// <summary>
         /// returns a dictionary with the TextBoxExtensions to apply to the latitude field. the keys are property

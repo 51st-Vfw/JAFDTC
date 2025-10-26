@@ -35,17 +35,23 @@ using static JAFDTC.Utilities.Networking.WyptCaptureDataRx;
 namespace JAFDTC.UI.A10C
 {
     /// <summary>
-    /// TODO: docuemnt
+    /// helper class that implements IEditNavpointPageHelper to support the a10c waypoint list editor in the ui.
+    /// this helper works with the basic EditNavpointPage implementation.
     /// </summary>
     internal class A10CEditWaypointHelper : IEditNavpointPageHelper
     {
-        public string SystemTag => WYPTSystem.SystemTag;
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // IEditNavpointPageHelper
+        //
+        // ------------------------------------------------------------------------------------------------------------
 
-        public string NavptName => "Waypoint";
+        public INavpointSystemImport NavptSystem(IConfiguration config)
+        {
+            return ((A10CConfiguration)config).WYPT;
+        }
 
-        public LLFormat NavptCoordFmt => LLFormat.DDM_P3ZF;
-
-        public int MaxNameLength => 12;
+        public NavpointSystemInfo SystemInfo => WYPTSystem.SystemInfo;
 
         public Dictionary<string, string> LatExtProperties
             => new()

@@ -2,7 +2,7 @@
 //
 // AV8BEditWaypointHelper.cs : IEditNavpointPageHelper for the av8b configuration
 //
-// Copyright(C) 2023- ilominar/raven
+// Copyright(C) 2023-2025 ilominar/raven
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 // Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -35,17 +35,23 @@ using static JAFDTC.Utilities.Networking.WyptCaptureDataRx;
 namespace JAFDTC.UI.AV8B
 {
     /// <summary>
-    /// TODO: docuemnt
+    /// helper class that implements IEditNavpointPageHelper to support the av8b waypoint list editor in the ui.
+    /// this helper works with the basic EditNavpointPage implementation.
     /// </summary>
     internal class AV8BEditWaypointHelper : IEditNavpointPageHelper
     {
-        public string SystemTag => WYPTSystem.SystemTag;
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // IEditNavpointPageHelper
+        //
+        // ------------------------------------------------------------------------------------------------------------
 
-        public string NavptName => "Waypoint";
+        public INavpointSystemImport NavptSystem(IConfiguration config)
+        {
+            return ((AV8BConfiguration)config).WYPT;
+        }
 
-        public LLFormat NavptCoordFmt => LLFormat.DMS;
-
-        public int MaxNameLength => 0;
+        public NavpointSystemInfo SystemInfo => WYPTSystem.SystemInfo;
 
         public Dictionary<string, string> LatExtProperties => null;
 

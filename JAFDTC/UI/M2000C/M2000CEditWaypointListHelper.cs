@@ -25,7 +25,6 @@ using JAFDTC.Models.M2000C.WYPT;
 using JAFDTC.UI.App;
 using JAFDTC.UI.Base;
 using JAFDTC.UI.Controls.Map;
-using JAFDTC.Utilities;
 using Microsoft.UI.Xaml.Controls;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -37,8 +36,8 @@ using static JAFDTC.Utilities.Networking.WyptCaptureDataRx;
 namespace JAFDTC.UI.M2000C
 {
     /// <summary>
-    /// helper class for EditNavpointListPage that implements IEditNavpointListPageHelper. this handles the
-    /// specialization of the generate navpoint list page for the m-2000c airframe.
+    /// helper class that implements IEditNavpointListPageHelper to support the m2000c waypoint list editor in the ui.
+    /// this helper works with the basic EditNavpointListPage implementation.
     /// </summary>
     internal class M2000CEditWaypointListHelper : EditWaypointListHelperBase
     {
@@ -48,36 +47,31 @@ namespace JAFDTC.UI.M2000C
 
         // ------------------------------------------------------------------------------------------------------------
         //
-        // properties
+        // IEditNavpointListPageHelper
         //
         // ------------------------------------------------------------------------------------------------------------
 
-        public override string SystemTag => WYPTSystem.SystemTag;
+        public override INavpointSystemImport NavptSystem(IConfiguration config)
+        {
+            return ((M2000CConfiguration)config).WYPT;
+        }
 
-        public override string NavptListTag => WYPTSystem.WYPTListTag;
+        public override NavpointSystemInfo SystemInfo => WYPTSystem.SystemInfo;
 
-        public override AirframeTypes AirframeType => AirframeTypes.M2000C;
-
-        public override int NavptMaxCount => 10;
-
-        public override LLFormat NavptCoordFmt => LLFormat.DDM_P3ZF;
-
-        // ------------------------------------------------------------------------------------------------------------
-        //
-        // methods
-        //
-        // ------------------------------------------------------------------------------------------------------------
-
-        public override int NavptCurrentCount(IConfiguration config) => ((M2000CConfiguration)config).WYPT.Count;
+        public override object NavptEditorArg(Page parentEditor, IMapControlVerbMirror verbMirror,
+                                              IConfiguration config, int indexNavpt)
+        {
+            bool isUnlinked = string.IsNullOrEmpty(config.SystemLinkedTo(SystemInfo.SystemTag));
+            return new EditNavptPageNavArgs(parentEditor, verbMirror, config, indexNavpt, isUnlinked,
+                                            typeof(M2000CEditWaypointHelper));
+        }
 
         public override void CopyConfigToEdit(IConfiguration config, ObservableCollection<INavpointInfo> edit)
         {
             M2000CConfiguration a10cConfig = (M2000CConfiguration)config;
             edit.Clear();
             foreach (WaypointInfo wypt in a10cConfig.WYPT.Points)
-            {
                 edit.Add(new WaypointInfo(wypt));
-            }
         }
 
         public override bool CopyEditToConfig(ObservableCollection<INavpointInfo> edit, IConfiguration config)
@@ -85,15 +79,8 @@ namespace JAFDTC.UI.M2000C
             M2000CConfiguration m2kConfig = (M2000CConfiguration)config;
             m2kConfig.WYPT.Points.Clear();
             foreach (WaypointInfo wypt in edit.Cast<WaypointInfo>())
-            {
                 m2kConfig.WYPT.Points.Add(new WaypointInfo(wypt));
-            }
             return true;
-        }
-
-        public override INavpointSystemImport NavptSystem(IConfiguration config)
-        {
-            return ((M2000CConfiguration)config).WYPT;
         }
 
         public override void ResetSystem(IConfiguration config)
@@ -131,11 +118,6 @@ namespace JAFDTC.UI.M2000C
             return ((M2000CConfiguration)config).WYPT.ImportSerializedNavpoints(cbData, isReplace);
         }
 
-        public override string ExportNavpoints(IConfiguration config)
-        {
-            return ((M2000CConfiguration)config).WYPT.SerializeNavpoints();
-        }
-
         public override void CaptureNavpoints(IConfiguration config, WyptCaptureData[] wypts, int startIndex)
         {
             WYPTSystem wyptSys = ((M2000CConfiguration)config).WYPT;
@@ -162,14 +144,6 @@ namespace JAFDTC.UI.M2000C
                     startIndex++;
                 }
             }
-        }
-
-        public override object NavptEditorArg(Page parentEditor, IMapControlVerbMirror verbMirror,
-                                              IConfiguration config, int indexNavpt)
-        {
-            bool isUnlinked = string.IsNullOrEmpty(config.SystemLinkedTo(SystemTag));
-            return new EditNavptPageNavArgs(parentEditor, verbMirror, config, indexNavpt, isUnlinked,
-                                            typeof(M2000CEditWaypointHelper));
         }
     }
 }

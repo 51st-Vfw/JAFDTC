@@ -40,7 +40,6 @@ using System.Text.Json;
 using Windows.ApplicationModel.DataTransfer;
 
 using static JAFDTC.Utilities.Networking.WyptCaptureDataRx;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace JAFDTC.UI.Base
 {
@@ -72,9 +71,9 @@ namespace JAFDTC.UI.Base
 
         protected override SystemBase SystemConfig => null;
 
-        protected override string SystemTag => PageHelper.SystemTag;
+        protected override string SystemTag => PageHelper.SystemInfo.SystemTag;
 
-        protected override string SystemName => PageHelper.NavptName;
+        protected override string SystemName => PageHelper.SystemInfo.NavptName;
 
         protected override bool IsPageStateDefault => (EditNavpt.Count == 0);
 
@@ -145,7 +144,7 @@ namespace JAFDTC.UI.Base
         {
             _isMarshalling = true;
             if (PageHelper.CopyEditToConfig(EditNavpt, Config))
-                Config.Save(this, PageHelper.SystemTag);
+                Config.Save(this, SystemTag);
             _isMarshalling = false;
             UpdateUIFromEditState();
         }
@@ -186,7 +185,7 @@ namespace JAFDTC.UI.Base
         {
             JAFDTC.App curApp = Application.Current as JAFDTC.App;
 
-            bool isFull = EditNavpt.Count >= PageHelper.NavptMaxCount;
+            bool isFull = EditNavpt.Count >= PageHelper.SystemInfo.NavptMaxCount;
             bool isDCSListening = curApp.IsDCSAvailable && (curApp.DCSActiveAirframe == Config.Airframe);
 
             Utilities.SetEnableState(uiBarAdd, isEditable && !isFull);
@@ -254,7 +253,7 @@ namespace JAFDTC.UI.Base
         /// </summary>
         private void CmdCopy_Click(object sender, RoutedEventArgs args)
         {
-            General.DataToClipboard(PageHelper.NavptListTag,
+            General.DataToClipboard(PageHelper.SystemInfo.NavptListTag,
                                     JsonSerializer.Serialize(uiNavptListView.SelectedItems, Configuration.JsonOptions));
         }
 
@@ -270,10 +269,10 @@ namespace JAFDTC.UI.Base
 
 // TODO: need to check paste against maximum navpoint count
             ClipboardData cboard = await General.ClipboardDataAsync();
-            if (cboard?.SystemTag == PageHelper.NavptListTag)
+            if (cboard?.SystemTag == PageHelper.SystemInfo.NavptListTag)
             {
                 PageHelper.PasteNavpoints(Config, cboard.Data);
-                Config.Save(this, PageHelper.SystemTag);
+                Config.Save(this, SystemTag);
                 CopyConfigToEditState();
             }
         }
@@ -286,7 +285,7 @@ namespace JAFDTC.UI.Base
         {
             Debug.Assert(uiNavptListView.SelectedItems.Count > 0);
 
-            if (await NavpointUIHelper.DeleteDialog(Content.XamlRoot, PageHelper.NavptName,
+            if (await NavpointUIHelper.DeleteDialog(Content.XamlRoot, SystemName,
                                                     uiNavptListView.SelectedItems.Count))
             {
                 _isMarshalling = true;
@@ -316,7 +315,7 @@ namespace JAFDTC.UI.Base
         private async void CmdRenumber_Click(object sender, RoutedEventArgs args)
         {
 // TODO: check navpoint min/max range
-            int newStartNum = await NavpointUIHelper.RenumberDialog(Content.XamlRoot, PageHelper.NavptName, 1, 700);
+            int newStartNum = await NavpointUIHelper.RenumberDialog(Content.XamlRoot, SystemName, 1, 700);
             if (newStartNum != -1)
             {
                 _startingNavptNum = newStartNum;
@@ -336,7 +335,7 @@ namespace JAFDTC.UI.Base
             _captureIndex = EditNavpt.Count;
             if (EditNavpt.Count > 0)
             {
-                ContentDialogResult result = await Utilities.CaptureActionDialog(Content.XamlRoot, PageHelper.NavptName);
+                ContentDialogResult result = await Utilities.CaptureActionDialog(Content.XamlRoot, SystemName);
                 if (result != ContentDialogResult.Primary)
                     _captureIndex = (uiNavptListView.SelectedIndex >= 0) ? uiNavptListView.SelectedIndex : 0;
             }
@@ -344,7 +343,7 @@ namespace JAFDTC.UI.Base
             SaveEditStateToConfig();
 
             WyptCaptureDataRx.Instance.WyptCaptureDataReceived += CmdCapture_WyptCaptureDataReceived;
-            await Utilities.CaptureMultipleDialog(Content.XamlRoot, PageHelper.NavptName);
+            await Utilities.CaptureMultipleDialog(Content.XamlRoot, SystemName);
             WyptCaptureDataRx.Instance.WyptCaptureDataReceived -= CmdCapture_WyptCaptureDataReceived;
         }
 
@@ -356,7 +355,7 @@ namespace JAFDTC.UI.Base
             DispatcherQueue.TryEnqueue(DispatcherQueuePriority.Normal, () =>
             {
                 PageHelper.CaptureNavpoints(Config, wypts, _captureIndex);
-                Config.Save(this, PageHelper.SystemTag);
+                Config.Save(this, SystemTag);
                 CopyConfigToEditState();
             });
         }
@@ -380,15 +379,12 @@ namespace JAFDTC.UI.Base
         /// </summary>
         private void CmdExportPOIs_Click(object sender, RoutedEventArgs args)
         {
-            if (uiNavptListView.Items.Count > 0)
-            {
-                if (uiNavptListView.SelectedItems.Count == 0)
-                    NavpointUIHelper.CopyNavpointsAsPoIs(Content.XamlRoot,
-                                                         [.. uiNavptListView.Items.OfType<INavpointInfo>()], true);
-                else
-                    NavpointUIHelper.CopyNavpointsAsPoIs(Content.XamlRoot,
-                                                         [.. uiNavptListView.SelectedItems.OfType<INavpointInfo>()], false);
-            }
+            if ((uiNavptListView.Items.Count > 0) && (uiNavptListView.SelectedItems.Count == 0))
+                NavpointUIHelper.CopyNavpointsAsPoIs(Content.XamlRoot,
+                                                     [.. uiNavptListView.Items.OfType<INavpointInfo>()], true);
+            else if (uiNavptListView.Items.Count > 0)
+                NavpointUIHelper.CopyNavpointsAsPoIs(Content.XamlRoot,
+                                                     [.. uiNavptListView.SelectedItems.OfType<INavpointInfo>()], false);
         }
 
         /// <summary>
@@ -399,10 +395,10 @@ namespace JAFDTC.UI.Base
         {
             MapWindow?.Close();
 
-            if (await NavpointUIHelper.Import(Content.XamlRoot, PageHelper.AirframeType,
-                                              PageHelper.NavptSystem(Config), PageHelper.NavptName))
+            if (await NavpointUIHelper.Import(Content.XamlRoot, PageHelper.SystemInfo.AirframeType,
+                                              PageHelper.NavptSystem(Config), SystemName))
             {
-                Config.Save(this, PageHelper.SystemTag);
+                Config.Save(this, SystemTag);
                 CopyConfigToEditState();
             }
         }
@@ -415,13 +411,13 @@ namespace JAFDTC.UI.Base
         {
             if (MapWindow == null)
             {
-                bool isLinked = !string.IsNullOrEmpty(Config.SystemLinkedTo(PageHelper.SystemTag));
+                bool isLinked = !string.IsNullOrEmpty(Config.SystemLinkedTo(SystemTag));
 
                 Dictionary<string, List<INavpointInfo>> routes = new()
                 {
                     [ROUTE_NAME] = [.. EditNavpt ]
                 };
-                MapWindow = NavpointUIHelper.OpenMap(this, PageHelper.NavptMaxCount, PageHelper.NavptCoordFmt, routes);
+                MapWindow = NavpointUIHelper.OpenMap(this, PageHelper.SystemInfo.NavptMaxCount, PageHelper.SystemInfo.NavptCoordFmt, routes);
                 MapWindow.MarkerExplainer = this;
                 MapWindow.Closed += MapWindow_Closed;
                 MapWindow.EditMask = ((isLinked) ? 0 : MapMarkerInfo.MarkerTypeMask.NAVPT) |
@@ -469,7 +465,7 @@ namespace JAFDTC.UI.Base
                 UpdateUIFromEditState();
             }
 
-            bool isEditable = string.IsNullOrEmpty(Config.SystemLinkedTo(PageHelper.SystemTag));
+            bool isEditable = string.IsNullOrEmpty(Config.SystemLinkedTo(SystemTag));
             uiNavptListCtxMenuFlyout.Items[0].IsEnabled = false;     // edit
             uiNavptListCtxMenuFlyout.Items[1].IsEnabled = false;     // copy
             uiNavptListCtxMenuFlyout.Items[2].IsEnabled = false;     // paste
@@ -515,7 +511,7 @@ namespace JAFDTC.UI.Base
                     CopyConfigToEditState();                            // just in case editor is FA, so it won't FO
                 string name = EditNavpt[info.TagInt - 1].Name;
                 if (string.IsNullOrEmpty(name))
-                    name = $"{PageHelper.NavptName} {info.TagInt}";
+                    name = $"{SystemName} {info.TagInt}";
                 return name;
             }
             else
@@ -662,7 +658,7 @@ namespace JAFDTC.UI.Base
         private async void ClipboardChangedHandler(object sender, object args)
         {
             ClipboardData cboard = await General.ClipboardDataAsync();
-            _isClipboardValid = ((cboard != null) && (cboard.SystemTag.StartsWith(PageHelper.NavptListTag)));
+            _isClipboardValid = ((cboard != null) && (cboard.SystemTag.StartsWith(PageHelper.SystemInfo.NavptListTag)));
             UpdateUIFromEditState();
         }
 

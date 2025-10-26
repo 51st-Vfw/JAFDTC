@@ -35,18 +35,23 @@ using static JAFDTC.Utilities.Networking.WyptCaptureDataRx;
 namespace JAFDTC.UI.M2000C
 {
     /// <summary>
-    /// helper class for EditNavpointPage that implements IEditNavpointPageHelper. this handles the specialization
-    /// of the general navpoint page for the m-2000c airframe.
+    /// helper class that implements IEditNavpointPageHelper to support the m2000c waypoint editor in the ui. this
+    /// helper works with the basic EditNavpointPage implementation.
     /// </summary>
     internal class M2000CEditWaypointHelper : IEditNavpointPageHelper
     {
-        public string SystemTag => WYPTSystem.SystemTag;
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // IEditNavpointPageHelper
+        //
+        // ------------------------------------------------------------------------------------------------------------
 
-        public string NavptName => "Waypoint";
+        public INavpointSystemImport NavptSystem(IConfiguration config)
+        {
+            return ((M2000CConfiguration)config).WYPT;
+        }
 
-        public LLFormat NavptCoordFmt => LLFormat.DDM_P3ZF;
-
-        public int MaxNameLength => 0;
+        public NavpointSystemInfo SystemInfo => WYPTSystem.SystemInfo;
 
         public Dictionary<string, string> LatExtProperties
             => new()

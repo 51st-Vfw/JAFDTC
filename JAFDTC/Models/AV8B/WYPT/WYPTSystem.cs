@@ -18,9 +18,11 @@
 // ********************************************************************************************************************
 
 using JAFDTC.Models.Base;
+using JAFDTC.Utilities;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Text.Json.Serialization;
 
 namespace JAFDTC.Models.AV8B.WYPT
 {
@@ -30,14 +32,33 @@ namespace JAFDTC.Models.AV8B.WYPT
     /// </summary>
     public partial class WYPTSystem : NavpointSystemBase<WaypointInfo>
     {
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // constants
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
         public const string SystemTag = "JAFDTC:AV8B:WYPT";
         public const string WYPTListTag = $"{SystemTag}:LIST";
+
+// TODO: validate waypoint count allowed along route
+        public static readonly NavpointSystemInfo SystemInfo = new(SystemTag,
+                                                                   WYPTListTag,
+                                                                   AirframeTypes.AV8B,
+                                                                   "Waypoint",
+                                                                   LLFormat.DMS,
+                                                                   0,
+                                                                   int.MaxValue,
+                                                                   [ "Main" ]);
 
         // ------------------------------------------------------------------------------------------------------------
         //
         // properties
         //
         // ------------------------------------------------------------------------------------------------------------
+
+        [JsonIgnore]
+        public override NavpointSystemInfo SysInfo => SystemInfo;
 
         public bool IsAppendMode { get; set; }
 

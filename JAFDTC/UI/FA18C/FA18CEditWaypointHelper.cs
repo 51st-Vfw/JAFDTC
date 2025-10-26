@@ -35,17 +35,23 @@ using static JAFDTC.Utilities.Networking.WyptCaptureDataRx;
 namespace JAFDTC.UI.FA18C
 {
     /// <summary>
-    /// TODO: document
+    /// helper class that implements IEditNavpointPageHelper to support the fa18c waypoint editor in the ui. this
+    /// helper works with the basic EditNavpointPage implementation.
     /// </summary>
     internal class FA18CEditWaypointHelper : IEditNavpointPageHelper
     {
-        public string SystemTag => WYPTSystem.SystemTag;
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // IEditNavpointPageHelper
+        //
+        // ------------------------------------------------------------------------------------------------------------
 
-        public string NavptName => "Waypoint";
+        public INavpointSystemImport NavptSystem(IConfiguration config)
+        {
+            return ((FA18CConfiguration)config).WYPT;
+        }
 
-        public LLFormat NavptCoordFmt => LLFormat.DDM_P2ZF;
-
-        public int MaxNameLength => 0;
+        public NavpointSystemInfo SystemInfo => WYPTSystem.SystemInfo;
 
         public Dictionary<string, string> LatExtProperties
             => new()

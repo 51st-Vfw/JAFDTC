@@ -18,10 +18,11 @@
 // ********************************************************************************************************************
 
 using JAFDTC.Models.Base;
-using System;
+using JAFDTC.Utilities;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Text.Json.Serialization;
 
 namespace JAFDTC.Models.F14AB.WYPT
 {
@@ -30,10 +31,34 @@ namespace JAFDTC.Models.F14AB.WYPT
     /// </summary>
     public partial class WYPTSystem : NavpointSystemBase<WaypointInfo>
     {
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // constants
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
         public const string SystemTag = "JAFDTC:F14AB:STPT";
         public const string WYPTListTag = $"{SystemTag}:LIST";
 
+        public static readonly NavpointSystemInfo SystemInfo = new(SystemTag,
+                                                                   WYPTListTag,
+                                                                   AirframeTypes.F14AB,
+                                                                   "Waypoint",
+                                                                   LLFormat.DDM_P1ZF,
+                                                                   0,
+                                                                   3,
+                                                                   [ "Main" ]);
+
         // TODO: consider support for FP, IP, ST, and HB waypoint types, currently only WP is supported.
+
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // properties
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
+        [JsonIgnore]
+        public override NavpointSystemInfo SysInfo => SystemInfo;
 
         // ------------------------------------------------------------------------------------------------------------
         //

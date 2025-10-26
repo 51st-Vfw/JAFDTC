@@ -19,10 +19,12 @@
 // ********************************************************************************************************************
 
 using JAFDTC.Models.Base;
+using JAFDTC.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 
 namespace JAFDTC.Models.F16C.STPT
@@ -41,6 +43,15 @@ namespace JAFDTC.Models.F16C.STPT
         public const string SystemTag = "JAFDTC:F16C:STPT";
         public const string STPTListTag = $"{SystemTag}:LIST";
 
+        public static readonly NavpointSystemInfo SystemInfo = new(SystemTag,
+                                                                   STPTListTag,
+                                                                   AirframeTypes.F16C,
+                                                                   "Steerpoint",
+                                                                   LLFormat.DDM_P3ZF,
+                                                                   0,
+                                                                   25,
+                                                                   [ "Main" ]);
+
         private const double DEG_TO_RAD = Math.PI / 180.0;
         private const double RAD_TO_DEG = 1.0 / DEG_TO_RAD;
         private const double M_TO_FT = 3.2808399;
@@ -53,6 +64,11 @@ namespace JAFDTC.Models.F16C.STPT
         // properties
         //
         // ------------------------------------------------------------------------------------------------------------
+
+        // ---- public properties
+
+        [JsonIgnore]
+        public override NavpointSystemInfo SysInfo => SystemInfo;
 
         // ---- private properties, static
 

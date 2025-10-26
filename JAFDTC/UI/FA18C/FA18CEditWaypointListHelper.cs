@@ -25,7 +25,6 @@ using JAFDTC.Models.FA18C.WYPT;
 using JAFDTC.UI.App;
 using JAFDTC.UI.Base;
 using JAFDTC.UI.Controls.Map;
-using JAFDTC.Utilities;
 using Microsoft.UI.Xaml.Controls;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -37,7 +36,8 @@ using static JAFDTC.Utilities.Networking.WyptCaptureDataRx;
 namespace JAFDTC.UI.FA18C
 {
     /// <summary>
-    /// TODO: document
+    /// helper class that implements IEditNavpointListPageHelper to support the fa18c waypoint list editor in the ui.
+    /// this helper works with the basic EditNavpointListPage implementation.
     /// </summary>
     internal class FA18CEditWaypointListHelper : EditWaypointListHelperBase
     {
@@ -47,37 +47,31 @@ namespace JAFDTC.UI.FA18C
 
         // ------------------------------------------------------------------------------------------------------------
         //
-        // properties
+        // IEditNavpointListPageHelper
         //
         // ------------------------------------------------------------------------------------------------------------
 
-        public override string SystemTag => WYPTSystem.SystemTag;
+        public override INavpointSystemImport NavptSystem(IConfiguration config)
+        {
+            return ((FA18CConfiguration)config).WYPT;
+        }
 
-        public override string NavptListTag => WYPTSystem.WYPTListTag;
+        public override NavpointSystemInfo SystemInfo => WYPTSystem.SystemInfo;
 
-        public override AirframeTypes AirframeType => AirframeTypes.FA18C;
-
-        public override LLFormat NavptCoordFmt => LLFormat.DDM_P2ZF;
-
-        // TODO: validate maximum navpoint count
-        public override int NavptMaxCount => int.MaxValue;
-
-        // ------------------------------------------------------------------------------------------------------------
-        //
-        // methods
-        //
-        // ------------------------------------------------------------------------------------------------------------
-
-        public override int NavptCurrentCount(IConfiguration config) => ((FA18CConfiguration)config).WYPT.Count;
+        public override object NavptEditorArg(Page parentEditor, IMapControlVerbMirror verbMirror,
+                                              IConfiguration config, int indexNavpt)
+        {
+            bool isUnlinked = string.IsNullOrEmpty(config.SystemLinkedTo(SystemInfo.SystemTag));
+            return new EditNavptPageNavArgs(parentEditor, verbMirror, config, indexNavpt, isUnlinked,
+                                            typeof(FA18CEditWaypointHelper));
+        }
 
         public override void CopyConfigToEdit(IConfiguration config, ObservableCollection<INavpointInfo> edit)
         {
             FA18CConfiguration hornetConfig = (FA18CConfiguration)config;
             edit.Clear();
             foreach (WaypointInfo wypt in hornetConfig.WYPT.Points)
-            {
                 edit.Add(new WaypointInfo(wypt));
-            }
         }
 
         public override bool CopyEditToConfig(ObservableCollection<INavpointInfo> edit, IConfiguration config)
@@ -85,15 +79,8 @@ namespace JAFDTC.UI.FA18C
             FA18CConfiguration hornetConfig = (FA18CConfiguration)config;
             hornetConfig.WYPT.Points.Clear();
             foreach (WaypointInfo wypt in edit.Cast<WaypointInfo>())
-            {
                 hornetConfig.WYPT.Points.Add(new WaypointInfo(wypt));
-            }
             return true;
-        }
-
-        public override INavpointSystemImport NavptSystem(IConfiguration config)
-        {
-            return ((FA18CConfiguration)config).WYPT;
         }
 
         public override void ResetSystem(IConfiguration config)
@@ -131,11 +118,6 @@ namespace JAFDTC.UI.FA18C
             return ((FA18CConfiguration)config).WYPT.ImportSerializedNavpoints(cbData, isReplace);
         }
 
-        public override string ExportNavpoints(IConfiguration config)
-        {
-            return ((FA18CConfiguration)config).WYPT.SerializeNavpoints();
-        }
-
         public override void CaptureNavpoints(IConfiguration config, WyptCaptureData[] wypts, int startIndex)
         {
             // TODO: implement target points
@@ -163,14 +145,6 @@ namespace JAFDTC.UI.FA18C
                     startIndex++;
                 }
             }
-        }
-
-        public override object NavptEditorArg(Page parentEditor, IMapControlVerbMirror verbMirror,
-                                              IConfiguration config, int indexNavpt)
-        {
-            bool isUnlinked = string.IsNullOrEmpty(config.SystemLinkedTo(SystemTag));
-            return new EditNavptPageNavArgs(parentEditor, verbMirror, config, indexNavpt, isUnlinked,
-                                            typeof(FA18CEditWaypointHelper));
         }
     }
 }

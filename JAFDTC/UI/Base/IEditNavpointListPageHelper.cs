@@ -21,7 +21,6 @@ using JAFDTC.Models;
 using JAFDTC.Models.Base;
 using JAFDTC.Models.DCS;
 using JAFDTC.UI.Controls.Map;
-using JAFDTC.Utilities;
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
@@ -38,30 +37,14 @@ namespace JAFDTC.UI.Base
     public interface IEditNavpointListPageHelper
     {
         /// <summary>
-        /// return the system tag for the navpoint system.
+        /// return the navpoint system from a configuration.
         /// </summary>
-        public string SystemTag { get; }
+        public INavpointSystemImport NavptSystem(IConfiguration config);
 
         /// <summary>
-        /// return the tag to use on navpoint lists.
+        /// return an object defining key navpoint system parameters.
         /// </summary>
-        public string NavptListTag { get; }
-
-        /// <summary>
-        /// return the airframe type for the navpoint list.
-        /// </summary>
-        public AirframeTypes AirframeType { get; }
-
-        /// <summary>
-        /// return the name to use to refer to a navpoint (waypoint, steerpoint, etc.) by in the user interface. the
-        /// string should be singular and capitalized.
-        /// </summary>
-        public string NavptName { get; }
-
-        /// <summary>
-        /// return the coordinate format used by navpoints in the navigation system.
-        /// </summary>
-        public LLFormat NavptCoordFmt { get; }
+        public NavpointSystemInfo SystemInfo { get; }
 
         /// <summary>
         /// return the type of the class for the editor interface page to use to edit a navpoint.
@@ -69,20 +52,11 @@ namespace JAFDTC.UI.Base
         public Type NavptEditorType { get; }
 
         /// <summary>
-        /// return the maximum number of navpoints the system supports. valid navpoint numbers are always on
-        /// [0, NavpointMaxCount).
+        /// return an object to use as the argument to the navpoint editor. this object is passed in through the
+        /// Parameter of a navigation operation to a page of type NavptEditorType.
         /// </summary>
-        public int NavptMaxCount { get; }
-
-        /// <summary>
-        /// return the  number of navpoints currently configured.
-        /// </summary>
-        public int NavptCurrentCount(IConfiguration config);
-
-        /// <summary>
-        /// return the  number of navpoints that can be added before reaching the maximum.
-        /// </summary>
-        public int NavptRemainingCount(IConfiguration config);
+        public object NavptEditorArg(Page parentEditor, IMapControlVerbMirror verbMirror, IConfiguration config,
+                                     int indexNavpt);
 
         /// <summary>
         /// set up the user interface for the navpoint list editor. this method is called at OnNavigatedTo. 
@@ -100,11 +74,6 @@ namespace JAFDTC.UI.Base
         /// the navpoints from the configuration.
         /// </summary>
         public bool CopyEditToConfig(ObservableCollection<INavpointInfo> edit, IConfiguration config);
-
-        /// <summary>
-        /// return the navpoint system.
-        /// </summary>
-        public INavpointSystemImport NavptSystem(IConfiguration config);
 
         /// <summary>
         /// reset the navpoint system to its default state.
@@ -130,20 +99,8 @@ namespace JAFDTC.UI.Base
         public bool PasteNavpoints(IConfiguration config, string cbData, bool isReplace = false);
 
         /// <summary>
-        /// return an export string for navpoints.
-        /// </summary>
-        public string ExportNavpoints(IConfiguration config);
-
-        /// <summary>
         /// capture navpoints from dcs using the dcs ui.
         /// </summary>
         public void CaptureNavpoints(IConfiguration config, WyptCaptureData[] wypts, int startIndex);
-
-        /// <summary>
-        /// return an object to use as the argument to the navpoint editor. this object is passed in through the
-        /// Parameter of a navigation operation.
-        /// </summary>
-        public object NavptEditorArg(Page parentEditor, IMapControlVerbMirror verbMirror, IConfiguration config,
-                                     int indexNavpt);
     }
 }

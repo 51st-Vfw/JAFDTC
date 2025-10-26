@@ -18,17 +18,42 @@
 // ********************************************************************************************************************
 
 using JAFDTC.Models.Base;
-using System;
+using JAFDTC.Utilities;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Text.Json.Serialization;
 
 namespace JAFDTC.Models.FA18C.WYPT
 {
     public partial class WYPTSystem : NavpointSystemBase<WaypointInfo>
     {
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // constants
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
         public const string SystemTag = "JAFDTC:FA18C:WYPT";
         public const string WYPTListTag = $"{SystemTag}:LIST";
+
+        public static readonly NavpointSystemInfo SystemInfo = new(SystemTag,
+                                                                   WYPTListTag,
+                                                                   AirframeTypes.FA18C,
+                                                                   "Waypoint",
+                                                                   LLFormat.DDM_P2ZF,
+                                                                   0,
+                                                                   60,
+                                                                   [ "Main" ]);
+
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // properties
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
+        [JsonIgnore]
+        public override NavpointSystemInfo SysInfo => SystemInfo;
 
         // ------------------------------------------------------------------------------------------------------------
         //

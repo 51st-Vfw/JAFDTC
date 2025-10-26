@@ -18,6 +18,7 @@
 // ********************************************************************************************************************
 
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace JAFDTC.Models.Base
 {
@@ -26,6 +27,17 @@ namespace JAFDTC.Models.Base
     /// </summary>
     public interface INavpointSystemImport
     {
+        /// <summary>
+        /// return the number of navpoints currently defined for the given route (null => all routes).
+        /// </summary>
+        public int NavptCurrentCount(string route = null);
+
+        /// <summary>
+        /// return the number of navpoints available (i.e., the number that could be added without breaking system
+        /// limits) for the given route (null => all routes).
+        /// </summary>
+        public int NavptAvailableCount(string route = null);
+
         /// <summary>
         /// deserialize an array of navpoints from .json and incorporate them into the navpoint list. the deserialized
         /// navpoints can either replace the existing navpoints or be appended to the end of the navpoint list. returns

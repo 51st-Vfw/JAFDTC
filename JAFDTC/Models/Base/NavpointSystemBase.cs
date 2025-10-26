@@ -22,6 +22,7 @@ using System.Text.Json.Serialization;
 using System.Text.Json;
 using System.Collections.Generic;
 using JAFDTC.Models.DCS;
+using System;
 
 namespace JAFDTC.Models.Base
 {
@@ -38,6 +39,11 @@ namespace JAFDTC.Models.Base
         // properties
         //
         // ------------------------------------------------------------------------------------------------------------
+
+        // ---- public properties
+
+        [JsonIgnore]
+        public virtual NavpointSystemInfo SysInfo { get; }
 
         // ---- INotifyPropertyChanged properties
 
@@ -70,6 +76,21 @@ namespace JAFDTC.Models.Base
         // INavpointSystemImport functions
         //
         // ------------------------------------------------------------------------------------------------------------
+
+        /// <summary>
+        /// return the number of navpoints currently defined for the given route (null => all routes).
+        /// 
+        /// derived classes must override this if they support routes.
+        /// </summary>
+        public virtual int NavptCurrentCount(string route = null) => Points.Count;
+
+        /// <summary>
+        /// return the number of navpoints available (i.e., the number that could be added without breaking system
+        /// limits) for the given route (null => all routes).
+        /// 
+        /// derived classes must override this if they support routes.
+        /// </summary>
+        public virtual int NavptAvailableCount(string route = null) => Math.Max(0, SysInfo.NavptMaxCount - Points.Count);
 
         /// <summary>
         /// deserialize an array of navpoints from .json and incorporate them into the navpoint list. the deserialized
@@ -120,24 +141,6 @@ namespace JAFDTC.Models.Base
         }
 
         /// <summary>
-        /// Convert the provided PointOfInterest into a nav point.
-        /// 
-        /// Derived classes should override if their navpoints require specialized conversion from a PointOfInterest.
-        /// </summary>
-        /// <param name="poi"></param>
-        /// <returns></returns>
-        protected virtual T ConvertPOIToNavPt(PointOfInterest poi)
-        {
-            return new()
-            {
-                Name = poi.Name,
-                Lat = poi.Latitude,
-                Lon = poi.Longitude,
-                Alt = poi.Elevation
-            };
-        }
-
-        /// <summary>
         /// incorporate a list of navpoints specified by navpoint info dictionaries (see navptInfoList) into the
         /// navpoint list. the new navpoints can either replace the existing navpoints or be appended to the end of
         /// the navpoing list. returns true on success, false on error (previous navpoints preserved on errors).
@@ -157,6 +160,21 @@ namespace JAFDTC.Models.Base
                 Points = prevPoints;
             }
             return false;
+        }
+
+        /// <summary>
+        /// Convert the provided PointOfInterest into a nav point.
+        /// 
+        /// Derived classes should override if their navpoints require specialized conversion from a PointOfInterest.
+        protected virtual T ConvertPOIToNavPt(PointOfInterest poi)
+        {
+            return new()
+            {
+                Name = poi.Name,
+                Lat = poi.Latitude,
+                Lon = poi.Longitude,
+                Alt = poi.Elevation
+            };
         }
 
         // ------------------------------------------------------------------------------------------------------------

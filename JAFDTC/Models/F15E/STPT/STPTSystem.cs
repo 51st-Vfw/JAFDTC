@@ -18,6 +18,7 @@
 // ********************************************************************************************************************
 
 using JAFDTC.Models.Base;
+using JAFDTC.Utilities;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -37,8 +38,24 @@ namespace JAFDTC.Models.F15E.STPT
     /// </summary>
     public partial class STPTSystem : NavpointSystemBase<SteerpointInfo>
     {
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // constants
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
         public const string SystemTag = "JAFDTC:F15E:STPT";
         public const string STPTListTag = $"{SystemTag}:LIST";
+
+// TODO: validate waypoint count allowed along route
+        public static readonly NavpointSystemInfo SystemInfo = new(SystemTag,
+                                                                   STPTListTag,
+                                                                   AirframeTypes.F15E,
+                                                                   "Steerpoint",
+                                                                   LLFormat.DDM_P1ZF,
+                                                                   0,
+                                                                   int.MaxValue,
+                                                                   [ "A", "B", "C" ]);
 
         // ------------------------------------------------------------------------------------------------------------
         //
@@ -47,6 +64,9 @@ namespace JAFDTC.Models.F15E.STPT
         // ------------------------------------------------------------------------------------------------------------
 
         // ---- public properties
+
+        [JsonIgnore]
+        public override NavpointSystemInfo SysInfo => SystemInfo;
 
         [JsonIgnore]
         public string ActiveRoute { get; set; }

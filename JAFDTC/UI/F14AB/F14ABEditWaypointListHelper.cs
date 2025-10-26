@@ -25,7 +25,6 @@ using JAFDTC.Models.F14AB.WYPT;
 using JAFDTC.UI.App;
 using JAFDTC.UI.Base;
 using JAFDTC.UI.Controls.Map;
-using JAFDTC.Utilities;
 using Microsoft.UI.Xaml.Controls;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -37,8 +36,8 @@ using static JAFDTC.Utilities.Networking.WyptCaptureDataRx;
 namespace JAFDTC.UI.F14AB
 {
     /// <summary>
-    /// helper class for EditNavpointListPage that implements IEditNavpointListPageHelper. this handles the
-    /// specialization of the general navpoint list page for the f-14a/b airframe.
+    /// helper class that implements IEditNavpointListPageHelper to support the f14ab waypoint list editor in the ui.
+    /// this helper works with the basic EditNavpointListPage implementation.
     /// </summary>
     internal class F14ABEditWaypointListHelper : EditWaypointListHelperBase
     {
@@ -48,27 +47,24 @@ namespace JAFDTC.UI.F14AB
 
         // ------------------------------------------------------------------------------------------------------------
         //
-        // properties
+        // IEditNavpointListPageHelper
         //
         // ------------------------------------------------------------------------------------------------------------
 
-        public override string SystemTag => WYPTSystem.SystemTag;
+        public override INavpointSystemImport NavptSystem(IConfiguration config)
+        {
+            return ((F14ABConfiguration)config).WYPT;
+        }
 
-        public override string NavptListTag => WYPTSystem.WYPTListTag;
+        public override NavpointSystemInfo SystemInfo => WYPTSystem.SystemInfo;
 
-        public override AirframeTypes AirframeType => AirframeTypes.F14AB;
-
-        public override int NavptMaxCount => 3;
-
-        public override LLFormat NavptCoordFmt => LLFormat.DDM_P1ZF;
-        
-        // ------------------------------------------------------------------------------------------------------------
-        //
-        // methods
-        //
-        // ------------------------------------------------------------------------------------------------------------
-
-        public override int NavptCurrentCount(IConfiguration config) => ((F14ABConfiguration)config).WYPT.Count;
+        public override object NavptEditorArg(Page parentEditor, IMapControlVerbMirror verbMirror,
+                                              IConfiguration config, int indexNavpt)
+        {
+            bool isUnlinked = string.IsNullOrEmpty(config.SystemLinkedTo(SystemInfo.SystemTag));
+            return new EditNavptPageNavArgs(parentEditor, verbMirror, config, indexNavpt, isUnlinked,
+                                            typeof(F14ABEditWaypointHelper));
+        }
 
         public override void CopyConfigToEdit(IConfiguration config, ObservableCollection<INavpointInfo> edit)
         {
@@ -85,11 +81,6 @@ namespace JAFDTC.UI.F14AB
             foreach (WaypointInfo wypt in edit.Cast<WaypointInfo>())
                 f14Config.WYPT.Points.Add(new WaypointInfo(wypt));
             return true;
-        }
-
-        public override INavpointSystemImport NavptSystem(IConfiguration config)
-        {
-            return ((F14ABConfiguration)config).WYPT;
         }
 
         public override void ResetSystem(IConfiguration config)
@@ -127,11 +118,6 @@ namespace JAFDTC.UI.F14AB
             return ((F14ABConfiguration)config).WYPT.ImportSerializedNavpoints(cbData, isReplace);
         }
 
-        public override string ExportNavpoints(IConfiguration config)
-        {
-            return ((F14ABConfiguration)config).WYPT.SerializeNavpoints();
-        }
-
         public override void CaptureNavpoints(IConfiguration config, WyptCaptureData[] wypts, int startIndex)
         {
             WYPTSystem wyptSys = ((F14ABConfiguration)config).WYPT;
@@ -158,14 +144,6 @@ namespace JAFDTC.UI.F14AB
                     startIndex++;
                 }
             }
-        }
-
-        public override object NavptEditorArg(Page parentEditor, IMapControlVerbMirror verbMirror,
-                                              IConfiguration config, int indexNavpt)
-        {
-            bool isUnlinked = string.IsNullOrEmpty(config.SystemLinkedTo(SystemTag));
-            return new EditNavptPageNavArgs(parentEditor, verbMirror, config, indexNavpt, isUnlinked,
-                                            typeof(F14ABEditWaypointHelper));
         }
     }
 }

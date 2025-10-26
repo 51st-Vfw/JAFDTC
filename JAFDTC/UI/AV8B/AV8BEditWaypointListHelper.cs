@@ -25,7 +25,6 @@ using JAFDTC.Models.DCS;
 using JAFDTC.UI.App;
 using JAFDTC.UI.Base;
 using JAFDTC.UI.Controls.Map;
-using JAFDTC.Utilities;
 using Microsoft.UI.Xaml.Controls;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -37,7 +36,8 @@ using static JAFDTC.Utilities.Networking.WyptCaptureDataRx;
 namespace JAFDTC.UI.AV8B
 {
     /// <summary>
-    /// TODO: docuemnt
+    /// helper class that implements IEditNavpointListPageHelper to support the av8b waypoint list editor in the ui.
+    /// this helper works with the basic EditNavpointListPage implementation.
     /// </summary>
     internal class AV8BEditWaypointListHelper : EditWaypointListHelperBase
     {
@@ -47,38 +47,31 @@ namespace JAFDTC.UI.AV8B
 
         // ------------------------------------------------------------------------------------------------------------
         //
-        // properties
+        // IEditNavpointListPageHelper
         //
         // ------------------------------------------------------------------------------------------------------------
 
-        public override string SystemTag => WYPTSystem.SystemTag;
+        public override INavpointSystemImport NavptSystem(IConfiguration config)
+        {
+            return ((AV8BConfiguration)config).WYPT;
+        }
 
-        public override string NavptListTag => WYPTSystem.WYPTListTag;
+        public override NavpointSystemInfo SystemInfo => WYPTSystem.SystemInfo;
 
-        public override AirframeTypes AirframeType => AirframeTypes.AV8B;
-
-        public override LLFormat NavptCoordFmt => LLFormat.DMS;
-
-        // TODO: validate maximum navpoint count
-        public override int NavptMaxCount => int.MaxValue;
-
-        // ------------------------------------------------------------------------------------------------------------
-        //
-        // methods
-        //
-        // ------------------------------------------------------------------------------------------------------------
-
-        public override int NavptCurrentCount(IConfiguration config) => ((AV8BConfiguration)config).WYPT.Count;
-
+        public override object NavptEditorArg(Page parentEditor, IMapControlVerbMirror verbMirror,
+                                      IConfiguration config, int indexNavpt)
+        {
+            bool isUnlinked = string.IsNullOrEmpty(config.SystemLinkedTo(SystemInfo.SystemTag));
+            return new EditNavptPageNavArgs(parentEditor, verbMirror, config, indexNavpt, isUnlinked,
+                                            typeof(AV8BEditWaypointHelper));
+        }
 
         public override void CopyConfigToEdit(IConfiguration config, ObservableCollection<INavpointInfo> edit)
         {
             AV8BConfiguration av8bConfig = (AV8BConfiguration)config;
             edit.Clear();
             foreach (WaypointInfo wypt in av8bConfig.WYPT.Points)
-            {
                 edit.Add(new WaypointInfo(wypt));
-            }
         }
 
         public override bool CopyEditToConfig(ObservableCollection<INavpointInfo> edit, IConfiguration config)
@@ -86,15 +79,8 @@ namespace JAFDTC.UI.AV8B
             AV8BConfiguration av8bConfig = (AV8BConfiguration)config;
             av8bConfig.WYPT.Points.Clear();
             foreach (WaypointInfo wypt in edit.Cast<WaypointInfo>())
-            {
                 av8bConfig.WYPT.Points.Add(new WaypointInfo(wypt));
-            }
             return true;
-        }
-
-        public override INavpointSystemImport NavptSystem(IConfiguration config)
-        {
-            return ((AV8BConfiguration)config).WYPT;
         }
 
         public override void ResetSystem(IConfiguration config)
@@ -132,11 +118,6 @@ namespace JAFDTC.UI.AV8B
             return ((AV8BConfiguration)config).WYPT.ImportSerializedNavpoints(cbData, isReplace);
         }
 
-        public override string ExportNavpoints(IConfiguration config)
-        {
-            return ((AV8BConfiguration)config).WYPT.SerializeNavpoints();
-        }
-
         public override void CaptureNavpoints(IConfiguration config, WyptCaptureData[] wypts, int startIndex)
         {
             WYPTSystem wyptSys = ((AV8BConfiguration)config).WYPT;
@@ -163,14 +144,6 @@ namespace JAFDTC.UI.AV8B
                     startIndex++;
                 }
             }
-        }
-
-        public override object NavptEditorArg(Page parentEditor, IMapControlVerbMirror verbMirror,
-                                              IConfiguration config, int indexNavpt)
-        {
-            bool isUnlinked = string.IsNullOrEmpty(config.SystemLinkedTo(SystemTag));
-            return new EditNavptPageNavArgs(parentEditor, verbMirror, config, indexNavpt, isUnlinked,
-                                            typeof(AV8BEditWaypointHelper));
         }
     }
 }

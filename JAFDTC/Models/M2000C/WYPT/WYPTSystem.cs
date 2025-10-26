@@ -18,10 +18,11 @@
 // ********************************************************************************************************************
 
 using JAFDTC.Models.Base;
-using System;
+using JAFDTC.Utilities;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Text.Json.Serialization;
 
 namespace JAFDTC.Models.M2000C.WYPT
 {
@@ -30,8 +31,33 @@ namespace JAFDTC.Models.M2000C.WYPT
     /// </summary>
     public partial class WYPTSystem : NavpointSystemBase<WaypointInfo>
     {
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // constants
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
         public const string SystemTag = "JAFDTC:M2000C:STPT";
         public const string WYPTListTag = $"{SystemTag}:LIST";
+            
+// TODO: validate waypoint count allowed along route
+        public static readonly NavpointSystemInfo SystemInfo = new(SystemTag,
+                                                                   WYPTListTag,
+                                                                   AirframeTypes.M2000C,
+                                                                   "Waypoint",
+                                                                   LLFormat.DDM_P3ZF,
+                                                                   0,
+                                                                   int.MaxValue,
+                                                                   [ "Main" ]);
+
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // properties
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
+        [JsonIgnore]
+        public override NavpointSystemInfo SysInfo => SystemInfo;
 
         // ------------------------------------------------------------------------------------------------------------
         //

@@ -18,8 +18,10 @@
 // ********************************************************************************************************************
 
 using JAFDTC.Models.Base;
+using JAFDTC.Utilities;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Text.Json.Serialization;
 
 namespace JAFDTC.Models.A10C.WYPT
 {
@@ -28,8 +30,32 @@ namespace JAFDTC.Models.A10C.WYPT
     /// </summary>
     public partial class WYPTSystem : NavpointSystemBase<WaypointInfo>
     {
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // constants
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
         public const string SystemTag = "JAFDTC:A10C:STPT";
         public const string WYPTListTag = $"{SystemTag}:LIST";
+
+        public static readonly NavpointSystemInfo SystemInfo = new(SystemTag,
+                                                                   WYPTListTag,
+                                                                   AirframeTypes.A10C,
+                                                                   "Waypoint",
+                                                                   LLFormat.DDM_P3ZF,
+                                                                   12,
+                                                                   2050,
+                                                                   [ "Main" ]);
+
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // properties
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
+        [JsonIgnore]
+        public override NavpointSystemInfo SysInfo => SystemInfo;
 
         // ------------------------------------------------------------------------------------------------------------
         //

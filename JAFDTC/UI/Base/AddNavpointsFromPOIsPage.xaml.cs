@@ -2,7 +2,7 @@
 //
 // AddNavpointsFromPOIsPage.xaml.cs : ui c# point of navpoint addition
 //
-// Copyright(C) 2023-5 ilominar/raven, fizzle
+// Copyright(C) 2025 ilominar/raven, fizzle
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 // Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -169,19 +169,20 @@ namespace JAFDTC.UI.Base
         private void UpdateAcceptButtons()
         {
             ToolTip tip = new();
-            int remainingCount = NavArgs.PageHelper.NavptRemainingCount(NavArgs.Config);
+            int remainingCount = NavArgs.PageHelper.NavptSystem(NavArgs.Config).NavptAvailableCount();
+            string navptName = NavArgs.PageHelper.SystemInfo.NavptName.ToLower();
             if (uiPoIListView.SelectedItems.Count > 0)
             {
                 uiAcceptBtnOK.Content = "Append Selected";
                 if (uiPoIListView.SelectedItems.Count > remainingCount)
                 {
                     uiAcceptBtnOK.IsEnabled = false;
-                    tip.Content = $"The airframe has space for only {remainingCount} more {NavArgs.PageHelper.NavptName.ToLower()}s";
+                    tip.Content = $"The airframe has space for only {remainingCount} more {navptName}s";
                 }
                 else
                 {
                     uiAcceptBtnOK.IsEnabled = true;
-                    tip.Content = $"Append {uiPoIListView.SelectedItems.Count} selected POIs as {NavArgs.PageHelper.NavptName.ToLower()}s";
+                    tip.Content = $"Append {uiPoIListView.SelectedItems.Count} selected POIs as {navptName}s";
                 }
             }
             else
@@ -190,12 +191,12 @@ namespace JAFDTC.UI.Base
                 if (CurPoIItems.Count > remainingCount)
                 {
                     uiAcceptBtnOK.IsEnabled = false;
-                    tip.Content = $"The airframe has space for only {remainingCount} more {NavArgs.PageHelper.NavptName.ToLower()}s";
+                    tip.Content = $"The airframe has space for only {remainingCount} more {navptName}s";
                 }
                 else
                 {
                     uiAcceptBtnOK.IsEnabled = true;
-                    tip.Content = $"Append {CurPoIItems.Count} listed POIs as {NavArgs.PageHelper.NavptName.ToLower()}s";
+                    tip.Content = $"Append {CurPoIItems.Count} listed POIs as {navptName}s";
                 }
             }
             ToolTipService.SetToolTip(uiAcceptBtnOK, tip);
@@ -209,7 +210,7 @@ namespace JAFDTC.UI.Base
         /// </summary>
         private async void AcceptBtnOk_Click(object sender, RoutedEventArgs args)
         {
-            string navptName = NavArgs.PageHelper.NavptName.ToLower();
+            string navptName = NavArgs.PageHelper.SystemInfo.NavptName.ToLower();
             if (uiPoIListView.SelectedItems.Count > 0)
             {
                 ContentDialogResult result = await Utilities.Message2BDialog(

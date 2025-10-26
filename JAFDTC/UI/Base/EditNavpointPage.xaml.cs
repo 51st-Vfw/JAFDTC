@@ -21,7 +21,6 @@ using CommunityToolkit.WinUI;
 using JAFDTC.Models;
 using JAFDTC.Models.Base;
 using JAFDTC.Models.DCS;
-using JAFDTC.UI.App;
 using JAFDTC.UI.Controls.Map;
 using JAFDTC.Utilities;
 using JAFDTC.Utilities.Networking;
@@ -29,7 +28,6 @@ using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using System;
@@ -168,7 +166,7 @@ namespace JAFDTC.UI.Base
         private void CopyEditToConfig(int index, bool isPersist = false)
         {
             if (PageHelper.CopyEditToConfig(index, EditNavpt, Config) && isPersist)
-                Config.Save(this, PageHelper.SystemTag);
+                Config.Save(this, PageHelper.SystemInfo.SystemTag);
         }
 
         /// <summary>
@@ -249,10 +247,15 @@ namespace JAFDTC.UI.Base
         /// </summary>
         private void ValidateNavptNameLength()
         {
-            if (PageHelper.MaxNameLength > 0 && uiNavptValueName.Text.Length > PageHelper.MaxNameLength)
+            if ((PageHelper.SystemInfo.NavptMaxNameLength > 0) &&
+                (uiNavptValueName.Text.Length > PageHelper.SystemInfo.NavptMaxNameLength))
+            {
                 uiNavptValueName.Style = (Style)Application.Current.Resources["WarningTextBoxStyle"];
+            }
             else
+            {
                 uiNavptValueName.Style = (Style)Application.Current.Resources["EditorParamEditTextBoxStyle"];
+            }
         }
 
         /// <summary>
@@ -313,9 +316,10 @@ namespace JAFDTC.UI.Base
         {
             JAFDTC.App curApp = Application.Current as JAFDTC.App;
 
-            bool isEditable = string.IsNullOrEmpty(Config.SystemLinkedTo(PageHelper.SystemTag));
+            bool isEditable = string.IsNullOrEmpty(Config.SystemLinkedTo(PageHelper.SystemInfo.SystemTag));
             bool isDCSListening = curApp.IsDCSAvailable && (curApp.DCSActiveAirframe == Config.Airframe);
             bool isErrorsInUI = CurStateHasErrors();
+            bool isNavptsAvail = (PageHelper.NavptSystem(Config).NavptAvailableCount() > 0);
 
             Utilities.SetEnableState(uiPoINameFilterBox, isEditable);
             Utilities.SetEnableState(uiPoIBtnFilter, isEditable);
@@ -330,7 +334,7 @@ namespace JAFDTC.UI.Base
                 Utilities.SetEnableState(kvp.Value, isEditable);
 
             Utilities.SetEnableState(uiNavptBtnPrev, !isErrorsInUI && (EditNavptIndex > 0));
-            Utilities.SetEnableState(uiNavptBtnAdd, isEditable && !isErrorsInUI);
+            Utilities.SetEnableState(uiNavptBtnAdd, isEditable && !isErrorsInUI && isNavptsAvail);
             Utilities.SetEnableState(uiNavptBtnNext, !isErrorsInUI &&
                                                      (EditNavptIndex < (PageHelper.NavpointCount(Config) - 1)));
 
@@ -349,8 +353,8 @@ namespace JAFDTC.UI.Base
                 IsRebuildPending = true;
                 DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low, () =>
                 {
-                    uiPoITextTitle.Text = $"{PageHelper.NavptName} Initial Setup";
-                    uiNavptTextNum.Text = $"{PageHelper.NavptName} {EditNavpt.Number} Information";
+                    uiPoITextTitle.Text = $"{PageHelper.SystemInfo.NavptName} Initial Setup";
+                    uiNavptTextNum.Text = $"{PageHelper.SystemInfo.NavptName} {EditNavpt.Number} Information";
                     RebuildEnableState();
                     IsRebuildPending = false;
                 });
@@ -371,7 +375,7 @@ namespace JAFDTC.UI.Base
         /// </summary>
         private void AcceptBtnOk_Click(object sender, RoutedEventArgs args)
         {
-            if (!CurStateHasErrors() && string.IsNullOrEmpty(Config.SystemLinkedTo(PageHelper.SystemTag)))
+            if (!CurStateHasErrors() && string.IsNullOrEmpty(Config.SystemLinkedTo(PageHelper.SystemInfo.SystemTag)))
                 CopyEditToConfig(EditNavptIndex, true);
             Frame.GoBack();
         }
@@ -483,7 +487,7 @@ namespace JAFDTC.UI.Base
         private async void PoIBtnCapture_Click(object sender, RoutedEventArgs args)
         {
             WyptCaptureDataRx.Instance.WyptCaptureDataReceived += PoIBtnCapture_WyptCaptureDataReceived;
-            await Utilities.CaptureSingleDialog(Content.XamlRoot, PageHelper.NavptName);
+            await Utilities.CaptureSingleDialog(Content.XamlRoot, PageHelper.SystemInfo.NavptName);
             WyptCaptureDataRx.Instance.WyptCaptureDataReceived -= PoIBtnCapture_WyptCaptureDataReceived;
 
             CopyEditToConfig(EditNavptIndex, true);
