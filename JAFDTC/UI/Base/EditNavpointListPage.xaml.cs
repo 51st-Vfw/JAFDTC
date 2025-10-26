@@ -575,6 +575,7 @@ namespace JAFDTC.UI.Base
             {
                 _isVerbEvent = true;
                 uiNavptListView.SelectedIndex = info.TagInt - 1;
+                uiNavptListView.ScrollIntoView(uiNavptListView.SelectedItem);
                 _isVerbEvent = false;
 
                 EditNavptDetailPage?.ChangeToEditNavpointAtIndex(info.TagInt - 1);
