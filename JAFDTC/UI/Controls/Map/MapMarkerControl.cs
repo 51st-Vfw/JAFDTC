@@ -63,7 +63,7 @@ namespace JAFDTC.UI.Controls.Map
         //
         // ------------------------------------------------------------------------------------------------------------
 
-        protected const double FG_STROKE_THICKNESS = 4.0;
+        protected const double FG_STROKE_THICKNESS = 3.0;
         protected const double BG_STROKE_THICKNESS = 8.0;
 
         protected const double PAD_X = BG_STROKE_THICKNESS + 4.0;
