@@ -157,7 +157,7 @@ namespace JAFDTC.Models.DCS
         /// return the single poi that matches a uid, null if no such poi exists
         /// </summary>
         public PointOfInterest Find(string uid)
-            => _uniqueIDs.GetValueOrDefault(uid, null);
+            => (string.IsNullOrEmpty(uid)) ? null : _uniqueIDs.GetValueOrDefault(uid, null);
 
         /// <summary>
         /// return list of points of interest containing all points of interest that match the specified query
@@ -384,6 +384,29 @@ namespace JAFDTC.Models.DCS
                 Save(poi.Campaign);
 
             return true;
+        }
+
+        /// <summary>
+        /// begin editing a point of interest. this removes the poi from the unique uid map in case the upcoming
+        /// edits mess with the uid. generally, this call should preceede any edit to a property that the uid
+        /// depends on.
+        /// </summary>
+        public void EditPointOfInterestBegins(PointOfInterest poi)
+        {
+            if (_uniqueIDs.ContainsKey(poi.UniqueID))
+                _uniqueIDs.Remove(poi.UniqueID);
+        }
+
+        /// <summary>
+        /// end editing a point of interest. this installs the poi in the unique uid map. generally, this call
+        /// should follow any edits to a property that the uid depends on and should balance the call to
+        /// EditPointOfInterestBegins that preceeded the edits.
+        /// </summary>
+        public void EditPointOfInterestEnds(PointOfInterest poi, bool isPersist = true)
+        {
+            _uniqueIDs[poi.UniqueID] = poi;
+            if (isPersist)
+                Save(poi.Campaign);
         }
 
         /// <summary>
