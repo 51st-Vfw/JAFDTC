@@ -244,7 +244,7 @@ namespace JAFDTC.Models
 
         /// <summary>
         /// persist the merged configuration into the dcs dtc file according to internal dte system configuration.
-        /// returns true on success, false on failure.
+        /// this should do nothing if the dte configuration is default. returns true on success, false on error.
         /// </summary>
         public bool SaveMergedSimDTC();
 

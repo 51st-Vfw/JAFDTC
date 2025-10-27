@@ -338,7 +338,10 @@ namespace JAFDTC.Models.F16C
             ConfigurationUpdated();
         }
 
-        public override bool SaveMergedSimDTC() => SaveMergedSimDTC(DTE.Template, DTE.OutputPath);
+        public override bool SaveMergedSimDTC()
+        {
+            return (DTE.IsDefault) ? true : SaveMergedSimDTC(DTE.Template, DTE.OutputPath);
+        }
 
         public override void AfterSystemEditorCompletes(string systemTag)
         {
