@@ -243,6 +243,12 @@ namespace JAFDTC.Models
         public void Save(object invokedBy = null, string syncSysTag = null);
 
         /// <summary>
+        /// persist the merged configuration into the dcs dtc file according to internal dte system configuration.
+        /// returns true on success, false on failure.
+        /// </summary>
+        public bool SaveMergedSimDTC();
+
+        /// <summary>
         /// persist the merged configuration into the dcs dtc file at the output path. the dcs dtc file is built by
         /// merging the configuration of mergable systems into the base template. returns true on success, false on
         /// failure.

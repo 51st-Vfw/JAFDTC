@@ -272,6 +272,8 @@ namespace JAFDTC.Models
             OnConfigurationSaved(invokedBy, syncSysTag);
         }
 
+        public virtual bool SaveMergedSimDTC() => false;
+
         public bool SaveMergedSimDTC(string template, string outputPath)
         {
             string name = Path.GetFileNameWithoutExtension(outputPath);
