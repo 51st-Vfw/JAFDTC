@@ -152,6 +152,8 @@ namespace JAFDTC.UI.App
             set => uiMap.MaxRouteLength = value;
         }
 
+        public bool CanOpenMarker { get; set; }
+
         // ---- private properties
 
         private readonly Dictionary<string, IMapControlVerbHandler> _mapObservers = [ ];
@@ -188,6 +190,7 @@ namespace JAFDTC.UI.App
             OpenMask = MapMarkerInfo.MarkerTypeMask.NONE;
             EditMask = MapMarkerInfo.MarkerTypeMask.NONE;
             MaxRouteLength = 0;
+            CanOpenMarker = true;
 
             Closed += MapWindow_Closed;
             SizeChanged += MapWindow_SizeChanged;
@@ -437,7 +440,7 @@ namespace JAFDTC.UI.App
 
 // TODO: correctly set enable when implemented
             Utilities.SetEnableState(uiBarBtnAdd, false);
-            Utilities.SetEnableState(uiBarBtnEdit, isOpenable);
+            Utilities.SetEnableState(uiBarBtnEdit, isOpenable && CanOpenMarker);
             Utilities.SetEnableState(uiBarBtnDelete, uiMap.CanEditSelectedMarker);
 // TODO: correctly set enable when implemented
             Utilities.SetEnableState(uiBarBtnImport, false);
