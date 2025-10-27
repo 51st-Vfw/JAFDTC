@@ -300,7 +300,15 @@ namespace JAFDTC.UI.Controls.Map
         private void AddMark(string tagStr, PointOfInterest poi)
         {
             Location location = new(double.Parse(poi.Latitude), double.Parse(poi.Longitude));
-            _marks[tagStr] = MarkerFactory((MapMarkerInfo.MarkerType)poi.Type, tagStr, -1, location);
+            AddMark((MapMarkerInfo.MarkerType)poi.Type, tagStr, location);
+        }
+
+        /// <summary>
+        /// add a mark to the control by creating a new maker and adding it to the list of known marks.
+        /// </summary>
+        private void AddMark(MapMarkerInfo.MarkerType type, string tagStr, Location location)
+        {
+            _marks[tagStr] = MarkerFactory(type, tagStr, -1, location);
         }
 
         /// <summary>
@@ -407,7 +415,7 @@ namespace JAFDTC.UI.Controls.Map
                 MapMarkerInfo.MarkerType.DCS_CORE
                     => new MapMarkerSquareControl(brush, brush, new Size(20.0, 20.0)),
                 MapMarkerInfo.MarkerType.USER
-                    => new MapMarkerTriangleControl(brush, brush, new Size(20.0, 20.0)),
+                    => new MapMarkerTriangleControl(brush, brush, new Size(22.0, 22.0)),
                 MapMarkerInfo.MarkerType.CAMPAIGN
                     => new MapMarkerCircleControl(brush, brush, new Size(20.0, 20.0)),
                 MapMarkerInfo.MarkerType.IMPORT_GEN
@@ -723,7 +731,12 @@ namespace JAFDTC.UI.Controls.Map
         public void VerbMarkerMoved(IMapControlVerbHandler sender, MapMarkerInfo info)
         {
             Debug.WriteLine($"MC:VerbMarkerMoved {info.Type}, {info.TagStr}, {info.TagInt}, {info.Lat}, {info.Lon}");
-            MoveMapMarker(_routes[info.TagStr].Points[info.TagInt - 1], new(double.Parse(info.Lat), double.Parse(info.Lon)));
+            if ((info.TagStr == null) || !CanEdit(info.Type))
+                return;
+            else if (_routes.TryGetValue(info.TagStr, out RouteInfo routeInfo))
+                MoveMapMarker(routeInfo.Points[info.TagInt - 1], new(double.Parse(info.Lat), double.Parse(info.Lon)));
+            else if (_marks.TryGetValue(info.TagStr, out MapMarkerControl marker))
+                MoveMapMarker(marker, new(double.Parse(info.Lat), double.Parse(info.Lon)));
         }
 
         /// <summary>
@@ -732,12 +745,18 @@ namespace JAFDTC.UI.Controls.Map
         public void VerbMarkerAdded(IMapControlVerbHandler sender, MapMarkerInfo info)
         {
             Debug.WriteLine($"MC:VerbMarkerAdded {info.Type}, {info.TagStr}, {info.TagInt}, {info.Lat}, {info.Lon}");
-            RouteInfo routeInfo = _routes[info.TagStr];
-            HideEditHandle(routeInfo.EditHandlePos);
-            HideEditHandle(routeInfo.EditHandleNeg);
-
-// TODO: what about other marker types?
-            AddMarkerToRoute(info.TagStr, info.TagInt, new(double.Parse(info.Lat), double.Parse(info.Lon)));
+            if ((info.TagStr == null) || !CanEdit(info.Type))
+                return;
+            else if (_routes.TryGetValue(info.TagStr, out RouteInfo routeInfo))
+            {
+                HideEditHandle(routeInfo.EditHandlePos);
+                HideEditHandle(routeInfo.EditHandleNeg);
+                AddMarkerToRoute(info.TagStr, info.TagInt, new(double.Parse(info.Lat), double.Parse(info.Lon)));
+            }
+            else
+            {
+                AddMark(info.Type, info.TagStr, new(double.Parse(info.Lat), double.Parse(info.Lon)));
+            }
         }
 
         /// <summary>
@@ -746,7 +765,9 @@ namespace JAFDTC.UI.Controls.Map
         public void VerbMarkerDeleted(IMapControlVerbHandler sender, MapMarkerInfo info)
         {
             Debug.WriteLine($"MC:VerbMarkerDeleted {info.Type}, {info.TagStr}, {info.TagInt}");
-            if ((info.TagStr != null) && (_routes.TryGetValue(info.TagStr, out RouteInfo routeInfo)))
+            if ((info.TagStr == null) || !CanEdit(info.Type))
+                return;
+            else if (_routes.TryGetValue(info.TagStr, out RouteInfo routeInfo))
             {
                 CrackMarkerTag(_selectedMarker, out MapMarkerInfo.MarkerType type, out string tagStr, out int _);
                 if (tagStr == info.TagStr)
@@ -762,7 +783,7 @@ namespace JAFDTC.UI.Controls.Map
                     routeInfo.Points[i].Tag = TagForMarkerOfKind(info.Type, info.TagStr, i + 1);
                 routeInfo.Path.Paths[0].Locations.RemoveAt(info.TagInt - 1);
             }
-            else if ((info.TagStr != null) && (_marks.TryGetValue(info.TagStr, out MapMarkerControl marker)))
+            else if (_marks.TryGetValue(info.TagStr, out MapMarkerControl marker))
             {
                 CrackMarkerTag(_selectedMarker, out MapMarkerInfo.MarkerType _, out string tagStr, out int _);
                 if (tagStr == info.TagStr)
