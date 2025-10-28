@@ -51,7 +51,8 @@ namespace JAFDTC.UI.Base
     /// using IEditNavpointListHelper, this class can support other navigation point systems that go beyond the basic
     /// functionality in NavpointInfoBase and NavpointSystemBase.
     /// </summary>
-    public sealed partial class EditNavpointListPage : SystemEditorPageBase, IMapControlVerbHandler, IMapControlMarkerExplainer
+    public sealed partial class EditNavpointListPage : SystemEditorPageBase,
+                                                       IMapControlVerbHandler, IMapControlMarkerExplainer
     {
         // ------------------------------------------------------------------------------------------------------------
         //
@@ -562,7 +563,7 @@ namespace JAFDTC.UI.Base
         /// <summary>
         /// TODO: document
         /// </summary>
-        public void VerbMarkerSelected(IMapControlVerbHandler sender, MapMarkerInfo info)
+        public void VerbMarkerSelected(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
             Debug.WriteLine($"ENLP:VerbMarkerSelected {info.Type}, {info.TagStr}, {info.TagInt}");
             if ((info.TagStr != ROUTE_NAME) || (info.Type == MapMarkerInfo.MarkerType.UNKNOWN))
@@ -585,7 +586,7 @@ namespace JAFDTC.UI.Base
         /// <summary>
         /// TODO: document
         /// </summary>
-        public void VerbMarkerOpened(IMapControlVerbHandler sender, MapMarkerInfo info)
+        public void VerbMarkerOpened(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
             Debug.WriteLine($"ENLP:MarkerOpen {info.Type}, {info.TagStr}, {info.TagInt}");
             if (info.TagStr == ROUTE_NAME)
@@ -601,7 +602,7 @@ namespace JAFDTC.UI.Base
         /// <summary>
         /// TODO: document
         /// </summary>
-        public void VerbMarkerMoved(IMapControlVerbHandler sender, MapMarkerInfo info)
+        public void VerbMarkerMoved(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
             Debug.WriteLine($"ENLP:VerbMarkerMoved {info.Type}, {info.TagStr}, {info.TagInt}, {info.Lat}, {info.Lon}");
             if (info.TagStr == ROUTE_NAME)
@@ -618,7 +619,7 @@ namespace JAFDTC.UI.Base
         /// <summary>
         /// TODO: document
         /// </summary>
-        public void VerbMarkerAdded(IMapControlVerbHandler sender, MapMarkerInfo info)
+        public void VerbMarkerAdded(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
             Debug.WriteLine($"ENLP:VerbMarkerAdded {info.Type}, {info.TagStr}, {info.TagInt}, {info.Lat}, {info.Lon}");
             if (info.TagStr == ROUTE_NAME)
@@ -638,7 +639,7 @@ namespace JAFDTC.UI.Base
         /// <summary>
         /// TODO: document
         /// </summary>
-        public void VerbMarkerDeleted(IMapControlVerbHandler sender, MapMarkerInfo info)
+        public void VerbMarkerDeleted(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
             Debug.WriteLine($"ENLP:VerbMarkerDeleted {info.Type}, {info.TagStr}, {info.TagInt}");
             if (info.TagStr == ROUTE_NAME)

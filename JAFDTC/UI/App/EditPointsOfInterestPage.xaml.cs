@@ -1631,7 +1631,7 @@ namespace JAFDTC.UI.App
         /// <summary>
         /// TODO: document
         /// </summary>
-        public void VerbMarkerSelected(IMapControlVerbHandler sender, MapMarkerInfo info)
+        public void VerbMarkerSelected(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
             Debug.WriteLine($"EPP:VerbMarkerSelected {info.Type}, {info.TagStr}, {info.TagInt}");
             if (info.Type == MapMarkerInfo.MarkerType.UNKNOWN)
@@ -1652,12 +1652,12 @@ namespace JAFDTC.UI.App
         /// <summary>
         /// TODO: document
         /// </summary>
-        public void VerbMarkerOpened(IMapControlVerbHandler sender, MapMarkerInfo info) { }
+        public void VerbMarkerOpened(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0) { }
 
         /// <summary>
         /// TODO: document
         /// </summary>
-        public void VerbMarkerMoved(IMapControlVerbHandler sender, MapMarkerInfo info)
+        public void VerbMarkerMoved(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
 // TODO: what if movement takes marker outside of theater?
             Debug.WriteLine($"EPP:VerbMarkerMoved {info.Type}, {info.TagStr}, {info.TagInt}, {info.Lat}, {info.Lon}");
@@ -1683,7 +1683,7 @@ namespace JAFDTC.UI.App
         /// <summary>
         /// TODO: document
         /// </summary>
-        public void VerbMarkerAdded(IMapControlVerbHandler sender, MapMarkerInfo info)
+        public void VerbMarkerAdded(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
             Debug.WriteLine($"EPP:VerbMarkerAdded {info.Type}, {info.TagStr}, {info.TagInt}, {info.Lat}, {info.Lon}");
 // TODO: nothing to do here until we support add via map window
@@ -1692,7 +1692,7 @@ namespace JAFDTC.UI.App
         /// <summary>
         /// TODO: document
         /// </summary>
-        public void VerbMarkerDeleted(IMapControlVerbHandler sender, MapMarkerInfo info)
+        public void VerbMarkerDeleted(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
             Debug.WriteLine($"EPP:VerbMarkerDeleted {info.Type}, {info.TagStr}, {info.TagInt}");
             PointOfInterest poi = PointOfInterestDbase.Instance.Find(info.TagStr);

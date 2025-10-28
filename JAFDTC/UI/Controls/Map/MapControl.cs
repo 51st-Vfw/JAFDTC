@@ -701,7 +701,7 @@ namespace JAFDTC.UI.Controls.Map
         /// <summary>
         /// handle a change to the selected marker from another source of map actions.
         /// </summary>
-        public void VerbMarkerSelected(IMapControlVerbHandler sender, MapMarkerInfo info)
+        public void VerbMarkerSelected(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
             Debug.WriteLine($"MC:MarkerSelect {info.Type}, {info.TagStr} {info.TagInt}");
             if (_selectedMarker != null)
@@ -723,12 +723,12 @@ namespace JAFDTC.UI.Controls.Map
         /// <summary>
         /// map does not have anything to do on opens originating from other senders.
         /// </summary>
-        public void VerbMarkerOpened(IMapControlVerbHandler sender, MapMarkerInfo info) { }
+        public void VerbMarkerOpened(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0) { }
 
         /// <summary>
         /// handle the change of a marker location.
         /// </summary>
-        public void VerbMarkerMoved(IMapControlVerbHandler sender, MapMarkerInfo info)
+        public void VerbMarkerMoved(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
             Debug.WriteLine($"MC:VerbMarkerMoved {info.Type}, {info.TagStr}, {info.TagInt}, {info.Lat}, {info.Lon}");
             if ((info.TagStr == null) || !CanEdit(info.Type))
@@ -742,7 +742,7 @@ namespace JAFDTC.UI.Controls.Map
         /// <summary>
         /// TODO: document
         /// </summary>
-        public void VerbMarkerAdded(IMapControlVerbHandler sender, MapMarkerInfo info)
+        public void VerbMarkerAdded(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
             Debug.WriteLine($"MC:VerbMarkerAdded {info.Type}, {info.TagStr}, {info.TagInt}, {info.Lat}, {info.Lon}");
             if ((info.TagStr == null) || !CanEdit(info.Type))
@@ -762,7 +762,7 @@ namespace JAFDTC.UI.Controls.Map
         /// <summary>
         /// TODO: document
         /// </summary>
-        public void VerbMarkerDeleted(IMapControlVerbHandler sender, MapMarkerInfo info)
+        public void VerbMarkerDeleted(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
             Debug.WriteLine($"MC:VerbMarkerDeleted {info.Type}, {info.TagStr}, {info.TagInt}");
             if ((info.TagStr == null) || !CanEdit(info.Type))

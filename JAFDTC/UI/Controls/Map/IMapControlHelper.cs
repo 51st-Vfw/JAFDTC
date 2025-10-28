@@ -54,27 +54,27 @@ namespace JAFDTC.UI.Controls.Map
         /// <summary>
         /// mirror marker selected across all registered observers except for the sender.
         /// </summary>
-        public void MirrorVerbMarkerSelected(IMapControlVerbHandler sender, MapMarkerInfo info);
+        public void MirrorVerbMarkerSelected(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0);
 
         /// <summary>
         /// mirror marker opened across all registered observers except for the sender.
         /// </summary>
-        public void MirrorVerbMarkerOpened(IMapControlVerbHandler sender, MapMarkerInfo info);
+        public void MirrorVerbMarkerOpened(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0);
 
         /// <summary>
         /// mirror marker moved across all registered observers except for the sender.
         /// </summary>
-        public void MirrorVerbMarkerMoved(IMapControlVerbHandler sender, MapMarkerInfo info);
+        public void MirrorVerbMarkerMoved(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0);
 
         /// <summary>
         /// mirror marker added across all registered observers except for the sender.
         /// </summary>
-        public void MirrorVerbMarkerAdded(IMapControlVerbHandler sender, MapMarkerInfo info);
+        public void MirrorVerbMarkerAdded(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0);
 
         /// <summary>
         /// mirror marker deleted across all registered observers except for the sender.
         /// </summary>
-        public void MirrorVerbMarkerDeleted(IMapControlVerbHandler sender, MapMarkerInfo info);
+        public void MirrorVerbMarkerDeleted(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0);
     }
 
     /// <summary>
@@ -102,27 +102,27 @@ namespace JAFDTC.UI.Controls.Map
         /// sender object drives a change to make the indicated marker selected (an UNKNOWN marker type
         /// indicates the selection is being cleared), replicate this change in the handler object.
         /// </summary>
-        public void VerbMarkerSelected(IMapControlVerbHandler sender, MapMarkerInfo info);
+        public void VerbMarkerSelected(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0);
 
         /// <summary>
         /// sender object has opened the indicated marker for detailed editing, replicate this change
         /// in the handler object.
         /// </summary>
-        public void VerbMarkerOpened(IMapControlVerbHandler sender, MapMarkerInfo info);
+        public void VerbMarkerOpened(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0);
 
         /// <summary>
         /// sender object has moved the indicated marker, replicate this change in the handler object.
         /// </summary>
-        public void VerbMarkerMoved(IMapControlVerbHandler sender, MapMarkerInfo info);
+        public void VerbMarkerMoved(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0);
 
         /// <summary>
         /// sender object has added a new marker, replicate this change in the handler object.
         /// </summary>
-        public void VerbMarkerAdded(IMapControlVerbHandler sender, MapMarkerInfo info);
+        public void VerbMarkerAdded(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0);
 
         /// <summary>
         /// sender object has deleted indicated marker, replicate this change in the handler object.
         /// </summary>
-        public void VerbMarkerDeleted(IMapControlVerbHandler sender, MapMarkerInfo info);
+        public void VerbMarkerDeleted(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0);
     }
 }

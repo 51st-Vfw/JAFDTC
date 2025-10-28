@@ -637,7 +637,7 @@ namespace JAFDTC.UI.F16C
         /// <summary>
         /// TODO: document
         /// </summary>
-        public void VerbMarkerSelected(IMapControlVerbHandler sender, MapMarkerInfo info)
+        public void VerbMarkerSelected(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
             Debug.WriteLine($"VSLP:VerbMarkerSelected {info.Type}, {info.TagStr}, {info.TagInt}");
             if ((info.TagStr != ROUTE_NAME) || (info.Type == MapMarkerInfo.MarkerType.UNKNOWN))
@@ -660,7 +660,7 @@ namespace JAFDTC.UI.F16C
         /// <summary>
         /// TODO: document
         /// </summary>
-        public void VerbMarkerOpened(IMapControlVerbHandler sender, MapMarkerInfo info)
+        public void VerbMarkerOpened(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
             Debug.WriteLine($"VSLP:MarkerOpen {info.Type}, {info.TagStr}, {info.TagInt}");
             if (info.TagStr == ROUTE_NAME)
@@ -676,7 +676,7 @@ namespace JAFDTC.UI.F16C
         /// <summary>
         /// TODO: document
         /// </summary>
-        public void VerbMarkerMoved(IMapControlVerbHandler sender, MapMarkerInfo info)
+        public void VerbMarkerMoved(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
             Debug.WriteLine($"VSLP:VerbMarkerMoved {info.Type}, {info.TagStr}, {info.TagInt}, {info.Lat}, {info.Lon}");
             if (info.TagStr == ROUTE_NAME)
@@ -693,7 +693,7 @@ namespace JAFDTC.UI.F16C
         /// <summary>
         /// TODO: document
         /// </summary>
-        public void VerbMarkerAdded(IMapControlVerbHandler sender, MapMarkerInfo info)
+        public void VerbMarkerAdded(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
             Debug.WriteLine($"VSLP:VerbMarkerAdded {info.Type}, {info.TagStr}, {info.TagInt}, {info.Lat}, {info.Lon}");
             if (info.TagStr == ROUTE_NAME)
@@ -714,7 +714,7 @@ namespace JAFDTC.UI.F16C
         /// <summary>
         /// TODO: document
         /// </summary>
-        public void VerbMarkerDeleted(IMapControlVerbHandler sender, MapMarkerInfo info)
+        public void VerbMarkerDeleted(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
             Debug.WriteLine($"VSLP:VerbMarkerDeleted {info.Type}, {info.TagStr}, {info.TagInt}");
             if (info.TagStr == ROUTE_NAME)

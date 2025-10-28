@@ -349,42 +349,43 @@ namespace JAFDTC.UI.App
         // following functions simply wlk the observers list and pass the verb along to all observers other than the
         // verb's sender. implicitly rebuilds our interface state after updates are completed.
 
-        private void MirrorVerb(Action<IMapControlVerbHandler, MapMarkerInfo> verb, string senderTag, MapMarkerInfo info)
+        private void MirrorVerb(Action<IMapControlVerbHandler, MapMarkerInfo, int> verb, string senderTag,
+                                MapMarkerInfo info, int param)
         {
             foreach (string tag in _mapObservers.Keys)
                 if (tag != senderTag)
-                    verb(_mapObservers[tag], info);
+                    verb(_mapObservers[tag], info, param);
             RebuildInterfaceState();
         }
 
-        public void MirrorVerbMarkerSelected(IMapControlVerbHandler sender, MapMarkerInfo info)
+        public void MirrorVerbMarkerSelected(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
-            void verb(IMapControlVerbHandler t, MapMarkerInfo i) { t.VerbMarkerSelected(sender, i); }
-            MirrorVerb(verb, sender?.VerbHandlerTag, info);
+            void verb(IMapControlVerbHandler t, MapMarkerInfo i, int param) { t.VerbMarkerSelected(sender, i, param); }
+            MirrorVerb(verb, sender?.VerbHandlerTag, info, param);
         }
 
-        public void MirrorVerbMarkerOpened(IMapControlVerbHandler sender, MapMarkerInfo info)
+        public void MirrorVerbMarkerOpened(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
-            void verb(IMapControlVerbHandler t, MapMarkerInfo i) { t.VerbMarkerOpened(sender, i); }
-            MirrorVerb(verb, sender?.VerbHandlerTag, info);
+            void verb(IMapControlVerbHandler t, MapMarkerInfo i, int param) { t.VerbMarkerOpened(sender, i, param); }
+            MirrorVerb(verb, sender?.VerbHandlerTag, info, param);
         }
 
-        public void MirrorVerbMarkerMoved(IMapControlVerbHandler sender, MapMarkerInfo info)
+        public void MirrorVerbMarkerMoved(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
-            void verb(IMapControlVerbHandler t, MapMarkerInfo i) { t.VerbMarkerMoved(sender, i); }
-            MirrorVerb(verb, sender?.VerbHandlerTag, info);
+            void verb(IMapControlVerbHandler t, MapMarkerInfo i, int param) { t.VerbMarkerMoved(sender, i, param); }
+            MirrorVerb(verb, sender?.VerbHandlerTag, info, param);
         }
 
-        public void MirrorVerbMarkerAdded(IMapControlVerbHandler sender, MapMarkerInfo info)
+        public void MirrorVerbMarkerAdded(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
-            void verb(IMapControlVerbHandler t, MapMarkerInfo i) { t.VerbMarkerAdded(sender, i); }
-            MirrorVerb(verb, sender?.VerbHandlerTag, info);
+            void verb(IMapControlVerbHandler t, MapMarkerInfo i, int param) { t.VerbMarkerAdded(sender, i, param); }
+            MirrorVerb(verb, sender?.VerbHandlerTag, info, param);
         }
 
-        public void MirrorVerbMarkerDeleted(IMapControlVerbHandler sender, MapMarkerInfo info)
+        public void MirrorVerbMarkerDeleted(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
-            void verb(IMapControlVerbHandler t, MapMarkerInfo i) { t.VerbMarkerDeleted(sender, i); }
-            MirrorVerb(verb, sender?.VerbHandlerTag, info);
+            void verb(IMapControlVerbHandler t, MapMarkerInfo i, int param) { t.VerbMarkerDeleted(sender, i, param); }
+            MirrorVerb(verb, sender?.VerbHandlerTag, info, param);
         }
 
         // ------------------------------------------------------------------------------------------------------------
