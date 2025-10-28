@@ -19,6 +19,8 @@
 
 using JAFDTC.Models;
 using JAFDTC.Models.DCS;
+using JAFDTC.UI.Base;
+using JAFDTC.UI.Controls.Map;
 using JAFDTC.Utilities;
 using JAFDTC.Utilities.Networking;
 using Microsoft.UI.Dispatching;
@@ -28,6 +30,7 @@ using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
+using Microsoft.Windows.Storage.Pickers;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -37,18 +40,18 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text.Json;
 using System.Text.RegularExpressions;
-using Windows.Storage.Pickers;
+using System.Threading.Tasks;
 using Windows.Storage;
-using WinRT.Interop;
+
 using static JAFDTC.Utilities.Networking.WyptCaptureDataRx;
 
 namespace JAFDTC.UI.App
 {
     /// <summary>
-    /// item class for an item in the point of interest list view. this provides ui-friendly views of properties
+    /// item class for an item in the point of interest ListView. this provides ui-friendly views of properties
     /// suitable for display in the ui via bindings.
     /// </summary>
-    public class PoIListItem
+    internal partial class PoIListItem : BindableObject
     {
         public PointOfInterest PoI { get; set; }
 
@@ -63,13 +66,35 @@ namespace JAFDTC.UI.App
             }
         }
 
-        public string LatUI => Coord.RemoveLLDegZeroFill(Coord.ConvertFromLatDD(PoI.Latitude, LLDisplayFmt));
+        public string _latUI;
+        public string LatUI
+        {
+            get => Coord.RemoveLLDegZeroFill(Coord.ConvertFromLatDD(PoI.Latitude, LLDisplayFmt));
+            set
+            {
+                PoI.Latitude = Coord.ConvertToLatDD(value, LLDisplayFmt);
+                SetProperty(ref _latUI, value);
+            }
+        }
 
-        public string LonUI => Coord.RemoveLLDegZeroFill(Coord.ConvertFromLonDD(PoI.Longitude, LLDisplayFmt));
-
+        private string _lonUI;
+        public string LonUI
+        { 
+            get => Coord.RemoveLLDegZeroFill(Coord.ConvertFromLonDD(PoI.Longitude, LLDisplayFmt));
+            set
+            {
+                PoI.Longitude = Coord.ConvertToLonDD(value, LLDisplayFmt);
+                SetProperty(ref _lonUI, value);
+            }
+        }
+        
         public string Glyph
-            => (PoI.Type == PointOfInterestType.USER) ? "\xE718"
-                                                      : ((PoI.Type == PointOfInterestType.CAMPAIGN) ? "\xE7C1" : "");
+            => PoI.Type switch
+            {
+                PointOfInterestType.USER => "\xE718",
+                PointOfInterestType.CAMPAIGN => "\xE7C1",
+                _ => ""
+            };
 
         public PoIListItem(PointOfInterest poi, LLFormat fmt) => (PoI, LLDisplayFmt) = (poi, fmt);
     }
@@ -78,7 +103,7 @@ namespace JAFDTC.UI.App
 
     /// <summary>
     /// point of interest lat/lon helper. this provides for translation between the user-facing presentation of the
-    /// lat/lon (where settings in the ui specify the lat/lon display format) and the internal decimal degress format.
+    /// lat/lon (where settings in the ui specify the lat/lon display format) and the internal decimal degrees format.
     /// </summary>
     internal partial class PoILL : BindableObject
     {
@@ -128,7 +153,7 @@ namespace JAFDTC.UI.App
 
         public List<string> GetErrorsWithEmpty(bool isEmptyOK)
         {
-            List<string> errors = new();
+            List<string> errors = [ ];
             if (!IsRegexFieldValid(LatUI, Coord.LatRegexFor(Format), isEmptyOK))
                 errors.Add("LatUI");
             if (!IsRegexFieldValid(LonUI, Coord.LonRegexFor(Format), isEmptyOK))
@@ -146,15 +171,18 @@ namespace JAFDTC.UI.App
     // ================================================================================================================
 
     /// <summary>
-    /// backing object for editing a point of interest.
+    /// backing object for editing a point of interest. this provides bindings for the text fields at the bottom of
+    /// the poi page that set name, tags, lat/lon/elev information.
     /// </summary>
     internal partial class PoIDetails : BindableObject
     {
+        public string SourceUID { get; set; }
+
         public int CurIndexLL { get; set; }
 
-        // HACK: we will use per-format PoILL instances to avoid binding multiple controls to the same property (which
-        // HACK: doesn't seem to work well). should be a way to dynamically bind/unbind properties that we could use
-        // HACK: to avoid this, but...
+        // HACK: we will use per-format PoILL instances to avoid binding multiple controls to the same property
+        // HACK: (which doesn't seem to work well). should be a way to dynamically bind/unbind properties that we
+        // HACK: could use to avoid this, but...
         //
         public PoILL[] LL { get; set; }
 
@@ -192,10 +220,38 @@ namespace JAFDTC.UI.App
             => (string.IsNullOrEmpty(Name) && string.IsNullOrEmpty(Tags) && string.IsNullOrEmpty(Alt) &&
                 LL[CurIndexLL].IsEmpty);
 
+        public bool IsDirty
+        {
+            get
+            {
+                PointOfInterest poi = PointOfInterestDbase.Instance.Find(SourceUID);
+                if (poi != null)
+                    return poi.Name != Name ||
+                           poi.Tags != Tags ||
+                           poi.Elevation != Alt ||
+                           poi.Latitude != LL[CurIndexLL].Lat ||
+                           poi.Longitude != LL[CurIndexLL].Lon;
+                else
+                    return !IsEmpty;
+            }
+        }
+
         // NOTE: format order of PoILL must be kept in sync with EditPointsOfInterestPage and xaml.
         //
         public PoIDetails()
-            => (CurIndexLL, LL) = (0, new PoILL[3] { new(LLFormat.DDU), new(LLFormat.DMS), new(LLFormat.DDM_P3ZF) });
+            => (CurIndexLL, LL) = (0, [ new(LLFormat.DDU), new(LLFormat.DMS), new(LLFormat.DDM_P3ZF) ]);
+
+        public PoIDetails(PointOfInterest poi, LLFormat llDisplayFmt, int llIndex)
+        {
+            CurIndexLL = 0;
+            LL = [new(LLFormat.DDU), new(LLFormat.DMS), new(LLFormat.DDM_P3ZF)];
+            SourceUID = null;
+            Name = poi.Name;
+            Tags = PointOfInterest.SanitizedTags(poi.Tags);
+            LL[llIndex].LatUI = Coord.ConvertFromLatDD(poi.Latitude, llDisplayFmt);
+            LL[llIndex].LonUI = Coord.ConvertFromLonDD(poi.Longitude, llDisplayFmt);
+            Alt = poi.Elevation;
+        }
 
         public List<string> GetErrorsWithEmpty(bool isEmptyOK)
         {
@@ -207,6 +263,7 @@ namespace JAFDTC.UI.App
 
         public void Reset()
         {
+            SourceUID = "";
             Name = "";
             Tags = "";
             Alt = "";
@@ -218,9 +275,10 @@ namespace JAFDTC.UI.App
     // ================================================================================================================
 
     /// <summary>
-    /// TODO: document
+    /// main page for the point of interest editor. this provides the ui view of the poi database in jafdtc and
+    /// implements typical editor actions to create, modify, and delete points of interest.
     /// </summary>
-    public sealed partial class EditPointsOfInterestPage : Page
+    public sealed partial class EditPointsOfInterestPage : Page, IMapControlVerbHandler, IMapControlMarkerExplainer
     {
         // ------------------------------------------------------------------------------------------------------------
         //
@@ -228,19 +286,40 @@ namespace JAFDTC.UI.App
         //
         // ------------------------------------------------------------------------------------------------------------
 
-        private static readonly Regex _campaignNameRegex = new(@"^[a-zA-Z0-9 ]+$");
+        // ---- regular expressions
+
+        [GeneratedRegex(@"^[a-zA-Z0-9 ]+$")]
+        private static partial Regex CampaignNameRegex();
+
+        // ---- internal properties
+
+        private MapWindow _mapWindow;
+        private MapWindow MapWindow
+        {
+            get => _mapWindow;
+            set
+            {
+                if (_mapWindow != value)
+                {
+                    _mapWindow = value;
+                    VerbMirror = value;
+                }
+            }
+        }
 
         private ObservableCollection<PoIListItem> CurPoIItems { get; set; }
 
-        private List<PointOfInterest> CurPoI { get; set; }
-
         private PoIDetails EditPoI { get; set; }
-
-        private bool IsEditPoINew { get; set; }
 
         private bool IsRebuildPending { get; set; }
 
+        private bool IsVerbEvent { get; set; }
+
         private LLFormat LLDisplayFmt { get; set; }
+
+        private string LastAddTheater { get; set; }
+
+        private string LastAddCampaign { get; set; }
 
         private string FilterTheater { get; set; }
 
@@ -250,14 +329,7 @@ namespace JAFDTC.UI.App
 
         private PointOfInterestTypeMask FilterIncludeTypes { get; set; }
 
-        private bool IsFiltered => !(string.IsNullOrEmpty(FilterTheater) &&
-                                     string.IsNullOrEmpty(FilterCampaign) && 
-                                     string.IsNullOrEmpty(FilterTags) &&
-                                     FilterIncludeTypes.HasFlag(PointOfInterestTypeMask.DCS_CORE) &&
-                                     FilterIncludeTypes.HasFlag(PointOfInterestTypeMask.USER) &&
-                                     FilterIncludeTypes.HasFlag(PointOfInterestTypeMask.CAMPAIGN));
-
-        // read-only properties
+        // ---- read-only properties
 
         private readonly Dictionary<LLFormat, int> _llFmtToIndexMap;
         private readonly Dictionary<string, LLFormat> _llFmtTextToFmtMap;
@@ -267,6 +339,15 @@ namespace JAFDTC.UI.App
         private readonly Brush _defaultBorderBrush;
         private readonly Brush _defaultBkgndBrush;
 
+        // ---- constructed properties
+
+        private bool IsFiltered => !(string.IsNullOrEmpty(FilterTheater) &&
+                                     string.IsNullOrEmpty(FilterCampaign) &&
+                                     string.IsNullOrEmpty(FilterTags) &&
+                                     FilterIncludeTypes.HasFlag(PointOfInterestTypeMask.DCS_CORE) &&
+                                     FilterIncludeTypes.HasFlag(PointOfInterestTypeMask.USER) &&
+                                     FilterIncludeTypes.HasFlag(PointOfInterestTypeMask.CAMPAIGN));
+
         // ------------------------------------------------------------------------------------------------------------
         //
         // construction
@@ -275,16 +356,17 @@ namespace JAFDTC.UI.App
 
         public EditPointsOfInterestPage()
         {
+            JAFDTC.App curApp = Application.Current as JAFDTC.App;
+            curApp.Window.Closed += AppWindow_Closed;
+
             InitializeComponent();
 
-            CurPoIItems = new ObservableCollection<PoIListItem>();
+            CurPoIItems = [ ];
 
             EditPoI = new PoIDetails();
             EditPoI.ErrorsChanged += PoIField_DataValidationError;
             for (int i = 0; i < EditPoI.LL.Length; i++)
                 EditPoI.LL[i].ErrorsChanged += PoIField_DataValidationError;
-
-            IsEditPoINew = true;
 
             // NOTE: these need to be kept in sync with PoIDetails and the xaml.
             //
@@ -309,10 +391,10 @@ namespace JAFDTC.UI.App
                 ["Name"] = uiPoIValueName,
                 ["Tags"] = uiPoIValueTags
             };
-            _poiFieldValues = new List<TextBox>()
-            {
+            _poiFieldValues =
+            [
                 uiPoIValueLatDD, uiPoIValueLatDDM, uiPoIValueLatDMS, uiPoIValueLonDD, uiPoIValueLonDDM, uiPoIValueLonDMS
-            };
+            ];
             _defaultBorderBrush = uiPoIValueLatDDM.BorderBrush;
             _defaultBkgndBrush = uiPoIValueLatDDM.Background;
 
@@ -338,12 +420,11 @@ namespace JAFDTC.UI.App
 
         private void ValidateAllFields(Dictionary<string, TextBox> fields, IEnumerable errors)
         {
-            Dictionary<string, bool> map = new();
+            Dictionary<string, bool> map = [ ];
             foreach (string error in errors)
                 map[error] = true;
             foreach (KeyValuePair<string, TextBox> kvp in fields)
-                SetFieldValidState(kvp.Value,
-                                   !map.ContainsKey(kvp.Key) || EditPoI.IsEmpty);
+                SetFieldValidState(kvp.Value, !map.ContainsKey(kvp.Key) || EditPoI.IsEmpty);
         }
 
         /// <summary>
@@ -364,9 +445,8 @@ namespace JAFDTC.UI.App
                     int index = _llFmtToIndexMap[LLDisplayFmt];
                     isValid = ((List<string>)EditPoI.LL[index].GetErrors(args.PropertyName)).Count == 0;
                 }
-                if (_curPoIFieldValueMap.ContainsKey(args.PropertyName))
-                    SetFieldValidState(_curPoIFieldValueMap[args.PropertyName],
-                                       isValid || EditPoI.IsEmpty);
+                if (_curPoIFieldValueMap.TryGetValue(args.PropertyName, out TextBox value))
+                    SetFieldValidState(value, isValid || EditPoI.IsEmpty);
             }
             RebuildInterfaceState();
         }
@@ -378,61 +458,22 @@ namespace JAFDTC.UI.App
         // ------------------------------------------------------------------------------------------------------------
 
         /// <summary>
-        /// apply a function to a new campaign. prompt the user for a camapign name and then perform the operation
-        /// given by a lambda when the user provides/accepts a valid name. the lambda takes a single string argument
-        /// (the campaign name) and returns true on success, false on error. the what parameter should be uppercase
-        /// description of what the function does ("Add", "Import").
+        /// returns the index of the poi in the poi list with the given uid, -1 if no matching poi is found.
         /// </summary>
-        private async void CoreApplyFuncToNewCampaign(string what, Func<string, bool> operation)
+        private int FindIndexOfPoIByUID(string uid)
         {
-            GetNameDialog nameDialog = new(null, $"Select a Name for the Campaign to {what}")
-            {
-                XamlRoot = Content.XamlRoot,
-                Title = $"{what} Campaign"
-            };
-            ContentDialog errDialog = new()
-            {
-                XamlRoot = Content.XamlRoot,
-                Title = "Invalid Name",
-                PrimaryButtonText = "OK",
-            };
-
-            string campaignName;
-            ContentDialogResult result;
-            while (true)
-            {
-                result = await nameDialog.ShowAsync();
-                campaignName = nameDialog.Value.Trim(' ');
-                string message = null;
-                foreach (string campaign in PointOfInterestDbase.Instance.KnownCampaigns)
-                {
-                    if (campaignName.ToLower() == campaign.ToLower())
-                    {
-                        message = $"There is already a campaign named '{campaignName}'. Please select a different name.";
-                        break;
-                    }
-                }
-                if (!_campaignNameRegex.IsMatch(campaignName))
-                    message = $"Campaign name '{campaignName}' may only contain alphanumeric characters. Please select a different name.";
-                if ((result == ContentDialogResult.None) || (message == null))
-                    break;
-                errDialog.Content = message;
-                await errDialog.ShowAsync();
-            }
-            if (result == ContentDialogResult.Primary)
-            {
-                operation(campaignName);
-                RebuildInterfaceState();
-            }
+            for (int i = 0; i < uiPoIListView.Items.Count; i++)
+                if (uiPoIListView.Items[i] is PoIListItem item && (item.PoI.UniqueID == uid))
+                    return i;
+            return -1;
         }
 
         /// <summary>
-        /// apply a function to an existing campaign. prompt the user to select an existing camapign and then perform
-        /// the operation given by a lambda when the user provides/accepts a valid campaign. the lambda takes a single
-        /// string argument (the campaign name) and returns true on success, false on error. the what parameter should
-        /// be uppercase description of what the function does ("Delete", "Export").
+        /// prompt the user to select an existing camapign for a subsequent opeation. the what parameter should
+        /// be an uppercase description of what the function does ("Delete", "Export"). returns the selected
+        /// campaign name, null if cancelled.
         /// </summary>
-        private async void CoreApplyFuncToExistingCampaign(string what, Func<string, bool> operation)
+        private async Task<string> PromptForCampaign(string what)
         {
             GetListDialog listDialog = new(PointOfInterestDbase.Instance.KnownCampaigns, "Campaign")
             {
@@ -440,11 +481,100 @@ namespace JAFDTC.UI.App
                 Title = $"{what} Campaign",
                 PrimaryButtonText = what
             };
-            if (await listDialog.ShowAsync() == ContentDialogResult.Primary)
+            ContentDialogResult result = await listDialog.ShowAsync();
+            return (result == ContentDialogResult.Primary) ? listDialog.SelectedItem : null;
+        }
+
+        /// <summary>
+        /// inform the user of a name collision in response to an attempt to add a new poi or edit an existing
+        /// poi.
+        /// </summary>
+        private async void PromptForNameCollision(string name, string theater, string campaign, string tags)
+        {
+            string msg = (string.IsNullOrEmpty(tags)) ? "" : $" with tags “{tags}”";
+            if (string.IsNullOrEmpty(campaign))
+                msg = $"The user POI “{name}” in {theater}{msg}";
+            else
+                msg = $"The “{campaign}” campaign POI “{name}” in {theater}{msg}";
+            await Utilities.Message1BDialog(Content.XamlRoot, "POI is not Unique",
+                                            $"POIs must have unique name, campaign, theater, and tags within" +
+                                            $" a POI type. {msg} is not unique.");
+        }
+
+        /// <summary>
+        /// commit edit changes to a template point of interest. if the source uid of the template poi is null,
+        /// the method creates a new point of interest, otherwise it applies the template to the poi identified
+        /// by the source uid (note the uid may change depending on the edits in the template).
+        /// </summary>
+        private string CoreCommitEditChanges(PoIDetails tmpltPoI, string theater, string campaign,
+                                             bool isForceUniqueName = false)
+        {
+            string editUID = null;
+
+            PointOfInterest srcPoI = PointOfInterestDbase.Instance.Find(tmpltPoI.SourceUID);
+
+            int index = _llFmtToIndexMap[LLDisplayFmt];
+            PointOfInterest newPoI = new((string.IsNullOrEmpty(campaign)) ? PointOfInterestType.USER
+                                                                          : PointOfInterestType.CAMPAIGN,
+                                         theater, campaign, tmpltPoI.Name, tmpltPoI.Tags,
+                                         tmpltPoI.LL[index].Lat, tmpltPoI.LL[index].Lon, tmpltPoI.Alt);
+
+            string nameBase = newPoI.Name;
+            int sequence = 1;
+            bool isUnique;
+            do
             {
-                operation(listDialog.SelectedItem);
-                RebuildInterfaceState();
+                isUnique = (PointOfInterestDbase.Instance.Find(newPoI.UniqueID) == null);
+                if ((srcPoI != null) && (srcPoI.UniqueID == newPoI.UniqueID))
+                    isUnique = true;
+                else if (!isUnique)
+                    newPoI.Name = $"{nameBase} {sequence++}";
             }
+            while (!isUnique && isForceUniqueName);
+
+            if (isUnique && (srcPoI != null))
+            {
+                // updating existing poi (srcPoI). apply the edits and update the other verb observers. if the uid
+                // changes, we'll delete the old uid and add the marker back with the new uid; otherwise, we'll move
+                // it to its location.
+                //
+                string origUID = srcPoI.UniqueID;
+                PointOfInterestDbase.Instance.EditPointOfInterestBegins(srcPoI);
+                srcPoI.Theater = theater;
+                srcPoI.Campaign = campaign;
+                srcPoI.Name = newPoI.Name;
+                srcPoI.Tags = PointOfInterest.SanitizedTags(srcPoI.Tags);
+                srcPoI.Elevation = tmpltPoI.Alt;
+                srcPoI.Latitude = tmpltPoI.LL[index].Lat;
+                srcPoI.Longitude = tmpltPoI.LL[index].Lon;
+                PointOfInterestDbase.Instance.EditPointOfInterestEnds(srcPoI);
+                PointOfInterestDbase.Instance.Save(srcPoI.Campaign);
+                editUID = srcPoI.UniqueID;
+
+                if (origUID != editUID)
+                {
+                    VerbMirror?.MirrorVerbMarkerDeleted(this, new((MapMarkerInfo.MarkerType)newPoI.Type, origUID, -1));
+                    VerbMirror?.MirrorVerbMarkerAdded(this, new((MapMarkerInfo.MarkerType)newPoI.Type, editUID, 
+                                                                -1, newPoI.Latitude, newPoI.Longitude));
+                }
+                else
+                {
+                    VerbMirror?.MirrorVerbMarkerMoved(this, new((MapMarkerInfo.MarkerType)newPoI.Type, newPoI.UniqueID,
+                                                                -1, newPoI.Latitude, newPoI.Longitude));
+                }
+            }
+            else if (isUnique)
+            {
+                // adding new poi. do that, then update verb observers.
+                //
+                PointOfInterestDbase.Instance.AddPointOfInterest(newPoI);
+                editUID = newPoI.UniqueID;
+
+                VerbMirror?.MirrorVerbMarkerAdded(this, new((MapMarkerInfo.MarkerType)newPoI.Type, newPoI.UniqueID, -1,
+                                                            newPoI.Latitude, newPoI.Longitude));
+            }
+
+            return editUID;
         }
 
         /// <summary>
@@ -454,32 +584,14 @@ namespace JAFDTC.UI.App
         /// </summary>
         private Dictionary<PointOfInterestType, List<PointOfInterest>> CrackSelectedPoIsByType()
         {
-            Dictionary<PointOfInterestType, List<PointOfInterest>> cracked = new();
+            Dictionary<PointOfInterestType, List<PointOfInterest>> cracked = [ ];
             foreach (PoIListItem item in uiPoIListView.SelectedItems.Cast<PoIListItem>())
             {
                 if (!cracked.ContainsKey(item.PoI.Type))
-                    cracked[item.PoI.Type] = new List<PointOfInterest>();
+                    cracked[item.PoI.Type] = [ ];
                 cracked[item.PoI.Type].Add(item.PoI);
             }
             return cracked;
-        }
-
-        /// <summary>
-        /// returns the current theater assocaited with the coordinates from the lat/lon fields currently in the
-        /// point of interest editor.
-        /// </summary>
-        private string GetTheaterFromEditor()
-        {
-            string theater = "";
-            int index = _llFmtToIndexMap[LLDisplayFmt];
-            if (double.TryParse(EditPoI.LL[index].Lat, out double lat) &&
-                double.TryParse(EditPoI.LL[index].Lon, out double lon))
-            {
-// TODO: what to do when we have multiple hits here?
-                List<string> theaters = PointOfInterest.TheatersForCoords(lat, lon);
-                theater = (theaters.Count == 1) ? theaters[0] : "";
-            }
-            return theater;
         }
 
         /// <summary>
@@ -523,6 +635,9 @@ namespace JAFDTC.UI.App
 
             LLDisplayFmt = fmt;
             EditPoI.CurIndexLL = _llFmtToIndexMap[LLDisplayFmt];
+
+            if (MapWindow != null)
+                MapWindow.CoordFormat = fmt;
         }
 
         /// <summary>
@@ -532,10 +647,19 @@ namespace JAFDTC.UI.App
         /// </summary>
         private void RebuildPoIList(string name = null)
         {
-            CurPoI = GetPoIsMatchingFilter(name);
+// TODO: preserve selection, or nah?
             CurPoIItems.Clear();
-            foreach (PointOfInterest poi in CurPoI)
+            Dictionary<string, PointOfInterest> marks = [];
+            foreach (PointOfInterest poi in GetPoIsMatchingFilter(name))
+            {
                 CurPoIItems.Add(new PoIListItem(poi, LLDisplayFmt));
+                marks[poi.UniqueID] = poi;
+            }
+            if (MapWindow != null)
+            {
+                MapWindow.Theater = (string.IsNullOrEmpty(FilterTheater)) ? "All Theaters" : FilterTheater;
+                MapWindow.SetupMapContent([ ], marks);
+            }
         }
 
         /// <summary>
@@ -544,13 +668,17 @@ namespace JAFDTC.UI.App
         /// </summary>
         private void RebuildActionButtonTitle()
         {
-            string theater = GetTheaterFromEditor();
-            uiPoITextTheater.Text = (string.IsNullOrEmpty(theater)) ? "Unknown Theater" : theater;
+            int index = _llFmtToIndexMap[LLDisplayFmt];
+            List<string> theaters = PointOfInterest.TheatersForCoords(EditPoI.LL[index].Lat, EditPoI.LL[index].Lon);
+            if ((theaters == null) || (theaters.Count == 0))
+                uiPoITextTheater.Text = "Unknown Theater";
+            else if (theaters.Count == 1)
+                uiPoITextTheater.Text = theaters[0];
+            else
+                uiPoITextTheater.Text = "Multiple Theaters";
 
-            PointOfInterestDbQuery query = new(PointOfInterestTypeMask.USER, theater, null, uiPoIValueName.Text);
-            List<PointOfInterest> pois = PointOfInterestDbase.Instance.Find(query);
-            IsEditPoINew = pois.Count == 0;
-            uiPoITextBtnAdd.Text = (IsEditPoINew) ? "Add" : "Update";
+            uiPoITextBtnAdd.Text = (string.IsNullOrEmpty(EditPoI.SourceUID)) ? "Add" : "Update";
+            uiPoITextBtnClear.Text = (EditPoI.IsDirty) ? "Reset" : "Clear";
         }
 
         /// <summary>
@@ -561,29 +689,18 @@ namespace JAFDTC.UI.App
             JAFDTC.App curApp = Application.Current as JAFDTC.App;
 
             Dictionary<PointOfInterestType, List<PointOfInterest>> selectionByType = CrackSelectedPoIsByType();
+            bool isCoreInSel = selectionByType.ContainsKey(PointOfInterestType.DCS_CORE);
             bool isUserInSel = selectionByType.ContainsKey(PointOfInterestType.USER);
             bool isCampaignInSel = selectionByType.ContainsKey(PointOfInterestType.CAMPAIGN);
 
-            PointOfInterestDbQuery query = new(PointOfInterestTypeMask.ANY, null, null, uiPoIValueName.Text);
-            bool isPoIMatching = false;
-            foreach (PointOfInterest poi in PointOfInterestDbase.Instance.Find(query))
-            {
-                if ((poi.Name == EditPoI.Name) &&
-                    (poi.Tags == EditPoI.Tags) &&
-                    (poi.Elevation == EditPoI.Alt) &&
-                    (poi.Latitude == EditPoI.LL[_llFmtToIndexMap[LLDisplayFmt]].Lat) &&
-                    (poi.Longitude == EditPoI.LL[_llFmtToIndexMap[LLDisplayFmt]].Lon))
-                {
-                    isPoIMatching = true;
-                    break;
-                }
-            }
+            foreach (TextBox elem in _curPoIFieldValueMap.Values)
+                Utilities.SetEnableState(elem, (uiPoIListView.SelectedItems.Count <= 1) && !isCoreInSel);
 
             bool isPoIValid = !string.IsNullOrEmpty(uiPoIValueName.Text) &&
                               !string.IsNullOrEmpty(uiPoIValueAlt.Text) &&
                               !EditPoI.HasErrors;
 
-            Utilities.SetEnableState(uiPoIBtnAdd, !isPoIMatching && isPoIValid);
+            Utilities.SetEnableState(uiPoIBtnAdd, EditPoI.IsDirty && isPoIValid);
             Utilities.SetEnableState(uiPoIBtnClear, !EditPoI.IsEmpty);
             Utilities.SetEnableState(uiPoIBtnCapture, curApp.IsDCSAvailable);
 
@@ -592,8 +709,7 @@ namespace JAFDTC.UI.App
 
             bool isCampaigns = (PointOfInterestDbase.Instance.KnownCampaigns.Count > 0);
 
-            Utilities.SetEnableState(uiBarBtnEdit, (uiPoIListView.SelectedItems.Count == 1) && isUserInSel);
-            Utilities.SetEnableState(uiBarBtnDuplicate, uiPoIListView.SelectedItems.Count == 1);
+            Utilities.SetEnableState(uiBarBtnCopyUser, uiPoIListView.SelectedItems.Count == 1);
             Utilities.SetEnableState(uiBarBtnCopyCampaign, isCampaigns && (uiPoIListView.SelectedItems.Count > 0));
             Utilities.SetEnableState(uiBarBtnDelete, isUserInSel || isCampaignInSel);
             Utilities.SetEnableState(uiBarBtnExport, (uiPoIListView.SelectedItems.Count > 0));
@@ -646,7 +762,7 @@ namespace JAFDTC.UI.App
         {
             if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
             {
-                List<string> suitableItems = new();
+                List<string> suitableItems = [ ];
                 List<PointOfInterest> pois = GetPoIsMatchingFilter(sender.Text);
                 if (pois.Count == 0)
                     suitableItems.Add("No Matching Points of Interest Found");
@@ -669,7 +785,8 @@ namespace JAFDTC.UI.App
         // ---- command bar / commands --------------------------------------------------------------------------------
 
         /// <summary>
-        /// filter command click: setup the filter setup.
+        /// filter command click: change the filter configuration via the filter specification dialog and update the
+        /// displayed pois appropriately.
         /// </summary>
         private async void CmdFilter_Click(object sender, RoutedEventArgs args)
         {
@@ -720,34 +837,25 @@ namespace JAFDTC.UI.App
         /// <summary>
         /// edit command click: copy the name, latitude, longitude, and elevation of the currnetly selected point of
         /// interest into the poi editor fields and rebuild the interface state to reflect the change. this should
-        /// only be called on editable user pois.
-        /// </summary>
-        private void CmdEdit_Click(object sender, RoutedEventArgs args)
-        {
-            PoIListItem poiListItem = (PoIListItem)(uiPoIListView.SelectedItems[0]);
-            int index = _llFmtToIndexMap[LLDisplayFmt];
-            EditPoI.Name = poiListItem.PoI.Name;
-            EditPoI.Tags = PointOfInterest.SanitizedTags(poiListItem.PoI.Tags);
-            EditPoI.LL[index].LatUI = Coord.ConvertFromLatDD(poiListItem.PoI.Latitude, LLDisplayFmt);
-            EditPoI.LL[index].LonUI = Coord.ConvertFromLonDD(poiListItem.PoI.Longitude, LLDisplayFmt);
-            EditPoI.Alt = poiListItem.PoI.Elevation;
-            RebuildInterfaceState();
-        }
-
-        /// <summary>
-        /// edit command click: copy the name, latitude, longitude, and elevation of the currnetly selected point of
-        /// interest into the poi editor fields and rebuild the interface state to reflect the change. this should
         /// only be called on read-only campaign and system pois.
         /// </summary>
-        private void CmdDuplicate_Click(object sender, RoutedEventArgs args)
+        private void CmdCopyUser_Click(object sender, RoutedEventArgs args)
         {
-            PoIListItem poiListItem = (PoIListItem)(uiPoIListView.SelectedItems[0]);
             int index = _llFmtToIndexMap[LLDisplayFmt];
-            EditPoI.Name = $"{poiListItem.PoI.Name} (User Copy)";
-            EditPoI.Tags = PointOfInterest.SanitizedTags(poiListItem.PoI.Tags);
-            EditPoI.LL[index].LatUI = Coord.ConvertFromLatDD(poiListItem.PoI.Latitude, LLDisplayFmt);
-            EditPoI.LL[index].LonUI = Coord.ConvertFromLonDD(poiListItem.PoI.Longitude, LLDisplayFmt);
-            EditPoI.Alt = poiListItem.PoI.Elevation;
+            foreach (PoIListItem item in uiPoIListView.SelectedItems.Cast<PoIListItem>())
+            {
+                PoIDetails newPoI = new(item.PoI, LLDisplayFmt, index)
+                {
+                    Name = $"{item.PoI.Name} - User Copy",
+                    SourceUID = null                                        // null creates new poi
+                };
+                if (CoreCommitEditChanges(newPoI, item.PoI.Theater, null, true) == null)
+                {
+                    PromptForNameCollision(newPoI.Name, item.PoI.Theater, null, newPoI.Tags);
+                    break;
+                }
+            }
+            RebuildPoIList();
             RebuildInterfaceState();
         }
 
@@ -755,22 +863,28 @@ namespace JAFDTC.UI.App
         /// copy to campaign click: prompt the user for a campaign then copy the points of interest that are not
         /// already part of that campaign to the campaign.
         /// </summary>
-        private void CmdCopyCampaign_Click(object sender, RoutedEventArgs args)
+        private async void CmdCopyCampaign_Click(object sender, RoutedEventArgs args)
         {
-            if (uiPoIListView.SelectedItems.Count > 0)
+            string campaign = await PromptForCampaign("Copy to");
+            if (campaign != null)
             {
-                CoreApplyFuncToExistingCampaign("Copy to", (campaignName) =>
-                {
-                    foreach (PoIListItem item in uiPoIListView.SelectedItems.Cast<PoIListItem>())
-                        if (string.IsNullOrEmpty(item.PoI.Campaign) || (item.PoI.Campaign != campaignName))
-                            PointOfInterestDbase.Instance.AddPointOfInterest(new PointOfInterest(item.PoI)
-                            {
-                                Type = PointOfInterestType.CAMPAIGN,
-                                Campaign = campaignName
-                            });
-                    RebuildPoIList();
-                    return true;
-                });
+                int index = _llFmtToIndexMap[LLDisplayFmt];
+                foreach (PoIListItem item in uiPoIListView.SelectedItems.Cast<PoIListItem>())
+                    if (string.IsNullOrEmpty(item.PoI.Campaign) || (item.PoI.Campaign != campaign))
+                    {
+                        PoIDetails newPoI = new(item.PoI, LLDisplayFmt, index)
+                        {
+                            Name = $"{item.PoI.Name} - {campaign} Copy",
+                            SourceUID = null                                // null creates new poi
+                        };
+                        if (CoreCommitEditChanges(newPoI, item.PoI.Theater, campaign, true) == null)
+                        {
+                            PromptForNameCollision(newPoI.Name, item.PoI.Theater, campaign, newPoI.Tags);
+                            break;
+                        }
+                    }
+                RebuildPoIList();
+                RebuildInterfaceState();
             }
         }
 
@@ -782,44 +896,93 @@ namespace JAFDTC.UI.App
         {
             if (uiPoIListView.SelectedItems.Count > 0)
             {
-                string message = "delete this point of interest?";
-                if (uiPoIListView.SelectedItems.Count > 1)
-                    message = "delete these points of interest?";
+                string message = (uiPoIListView.SelectedItems.Count > 1) ? "delete these points of interest?"
+                                                                         : "delete this point of interest?";
                 ContentDialogResult result = await Utilities.Message2BDialog(
                     Content.XamlRoot,
-                    "Delete Points of Interest?",
+                    "Delete Point" + ((uiPoIListView.SelectedItems.Count > 1) ? "s" : "") + " of Interest?",
                     $"Are you sure you want to {message} This action cannot be undone.",
                     "Delete"
                 );
                 if (result == ContentDialogResult.Primary)
                 {
-                    bool isCampaignDeleted = false;
+                    Dictionary<string, bool> campaignsModified = [];
+                    Dictionary<string, bool> campaignsDeleted = [];
                     foreach (PoIListItem item in uiPoIListView.SelectedItems.Cast<PoIListItem>())
                         if (item.PoI.Type != PointOfInterestType.DCS_CORE)
                         {
+                            campaignsModified[(string.IsNullOrEmpty(item.PoI.Campaign)) ? "<u>" :  item.PoI.Campaign] = true;
                             if (PointOfInterestDbase.Instance.CountPoIInCampaign(item.PoI.Campaign) == 1)
                             {
+                                campaignsDeleted[item.PoI.Campaign] = true;
                                 PointOfInterestDbase.Instance.DeleteCampaign(item.PoI.Campaign);
-                                isCampaignDeleted = true;
                             }
                             else
                             {
-                                // TODO: ideally, save at end after delete is done, rather than doing N saves
-                                PointOfInterestDbase.Instance.RemovePointOfInterest(item.PoI);
+                                PointOfInterestDbase.Instance.RemovePointOfInterest(item.PoI, false);
+
+                                VerbMirror?.MirrorVerbMarkerDeleted(this, new((MapMarkerInfo.MarkerType)item.PoI.Type,
+                                                                              item.PoI.UniqueID));
                             }
                         }
-                    if (isCampaignDeleted)
-                    {
-                        await Utilities.Message1BDialog(
-                            Content.XamlRoot,
-                            $"Deleted Empty Campaigns",
-                            $"The delete removed all points of interest from one or more campaigns." +
-                             " These campaigns have been deleted as well.");
-                    }
+                    foreach (string campaign in campaignsModified.Keys)
+                        PointOfInterestDbase.Instance.Save((campaign != "<u>") ? campaign : null);
+
                     RebuildPoIList();
                     RebuildInterfaceState();
+
+                    if (campaignsDeleted.Count > 0)
+                    {
+                        string msg;
+                        List<string> campaigns = [.. campaignsDeleted.Keys ];
+                        if (campaigns.Count == 1)
+                            msg = $"campaign {campaigns[0]}. This campaign has";
+                        else if (campaigns.Count == 2)
+                            msg = $"campaigns {campaigns[0]} and {campaigns[1]}. These campaigns have";
+                        else
+                            msg = $"campaigns " + string.Join(", ", campaigns.GetRange(0, campaigns.Count - 1)) +
+                                  $", and {campaigns[^1]}. These campaigns have";
+
+                        await Utilities.Message1BDialog(
+                            Content.XamlRoot,
+                            $"Deleted Empty Campaign" + ((campaignsDeleted.Count > 1) ? "s" : ""),
+                            $"The delete removed all points of interest from the {msg} been deleted as well.");
+                    }
                 }
             }
+        }
+
+        /// <summary>
+        /// map command: if the map window is not currently open, build out the data source and so on necessary for
+        /// the window and create it. otherwise, activate the window.
+        /// </summary>
+        private void CmdMap_Click(object sender, RoutedEventArgs args)
+        {
+            if (MapWindow == null)
+            {
+                MapWindow = new()
+                {
+                    MarkerExplainer = this,
+                    OpenMask = MapMarkerInfo.MarkerTypeMask.USER |
+                               MapMarkerInfo.MarkerTypeMask.CAMPAIGN |
+                               MapMarkerInfo.MarkerTypeMask.DCS_CORE,
+                    EditMask = MapMarkerInfo.MarkerTypeMask.USER | MapMarkerInfo.MarkerTypeMask.CAMPAIGN,
+                    CoordFormat = LLDisplayFmt,
+                    MaxRouteLength = 0,
+                    CanOpenMarker = false
+                };
+                MapWindow.Closed += MapWindow_Closed;
+                MapWindow.RegisterMapControlVerbObserver(this);
+
+                RebuildPoIList();
+
+// TODO: mirror selection? presently, RebuildPoIList clears the selection
+//              if (uiPoIListView.SelectedItem is PoIListItem item)
+//                  VerbMirror?.MirrorVerbMarkerSelected(this, new((MapMarkerInfo.MarkerType)item.PoI.Type,
+//                                                                 item.PoI.UniqueID, -1));
+            }
+
+            MapWindow.Activate();
         }
 
         /// <summary>
@@ -832,9 +995,8 @@ namespace JAFDTC.UI.App
             // pick a .json or .csv file to import from and attempt to deserialize a list of points of interest
             // from the file.
             //
-            FileOpenPicker picker = new()
+            FileOpenPicker picker = new((Application.Current as JAFDTC.App).Window.AppWindow.Id)
             {
-                SettingsIdentifier = "JAFDTC_ImportPoI",
                 SuggestedStartLocation = PickerLocationId.Desktop
             };
             picker.FileTypeFilter.Add(".json");
@@ -842,15 +1004,16 @@ namespace JAFDTC.UI.App
             var hwnd = WinRT.Interop.WindowNative.GetWindowHandle((Application.Current as JAFDTC.App)?.Window);
             WinRT.Interop.InitializeWithWindow.Initialize(picker, hwnd);
 
-            StorageFile file = await picker.PickSingleFileAsync();
-            if (file == null)
+            PickFileResult resultPick = await picker.PickSingleFileAsync();
+            if (resultPick == null)
                 return;                                         // EXIT: cancelled picker...
 
             List<PointOfInterest> pois;
             try
             {
+                StorageFile file = await StorageFile.GetFileFromPathAsync(resultPick.Path);
                 string data = await FileIO.ReadTextAsync(file);
-                if (file.FileType.ToLower() == ".json")
+                if (file.FileType.Equals(".json", StringComparison.CurrentCultureIgnoreCase))
                     pois = JsonSerializer.Deserialize<List<PointOfInterest>>(data);
                 else
                     pois = PointOfInterestDbase.ParseCSV(data);
@@ -860,7 +1023,7 @@ namespace JAFDTC.UI.App
                 FileManager.Log($"EditPointsOfInterestPage:CmdImport_Click exception {ex}");
                 await Utilities.Message1BDialog(Content.XamlRoot,
                                                 $"Import Failed",
-                                                $"Unable to import points of interest from {file.Name}.");
+                                                $"Unable to import points of interest from {resultPick.Path}.");
                 return;                                         // EXIT: file read failed
             }
 
@@ -869,14 +1032,14 @@ namespace JAFDTC.UI.App
             // user prompts on how to handle the import. we'll handle duplicates here as well (import will
             // over-write them).
             //
-            Dictionary<PointOfInterestType, int> poiTypes = new();
-            Dictionary<string, List<PointOfInterest>> poisCampaign = new();
-            List<PointOfInterest> poisUser = new();
-            List<PointOfInterest> poisDup = new();
+            Dictionary<PointOfInterestType, int> poiTypes = [ ];
+            Dictionary<string, List<PointOfInterest>> poisCampaign = [ ];
+            List<PointOfInterest> poisUser = [ ];
+            List<PointOfInterest> poisDup = [ ];
             foreach (PointOfInterest poi in pois)
             {
-                if (poiTypes.ContainsKey(poi.Type))
-                    poiTypes[poi.Type]++;
+                if (poiTypes.TryGetValue(poi.Type, out int typeValue))
+                    poiTypes[poi.Type] = ++typeValue;
                 else
                     poiTypes[poi.Type] = 1;
                 if (poi.Type == PointOfInterestType.USER)
@@ -889,7 +1052,7 @@ namespace JAFDTC.UI.App
                 else if ((poi.Type == PointOfInterestType.CAMPAIGN) && !string.IsNullOrEmpty(poi.Campaign))
                 {
                     if (!poisCampaign.ContainsKey(poi.Campaign))
-                        poisCampaign[poi.Campaign] = new List<PointOfInterest>();
+                        poisCampaign[poi.Campaign] = [ ];
                     poisCampaign[poi.Campaign].Add(poi);
                     PointOfInterestDbQuery query = new(PointOfInterestTypeMask.CAMPAIGN, poi.Theater, poi.Campaign,
                                                        poi.Name);
@@ -915,8 +1078,15 @@ namespace JAFDTC.UI.App
             // add the pois to the database. user pois are added as is. campaign pois that match an existing campaign
             // prompt the user to "add" or "replace".
             //
+            int index = _llFmtToIndexMap[LLDisplayFmt];
             foreach (PointOfInterest poi in poisUser)
-                PointOfInterestDbase.Instance.AddPointOfInterest(poi, false);
+            {
+                PoIDetails tmpltPoI = new(poi, LLDisplayFmt, index)
+                {
+                    SourceUID = null                                        // null creates new poi
+                };
+                CoreCommitEditChanges(tmpltPoI, poi.Theater, poi.Campaign, true);
+            }
             PointOfInterestDbase.Instance.Save();
 
             foreach (string campaign in poisCampaign.Keys)
@@ -926,19 +1096,31 @@ namespace JAFDTC.UI.App
                     ContentDialogResult result = await Utilities.Message3BDialog(
                         Content.XamlRoot,
                         $"Campaign Exists",
-                        $"Import file contains points of interest for a campaign '{campaign}' that is already in" +
+                        $"Import file contains points of interest for a campaign “{campaign}” that is already in" +
                         $" the database. Would you like to merge the points of interest to this existing campaign or" +
                         $" replace the points of interest in this existing campaign with the imported points?",
                         "Add",
                         "Replace",
                         "Cancel");
-                    if (result == ContentDialogResult.Secondary)
+                    if (result == ContentDialogResult.Secondary)            // "replace"
+                    {
+                        PointOfInterestDbQuery query = new(PointOfInterestTypeMask.CAMPAIGN, null, campaign);
+                        foreach (PointOfInterest poi in PointOfInterestDbase.Instance.Find(query))
+                            VerbMirror?.MirrorVerbMarkerDeleted(this, new((MapMarkerInfo.MarkerType)poi.Type, poi.UniqueID));
+
                         PointOfInterestDbase.Instance.DeleteCampaign(campaign, false);
+                    }
                 }
                 if (PointOfInterestDbase.Instance.CountPoIInCampaign(campaign) == 0)
                     PointOfInterestDbase.Instance.AddCampaign(campaign, false);
                 foreach (PointOfInterest poi in poisCampaign[campaign])
-                    PointOfInterestDbase.Instance.AddPointOfInterest(poi, false);
+                {
+                    PoIDetails tmpltPoI = new(poi, LLDisplayFmt, index)
+                    {
+                        SourceUID = poi.UniqueID
+                    };
+                    CoreCommitEditChanges(tmpltPoI, poi.Theater, poi.Campaign, true);
+                }
                 PointOfInterestDbase.Instance.Save(campaign);
             }
 
@@ -953,25 +1135,25 @@ namespace JAFDTC.UI.App
         /// <summary>
         /// export command click: prompt the user for a file to export the selected points of interest to and
         /// serialize the selected pois to the file. we will make some modifications to what is exported based
-        /// on user responses: dcs pois are converted to user pois, and campaign pois may be added to export
-        /// entire campaigns if not all campaign pois are selected.
+        /// on user responses: dcs core pois are converted to user pois, and campaign pois may be added to
+        /// export entire campaigns if not all campaign pois are selected.
         /// </summary>
         private async void CmdExport_Click(object sender, RoutedEventArgs args)
         {
             Dictionary<PointOfInterestType, List<PointOfInterest>> selectionByType = CrackSelectedPoIsByType();
-            List<PointOfInterest> pois = new();
+            List<PointOfInterest> pois = [ ];
             ContentDialogResult result;
 
             // user pois are copied into the export set as is with no changes.
             //
-            if (selectionByType.ContainsKey(PointOfInterestType.USER))
-                foreach (PointOfInterest poi in selectionByType[PointOfInterestType.USER])
+            if (selectionByType.TryGetValue(PointOfInterestType.USER, out List<PointOfInterest> userList))
+                foreach (PointOfInterest poi in userList)
                     pois.Add(poi);
 
-            // dcs pois are copied into the export set as user pois with an updated type and name. we'll ask the
-            // user if this is ok before doing the deed.
+            // dcs core pois are copied into the export set as user pois with an updated type and name. we'll
+            // ask the user if this is ok before doing the deed.
             //
-            if (selectionByType.ContainsKey(PointOfInterestType.DCS_CORE))
+            if (selectionByType.TryGetValue(PointOfInterestType.DCS_CORE, out List<PointOfInterest> coreList))
             {
                 result = await Utilities.Message2BDialog(
                     Content.XamlRoot,
@@ -981,23 +1163,23 @@ namespace JAFDTC.UI.App
                 if (result != ContentDialogResult.Primary)
                     return;                                     // EXIT: user cancels
 
-                foreach (PointOfInterest poi in selectionByType[PointOfInterestType.DCS_CORE])
+                foreach (PointOfInterest poi in coreList)
                     pois.Add(new PointOfInterest(poi)
                     {
                         Type = PointOfInterestType.USER,
-                        Name = $"{poi.Name} (User Copy)"
+                        Name = $"{poi.Name} - User Copy"
                     });
             }
 
             // campaign pois are copied into the export set either as complete campaigns or selected pois. if the
             // user did not select all pois in a campaign, ask if they want to include all pois.
             //
-            if (selectionByType.ContainsKey(PointOfInterestType.CAMPAIGN))
+            if (selectionByType.TryGetValue(PointOfInterestType.CAMPAIGN, out List<PointOfInterest> campaignsList))
             {
-                Dictionary<string, int> campaigns = new();
-                foreach (PointOfInterest poi in selectionByType[PointOfInterestType.CAMPAIGN])
-                    if (campaigns.ContainsKey(poi.Campaign))
-                        campaigns[poi.Campaign]++;
+                Dictionary<string, int> campaigns = [ ];
+                foreach (PointOfInterest poi in campaignsList)
+                    if (campaigns.TryGetValue(poi.Campaign, out int campaignValue))
+                        campaigns[poi.Campaign] = ++campaignValue;
                     else
                         campaigns[poi.Campaign] = 1;
 
@@ -1038,19 +1220,17 @@ namespace JAFDTC.UI.App
             //
             try
             {
-                FileSavePicker picker = new()
+                FileSavePicker picker = new((Application.Current as JAFDTC.App).Window.AppWindow.Id)
                 {
-                    SettingsIdentifier = "JAFDTC_ExportPoI",
                     SuggestedStartLocation = PickerLocationId.Desktop,
                     SuggestedFileName = "JAFDTC PoIs"
                 };
-                picker.FileTypeChoices.Add("JSON", new List<string>() { ".json" });
-                var hwnd = WindowNative.GetWindowHandle((Application.Current as JAFDTC.App)?.Window);
-                InitializeWithWindow.Initialize(picker, hwnd);
+                picker.FileTypeChoices.Add("JSON", [ ".json" ]);
 
-                StorageFile file = await picker.PickSaveFileAsync();
-                if (file != null)
+                PickFileResult resultPick = await picker.PickSaveFileAsync();
+                if (resultPick != null)
                 {
+                    StorageFile file = await StorageFile.GetFileFromPathAsync(resultPick.Path);
                     await FileIO.WriteTextAsync(file, JsonSerializer.Serialize(pois, Configuration.JsonOptions));
                     string what = (pois.Count > 1) ? "points" : "point";
                     await Utilities.Message1BDialog(Content.XamlRoot,
@@ -1070,27 +1250,64 @@ namespace JAFDTC.UI.App
         /// add campaign command click: prompt the user for the name of a new campaign and add it to the point of
         /// interest database.
         /// </summary>
-        private void CmdAddCampaign_Click(object sender, RoutedEventArgs args)
+        private async void CmdAddCampaign_Click(object sender, RoutedEventArgs args)
         {
-            CoreApplyFuncToNewCampaign("Add", (campaignName) =>
+            GetNameDialog nameDialog = new(null, $"Select a name for the campaign to add")
+            {
+                XamlRoot = Content.XamlRoot,
+                Title = $"Add Campaign"
+            };
+            ContentDialog errDialog = new()
+            {
+                XamlRoot = Content.XamlRoot,
+                Title = "Invalid Campaign Name",
+                PrimaryButtonText = "OK",
+            };
+
+            string campaignName;
+            ContentDialogResult result;
+            while (true)
+            {
+                result = await nameDialog.ShowAsync();
+                campaignName = nameDialog.Value.Trim(' ');
+                string message = null;
+                foreach (string campaign in PointOfInterestDbase.Instance.KnownCampaigns)
+                    if (campaignName.Equals(campaign, StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        message = $"There is already a campaign named “{campaignName}” in the database. Please select a different name.";
+                        break;
+                    }
+                if (!CampaignNameRegex().IsMatch(campaignName))
+                    message = $"Campaign name “{campaignName}” may only contain alphanumeric characters. Please select a different name.";
+                if ((result == ContentDialogResult.None) || (message == null))
+                    break;
+                errDialog.Content = message;
+                await errDialog.ShowAsync();
+            }
+            if (result == ContentDialogResult.Primary)
             {
                 PointOfInterestDbase.Instance.AddCampaign(campaignName);
-                return true;
-            });
+                RebuildInterfaceState();
+            }
         }
 
         /// <summary>
         /// delete campaign command click: prompt the user to select an existing campaign and delete it from the point
         /// of interest database.
         /// </summary>
-        private void CmdDeleteCampaign_Click(object sender, RoutedEventArgs args)
+        private async void CmdDeleteCampaign_Click(object sender, RoutedEventArgs args)
         {
-            CoreApplyFuncToExistingCampaign("Delete", (campaignName) =>
+            string campaign = await PromptForCampaign("Delete");
+            if (campaign != null)
             {
-                PointOfInterestDbase.Instance.DeleteCampaign(campaignName);
+                PointOfInterestDbQuery query = new(PointOfInterestTypeMask.CAMPAIGN, null, campaign);
+                foreach (PointOfInterest poi in PointOfInterestDbase.Instance.Find(query))
+                    VerbMirror?.MirrorVerbMarkerDeleted(this, new((MapMarkerInfo.MarkerType)poi.Type, poi.UniqueID));
+
+                PointOfInterestDbase.Instance.DeleteCampaign(campaign);
                 RebuildPoIList();
-                return true;
-            });
+                RebuildInterfaceState();
+            }
         }
 
         // ---- coordinate setup --------------------------------------------------------------------------------------
@@ -1101,8 +1318,7 @@ namespace JAFDTC.UI.App
         /// </summary>
         private async void CmdCoords_Click(object sender, RoutedEventArgs args)
         {
-            List<string> items = new(_llFmtTextToFmtMap.Keys);
-            GetListDialog coordList = new(items, null, 0, _llFmtToIndexMap[LLDisplayFmt])
+            GetListDialog coordList = new([.. _llFmtTextToFmtMap.Keys ], null, 0, _llFmtToIndexMap[LLDisplayFmt])
             {
                 XamlRoot = Content.XamlRoot,
                 Title = $"Select a Coordinate Format",
@@ -1126,8 +1342,12 @@ namespace JAFDTC.UI.App
         /// </summary>
         private void PoIListView_RightTapped(object sender, RightTappedRoutedEventArgs args)
         {
-            ListView listView = (ListView)sender;
-            PoIListItem poi = (PoIListItem)((FrameworkElement)args.OriginalSource).DataContext;
+            ListView listView = sender as ListView;
+            PoIListItem poi = ((FrameworkElement)args.OriginalSource).DataContext as PoIListItem;
+
+            // check if the tapped item is selected. if the right tap occurs outside of the selection, change
+            // up the selection to just be the tapped item.
+            //
             int index = CurPoIItems.IndexOf(poi);
             bool isTappedItemSelected = false;
             foreach (ItemIndexRange range in listView.SelectedRanges)
@@ -1141,31 +1361,24 @@ namespace JAFDTC.UI.App
                 listView.SelectedIndex = CurPoIItems.IndexOf(poi);
                 RebuildInterfaceState();
             }
-
+            
+            // set up enables based on items selected. rely on the command handlers to properly handle situations
+            // where there are a mix of types and behave correctly (e.g., not delete core items selected).
+            //
             bool isSelect = (uiPoIListView.SelectedItems.Count > 0);
-            bool isOneUsrSel = false;
-            bool isOneNonUsrSel = false;
-            if (uiPoIListView.SelectedItems.Count == 1)
-            {
-                isOneUsrSel = (poi.PoI.Type == PointOfInterestType.USER);
-                isOneNonUsrSel = !isOneUsrSel;
-            }
-
-            uiPoiListCtxMenuFlyout.Items[0].IsEnabled = isOneUsrSel;                                // edit
-            uiPoiListCtxMenuFlyout.Items[1].IsEnabled = isOneNonUsrSel;                             // duplicate
-            uiPoiListCtxMenuFlyout.Items[2].IsEnabled = isSelect;                                   // export
-            uiPoiListCtxMenuFlyout.Items[4].IsEnabled = isSelect;                                   // copy to campaign
-            uiPoiListCtxMenuFlyout.Items[6].IsEnabled = isSelect;                                   // delete
+            bool isOneNonCore = false;
+            foreach (PoIListItem item in uiPoIListView.SelectedItems.Cast<PoIListItem>())
+                if (item.PoI.Type != PointOfInterestType.DCS_CORE)
+                {
+                    isOneNonCore = true;
+                    break;
+                }
+            uiPoiListCtxMenuFlyout.Items[0].IsEnabled = isSelect;                                   // copy to user
+            uiPoiListCtxMenuFlyout.Items[1].IsEnabled = isSelect;                                   // copy to campaign
+            uiPoiListCtxMenuFlyout.Items[3].IsEnabled = isSelect;                                   // export
+            uiPoiListCtxMenuFlyout.Items[5].IsEnabled = isOneNonCore;                               // delete
 
             uiPoiListCtxMenuFlyout.ShowAt((ListView)sender, args.GetPosition(listView));
-        }
-
-        /// <summary>
-        /// poi list view double click: edit item
-        /// </summary>
-        private void PoIListView_DoubleTapped(object sender, DoubleTappedRoutedEventArgs args)
-        {
-            CmdEdit_Click(sender, args);
         }
 
         /// <summary>
@@ -1173,52 +1386,146 @@ namespace JAFDTC.UI.App
         /// </summary>
         private void PoIListView_SelectionChanged(object sender, SelectionChangedEventArgs args)
         {
+            if (uiPoIListView.SelectedItems.Count != 1)
+            {
+                EditPoI.Reset();
+// TODO: this will clear map window selection when we have multiple things selected in the poi list.
+// TODO: this likely needs to change if multi-selection is ever supported in the map window.
+                if (!IsVerbEvent)
+                    VerbMirror?.MirrorVerbMarkerSelected(this, new());
+            }
+            else if (uiPoIListView.SelectedItems.Count == 1)
+            {
+                PoIListItem item = uiPoIListView.SelectedItem as PoIListItem;
+                int index = _llFmtToIndexMap[LLDisplayFmt];
+
+                EditPoI.SourceUID = item.PoI.UniqueID;
+                EditPoI.Name = item.PoI.Name;
+                EditPoI.Tags = PointOfInterest.SanitizedTags(item.PoI.Tags);
+                EditPoI.LL[index].LatUI = Coord.ConvertFromLatDD(item.PoI.Latitude, LLDisplayFmt);
+                EditPoI.LL[index].LonUI = Coord.ConvertFromLonDD(item.PoI.Longitude, LLDisplayFmt);
+                EditPoI.Alt = item.PoI.Elevation;
+
+                if (!IsVerbEvent)
+                    VerbMirror?.MirrorVerbMarkerSelected(this, new((MapMarkerInfo.MarkerType)item.PoI.Type,
+                                                                   item.PoI.UniqueID, -1));
+            }
             RebuildInterfaceState();
         }
 
         /// <summary>
         /// poi add/update button click: add a new poi or update an existing poi with the values from the poi editor.
         /// </summary>
-        private void PoIBtnAdd_Click(object sender, RoutedEventArgs args)
+        private async void PoIBtnAdd_Click(object sender, RoutedEventArgs args)
         {
-            string theater = GetTheaterFromEditor();
+            string newUID = null;
             int index = _llFmtToIndexMap[LLDisplayFmt];
-            PointOfInterestDbQuery query = new(PointOfInterestTypeMask.USER, theater, null, EditPoI.Name);
-            List<PointOfInterest> pois = PointOfInterestDbase.Instance.Find(query);
-            if (IsEditPoINew || (pois.Count == 0))
+            List<string> editTheaters = PointOfInterest.TheatersForCoords(EditPoI.LL[index].Lat, EditPoI.LL[index].Lon);
+
+            if (editTheaters.Count == 0)
             {
-                PointOfInterest poi = new()
+                await Utilities.Message1BDialog(Content.XamlRoot, "Unknown Theater",
+                                                $"POIs must be located in known theaters. The location" +
+                                                $" {EditPoI.LL[index].LatUI} {EditPoI.LL[index].LonUI} is not in a" +
+                                                $" known theater.");
+            }
+            else if (string.IsNullOrEmpty(EditPoI.SourceUID))
+            {
+                // no source uid on the edit poi implies we are creating a new poi from the data in the editor
+                // fields. determine if the new poi should be a user poi or part of a campaign and what theater
+                // it should be placed in by asking the user in situations where there is ambiguity. once we have
+                // that information, create the poi from the edit poi, ensuring new poi has unique parameters.
+
+                List<string> campaigns = PointOfInterestDbase.Instance.KnownCampaigns;
+                campaigns.Insert(0, $"Add “{EditPoI.Name}” as a User POI");
+
+                if ((campaigns.Count > 1) || (editTheaters.Count > 1))
                 {
-                    Type = PointOfInterestType.USER,
-                    Name = EditPoI.Name,
-                    Tags = PointOfInterest.SanitizedTags(EditPoI.Tags),
-                    Theater = theater,
-                    Latitude = EditPoI.LL[index].Lat,
-                    Longitude = EditPoI.LL[index].Lon,
-                    Elevation = EditPoI.Alt,
-                };
-                PointOfInterestDbase.Instance.AddPointOfInterest(poi);
-                EditPoI.Tags = poi.Tags;
+                    GetPoITagDetails tagDialog = new(campaigns, LastAddCampaign, editTheaters, LastAddTheater)
+                    {
+                        XamlRoot = Content.XamlRoot,
+                        Title = "Select POI Parameters",
+                        PrimaryButtonText = "OK",
+                        CloseButtonText = "Cancel"
+                    };
+                    ContentDialogResult result = await tagDialog.ShowAsync(ContentDialogPlacement.Popup);
+                    if (result == ContentDialogResult.None)
+                        return;                                         // **** EXITS: user cancel
+
+                    LastAddCampaign = (tagDialog.Campaign.StartsWith("Add “")) ? null : tagDialog.Campaign;
+                    LastAddTheater = tagDialog.Theater;
+                }
+                if (campaigns.Count == 1)
+                    LastAddCampaign = null;
+                if (editTheaters.Count == 1)
+                    LastAddTheater = editTheaters[0];
+
+                newUID = CoreCommitEditChanges(EditPoI, LastAddTheater, LastAddCampaign);
+
             }
             else
             {
-                pois[0].Tags = PointOfInterest.SanitizedTags(EditPoI.Tags);
-                pois[0].Elevation = EditPoI.Alt;
-                pois[0].Latitude = EditPoI.LL[index].Lat;
-                pois[0].Longitude = EditPoI.LL[index].Lon;
-                EditPoI.Tags = pois[0].Tags;
+                // a source uid on the edit poi implies we are updating an existing poi in the database. this
+                // action may change the theater, but cannot change the campaign. prompt for a new theater if
+                // potential theaters in edit poi differ from the potential theaters for the poi's current
+                // location; otherwise, we'll use the poi's current theater. once we have that information,
+                // update the poi from the edit poi, ensuring new poi has unique parameters.
+
+                PointOfInterest poi = PointOfInterestDbase.Instance.Find(EditPoI.SourceUID);
+                List<string> poiTheaters = PointOfInterest.TheatersForCoords(poi.Latitude, poi.Longitude);
+
+                if (!poiTheaters.SequenceEqual(editTheaters) || (poiTheaters.Count > 1))
+                {
+                    GetPoITagDetails tagDialog = new(null, null, editTheaters, LastAddTheater)
+                    {
+                        XamlRoot = Content.XamlRoot,
+                        Title = "Select POI Theater",
+                        PrimaryButtonText = "OK",
+                        CloseButtonText = "Cancel"
+                    };
+                    ContentDialogResult result = await tagDialog.ShowAsync(ContentDialogPlacement.Popup);
+                    if (result == ContentDialogResult.None)
+                        return;                                         // **** EXITS: user cancel
+
+                    LastAddTheater = tagDialog.Theater;
+                }
+                if (editTheaters.Count == 1)
+                    LastAddTheater = editTheaters[0];
+
+                newUID = CoreCommitEditChanges(EditPoI, LastAddTheater, poi.Campaign);
             }
 
-            RebuildPoIList();
-            RebuildInterfaceState();
+            if (newUID == null)
+            {
+                PromptForNameCollision(EditPoI.Name, LastAddTheater, LastAddCampaign, EditPoI.Tags);
+            }
+            else
+            {
+                EditPoI.Reset();
+                RebuildPoIList();
+                RebuildInterfaceState();
+            }
         }
 
         /// <summary>
-        /// poi clear button click: clear the poi editor.
+        /// poi clear button click: reset (if editor is dirty and there's a selected item) or reset (otherwise)
+        /// the poi editor.
         /// </summary>
         private void PoIBtnClear_Click(object sender, RoutedEventArgs args)
         {
-            EditPoI.Reset();
+            if (EditPoI.IsDirty && (uiPoIListView.SelectedItem is PoIListItem item))
+            {
+                int index = _llFmtToIndexMap[LLDisplayFmt];
+                EditPoI.Name = item.PoI.Name;
+                EditPoI.Tags = PointOfInterest.SanitizedTags(item.PoI.Tags);
+                EditPoI.LL[index].LatUI = Coord.ConvertFromLatDD(item.PoI.Latitude, LLDisplayFmt);
+                EditPoI.LL[index].LonUI = Coord.ConvertFromLonDD(item.PoI.Longitude, LLDisplayFmt);
+                EditPoI.Alt = item.PoI.Elevation;
+            }
+            else
+            {
+                uiPoIListView.SelectedItems.Clear();
+            }
             RebuildInterfaceState();
         }
 
@@ -1270,6 +1577,134 @@ namespace JAFDTC.UI.App
             RebuildInterfaceState();
         }
 
+        // ---- window changes ----------------------------------------------------------------------------------------
+
+        /// <summary>
+        /// on closing the map window, null out the MapWindow instance and dump any event handlers.
+        /// </summary>
+        private void MapWindow_Closed(object sender, WindowEventArgs args)
+        {
+            MapWindow.Closed -= MapWindow_Closed;
+            MapWindow = null;
+        }
+
+        /// <summary>
+        /// on closing the main app window, close any open map window too.
+        /// </summary>
+        private void AppWindow_Closed(object sender, WindowEventArgs args)
+        {
+            MapWindow?.Close();
+        }
+
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // IMapControlMarkerExplainer
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
+        /// <summary>
+        /// returns the display type of the marker with the specified information.
+        /// </summary>
+        public string MarkerDisplayType(MapMarkerInfo info) => NavpointUIHelper.MarkerDisplayType(info);
+
+        /// <summary>
+        /// returns the display name of the marker with the specified information.
+        /// </summary>
+        public string MarkerDisplayName(MapMarkerInfo info) => NavpointUIHelper.MarkerDisplayName(info);
+
+        /// <summary>
+        /// returns the elevation of the marker with the specified information.
+        /// </summary>
+        public string MarkerDisplayElevation(MapMarkerInfo info, string units = "")
+            => NavpointUIHelper.MarkerDisplayElevation(info, units);
+
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // IWorldMapControlVerbHandler
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
+        public string VerbHandlerTag => "EditPointsOfInterestPage";
+
+        public IMapControlVerbMirror VerbMirror { get; set; }
+
+        /// <summary>
+        /// TODO: document
+        /// </summary>
+        public void VerbMarkerSelected(IMapControlVerbHandler sender, MapMarkerInfo info)
+        {
+            Debug.WriteLine($"EPP:VerbMarkerSelected {info.Type}, {info.TagStr}, {info.TagInt}");
+            if (info.Type == MapMarkerInfo.MarkerType.UNKNOWN)
+            {
+                IsVerbEvent = true;
+                uiPoIListView.SelectedIndex = -1;
+                IsVerbEvent = false;
+            }
+            else
+            {
+                IsVerbEvent = true;
+                uiPoIListView.SelectedIndex = FindIndexOfPoIByUID(info.TagStr);
+                uiPoIListView.ScrollIntoView(uiPoIListView.SelectedItem);
+                IsVerbEvent = false;
+            }
+        }
+
+        /// <summary>
+        /// TODO: document
+        /// </summary>
+        public void VerbMarkerOpened(IMapControlVerbHandler sender, MapMarkerInfo info) { }
+
+        /// <summary>
+        /// TODO: document
+        /// </summary>
+        public void VerbMarkerMoved(IMapControlVerbHandler sender, MapMarkerInfo info)
+        {
+// TODO: what if movement takes marker outside of theater?
+            Debug.WriteLine($"EPP:VerbMarkerMoved {info.Type}, {info.TagStr}, {info.TagInt}, {info.Lat}, {info.Lon}");
+            PointOfInterest poi = PointOfInterestDbase.Instance.Find(info.TagStr);
+            if ((poi != null) && (poi.UniqueID == EditPoI.SourceUID))
+            {
+                int index = _llFmtToIndexMap[LLDisplayFmt];
+                EditPoI.LL[index].LatUI = Coord.ConvertFromLatDD(info.Lat, LLDisplayFmt);
+                EditPoI.LL[index].LonUI = Coord.ConvertFromLonDD(info.Lon, LLDisplayFmt);
+
+                foreach (PoIListItem item in uiPoIListView.Items.Cast<PoIListItem>())
+                {
+                    if (poi.UniqueID == item.PoI.UniqueID)
+                    {
+                        item.LatUI = EditPoI.LL[index].LatUI;
+                        item.LonUI = EditPoI.LL[index].LonUI;
+                        break;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// TODO: document
+        /// </summary>
+        public void VerbMarkerAdded(IMapControlVerbHandler sender, MapMarkerInfo info)
+        {
+            Debug.WriteLine($"EPP:VerbMarkerAdded {info.Type}, {info.TagStr}, {info.TagInt}, {info.Lat}, {info.Lon}");
+// TODO: nothing to do here until we support add via map window
+        }
+
+        /// <summary>
+        /// TODO: document
+        /// </summary>
+        public void VerbMarkerDeleted(IMapControlVerbHandler sender, MapMarkerInfo info)
+        {
+            Debug.WriteLine($"EPP:VerbMarkerDeleted {info.Type}, {info.TagStr}, {info.TagInt}");
+            PointOfInterest poi = PointOfInterestDbase.Instance.Find(info.TagStr);
+
+            if (PointOfInterestDbase.Instance.CountPoIInCampaign(poi.Campaign) == 1)
+                PointOfInterestDbase.Instance.DeleteCampaign(poi.Campaign);
+            PointOfInterestDbase.Instance.RemovePointOfInterest(poi);
+
+            RebuildPoIList();
+            RebuildInterfaceState();
+        }
+
         // ------------------------------------------------------------------------------------------------------------
         //
         // events
@@ -1297,6 +1732,16 @@ namespace JAFDTC.UI.App
             RebuildInterfaceState();
 
             base.OnNavigatedTo(args);
+        }
+
+        /// <summary>
+        /// on navigating from this page, close any open map window.
+        /// </summary>
+        protected override void OnNavigatedFrom(NavigationEventArgs args)
+        {
+            MapWindow?.Close();
+
+            base.OnNavigatedFrom(args);
         }
     }
 }

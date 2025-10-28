@@ -89,7 +89,7 @@ https://www.gnu.org/licenses/.
             </Grid.ColumnDefinitions>
 
             <!-- poi search box -->
-            <AutoSuggestBox Grid.Column="0" Width="375" x:Name="uiPoINameFilterBox"
+            <AutoSuggestBox Grid.Column="0" Width="325" x:Name="uiPoINameFilterBox"
                             VerticalAlignment="Center"
                             PlaceholderText="Filter Points of Interest by Name"
                             QueryIcon="Find"
@@ -107,19 +107,16 @@ https://www.gnu.org/licenses/.
                     </AppBarToggleButton.Icon>
                 </AppBarToggleButton>
                 <AppBarSeparator/>
-                <AppBarButton x:Name="uiBarBtnEdit" Icon="Edit" Label="Edit"
-                              Click="CmdEdit_Click"
-                              ToolTipService.ToolTip="Edit point of interest"/>
-                <AppBarButton x:Name="uiBarBtnDuplicate" Label="Duplicate to User"
-                              Click="CmdDuplicate_Click"
-                              ToolTipService.ToolTip="Duplicate as user point of interest">
+                <AppBarButton x:Name="uiBarBtnCopyUser" Label="Copy to User"
+                              Click="CmdCopyUser_Click"
+                              ToolTipService.ToolTip="Copy selected points of interest to user POIs">
                     <AppBarButton.Icon>
-                        <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE7C4;"/>
+                        <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE718;"/>
                     </AppBarButton.Icon>
                 </AppBarButton>
                 <AppBarButton x:Name="uiBarBtnCopyCampaign" Label="Copy to Campaign"
                               Click="CmdCopyCampaign_Click"
-                              ToolTipService.ToolTip="Copy selected points of interest to campaign">
+                              ToolTipService.ToolTip="Copy selected points of interest to campaign POIs">
                     <AppBarButton.Icon>
                         <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE7C1;"/>
                     </AppBarButton.Icon>
@@ -127,6 +124,14 @@ https://www.gnu.org/licenses/.
                 <AppBarButton x:Name="uiBarBtnDelete" Icon="Delete" Label="Delete"
                               Click="CmdDelete_Click"
                               ToolTipService.ToolTip="Delete selected point of interest"/>
+                <AppBarSeparator/>
+                <AppBarButton x:Name="uiBarBtnMap" Label="Map"
+                              Click="CmdMap_Click"
+                              ToolTipService.ToolTip="Show map window to edit points of interest">
+                    <AppBarButton.Icon>
+                        <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE707;"/>
+                    </AppBarButton.Icon>
+                </AppBarButton>
                 <AppBarSeparator/>
                 <AppBarButton x:Name="uiBarBtnImport" Icon="Download" Label="Import"
                               Click="CmdImport_Click"
@@ -211,25 +216,24 @@ https://www.gnu.org/licenses/.
                       SelectionMode="Extended"
                       SelectionChanged="PoIListView_SelectionChanged"
                       RightTapped="PoIListView_RightTapped"
-                      DoubleTapped="PoIListView_DoubleTapped"
                       ItemsSource="{x:Bind CurPoIItems}">
                 <ListView.Resources>
                     <MenuFlyout x:Name="uiPoiListCtxMenuFlyout">
                         <MenuFlyout.Items>
-                            <MenuFlyoutItem Text="Edit" Icon="Edit" Click="CmdEdit_Click"/>
-                            <MenuFlyoutItem Text="Duplicate" Click="CmdDuplicate_Click">
+                            <MenuFlyoutItem Text="Copy to User..."
+                                            Click="CmdCopyUser_Click">
                                 <MenuFlyoutItem.Icon>
-                                    <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE7C4;"/>
+                                    <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE718;"/>
                                 </MenuFlyoutItem.Icon>
                             </MenuFlyoutItem>
-                            <MenuFlyoutItem Text="Export" Icon="Upload" Click="CmdExport_Click"/>
-                            <MenuFlyoutSeparator/>
                             <MenuFlyoutItem Text="Copy to Campaign..." 
                                             Click="CmdCopyCampaign_Click">
                                 <MenuFlyoutItem.Icon>
                                     <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE7C1;"/>
                                 </MenuFlyoutItem.Icon>
                             </MenuFlyoutItem>
+                            <MenuFlyoutSeparator/>
+                            <MenuFlyoutItem Text="Export" Icon="Upload" Click="CmdExport_Click"/>
                             <MenuFlyoutSeparator/>
                             <MenuFlyoutItem Text="Delete" Icon="Delete" Click="CmdDelete_Click"/>
                         </MenuFlyout.Items>
@@ -272,11 +276,11 @@ https://www.gnu.org/licenses/.
                             <TextBlock Grid.Column="3" Margin="6,0,0,0"
                                        VerticalAlignment="Center"
                                        HorizontalTextAlignment="Center"
-                                       Text="{x:Bind LatUI}"/>
+                                       Text="{x:Bind LatUI, Mode=TwoWay}"/>
                             <TextBlock Grid.Column="4" Margin="6,0,0,0"
                                        VerticalAlignment="Center"
                                        HorizontalTextAlignment="Center"
-                                       Text="{x:Bind LonUI}"/>
+                                       Text="{x:Bind LonUI, Mode=TwoWay}"/>
                             <TextBlock Grid.Column="5" Margin="6,0,0,0"
                                        VerticalAlignment="Center"
                                        HorizontalTextAlignment="Center"
@@ -333,7 +337,7 @@ https://www.gnu.org/licenses/.
                      Text="{x:Bind EditPoI.Tags, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
                      TextChanged="PoITextBox_TextChanged"
                      LostFocus="PoITextBox_LostFocus"
-                     ToolTipService.ToolTip="Tags for point of interest"/>
+                     ToolTipService.ToolTip="Tags for point of interest (“,” separated)"/>
             </Grid>
             <Button Grid.Row="0" Grid.Column="2" Margin="24,12,0,0" x:Name="uiPoIBtnAdd"
                     HorizontalAlignment="Stretch" VerticalAlignment="Center"
@@ -457,7 +461,9 @@ https://www.gnu.org/licenses/.
             <Button Grid.Row="1" Grid.Column="2" Margin="24,12,0,0" x:Name="uiPoIBtnClear"
                     HorizontalAlignment="Stretch" VerticalAlignment="Center"
                     Click="PoIBtnClear_Click">
-                Clear
+                <TextBlock x:Name="uiPoITextBtnClear">
+                    Clear
+                </TextBlock>
             </Button>
         </Grid>
     </Grid>

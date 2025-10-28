@@ -74,6 +74,7 @@
     <None Remove="UI\A10C\A10CEditTADPage.xaml" />
     <None Remove="UI\A10C\A10CEditTGPPage.xaml" />
     <None Remove="UI\App\EditPointsOfInterestPage.xaml" />
+    <None Remove="UI\App\GetPoITagDetails.xaml" />
     <None Remove="UI\App\ImportBaseDialog.xaml" />
     <None Remove="UI\App\ImportParamsDialog.xaml" />
     <None Remove="UI\App\MapWindow.xaml" />
@@ -248,6 +249,9 @@
     <None Update="Images\mk-84hd.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Page Update="UI\App\GetPoITagDetails.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="UI\App\ImportBaseDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
