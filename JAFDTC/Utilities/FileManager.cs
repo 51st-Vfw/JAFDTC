@@ -258,6 +258,33 @@ namespace JAFDTC.Utilities
 
         // ------------------------------------------------------------------------------------------------------------
         //
+        // parameter dictionaries
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
+        /// <summary>
+        /// return the parameters dictionary with the given name. the dictionary is located in the {name}.json file
+        /// in the "Data" directory of the app package and is read-only. returns the parameters dictionary read from
+        /// the file, the dictionary is empty on error.
+        /// </summary>
+        public static Dictionary<string, string> LoadParametersDictionary(string name)
+        {
+            Dictionary<string, string> paramMap = [ ];
+            string path = Path.Combine(_appDirPath, "Data", $"{name}.json");
+            try
+            {
+                string json = ReadFile(path);
+                paramMap = (Dictionary<string, string>)JsonSerializer.Deserialize<Dictionary<string, string>>(json);
+            }
+            catch (Exception ex)
+            {
+                FileManager.Log($"FileManager:ReadParameters exception reading {path}, {ex}");
+            }
+            return paramMap;
+        }
+
+        // ------------------------------------------------------------------------------------------------------------
+        //
         // aircraft configurations
         //
         // ------------------------------------------------------------------------------------------------------------
