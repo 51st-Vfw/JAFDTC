@@ -21,6 +21,7 @@
 using JAFDTC.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Xml.Linq;
 
@@ -114,12 +115,18 @@ namespace JAFDTC.Models.DCS
         private readonly Dictionary<string, PointOfInterest> _uniqueIDs;
 
         /// <summary>
-        /// return a list of the names of known campaigns.
+        /// return a sorted list of the names of known campaigns.
         /// </summary>
         public List<string> KnownCampaigns
-            => ((_dbase != null) && _dbase.TryGetValue(PointOfInterestType.CAMPAIGN,
-                                                       out Dictionary<string, List<PointOfInterest>> value))
-                    ? [.. value.Keys ] : new();
+        {
+            get
+            {
+                Dictionary<string, List<PointOfInterest>> map = _dbase.GetValueOrDefault(PointOfInterestType.CAMPAIGN, [ ]);
+                List<string> campaigns = [.. map.Keys ];
+                campaigns.Sort();
+                return campaigns;
+            }
+        }
 
         /// <summary>
         /// return a list of strings for all of the theaters represented in the database.
