@@ -581,7 +581,10 @@ namespace JAFDTC
         private async static void OpenDCSDTCEditor(IConfiguration cfg)
         {
             if (cfg != null)
+            {
+                cfg.SaveMergedSimDTC();
                 await cfg.UploadAgent.OpenDCSDTCEditor();
+            }
         }
 
         // ------------------------------------------------------------------------------------------------------------
