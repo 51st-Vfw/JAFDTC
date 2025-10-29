@@ -56,14 +56,6 @@ namespace JAFDTC.UI.F16C
 
         // ------------------------------------------------------------------------------------------------------------
         //
-        // constants
-        //
-        // ------------------------------------------------------------------------------------------------------------
-
-        public readonly static string ROUTE_NAME = "Primary";
-
-        // ------------------------------------------------------------------------------------------------------------
-        //
         // properties
         //
         // ------------------------------------------------------------------------------------------------------------
@@ -261,7 +253,8 @@ namespace JAFDTC.UI.F16C
                 CopyEditToConfig(true);
                 RebuildInterfaceState();
 
-                MapMarkerInfo info = new(MapMarkerInfo.MarkerType.NAVPT, ROUTE_NAME, index + 1, ll.Item1, ll.Item2);
+                MapMarkerInfo info = new(MapMarkerInfo.MarkerType.NAVPT, STPTSystem.SystemInfo.RouteNames[0],
+                                         index + 1, ll.Item1, ll.Item2);
                 VerbMirror?.MirrorVerbMarkerAdded(this, info);
                 VerbMirror?.MirrorVerbMarkerSelected(this, info);
             }
@@ -314,7 +307,8 @@ namespace JAFDTC.UI.F16C
                 foreach (int index in selectedIndices)
                 {
                     EditSTPT.Points.RemoveAt(index);
-                    VerbMirror?.MirrorVerbMarkerDeleted(this, new(MapMarkerInfo.MarkerType.NAVPT, ROUTE_NAME, index + 1));
+                    VerbMirror?.MirrorVerbMarkerDeleted(this, new(MapMarkerInfo.MarkerType.NAVPT,
+                                                                  STPTSystem.SystemInfo.RouteNames[0], index + 1));
                 }
                 VerbMirror?.MirrorVerbMarkerSelected(this, new());
 
@@ -453,7 +447,7 @@ namespace JAFDTC.UI.F16C
 
                 Dictionary<string, List<INavpointInfo>> routes = new()
                 {
-                    [ROUTE_NAME] = [.. EditSTPT.Points ]
+                    [ STPTSystem.SystemInfo.RouteNames[0] ] = [.. EditSTPT.Points ]
                 };
 // TODO: fix max navpoint count
                 MapWindow = NavpointUIHelper.OpenMap(this, 20, LLFormat.DDM_P3ZF, routes);
@@ -465,8 +459,9 @@ namespace JAFDTC.UI.F16C
                 NavArgs.ConfigPage.RegisterAuxWindow(MapWindow);
 
                 if (uiStptListView.SelectedIndex != -1)
-                    VerbMirror?.MirrorVerbMarkerSelected(this, new(MapMarkerInfo.MarkerType.ANY, ROUTE_NAME,
-                                                         uiStptListView.SelectedIndex + 1));
+                    VerbMirror?.MirrorVerbMarkerSelected(this, new(MapMarkerInfo.MarkerType.ANY,
+                                                                   STPTSystem.SystemInfo.RouteNames[0],
+                                                                   uiStptListView.SelectedIndex + 1));
             }
             else
             {
@@ -530,7 +525,8 @@ namespace JAFDTC.UI.F16C
                 }
                 else if ((listView.SelectedItems.Count == 1) && !_isVerbEvent)
                     VerbMirror?.MirrorVerbMarkerSelected(this, new(MapMarkerInfo.MarkerType.ANY,
-                                                                   ROUTE_NAME, listView.SelectedIndex + 1));
+                                                                   STPTSystem.SystemInfo.RouteNames[0],
+                                                                   listView.SelectedIndex + 1));
                 RebuildInterfaceState();
             }
         }
@@ -646,13 +642,15 @@ namespace JAFDTC.UI.F16C
         public void VerbMarkerSelected(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
             Debug.WriteLine($"VSLP:VerbMarkerSelected {info.Type}, {info.TagStr}, {info.TagInt}");
-            if ((info.TagStr != ROUTE_NAME) || (info.Type == MapMarkerInfo.MarkerType.UNKNOWN))
+            if ((info.TagStr != STPTSystem.SystemInfo.RouteNames[0]) ||
+                (info.Type == MapMarkerInfo.MarkerType.UNKNOWN))
             {
                 _isVerbEvent = true;
                 uiStptListView.SelectedIndex = -1;
                 _isVerbEvent = false;
             }
-            else if ((info.TagStr == ROUTE_NAME) && (info.Type == MapMarkerInfo.MarkerType.NAVPT))
+            else if ((info.TagStr == STPTSystem.SystemInfo.RouteNames[0]) &&
+                     (info.Type == MapMarkerInfo.MarkerType.NAVPT))
             {
                 _isVerbEvent = true;
                 uiStptListView.SelectedIndex = info.TagInt - 1;
@@ -669,7 +667,7 @@ namespace JAFDTC.UI.F16C
         public void VerbMarkerOpened(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
             Debug.WriteLine($"VSLP:MarkerOpen {info.Type}, {info.TagStr}, {info.TagInt}");
-            if (info.TagStr == ROUTE_NAME)
+            if (info.TagStr == STPTSystem.SystemInfo.RouteNames[0])
             {
                 if (EditStptDetailPage == null)
                     EditSteerpoint(EditSTPT.Points[info.TagInt - 1]);
@@ -685,7 +683,7 @@ namespace JAFDTC.UI.F16C
         public void VerbMarkerMoved(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
             Debug.WriteLine($"VSLP:VerbMarkerMoved {info.Type}, {info.TagStr}, {info.TagInt}, {info.Lat}, {info.Lon}");
-            if (info.TagStr == ROUTE_NAME)
+            if (info.TagStr == STPTSystem.SystemInfo.RouteNames[0])
             {
                 EditSTPT.Points[info.TagInt - 1].Lat = info.Lat;
                 EditSTPT.Points[info.TagInt - 1].Lon = info.Lon;
@@ -702,7 +700,7 @@ namespace JAFDTC.UI.F16C
         public void VerbMarkerAdded(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
             Debug.WriteLine($"VSLP:VerbMarkerAdded {info.Type}, {info.TagStr}, {info.TagInt}, {info.Lat}, {info.Lon}");
-            if (info.TagStr == ROUTE_NAME)
+            if (info.TagStr == STPTSystem.SystemInfo.RouteNames[0])
             {
                 SteerpointInfo stpt = EditSTPT.Add(null, info.TagInt - 1);
                 int index = EditSTPT.Points.IndexOf(stpt);
@@ -723,7 +721,7 @@ namespace JAFDTC.UI.F16C
         public void VerbMarkerDeleted(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
             Debug.WriteLine($"VSLP:VerbMarkerDeleted {info.Type}, {info.TagStr}, {info.TagInt}");
-            if (info.TagStr == ROUTE_NAME)
+            if (info.TagStr == STPTSystem.SystemInfo.RouteNames[0])
             {
                 uiStptListView.SelectedIndex = -1;
 

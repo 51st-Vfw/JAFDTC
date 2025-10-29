@@ -56,14 +56,6 @@ namespace JAFDTC.UI.Base
     {
         // ------------------------------------------------------------------------------------------------------------
         //
-        // constants
-        //
-        // ------------------------------------------------------------------------------------------------------------
-
-        public readonly static string ROUTE_NAME = "Primary";
-
-        // ------------------------------------------------------------------------------------------------------------
-        //
         // properties
         //
         // ------------------------------------------------------------------------------------------------------------
@@ -242,7 +234,8 @@ namespace JAFDTC.UI.Base
                 EditNavpt[index].Lon = ll.Item2;
                 SaveEditStateToConfig();
 
-                MapMarkerInfo info = new(MapMarkerInfo.MarkerType.NAVPT, ROUTE_NAME, index + 1, ll.Item1, ll.Item2);
+                MapMarkerInfo info = new(MapMarkerInfo.MarkerType.NAVPT, PageHelper.SystemInfo.RouteNames[0],
+                                         index + 1, ll.Item1, ll.Item2);
                 VerbMirror?.MirrorVerbMarkerAdded(this, info);
                 VerbMirror?.MirrorVerbMarkerSelected(this, info);
             }
@@ -300,7 +293,8 @@ namespace JAFDTC.UI.Base
                 foreach (int index in selectedIndices)
                 {
                     EditNavpt.RemoveAt(index);
-                    VerbMirror?.MirrorVerbMarkerDeleted(this, new(MapMarkerInfo.MarkerType.NAVPT, ROUTE_NAME, index + 1));
+                    VerbMirror?.MirrorVerbMarkerDeleted(this, new(MapMarkerInfo.MarkerType.NAVPT,
+                                                                  PageHelper.SystemInfo.RouteNames[0], index + 1));
                 }
                 VerbMirror?.MirrorVerbMarkerSelected(this, new());
 
@@ -416,7 +410,7 @@ namespace JAFDTC.UI.Base
 
                 Dictionary<string, List<INavpointInfo>> routes = new()
                 {
-                    [ROUTE_NAME] = [.. EditNavpt ]
+                    [ PageHelper.SystemInfo.RouteNames[0] ] = [.. EditNavpt ]
                 };
                 MapWindow = NavpointUIHelper.OpenMap(this, PageHelper.SystemInfo.NavptMaxCount, PageHelper.SystemInfo.NavptCoordFmt, routes);
                 MapWindow.MarkerExplainer = this;
@@ -427,7 +421,8 @@ namespace JAFDTC.UI.Base
                 NavArgs.ConfigPage.RegisterAuxWindow(MapWindow);
 
                 if (uiNavptListView.SelectedIndex != -1)
-                    VerbMirror?.MirrorVerbMarkerSelected(this, new(MapMarkerInfo.MarkerType.ANY, ROUTE_NAME,
+                    VerbMirror?.MirrorVerbMarkerSelected(this, new(MapMarkerInfo.MarkerType.ANY,
+                                                         PageHelper.SystemInfo.RouteNames[0],
                                                          uiNavptListView.SelectedIndex + 1));
             }
             else
@@ -454,7 +449,8 @@ namespace JAFDTC.UI.Base
                 }
                 else if ((listView.SelectedItems.Count == 1) && !_isVerbEvent)
                     VerbMirror?.MirrorVerbMarkerSelected(this, new(MapMarkerInfo.MarkerType.ANY,
-                                                                   ROUTE_NAME, listView.SelectedIndex + 1));
+                                                                   PageHelper.SystemInfo.RouteNames[0],
+                                                                   listView.SelectedIndex + 1));
                 UpdateUIFromEditState();
             }
         }
@@ -572,13 +568,15 @@ namespace JAFDTC.UI.Base
         public void VerbMarkerSelected(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
             Debug.WriteLine($"ENLP:VerbMarkerSelected {info.Type}, {info.TagStr}, {info.TagInt}");
-            if ((info.TagStr != ROUTE_NAME) || (info.Type == MapMarkerInfo.MarkerType.UNKNOWN))
+            if ((info.TagStr != PageHelper.SystemInfo.RouteNames[0]) ||
+                (info.Type == MapMarkerInfo.MarkerType.UNKNOWN))
             {
                 _isVerbEvent = true;
                 uiNavptListView.SelectedIndex = -1;
                 _isVerbEvent = false;
             }
-            else if ((info.TagStr == ROUTE_NAME) && (info.Type == MapMarkerInfo.MarkerType.NAVPT))
+            else if ((info.TagStr == PageHelper.SystemInfo.RouteNames[0]) &&
+                     (info.Type == MapMarkerInfo.MarkerType.NAVPT))
             {
                 _isVerbEvent = true;
                 uiNavptListView.SelectedIndex = info.TagInt - 1;
@@ -595,7 +593,7 @@ namespace JAFDTC.UI.Base
         public void VerbMarkerOpened(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
             Debug.WriteLine($"ENLP:MarkerOpen {info.Type}, {info.TagStr}, {info.TagInt}");
-            if (info.TagStr == ROUTE_NAME)
+            if (info.TagStr == PageHelper.SystemInfo.RouteNames[0])
             {
                 if (EditNavptDetailPage == null)
                     EditNavpoint(EditNavpt[info.TagInt - 1]);
@@ -611,7 +609,7 @@ namespace JAFDTC.UI.Base
         public void VerbMarkerMoved(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
             Debug.WriteLine($"ENLP:VerbMarkerMoved {info.Type}, {info.TagStr}, {info.TagInt}, {info.Lat}, {info.Lon}");
-            if (info.TagStr == ROUTE_NAME)
+            if (info.TagStr == PageHelper.SystemInfo.RouteNames[0])
             {
                 EditNavpt[info.TagInt - 1].Lat = info.Lat;
                 EditNavpt[info.TagInt - 1].Lon = info.Lon;
@@ -628,7 +626,7 @@ namespace JAFDTC.UI.Base
         public void VerbMarkerAdded(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
             Debug.WriteLine($"ENLP:VerbMarkerAdded {info.Type}, {info.TagStr}, {info.TagInt}, {info.Lat}, {info.Lon}");
-            if (info.TagStr == ROUTE_NAME)
+            if (info.TagStr == PageHelper.SystemInfo.RouteNames[0])
             {
                 int index = PageHelper.AddNavpoint(Config, info.TagInt - 1);
                 CopyConfigToEditState();
@@ -648,7 +646,7 @@ namespace JAFDTC.UI.Base
         public void VerbMarkerDeleted(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
             Debug.WriteLine($"ENLP:VerbMarkerDeleted {info.Type}, {info.TagStr}, {info.TagInt}");
-            if (info.TagStr == ROUTE_NAME)
+            if (info.TagStr == PageHelper.SystemInfo.RouteNames[0])
             {
                 uiNavptListView.SelectedIndex = -1;
 
