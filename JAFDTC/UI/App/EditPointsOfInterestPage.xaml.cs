@@ -41,6 +41,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Windows.Media.Protection.PlayReady;
 using Windows.Storage;
 
 using static JAFDTC.Utilities.Networking.WyptCaptureDataRx;
@@ -317,6 +318,10 @@ namespace JAFDTC.UI.App
 
         private LLFormat LLDisplayFmt { get; set; }
 
+        private string LastLat { get; set; }
+
+        private string LastLon { get; set; }
+
         private string LastAddTheater { get; set; }
 
         private string LastAddCampaign { get; set; }
@@ -466,6 +471,23 @@ namespace JAFDTC.UI.App
                 if (uiPoIListView.Items[i] is PoIListItem item && (item.PoI.UniqueID == uid))
                     return i;
             return -1;
+        }
+
+        /// <summary>
+        /// TODO: document
+        /// </summary>
+        private void SetEditObjectLatLon(string lat, string lon)
+        {
+            int index = _llFmtToIndexMap[LLDisplayFmt];
+            EditPoI.LL[index].LatUI = Coord.ConvertFromLatDD(lat, LLDisplayFmt);
+            EditPoI.LL[index].LonUI = Coord.ConvertFromLonDD(lon, LLDisplayFmt);
+
+            int indexItem = FindIndexOfPoIByUID(EditPoI.SourceUID);
+            if (indexItem != -1)
+            {
+                (uiPoIListView.Items[indexItem] as PoIListItem).LatUI = EditPoI.LL[index].LatUI;
+                (uiPoIListView.Items[indexItem] as PoIListItem).LonUI = EditPoI.LL[index].LonUI;
+            }
         }
 
         /// <summary>
@@ -1633,7 +1655,7 @@ namespace JAFDTC.UI.App
         /// </summary>
         public void VerbMarkerSelected(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
-            Debug.WriteLine($"EPP:VerbMarkerSelected {info.Type}, {info.TagStr}, {info.TagInt}");
+            Debug.WriteLine($"EPP:VerbMarkerSelected({param}) {info.Type}, {info.TagStr}, {info.TagInt}");
             if (info.Type == MapMarkerInfo.MarkerType.UNKNOWN)
             {
                 IsVerbEvent = true;
@@ -1659,23 +1681,36 @@ namespace JAFDTC.UI.App
         /// </summary>
         public void VerbMarkerMoved(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
-// TODO: what if movement takes marker outside of theater?
-            Debug.WriteLine($"EPP:VerbMarkerMoved {info.Type}, {info.TagStr}, {info.TagInt}, {info.Lat}, {info.Lon}");
+            Debug.WriteLine($"EPP:VerbMarkerMoved({param}) {info.Type}, {info.TagStr}, {info.TagInt}, {info.Lat}, {info.Lon}");
             PointOfInterest poi = PointOfInterestDbase.Instance.Find(info.TagStr);
             if ((poi != null) && (poi.UniqueID == EditPoI.SourceUID))
             {
-                int index = _llFmtToIndexMap[LLDisplayFmt];
-                EditPoI.LL[index].LatUI = Coord.ConvertFromLatDD(info.Lat, LLDisplayFmt);
-                EditPoI.LL[index].LonUI = Coord.ConvertFromLonDD(info.Lon, LLDisplayFmt);
+                SetEditObjectLatLon(info.Lat, info.Lon);
 
-                foreach (PoIListItem item in uiPoIListView.Items.Cast<PoIListItem>())
+                if (param == -1)
                 {
-                    if (poi.UniqueID == item.PoI.UniqueID)
+                    LastLat = info.Lat;
+                    LastLon = info.Lon;
+                }
+                else if ((param == 1) && PointOfInterest.TheatersForCoords(info.Lat, info.Lon).Contains(poi.Theater))
+                {
+                    PointOfInterestDbase.Instance.Save(poi.Campaign);
+                }
+                else if ((param == 1) && !string.IsNullOrEmpty(LastLat) && !string.IsNullOrEmpty(LastLon))
+                {
+                    DispatcherQueue.TryEnqueue(DispatcherQueuePriority.Normal, async () =>
                     {
-                        item.LatUI = EditPoI.LL[index].LatUI;
-                        item.LonUI = EditPoI.LL[index].LonUI;
-                        break;
-                    }
+                        await Utilities.Message1BDialog(Content.XamlRoot, "Elvis Has Left the Building",
+                                                        $"Point of interest has moved out of the {poi.Theater} theater." +
+                                                        $" Restoring previous position.");
+
+                        SetEditObjectLatLon(LastLat, LastLon);
+                        VerbMirror?.MirrorVerbMarkerMoved(this, new((MapMarkerInfo.MarkerType) poi.Type, info.TagStr,
+                                                                    info.TagInt, LastLat, LastLon), 1);
+                        LastLat = null;
+                        LastLon = null;
+                        PointOfInterestDbase.Instance.Save(poi.Campaign);
+                    });
                 }
             }
         }
@@ -1685,7 +1720,7 @@ namespace JAFDTC.UI.App
         /// </summary>
         public void VerbMarkerAdded(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
-            Debug.WriteLine($"EPP:VerbMarkerAdded {info.Type}, {info.TagStr}, {info.TagInt}, {info.Lat}, {info.Lon}");
+            Debug.WriteLine($"EPP:VerbMarkerAdded({param}) {info.Type}, {info.TagStr}, {info.TagInt}, {info.Lat}, {info.Lon}");
 // TODO: nothing to do here until we support add via map window
         }
 
@@ -1694,7 +1729,7 @@ namespace JAFDTC.UI.App
         /// </summary>
         public void VerbMarkerDeleted(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
-            Debug.WriteLine($"EPP:VerbMarkerDeleted {info.Type}, {info.TagStr}, {info.TagInt}");
+            Debug.WriteLine($"EPP:VerbMarkerDeleted({param}) {info.Type}, {info.TagStr}, {info.TagInt}");
             PointOfInterest poi = PointOfInterestDbase.Instance.Find(info.TagStr);
 
             if (PointOfInterestDbase.Instance.CountPoIInCampaign(poi.Campaign) == 1)

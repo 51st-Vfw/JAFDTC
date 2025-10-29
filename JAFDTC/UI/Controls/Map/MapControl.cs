@@ -173,6 +173,8 @@ namespace JAFDTC.UI.Controls.Map
         private DragStateEnum _dragState = DragStateEnum.IDLE;
         private bool _isNewMarker = false;
 
+        // ---- read-only properties
+
         private readonly Dictionary<string, RouteInfo> _routes = [ ];
         private readonly Dictionary<string, MapMarkerControl> _marks = [ ];
 
@@ -703,7 +705,7 @@ namespace JAFDTC.UI.Controls.Map
         /// </summary>
         public void VerbMarkerSelected(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
-            Debug.WriteLine($"MC:MarkerSelect {info.Type}, {info.TagStr} {info.TagInt}");
+            Debug.WriteLine($"MC:MarkerSelect({param}) {info.Type}, {info.TagStr} {info.TagInt}");
             if (_selectedMarker != null)
                 UnselectMarker(_selectedMarker);
             _selectedMarker = null;
@@ -730,7 +732,7 @@ namespace JAFDTC.UI.Controls.Map
         /// </summary>
         public void VerbMarkerMoved(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
-            Debug.WriteLine($"MC:VerbMarkerMoved {info.Type}, {info.TagStr}, {info.TagInt}, {info.Lat}, {info.Lon}");
+            Debug.WriteLine($"MC:VerbMarkerMoved({param}) {info.Type}, {info.TagStr}, {info.TagInt}, {info.Lat}, {info.Lon}");
             if ((info.TagStr == null) || !CanEdit(info.Type))
                 return;
             else if (_routes.TryGetValue(info.TagStr, out RouteInfo routeInfo))
@@ -744,7 +746,7 @@ namespace JAFDTC.UI.Controls.Map
         /// </summary>
         public void VerbMarkerAdded(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
-            Debug.WriteLine($"MC:VerbMarkerAdded {info.Type}, {info.TagStr}, {info.TagInt}, {info.Lat}, {info.Lon}");
+            Debug.WriteLine($"MC:VerbMarkerAdded({param}) {info.Type}, {info.TagStr}, {info.TagInt}, {info.Lat}, {info.Lon}");
             if ((info.TagStr == null) || !CanEdit(info.Type))
                 return;
             else if (_routes.TryGetValue(info.TagStr, out RouteInfo routeInfo))
@@ -764,7 +766,7 @@ namespace JAFDTC.UI.Controls.Map
         /// </summary>
         public void VerbMarkerDeleted(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
-            Debug.WriteLine($"MC:VerbMarkerDeleted {info.Type}, {info.TagStr}, {info.TagInt}");
+            Debug.WriteLine($"MC:VerbMarkerDeleted({param}) {info.Type}, {info.TagStr}, {info.TagInt}");
             if ((info.TagStr == null) || !CanEdit(info.Type))
                 return;
             else if (_routes.TryGetValue(info.TagStr, out RouteInfo routeInfo))
@@ -876,6 +878,10 @@ namespace JAFDTC.UI.Controls.Map
         {
             if (_dragState == DragStateEnum.ACTIVE_MARKER)
             {
+                // mark end of drag by sending a moved verb in the final location with a param of 1.
+                //
+                VerbMirror?.MirrorVerbMarkerMoved(this, new(_selectedMarker), 1);
+
                 _dragState = DragStateEnum.IDLE;                // force SelectMarker() to restore handles...
                 SelectMarker(_selectedMarker);
             }
@@ -924,10 +930,21 @@ namespace JAFDTC.UI.Controls.Map
                 else if (_dragState == DragStateEnum.ACTIVE_MARKER)
                 {
                     MoveMapMarker(_selectedMarker, ViewToLocation(evt.GetCurrentPoint(this).Position));
+                    //
+                    // if we're moving an edit handle, MoveMapMarker will take care of creating a new marker to
+                    // replace the handle (setting it to the selected marker) and getting the handle out of the
+                    // way (_isNewMarker will indicate this state). we'll send an initial moved verb with a -1
+                    // param to indicate a drag is starting. otherwise, just continue to drag.
+                    //
                     if (_isNewMarker)
+                    {
                         VerbMirror?.MirrorVerbMarkerAdded(this, new(_selectedMarker));
+                        VerbMirror?.MirrorVerbMarkerMoved(this, new(_selectedMarker), -1);
+                    }
                     else
+                    {
                         VerbMirror?.MirrorVerbMarkerMoved(this, new(_selectedMarker));
+                    }
                     _isNewMarker = false;
                 }
             }
@@ -951,6 +968,8 @@ namespace JAFDTC.UI.Controls.Map
                     _dragState = DragStateEnum.ACTIVE_MARKER;
                     if (type == MapMarkerInfo.MarkerType.NAVPT_HANDLE)
                         _isNewMarker = true;
+                    else
+                        VerbMirror?.MirrorVerbMarkerMoved(this, new(_selectedMarker), -1);
                 }
             }
             else if (_dragState == DragStateEnum.ACTIVE_MAP)
