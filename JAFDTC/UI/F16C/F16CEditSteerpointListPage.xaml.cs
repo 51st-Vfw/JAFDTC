@@ -521,10 +521,16 @@ namespace JAFDTC.UI.F16C
         {
             if (!_isMarshalling)
             {
-                ListView list = sender as ListView;
-                if (!_isVerbEvent)
+                ListView listView = sender as ListView;
+                if ((listView.SelectedItems.Count != 1) && !_isVerbEvent)
+                {
+// TODO: this will clear map window selection when we have multiple things selected in the poi list.
+// TODO: this likely needs to change if multi-selection is ever supported in the map window.
+                    VerbMirror?.MirrorVerbMarkerSelected(this, new());
+                }
+                else if ((listView.SelectedItems.Count == 1) && !_isVerbEvent)
                     VerbMirror?.MirrorVerbMarkerSelected(this, new(MapMarkerInfo.MarkerType.ANY,
-                                                                   ROUTE_NAME, list.SelectedIndex + 1));
+                                                                   ROUTE_NAME, listView.SelectedIndex + 1));
                 RebuildInterfaceState();
             }
         }
