@@ -57,11 +57,17 @@ namespace JAFDTC.Utilities
         private static string _commonDirPath
             = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Saved Games\\JAFDTC");
 
+        private static string _mapTileCachePath
+            = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
+                           "JAFDTC", "MapControlTileCache");
+
         private static string _settingsPath = null;
 
         private static string _logPath = null;
 
         private static StreamWriter _logStream = null;
+
+        private static readonly string[] _sizeSuffixes = { "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB" };
 
         // ------------------------------------------------------------------------------------------------------------
         //
@@ -194,6 +200,48 @@ namespace JAFDTC.Utilities
         public static void WriteFile(string path, string content)
         {
             File.WriteAllText(path, content);
+        }
+
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // map tile cache directory
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
+        /// <summary>
+        /// return the path to the map tile cache directory.
+        /// </summary>
+        public static string MapTileCachePath => _mapTileCachePath;
+
+        /// <summary>
+        /// returns the size of the files in a folder.
+        /// </summary>
+        private static long GetSizeOfFilesInFolder(string path, long size)
+        {
+            foreach (string dir in Directory.GetDirectories(path))
+                if (Directory.Exists(dir))
+                    size += GetSizeOfFilesInFolder(dir, 0);
+            foreach (string file in Directory.GetFiles(path))
+                if (File.Exists(file))
+                    size += new FileInfo(file).Length;
+            return size;
+        }
+
+        /// <summary>
+        /// returns a size string ("200 KB" for the current size of the map tile cache.
+        /// </summary>
+        public static string GetCurrentMapTileCacheSize()
+        {
+            long size = GetSizeOfFilesInFolder(MapTileCachePath, 0);
+
+            int i = 0;
+            decimal dValue = (decimal)size;
+            while (Math.Round(dValue, 2) >= 1000)
+            {
+                dValue /= 1024;
+                i++;
+            }
+            return string.Format("{0:n2} {1}", dValue, _sizeSuffixes[i]);
         }
 
         // ------------------------------------------------------------------------------------------------------------

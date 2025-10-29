@@ -223,9 +223,9 @@ namespace JAFDTC.UI.App
 
 #if ENABLE_MAP_FILE_CACHE
 
-            string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
-                                       "JAFDTC", "MapControlTileCache");
-            FileManager.Log($"Enabling MapControl ImageFileCache at: {path}");
+            string path = FileManager.MapTileCachePath;
+            FileManager.Log($"MapControl ImageFileCache path: {path}");
+            FileManager.Log($"MapControl ImageFileCache size: {FileManager.GetCurrentMapTileCacheSize()}");
             _mapTileCache = new MapControl.Caching.ImageFileCache(path);
             TileImageLoader.Cache = _mapTileCache;
 
