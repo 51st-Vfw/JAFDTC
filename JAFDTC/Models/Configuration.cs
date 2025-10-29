@@ -276,33 +276,36 @@ namespace JAFDTC.Models
 
         public bool SaveMergedSimDTC(string template, string outputPath)
         {
-            string name = Path.GetFileNameWithoutExtension(outputPath);
-            try
+            if (!string.IsNullOrEmpty(outputPath))
             {
-                string json = FileManager.LoadDTCTemplate(Airframe, template)
-                    ?? throw new Exception($"Cannot load DTC template {template}");
-                JsonNode dom = JsonNode.Parse(json)
-                    ?? throw new Exception($"Cannot parse DTC template {template}");
-
-                dom["name"] = name;
-                dom["data"]["name"] = name;
-                foreach (string tag in MergeableSysTagsForDTC)
+                string name = Path.GetFileNameWithoutExtension(outputPath);
+                try
                 {
-                    ISystem system = SystemForTag(tag);
-                    if (!system.IsDefault && IsMerged(tag))
-                        system.MergeIntoSimDTC(dom["data"]);
+                    string json = FileManager.LoadDTCTemplate(Airframe, template)
+                        ?? throw new Exception($"Cannot load DTC template {template}");
+                    JsonNode dom = JsonNode.Parse(json)
+                        ?? throw new Exception($"Cannot parse DTC template {template}");
+
+                    dom["name"] = name;
+                    dom["data"]["name"] = name;
+                    foreach (string tag in MergeableSysTagsForDTC)
+                    {
+                        ISystem system = SystemForTag(tag);
+                        if (!system.IsDefault && IsMerged(tag))
+                            system.MergeIntoSimDTC(dom["data"]);
+                    }
+
+                    json = dom.ToJsonString(Globals.JSONOptions)
+                        ?? throw new Exception($"Cannot create DTC file");
+                    FileManager.WriteFile(outputPath, json);
+
+                    FileManager.Log($"Successfully merged \"{Name}\" into {outputPath}");
                 }
-
-                json = dom.ToJsonString(Globals.JSONOptions)
-                    ?? throw new Exception($"Cannot create DTC file");
-                FileManager.WriteFile(outputPath, json);
-
-                FileManager.Log($"Successfully merged \"{Name}\" into {outputPath}");
-            }
-            catch (Exception ex)
-            {
-                FileManager.Log($"Configuration:SaveMergedSimDTC exception {ex}");
-                return false;
+                catch (Exception ex)
+                {
+                    FileManager.Log($"Configuration:SaveMergedSimDTC exception {ex}");
+                    return false;
+                }
             }
             return true;
         }
