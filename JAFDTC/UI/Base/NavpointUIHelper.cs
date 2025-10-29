@@ -303,7 +303,7 @@ namespace JAFDTC.UI.Base
                 if (dupes.Count > 0)
                 {
                     string dupeMsg = (dupes.Count == 1) ?
-                        $"The point of interest \"{dupes[0]}\" already exists and was not copied." :
+                        $"The point of interest “{dupes[0]}” already exists and was not copied." :
                         $"The following points of interest already exist and were not copied:\n- {string.Join("\n- ", dupes)}";
                     await Utilities.Message1BDialog(root, "Duplicate Points of Interest", dupeMsg);
                 }
