@@ -1,0 +1,5 @@
+﻿{
+  "UriTemplate": "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+  "SourceName": "OpenStreetMap",
+  "Description": "Map data © [OpenStreetMap](https://www.openstreetmap.org/copyright) contributors"
+}

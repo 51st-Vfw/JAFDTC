@@ -17,6 +17,10 @@
 //
 // ********************************************************************************************************************
 
+// define ENABLE_MAP_FILE_CACHE to enable file caching of map tiles via ImageFileCache from MapControl.
+//
+#define ENABLE_MAP_FILE_CACHE
+
 using JAFDTC.Models.Base;
 using JAFDTC.Models.DCS;
 using JAFDTC.UI.Base;
@@ -33,6 +37,7 @@ using Microsoft.UI.Xaml.Input;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Runtime.InteropServices;
 using Windows.Graphics;
 
@@ -156,9 +161,11 @@ namespace JAFDTC.UI.App
 
         // ---- private properties
 
-        private readonly Dictionary<string, IMapControlVerbHandler> _mapObservers = [ ];
+        private MapControl.Caching.ImageFileCache _mapTileCache;
 
         private bool _isViewportChanging = false;
+
+        private readonly Dictionary<string, IMapControlVerbHandler> _mapObservers = [ ];
 
         private static WinProc _newWndProc = null;
         private static IntPtr _oldWndProc = IntPtr.Zero;
@@ -201,12 +208,32 @@ namespace JAFDTC.UI.App
             uiMap.PointerMoved += Map_PointerMoved;
             uiMap.ViewportChanged += Map_ViewportChanged;
 
-// TODO: switch to "real" tile uri...
-//          uiMapTiles.TileSource = new TileSource { UriTemplate = "https://tile.openstreetmap.org/{z}/{x}/{y}.png" Description = "DESCRIPTION HERE" };
-// Map tiles © [MapTiles](https://www.maptilesapi.com/) API | Map data © [OpenStreetMap](https://www.openstreetmap.org/copyright) contributors
-
+            Dictionary<string, string> tileParams = FileManager.LoadParametersDictionary("params-map-tiles");
+            if (tileParams.Count > 0)
+            {
+                uiMapTiles.TileSource = new TileSource()
+                {
+                    UriTemplate = tileParams["UriTemplate"],
+                };
+                uiMapTiles.SourceName = tileParams["SourceName"];
+                uiMapTiles.Description = tileParams["Description"];
+            }
             foreach (Inline inline in Utilities.TextToInlines(uiMapTiles.Description))
                 uiMapTextAttribution.Inlines.Add(inline);
+
+#if ENABLE_MAP_FILE_CACHE
+
+            string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
+                                       "JAFDTC", "MapControlTileCache");
+            FileManager.Log($"Enabling MapControl ImageFileCache at: {path}");
+            _mapTileCache = new MapControl.Caching.ImageFileCache(path);
+            TileImageLoader.Cache = _mapTileCache;
+
+#else
+
+            _mapTileCache = null;
+
+#endif
 
             // ---- window setup
 
@@ -567,11 +594,12 @@ namespace JAFDTC.UI.App
         // ------------------------------------------------------------------------------------------------------------
 
         /// <summary>
-        /// on window closed, persist the last window location and size to settings.
+        /// on window closed, persist the last window location and size to settings and dispose any map tile cache.
         /// </summary>
         private void MapWindow_Closed(object sender, WindowEventArgs args)
         {
             Settings.LastWindowSetupMap = Utilities.BuildWindowSetupString(_windPosnCur, _windSizeCur);
+            _mapTileCache?.Dispose();
         }
 
         /// <summary>
