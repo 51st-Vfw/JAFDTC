@@ -96,6 +96,10 @@ namespace JAFDTC.Utilities
 
         public bool IsNewVersCheckDisabled { get; set; }
 
+        public bool IsMapWindowAutoOpen { get; set; }
+
+        public bool IsMapTileCacheDisabled { get; set; }
+
         public int TCPPortCmdTx { get; }
 
         public int TCPPortCfgNameTx { get; }
@@ -140,6 +144,8 @@ namespace JAFDTC.Utilities
             IsNavPtImportIgnoreAirframe = false;
             IsAlwaysOnTop = false;
             IsNewVersCheckDisabled = false;
+            IsMapWindowAutoOpen = false;
+            IsMapTileCacheDisabled = false;
 
             // NOTE: the tx/rx ports need to be kept in sync with corresponding port numbers in Lua and cannot be
             // NOTE: changed without corresponding changes to the Lua files. they are readonly here.
@@ -322,7 +328,33 @@ namespace JAFDTC.Utilities
                 }
             }
         }
-        
+
+        public static bool IsMapWindowAutoOpen
+        {
+            get => _currentSettings.IsMapWindowAutoOpen;
+            set
+            {
+                if (_currentSettings.IsMapWindowAutoOpen != value)
+                {
+                    _currentSettings.IsMapWindowAutoOpen = value;
+                    FileManager.WriteSettings(_currentSettings);
+                }
+            }
+        }
+
+        public static bool IsMapTileCacheDisabled
+        {
+            get => _currentSettings.IsMapTileCacheDisabled;
+            set
+            {
+                if (_currentSettings.IsMapTileCacheDisabled != value)
+                {
+                    _currentSettings.IsMapTileCacheDisabled = value;
+                    FileManager.WriteSettings(_currentSettings);
+                }
+            }
+        }
+
         public static int LastAirframeSelection
         {
             get => _currentSettings.LastAirframeSelection;

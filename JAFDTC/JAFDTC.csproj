@@ -78,6 +78,7 @@
     <None Remove="UI\App\GetPoITagDetails.xaml" />
     <None Remove="UI\App\ImportBaseDialog.xaml" />
     <None Remove="UI\App\ImportParamsDialog.xaml" />
+    <None Remove="UI\App\MapSettingsDialog.xaml" />
     <None Remove="UI\App\MapWindow.xaml" />
     <None Remove="UI\AV8B\AV8BEditWaypointListPage.xaml" />
     <None Remove="UI\Base\EditNavpointListPage.xaml" />
@@ -251,6 +252,9 @@
     <None Update="Images\mk-84hd.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Page Update="UI\App\MapSettingsDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="UI\App\GetPoITagDetails.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>

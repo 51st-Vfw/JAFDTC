@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+**********************************************************************************************************************
+    
+MapSettingsDialog.xaml : ui xaml for map settings dialog
+
+Copyright(C) 2025 ilominar/raven
+
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
+Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
+option) any later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
+implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+for more details.
+You should have received a copy of the GNU General Public License along with this program.  If not, see
+https://www.gnu.org/licenses/.
+
+**********************************************************************************************************************
+-->
+<ContentDialog
+    x:Class="JAFDTC.UI.App.MapSettingsDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:JAFDTC.UI.App"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Title="JAFDTC Map Settings"
+    DefaultButton="Primary"
+    PrimaryButtonText="OK"
+    CloseButtonText="Cancel">
+
+    <ContentDialog.Resources>
+        <Style TargetType="local:MapSettingsDialog" BasedOn="{StaticResource DefaultContentDialogStyle}"/>
+    </ContentDialog.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+
+        <CheckBox x:Name="uiSetCkbxAutoOpen" Grid.Row="0" Margin="0,8,0,0"
+                  HorizontalAlignment="Left">
+            Automatically open a map window when possible
+        </CheckBox>
+        <CheckBox x:Name="uiSetCkbxEnableCache" Grid.Row="1" Margin="0,0,0,0"
+                  HorizontalAlignment="Left">
+            Enable local map tile cache for map windows
+        </CheckBox>
+        <TextBlock x:Name="uiTxtCacheInfo" Grid.Row="2" Margin="0,16,0,0"
+                   Style="{ThemeResource TableHeaderTextStyle}"
+                   HorizontalAlignment="Center">
+            The map tile cache currently uses 250.00 KB at
+        </TextBlock>
+        <TextBlock x:Name="uiTxtCachePath" Grid.Row="3" Margin="0,8,0,0"
+                   Style="{ThemeResource TableHeaderTextStyle}"
+                   HorizontalAlignment="Center">
+            C:\PATH\PATH\PATH
+        </TextBlock>
+
+    </Grid>
+</ContentDialog>

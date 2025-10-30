@@ -18,6 +18,7 @@
 // ********************************************************************************************************************
 
 using JAFDTC.Models;
+using JAFDTC.Models.Base;
 using JAFDTC.Models.DCS;
 using JAFDTC.UI.Base;
 using JAFDTC.UI.Controls.Map;
@@ -461,6 +462,35 @@ namespace JAFDTC.UI.App
         // ui utility
         //
         // ------------------------------------------------------------------------------------------------------------
+
+        /// <summary>
+        /// build out the data source and so on necessary for the map window and create it.
+        /// </summary>
+        private void CoreOpenMap(bool isMapWindowActive)
+        {
+            MapWindow = new()
+            {
+                MarkerExplainer = this,
+                OpenMask = MapMarkerInfo.MarkerTypeMask.USER |
+                           MapMarkerInfo.MarkerTypeMask.CAMPAIGN |
+                           MapMarkerInfo.MarkerTypeMask.DCS_CORE,
+                EditMask = MapMarkerInfo.MarkerTypeMask.USER | MapMarkerInfo.MarkerTypeMask.CAMPAIGN,
+                CoordFormat = LLDisplayFmt,
+                MaxRouteLength = 0,
+                CanOpenMarker = false
+            };
+            MapWindow.Closed += MapWindow_Closed;
+            MapWindow.RegisterMapControlVerbObserver(this);
+
+            RebuildPoIList();
+
+            MapWindow.Activate();
+
+            // TODO: mirror selection? presently, RebuildPoIList clears the selection
+            //              if (uiPoIListView.SelectedItem is PoIListItem item)
+            //                  VerbMirror?.MirrorVerbMarkerSelected(this, new((MapMarkerInfo.MarkerType)item.PoI.Type,
+            //                                                                 item.PoI.UniqueID, -1));
+        }
 
         /// <summary>
         /// returns the index of the poi in the poi list with the given uid, -1 if no matching poi is found.
@@ -981,30 +1011,9 @@ namespace JAFDTC.UI.App
         private void CmdMap_Click(object sender, RoutedEventArgs args)
         {
             if (MapWindow == null)
-            {
-                MapWindow = new()
-                {
-                    MarkerExplainer = this,
-                    OpenMask = MapMarkerInfo.MarkerTypeMask.USER |
-                               MapMarkerInfo.MarkerTypeMask.CAMPAIGN |
-                               MapMarkerInfo.MarkerTypeMask.DCS_CORE,
-                    EditMask = MapMarkerInfo.MarkerTypeMask.USER | MapMarkerInfo.MarkerTypeMask.CAMPAIGN,
-                    CoordFormat = LLDisplayFmt,
-                    MaxRouteLength = 0,
-                    CanOpenMarker = false
-                };
-                MapWindow.Closed += MapWindow_Closed;
-                MapWindow.RegisterMapControlVerbObserver(this);
-
-                RebuildPoIList();
-
-// TODO: mirror selection? presently, RebuildPoIList clears the selection
-//              if (uiPoIListView.SelectedItem is PoIListItem item)
-//                  VerbMirror?.MirrorVerbMarkerSelected(this, new((MapMarkerInfo.MarkerType)item.PoI.Type,
-//                                                                 item.PoI.UniqueID, -1));
-            }
-
-            MapWindow.Activate();
+                CoreOpenMap(true);
+            else
+                MapWindow.Activate();
         }
 
         /// <summary>
@@ -1767,6 +1776,9 @@ namespace JAFDTC.UI.App
             RebuildInterfaceState();
 
             base.OnNavigatedTo(args);
+
+            if (Settings.IsMapWindowAutoOpen)
+                Utilities.DispatchAfterDelay(DispatcherQueue, 1.0, false, (s, e) => CoreOpenMap(false));
         }
 
         /// <summary>

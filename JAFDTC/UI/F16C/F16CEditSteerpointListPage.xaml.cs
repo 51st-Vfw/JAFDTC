@@ -152,6 +152,33 @@ namespace JAFDTC.UI.F16C
         // ------------------------------------------------------------------------------------------------------------
 
         /// <summary>
+        /// build out the data source and so on necessary for the map window and create it.
+        /// </summary>
+        private void CoreOpenMap(bool isMapWindowActive)
+        {
+            bool isLinked = !string.IsNullOrEmpty(Config.SystemLinkedTo(STPTSystem.SystemTag));
+
+            Dictionary<string, List<INavpointInfo>> routes = new()
+            {
+                [ STPTSystem.SystemInfo.RouteNames[0] ] = [.. EditSTPT.Points]
+            };
+            MapWindow = NavpointUIHelper.OpenMap(this, STPTSystem.SystemInfo.NavptMaxCount, LLFormat.DDM_P3ZF, routes);
+            MapWindow.MarkerExplainer = this;
+            MapWindow.Closed += MapWindow_Closed;
+            MapWindow.EditMask = ((isLinked) ? 0 : MapMarkerInfo.MarkerTypeMask.NAVPT) |
+                                 ((isLinked) ? 0 : MapMarkerInfo.MarkerTypeMask.NAVPT_HANDLE);
+
+            NavArgs.ConfigPage.RegisterAuxWindow(MapWindow);
+
+            if (uiStptListView.SelectedIndex != -1)
+                VerbMirror?.MirrorVerbMarkerSelected(this, new(MapMarkerInfo.MarkerType.ANY,
+                                                               STPTSystem.SystemInfo.RouteNames[0],
+                                                               uiStptListView.SelectedIndex + 1));
+
+// TODO: activate main window on !isMapWindowActive?
+        }
+
+        /// <summary>
         /// launch the F16CEditSteerpointPage to edit the specified steerpoint.
         /// </summary>
         private void EditSteerpoint(SteerpointInfo stpt)
@@ -442,31 +469,9 @@ namespace JAFDTC.UI.F16C
         private void CmdMap_Click(object sender, RoutedEventArgs args)
         {
             if (MapWindow == null)
-            {
-                bool isLinked = !string.IsNullOrEmpty(Config.SystemLinkedTo(STPTSystem.SystemTag));
-
-                Dictionary<string, List<INavpointInfo>> routes = new()
-                {
-                    [ STPTSystem.SystemInfo.RouteNames[0] ] = [.. EditSTPT.Points ]
-                };
-// TODO: fix max navpoint count
-                MapWindow = NavpointUIHelper.OpenMap(this, 20, LLFormat.DDM_P3ZF, routes);
-                MapWindow.MarkerExplainer = this;
-                MapWindow.Closed += MapWindow_Closed;
-                MapWindow.EditMask = ((isLinked) ? 0 : MapMarkerInfo.MarkerTypeMask.NAVPT) |
-                                     ((isLinked) ? 0 : MapMarkerInfo.MarkerTypeMask.NAVPT_HANDLE);
-
-                NavArgs.ConfigPage.RegisterAuxWindow(MapWindow);
-
-                if (uiStptListView.SelectedIndex != -1)
-                    VerbMirror?.MirrorVerbMarkerSelected(this, new(MapMarkerInfo.MarkerType.ANY,
-                                                                   STPTSystem.SystemInfo.RouteNames[0],
-                                                                   uiStptListView.SelectedIndex + 1));
-            }
+                CoreOpenMap(false);
             else
-            {
                 MapWindow.Activate();
-            }
         }
 
         // ---- buttons -----------------------------------------------------------------------------------------------
@@ -833,6 +838,9 @@ namespace JAFDTC.UI.F16C
             RebuildInterfaceState();
 
             base.OnNavigatedTo(args);
+
+            if (Settings.IsMapWindowAutoOpen)
+                Utilities.DispatchAfterDelay(DispatcherQueue, 1.0, false, (s, e) => CoreOpenMap(false));
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs args)

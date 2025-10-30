@@ -31,6 +31,7 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -147,6 +148,35 @@ namespace JAFDTC.UI.Base
         // utility
         //
         // ------------------------------------------------------------------------------------------------------------
+
+        /// <summary>
+        /// build out the data source and so on necessary for the map window and create it.
+        /// </summary>
+        private void CoreOpenMap(bool isMapWindowActive)
+        {
+            JAFDTC.App curApp = Application.Current as JAFDTC.App;
+            bool isLinked = !string.IsNullOrEmpty(Config.SystemLinkedTo(SystemTag));
+
+            Dictionary<string, List<INavpointInfo>> routes = new()
+            {
+                [ PageHelper.SystemInfo.RouteNames[0] ] = [.. EditNavpt]
+            };
+            MapWindow = NavpointUIHelper.OpenMap(this, PageHelper.SystemInfo.NavptMaxCount,
+                                                 PageHelper.SystemInfo.NavptCoordFmt, routes);
+            MapWindow.MarkerExplainer = this;
+            MapWindow.Closed += MapWindow_Closed;
+            MapWindow.EditMask = ((isLinked) ? 0 : MapMarkerInfo.MarkerTypeMask.NAVPT) |
+                                 ((isLinked) ? 0 : MapMarkerInfo.MarkerTypeMask.NAVPT_HANDLE);
+
+            NavArgs.ConfigPage.RegisterAuxWindow(MapWindow);
+
+            if (uiNavptListView.SelectedIndex != -1)
+                VerbMirror?.MirrorVerbMarkerSelected(this, new(MapMarkerInfo.MarkerType.ANY,
+                                                     PageHelper.SystemInfo.RouteNames[0],
+                                                     uiNavptListView.SelectedIndex + 1));
+
+// TODO: activate main window on !isMapWindowActive?
+        }
 
         /// <summary>
         /// launch the proper detail page to edit the specified navpoint.
@@ -405,30 +435,9 @@ namespace JAFDTC.UI.Base
         private void CmdMap_Click(object sender, RoutedEventArgs args)
         {
             if (MapWindow == null)
-            {
-                bool isLinked = !string.IsNullOrEmpty(Config.SystemLinkedTo(SystemTag));
-
-                Dictionary<string, List<INavpointInfo>> routes = new()
-                {
-                    [ PageHelper.SystemInfo.RouteNames[0] ] = [.. EditNavpt ]
-                };
-                MapWindow = NavpointUIHelper.OpenMap(this, PageHelper.SystemInfo.NavptMaxCount, PageHelper.SystemInfo.NavptCoordFmt, routes);
-                MapWindow.MarkerExplainer = this;
-                MapWindow.Closed += MapWindow_Closed;
-                MapWindow.EditMask = ((isLinked) ? 0 : MapMarkerInfo.MarkerTypeMask.NAVPT) |
-                                     ((isLinked) ? 0 : MapMarkerInfo.MarkerTypeMask.NAVPT_HANDLE);
-
-                NavArgs.ConfigPage.RegisterAuxWindow(MapWindow);
-
-                if (uiNavptListView.SelectedIndex != -1)
-                    VerbMirror?.MirrorVerbMarkerSelected(this, new(MapMarkerInfo.MarkerType.ANY,
-                                                         PageHelper.SystemInfo.RouteNames[0],
-                                                         uiNavptListView.SelectedIndex + 1));
-            }
+                CoreOpenMap(true);
             else
-            {
                 MapWindow.Activate();
-            }
         }
 
         // ---- navigation point list ---------------------------------------------------------------------------------
@@ -743,6 +752,9 @@ namespace JAFDTC.UI.Base
             ((Application.Current as JAFDTC.App)?.Window).Activated += WindowActivatedHandler;
 
             ClipboardChangedHandler(null, null);
+
+            if (Settings.IsMapWindowAutoOpen)
+                Utilities.DispatchAfterDelay(DispatcherQueue, 1.0, false, (s, e) => CoreOpenMap(false));
         }
 
         /// <summary>

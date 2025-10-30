@@ -37,7 +37,6 @@ using Microsoft.UI.Xaml.Input;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Runtime.InteropServices;
 using Windows.Graphics;
 
@@ -221,19 +220,22 @@ namespace JAFDTC.UI.App
             foreach (Inline inline in Utilities.TextToInlines(uiMapTiles.Description))
                 uiMapTextAttribution.Inlines.Add(inline);
 
+            _mapTileCache = null;
+            if (!Settings.IsMapTileCacheDisabled)
+            {
 #if ENABLE_MAP_FILE_CACHE
 
-            string path = FileManager.MapTileCachePath;
-            FileManager.Log($"MapControl ImageFileCache path: {path}");
-            FileManager.Log($"MapControl ImageFileCache size: {FileManager.GetCurrentMapTileCacheSize()}");
-            _mapTileCache = new MapControl.Caching.ImageFileCache(path);
-            TileImageLoader.Cache = _mapTileCache;
-
-#else
-
-            _mapTileCache = null;
+                FileManager.Log($"MapControl ImageFileCache path: {FileManager.MapTileCachePath}");
+                FileManager.Log($"MapControl ImageFileCache size: {FileManager.GetCurrentMapTileCacheSize()}");
+                _mapTileCache = new MapControl.Caching.ImageFileCache(FileManager.MapTileCachePath);
+                TileImageLoader.Cache = _mapTileCache;
 
 #endif
+            }
+            else
+            {
+                FileManager.Log($"MapControl ImageFileCache disabled");
+            }
 
             // ---- window setup
 
@@ -472,8 +474,7 @@ namespace JAFDTC.UI.App
             Utilities.SetEnableState(uiBarBtnDelete, uiMap.CanEditSelectedMarker);
 // TODO: correctly set enable when implemented
             Utilities.SetEnableState(uiBarBtnImport, false);
-// TODO: correctly set enable when implemented
-            Utilities.SetEnableState(uiBarBtnSettings, false);
+            Utilities.SetEnableState(uiBarBtnSettings, true);
         }
 
         /// <summary>
@@ -532,11 +533,21 @@ namespace JAFDTC.UI.App
         }
 
         /// <summary>
-        /// settings command: open the settings dialog to select settings.
+        /// settings command: open the settings dialog to select settings and update persisted settings as needed.
         /// </summary>
-        public void CmdSettings_Click(object sender, RoutedEventArgs args)
+        public async void CmdSettings_Click(object sender, RoutedEventArgs args)
         {
-// TODO: implement
+            MapSettingsDialog settingsDialog = new(FileManager.MapTileCachePath, FileManager.GetCurrentMapTileCacheSize(),
+                                                   Settings.IsMapWindowAutoOpen, !Settings.IsMapTileCacheDisabled)
+            {
+                XamlRoot = Content.XamlRoot
+            };
+            ContentDialogResult result = await settingsDialog.ShowAsync();
+            if (result == ContentDialogResult.Primary)
+            {
+                Settings.IsMapTileCacheDisabled = !settingsDialog.IsTileCacheEnabled;
+                Settings.IsMapWindowAutoOpen = settingsDialog.IsAutoOpen;
+            }
         }
 
         // ---- zoom slider -------------------------------------------------------------------------------------------
