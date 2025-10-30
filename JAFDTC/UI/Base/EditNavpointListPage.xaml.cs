@@ -154,19 +154,19 @@ namespace JAFDTC.UI.Base
         /// </summary>
         private void CoreOpenMap(bool isMapWindowActive)
         {
-            JAFDTC.App curApp = Application.Current as JAFDTC.App;
             bool isLinked = !string.IsNullOrEmpty(Config.SystemLinkedTo(SystemTag));
+            MapMarkerInfo.MarkerTypeMask editMask = ((isLinked) ? 0 : MapMarkerInfo.MarkerTypeMask.NAVPT) |
+                                                    ((isLinked) ? 0 : MapMarkerInfo.MarkerTypeMask.NAVPT_HANDLE);
+            MapMarkerInfo.MarkerTypeMask openMask = MapMarkerInfo.MarkerTypeMask.NAVPT;
 
             Dictionary<string, List<INavpointInfo>> routes = new()
             {
                 [ PageHelper.SystemInfo.RouteNames[0] ] = [.. EditNavpt]
             };
             MapWindow = NavpointUIHelper.OpenMap(this, PageHelper.SystemInfo.NavptMaxCount,
-                                                 PageHelper.SystemInfo.NavptCoordFmt, routes);
+                                                 PageHelper.SystemInfo.NavptCoordFmt, openMask, editMask, routes);
             MapWindow.MarkerExplainer = this;
             MapWindow.Closed += MapWindow_Closed;
-            MapWindow.EditMask = ((isLinked) ? 0 : MapMarkerInfo.MarkerTypeMask.NAVPT) |
-                                 ((isLinked) ? 0 : MapMarkerInfo.MarkerTypeMask.NAVPT_HANDLE);
 
             NavArgs.ConfigPage.RegisterAuxWindow(MapWindow);
 

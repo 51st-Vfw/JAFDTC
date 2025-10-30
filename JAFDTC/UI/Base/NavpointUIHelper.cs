@@ -480,8 +480,9 @@ namespace JAFDTC.UI.Base
         /// <summary>
         /// TODO: document
         /// </summary>
-        public static MapWindow OpenMap(IMapControlVerbHandler observer, int maxRouteLen,
-                                        LLFormat coordFormat, Dictionary<string, List<INavpointInfo>> routes)
+        public static MapWindow OpenMap(IMapControlVerbHandler observer, int maxRouteLen, LLFormat coordFormat,
+                                        MapMarkerInfo.MarkerTypeMask openMask, MapMarkerInfo.MarkerTypeMask editMask,
+                                        Dictionary<string, List<INavpointInfo>> routes)
         {
             List<INavpointInfo> allRoutes = [ ];
             foreach (string route in routes.Keys)
@@ -497,8 +498,8 @@ namespace JAFDTC.UI.Base
             MapWindow mapWindow = new()
             {
                 Theater = theater,
-                OpenMask = MapMarkerInfo.MarkerTypeMask.NAVPT,
-                EditMask = MapMarkerInfo.MarkerTypeMask.ANY,
+                OpenMask = openMask,
+                EditMask = editMask,
                 CoordFormat = coordFormat,
                 MaxRouteLength = maxRouteLen
             };
