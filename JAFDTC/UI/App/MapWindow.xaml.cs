@@ -38,6 +38,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Threading;
 using Windows.Graphics;
 
 namespace JAFDTC.UI.App
@@ -428,34 +429,37 @@ namespace JAFDTC.UI.App
         /// </summary>
         private void RebuildStatusNavpointInfo()
         {
+            bool isMarkerSelected = false;
+            bool isMarkerEditable = false;
             MapMarkerInfo mrkInfo = uiMap.SelectedMarkerInfo;
             if (mrkInfo == null)
             {
                 uiTxtSelName.Text = "No Selection";
-                uiTxtSelLat.Visibility = Visibility.Collapsed;
-                uiTxtSelLon.Visibility = Visibility.Collapsed;
-                uiTxtSelAlt.Visibility = Visibility.Collapsed;
-                uiLblSelAlt.Visibility = Visibility.Collapsed;
+            }
+            else if (mrkInfo.Type == MapMarkerInfo.MarkerType.UNKNOWN)
+            {
+                uiTxtSelName.Text = "Unknown Selection";
             }
             else
             {
-                if (mrkInfo.Type == MapMarkerInfo.MarkerType.UNKNOWN)
-                {
-                    uiTxtSelName.Text = "Unknown Selection";
-                }
+                if (mrkInfo.Type == MapMarkerInfo.MarkerType.NAVPT_HANDLE)
+                    uiTxtSelName.Text = "Add Navpoint Handle";
                 else
-                {
                     uiTxtSelName.Text = MarkerExplainer?.MarkerDisplayName(mrkInfo) ?? "Unknown";
-                    uiTxtSelAlt.Text = MarkerExplainer?.MarkerDisplayElevation(mrkInfo, "'") ?? "Unknown";
-                    uiTxtSelLat.Text = Coord.ConvertFromLatDD(mrkInfo.Lat, CoordFormat);
-                    uiTxtSelLon.Text = Coord.ConvertFromLonDD(mrkInfo.Lon, CoordFormat);
 
-                    uiTxtSelLat.Visibility = Visibility.Visible;
-                    uiTxtSelLon.Visibility = Visibility.Visible;
-                    uiTxtSelAlt.Visibility = Visibility.Visible;
-                    uiLblSelAlt.Visibility = Visibility.Visible;
-                }
+                uiTxtSelAlt.Text = MarkerExplainer?.MarkerDisplayElevation(mrkInfo, "'") ?? "Unknown";
+                uiTxtSelLat.Text = Coord.ConvertFromLatDD(mrkInfo.Lat, CoordFormat);
+                uiTxtSelLon.Text = Coord.ConvertFromLonDD(mrkInfo.Lon, CoordFormat);
+
+                isMarkerSelected = true;
+                isMarkerEditable = EditMask.HasFlag((MapMarkerInfo.MarkerTypeMask)(1 << (int)mrkInfo.Type));
             }
+
+            uiIconEditStatus.Visibility = (isMarkerEditable) ? Visibility.Visible : Visibility.Collapsed;
+            uiTxtSelLat.Visibility = (isMarkerSelected) ? Visibility.Visible : Visibility.Collapsed;
+            uiTxtSelLon.Visibility = (isMarkerSelected) ? Visibility.Visible : Visibility.Collapsed;
+            uiTxtSelAlt.Visibility = (isMarkerSelected) ? Visibility.Visible : Visibility.Collapsed;
+            uiLblSelAlt.Visibility = (isMarkerSelected) ? Visibility.Visible : Visibility.Collapsed;
         }
 
         /// <summary>

@@ -244,11 +244,12 @@ https://www.gnu.org/licenses/.
             </StackPanel>
         </Grid>
 
-        <!-- command bar bottom area -->
+        <!-- bottom status bar -->
         <Grid Grid.Row="3">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <StackPanel Grid.Column="0" Margin="16,6,16,6"
@@ -264,7 +265,15 @@ https://www.gnu.org/licenses/.
                 <TextBlock x:Name="uiTxtMouseLon" Width="90" Margin="8,0,0,0"
                            Foreground="{ThemeResource TextFillColorTertiary}"/>
             </StackPanel>
-            <StackPanel Grid.Column="2" Margin="16,6,16,6"
+            <StackPanel Grid.Column="2" Margin="0,0,0,0"
+                        VerticalAlignment="Center">
+                <FontIcon x:Name="uiIconEditStatus"
+                          Foreground="{ThemeResource TextFillColorTertiary}"
+                          FontSize="16"
+                          FontFamily="Segoe Fluent Icons"
+                          Glyph="&#xE70F;"/>
+            </StackPanel>
+            <StackPanel Grid.Column="3" Margin="16,6,16,6"
                         Orientation="Vertical"
                         VerticalAlignment="Center">
                 <TextBlock x:Name="uiTxtSelName" Margin="0,0,0,0"
