@@ -108,7 +108,7 @@ https://www.gnu.org/licenses/.
                 <AppBarSeparator/>
                 <AppBarButton x:Name="uiBarBtnImport" Icon="Download" Label="Import"
                               Click="CmdImport_Click"
-                              ToolTipService.ToolTip="Create new configuration from file"/>
+                              ToolTipService.ToolTip="Import new configuration from file"/>
                 <AppBarButton x:Name="uiBarBtnExport" Icon="Upload" Label="Export"
                               Click="CmdExport_Click"
                               ToolTipService.ToolTip="Export selected configuration to JAFDTC file"/>

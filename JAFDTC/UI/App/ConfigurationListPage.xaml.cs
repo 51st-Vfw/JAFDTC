@@ -238,8 +238,8 @@ namespace JAFDTC.UI.App
         private string ValidateConfigName(string name)
         {
             string message = null;
-            if ((name == null) || (name.Length == 0))
-                return "The name may not be empty";
+            if (string.IsNullOrEmpty(name))
+                return "The name may not be empty.";
             else if (ConfigList.IsNameUnique(name) == false)
                 message = "There is already a configuration with that name.";
             return message;
@@ -484,7 +484,8 @@ namespace JAFDTC.UI.App
         /// </summary>
         private void CmdAdd_Click(object sender, RoutedEventArgs args)
         {
-            PromptForConfigName("Create New Configuration", null, null, AddConfigNameOpHandler);
+            PromptForConfigName("Create New Configuration", "Enter a name for the new configuration:", null,
+                                AddConfigNameOpHandler);
         }
 
         /// <summary>
@@ -494,7 +495,7 @@ namespace JAFDTC.UI.App
         private void CmdCopy_Click(object sender, RoutedEventArgs args)
         {
             if (uiCfgListView.SelectedItem is IConfiguration config)
-                PromptForConfigName("Duplicate Configuration", "Enter Name of Duplicate:",
+                PromptForConfigName("Duplicate Configuration", "Enter a name for the duplicated configuration:",
                                     $"{config.Name} Copy", CopyConfigNameOpHandler);
         }
 
@@ -530,7 +531,8 @@ namespace JAFDTC.UI.App
         private void CmdRename_Click(object sender, RoutedEventArgs args)
         {
             if (uiCfgListView.SelectedItem is IConfiguration config)
-                PromptForConfigName("Rename Configuration", "Enter New Name:", config.Name, RenameConfigNameOpHandler);
+                PromptForConfigName("Rename Configuration", "Enter a new name for the configuration:", config.Name,
+                                    RenameConfigNameOpHandler);
         }
 
         /// <summary>
@@ -543,7 +545,7 @@ namespace JAFDTC.UI.App
                 ContentDialogResult result = await Utilities.Message2BDialog(
                     Content.XamlRoot,
                     "Delete Configuration?",
-                    "Are you sure you want to delete this configuration? This action cannot be undone.",
+                    $"Are you sure you want to delete the configuration “{config.Name}”? This action cannot be undone.",
                     "Delete"
                 );
                 if (result == ContentDialogResult.Primary)
