@@ -143,28 +143,28 @@ https://www.gnu.org/licenses/.
                     -->
                     <SolidColorBrush x:Key="MapMarker_Bkgnd_Brush" Color="#ffffffff"/>
 
-                    <SolidColorBrush x:Key="MapMarker_DCS_CORE_Brush" Color="#ff202020"/>
-                    <SolidColorBrush x:Key="MapMarker_USER_Brush" Color="#ff900000"/>
-                    <SolidColorBrush x:Key="MapMarker_CAMPAIGN_Brush" Color="Orange"/>
-                    <SolidColorBrush x:Key="MapMarker_NAVPT0_Brush" Color="#ff0a0acc"/>
-                    <SolidColorBrush x:Key="MapMarker_NAVPT1_Brush" Color="Orange"/>
-                    <SolidColorBrush x:Key="MapMarker_NAVPT2_Brush" Color="Orange"/>
-                    <SolidColorBrush x:Key="MapMarker_NAVPT3_Brush" Color="Orange"/>
-                    <SolidColorBrush x:Key="MapMarker_IMPORT_GEN_Brush" Color="Orange"/>
-                    <SolidColorBrush x:Key="MapMarker_IMPORT_S2A_Brush" Color="Orange"/>
+                    <SolidColorBrush x:Key="MapMarker_DCS_CORE_Brush" Color="#FF404040"/>
+                    <SolidColorBrush x:Key="MapMarker_USER_Brush" Color="#FF404040"/>
+                    <SolidColorBrush x:Key="MapMarker_CAMPAIGN_Brush" Color="#FFFF8D00"/>
+                    <SolidColorBrush x:Key="MapMarker_NAVPT0_Brush" Color="#FF2E1ED5"/>
+                    <SolidColorBrush x:Key="MapMarker_NAVPT1_Brush" Color="#FF3296B0"/>
+                    <SolidColorBrush x:Key="MapMarker_NAVPT2_Brush" Color="#FFB30ED4"/>
+                    <SolidColorBrush x:Key="MapMarker_NAVPT3_Brush" Color="#FF3B6B04"/>
+                    <SolidColorBrush x:Key="MapMarker_IMPORT_GEN_Brush" Color="#FF890011"/>
+                    <SolidColorBrush x:Key="MapMarker_IMPORT_S2A_Brush" Color="#FF890011"/>
 
                     <!--
                     brushes for base map markers in r/o state.
                     -->
-                    <SolidColorBrush x:Key="MapMarker_DCS_CORE_RO_Brush" Color="#ff484848"/>
-                    <SolidColorBrush x:Key="MapMarker_USER_RO_Brush" Color="#ff880000"/>
-                    <SolidColorBrush x:Key="MapMarker_CAMPAIGN_RO_Brush" Color="Orange"/>
-                    <SolidColorBrush x:Key="MapMarker_NAVPT0_RO_Brush" Color="#ff7a7acc"/>
-                    <SolidColorBrush x:Key="MapMarker_NAVPT1_RO_Brush" Color="Orange"/>
-                    <SolidColorBrush x:Key="MapMarker_NAVPT2_RO_Brush" Color="Orange"/>
-                    <SolidColorBrush x:Key="MapMarker_NAVPT3_RO_Brush" Color="Orange"/>
-                    <SolidColorBrush x:Key="MapMarker_IMPORT_GEN_RO_Brush" Color="Orange"/>
-                    <SolidColorBrush x:Key="MapMarker_IMPORT_S2A_RO_Brush" Color="Orange"/>
+                    <SolidColorBrush x:Key="MapMarker_DCS_CORE_RO_Brush" Color="#FF808080"/>
+                    <SolidColorBrush x:Key="MapMarker_USER_RO_Brush" Color="#FF808080"/>
+                    <SolidColorBrush x:Key="MapMarker_CAMPAIGN_RO_Brush" Color="#FFFFB753"/>
+                    <SolidColorBrush x:Key="MapMarker_NAVPT0_RO_Brush" Color="#FF8078FF"/>
+                    <SolidColorBrush x:Key="MapMarker_NAVPT1_RO_Brush" Color="#FF8ACCBF"/>
+                    <SolidColorBrush x:Key="MapMarker_NAVPT2_RO_Brush" Color="#FFE77EEF"/>
+                    <SolidColorBrush x:Key="MapMarker_NAVPT3_RO_Brush" Color="#FF96B77B"/>
+                    <SolidColorBrush x:Key="MapMarker_IMPORT_GEN_RO_Brush" Color="#FF890011"/>
+                    <SolidColorBrush x:Key="MapMarker_IMPORT_S2A_RO_Brush" Color="#FF890011"/>
 
                     <!--
                     stroke colors for the RouteLine?FgTemplate data templates need to be kept in sync with the

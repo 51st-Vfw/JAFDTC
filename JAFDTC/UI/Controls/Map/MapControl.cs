@@ -417,13 +417,15 @@ namespace JAFDTC.UI.Controls.Map
                 MapMarkerInfo.MarkerType.DCS_CORE
                     => new MapMarkerSquareControl(brush, brush, new Size(20.0, 20.0)),
                 MapMarkerInfo.MarkerType.USER
-                    => new MapMarkerTriangleControl(brush, brush, new Size(22.0, 22.0)),
+                    => new MapMarkerCircleControl(brush, brush, new Size(22.0, 22.0)),
                 MapMarkerInfo.MarkerType.CAMPAIGN
-                    => new MapMarkerCircleControl(brush, brush, new Size(20.0, 20.0)),
+                    => new MapMarkerCircleControl(brush, brush, new Size(22.0, 22.0)),
                 MapMarkerInfo.MarkerType.IMPORT_GEN
                 or MapMarkerInfo.MarkerType.IMPORT_S2A
-                or MapMarkerInfo.MarkerType.BULLSEYE
-                    => new MapMarkerCircleControl(brush, brush, new Size(20.0, 20.0)),
+                    => new MapMarkerTriangleControl(brush, brush, new Size(22.0, 22.0)),
+                MapMarkerInfo.MarkerType.BULLSEYE
+// TODO: use different shape?
+                    => new MapMarkerTriangleControl(brush, brush, new Size(22.0, 22.0)),
                 _ => new MapMarkerCircleControl(),
             };
             marker.Location = loc;
