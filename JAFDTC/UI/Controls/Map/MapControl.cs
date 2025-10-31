@@ -189,11 +189,16 @@ namespace JAFDTC.UI.Controls.Map
             [MapMarkerInfo.MarkerType.IMPORT_GEN] = 14,
             [MapMarkerInfo.MarkerType.IMPORT_S2A] = 15,
             //
-            // z of 20 reserved for route paths.
+            // z of 20 reserved for route paths, MAP_MARKER_Z_ROUTE_PATH
             //
             [MapMarkerInfo.MarkerType.NAVPT_HANDLE] = 21,
             [MapMarkerInfo.MarkerType.NAVPT] = 22,
+            //
+            // z of 21 reserved for current selection, MAP_MARKER_Z_SELECTION
         };
+
+        private const int MAP_MARKER_Z_ROUTE_PATH = 20;
+        private const int MAP_MARKER_Z_SELECTION = 23;
 
 #if TODO_IMPLEMENT
         private readonly Dictionary<object, List<MapMarkerInfo>> _imports = [ ];
@@ -351,7 +356,7 @@ namespace JAFDTC.UI.Controls.Map
             {
                 Tag = tag
             };
-            Canvas.SetZIndex(control, _mapMarkerZ[MapMarkerInfo.MarkerType.NAVPT] - 1);
+            Canvas.SetZIndex(control, MAP_MARKER_Z_ROUTE_PATH);
             Children.Add(control);
             //
             // TODO: since the route paths use MapItemsControl (a ListBox), they need a data template. no way to
@@ -605,6 +610,8 @@ namespace JAFDTC.UI.Controls.Map
             double dtHandle = (_dragState == DragStateEnum.IDLE) ? 0.10 : 0.30;
             RouteInfo route = _routes.GetValueOrDefault(tagStr, null);
 
+            Canvas.SetZIndex(marker, MAP_MARKER_Z_SELECTION);
+
             if (isRoute || isEditHandle)
             {
                 foreach (MapMarkerControl routeMarker in route.Points)
@@ -653,6 +660,8 @@ namespace JAFDTC.UI.Controls.Map
             bool isRoute = (type == MapMarkerInfo.MarkerType.NAVPT);
             bool isEditHandle = (type == MapMarkerInfo.MarkerType.NAVPT_HANDLE);
             RouteInfo route = _routes.GetValueOrDefault(tagStr, null);
+
+            Canvas.SetZIndex(marker, _mapMarkerZ[type]);
 
             if (isRoute || isEditHandle)
                 foreach (MapMarkerControl routeMarker in route.Points)
