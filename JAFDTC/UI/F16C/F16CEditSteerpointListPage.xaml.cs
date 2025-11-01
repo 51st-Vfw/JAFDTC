@@ -69,8 +69,6 @@ namespace JAFDTC.UI.F16C
 
         private STPTSystem EditSTPT { get; set; }
 
-        private int StartingStptNum { get; set; }
-
         private bool IsClipboardValid { get; set; }
 
         private int CaptureIndex { get; set; }
@@ -132,12 +130,14 @@ namespace JAFDTC.UI.F16C
             EditSTPT.Points.Clear();
             foreach (SteerpointInfo stpt in Config.STPT.Points)
                 EditSTPT.Add(new SteerpointInfo(stpt));
+            EditSTPT.RenumberFrom(1);
             _isMarshalling = false;
         }
 
         private void CopyEditToConfig(bool isPersist = false)
         {
             _isMarshalling = true;
+            EditSTPT.RenumberFrom(1);
             Config.STPT = (STPTSystem)EditSTPT.Clone();
             _isMarshalling = false;
 
@@ -197,7 +197,7 @@ namespace JAFDTC.UI.F16C
         /// </summary>
         private void RenumberSteerpoints()
         {
-            EditSTPT.RenumberFrom(StartingStptNum);
+            EditSTPT.RenumberFrom(1);
             CopyEditToConfig(true);
         }
 
@@ -230,7 +230,6 @@ namespace JAFDTC.UI.F16C
             Utilities.SetEnableState(uiBarCapture, isEditable && isDCSListening);
             Utilities.SetEnableState(uiBarImport, isEditable);
             Utilities.SetEnableState(uiBarMap, (uiStptListView.Items.Count > 0));
-            Utilities.SetEnableState(uiBarRenumber, isEditable && (EditSTPT.Count > 0));
             Utilities.SetEnableState(uiBarImportPOIs, true);
             Utilities.SetEnableState(uiBarExportPOIs, isEditable && (EditSTPT.Count > 0));
 
@@ -347,23 +346,6 @@ namespace JAFDTC.UI.F16C
                 // steerpoint renumbering should be handled by observer to EditSTPT changes...
                 //
                 CopyEditToConfig(true);
-            }
-        }
-
-        /// <summary>
-        /// renumber button click: prompt the user for the new starting steerpoint number, renumber
-        /// the steerpoints and save the updated configuration.
-        /// </summary>
-        private async void CmdRenumber_Click(object sender, RoutedEventArgs args)
-        {
-            int maxNavptNum = STPTSystem.SystemInfo.NavptMaxCount - EditSTPT.Points.Count + 1;
-            int newStartNum = await NavpointUIHelper.RenumberDialog(Content.XamlRoot, STPTSystem.SystemInfo.NavptName,
-                                                                    1, maxNavptNum);
-            if (newStartNum != -1)
-            {
-                StartingStptNum = newStartNum;
-                RenumberSteerpoints();
-                RebuildInterfaceState();
             }
         }
 
@@ -840,7 +822,6 @@ namespace JAFDTC.UI.F16C
             NavArgs = (ConfigEditorPageNavArgs)args.Parameter;
 
             Config = (F16CConfiguration)NavArgs.Config;
-            StartingStptNum = (Config.STPT.Points.Count > 0) ? Config.STPT.Points[0].Number : 1;
             CopyConfigToEdit();
 
             EditStptDetailPage = null;

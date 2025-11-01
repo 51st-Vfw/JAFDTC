@@ -62,10 +62,6 @@ https://www.gnu.org/licenses/.
                           Click="CmdDelete_Click"
                           ToolTipService.ToolTip="Delete selected steerpoints"/>
             <AppBarSeparator/>
-            <AppBarButton x:Name="uiBarRenumber" Icon="AllApps" Label="Renumber"
-                          Click="CmdRenumber_Click"
-                          ToolTipService.ToolTip="Renumber the list of steerpoints"/>
-            <AppBarSeparator/>
             <AppBarButton x:Name="uiBarMap" Label="Map"
                           Click="CmdMap_Click"
                           ToolTipService.ToolTip="Show map window to edit locations">

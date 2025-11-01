@@ -92,7 +92,6 @@ namespace JAFDTC.UI.Base
 
         private EditNavpointPage EditNavptDetailPage { get; set; }
 
-        private int _startingNavptNum;
         private bool _isVerbEvent;
         private bool _isClipboardValid;
         private bool _isMarshalling;
@@ -125,6 +124,7 @@ namespace JAFDTC.UI.Base
         {
             _isMarshalling = true;
             PageHelper.CopyConfigToEdit(Config, EditNavpt);
+            RenumberNavpoints();
             _isMarshalling = false;
             UpdateUIFromEditState();
         }
@@ -136,6 +136,7 @@ namespace JAFDTC.UI.Base
         protected override void SaveEditStateToConfig()
         {
             _isMarshalling = true;
+            RenumberNavpoints();
             if (PageHelper.CopyEditToConfig(EditNavpt, Config))
                 Config.Save(this, SystemTag);
             _isMarshalling = false;
@@ -160,7 +161,7 @@ namespace JAFDTC.UI.Base
 
             Dictionary<string, List<INavpointInfo>> routes = new()
             {
-                [ PageHelper.SystemInfo.RouteNames[0] ] = [.. EditNavpt]
+                [ PageHelper.SystemInfo.RouteNames[0] ] = [.. EditNavpt ]
             };
             MapWindow = NavpointUIHelper.OpenMap(this, PageHelper.SystemInfo.NavptMaxCount,
                                                  PageHelper.SystemInfo.NavptCoordFmt, openMask, editMask, routes);
@@ -190,13 +191,12 @@ namespace JAFDTC.UI.Base
         }
 
         /// <summary>
-        /// renumber waypoints sequentially starting from _startingNavptNum.
+        /// renumber waypoints sequentially starting from 1.
         /// </summary>
-        private void RenumberWaypoints()
+        private void RenumberNavpoints()
         {
             for (int i = 0; i < EditNavpt.Count; i++)
-                EditNavpt[i].Number = _startingNavptNum + i;
-            SaveEditStateToConfig();
+                EditNavpt[i].Number = i + 1;
         }
 
         /// <summary>
@@ -219,7 +219,6 @@ namespace JAFDTC.UI.Base
             Utilities.SetEnableState(uiBarCapture, isEditable && isDCSListening);
             Utilities.SetEnableState(uiBarImport, isEditable);
             Utilities.SetEnableState(uiBarMap, (uiNavptListView.Items.Count > 0));
-            Utilities.SetEnableState(uiBarRenumber, isEditable && (EditNavpt.Count > 0));
             Utilities.SetEnableState(uiBarImportPOIs, true);
             Utilities.SetEnableState(uiBarExportPOIs, isEditable && (EditNavpt.Count > 0));
 
@@ -312,7 +311,6 @@ namespace JAFDTC.UI.Base
                                                     uiNavptListView.SelectedItems.Count))
             {
                 _isMarshalling = true;
-
                 List<int> selectedIndices = [ ];
                 foreach (ItemIndexRange range in uiNavptListView.SelectedRanges)
                     for (int i = range.FirstIndex; i <= range.LastIndex; i++)
@@ -326,25 +324,9 @@ namespace JAFDTC.UI.Base
                                                                   PageHelper.SystemInfo.RouteNames[0], index + 1));
                 }
                 VerbMirror?.MirrorVerbMarkerSelected(this, new());
-
                 _isMarshalling = false;
-                SaveEditStateToConfig();
-            }
-        }
 
-        /// <summary>
-        /// renumber button click: prompt the user for the new starting navpoint number, renumber the navpoints and
-        /// save the updated configuration.
-        /// </summary>
-        private async void CmdRenumber_Click(object sender, RoutedEventArgs args)
-        {
-            int maxNavptNum = PageHelper.SystemInfo.NavptMaxCount - EditNavpt.Count + 1;
-            int newStartNum = await NavpointUIHelper.RenumberDialog(Content.XamlRoot, SystemName, 1, maxNavptNum);
-            if (newStartNum != -1)
-            {
-                _startingNavptNum = newStartNum;
-                RenumberWaypoints();
-                UpdateUIFromEditState();
+                SaveEditStateToConfig();
             }
         }
 
@@ -713,7 +695,7 @@ namespace JAFDTC.UI.Base
                 VerbMirror?.MirrorVerbMarkerDeleted(this, info);
             }
             if (!_isMarshalling && (list.Count > 0))
-                RenumberWaypoints();
+                RenumberNavpoints();
         }
 
         /// <summary>
@@ -759,8 +741,6 @@ namespace JAFDTC.UI.Base
             base.OnNavigatedTo(args);
 
             EditNavptDetailPage = null;
-
-            _startingNavptNum = (EditNavpt.Count > 0) ? EditNavpt[0].Number : 1;
 
             NavArgs.BackButton.IsEnabled = true;
 
