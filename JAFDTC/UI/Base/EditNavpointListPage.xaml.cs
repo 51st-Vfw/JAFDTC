@@ -31,7 +31,6 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -576,7 +575,7 @@ namespace JAFDTC.UI.Base
         /// </summary>
         public void VerbMarkerSelected(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
-            Debug.WriteLine($"ENLP:VerbMarkerSelected {info.Type}, {info.TagStr}, {info.TagInt}");
+            Debug.WriteLine($"ENLP:VerbMarkerSelected({param}) {info.Type}, {info.TagStr}, {info.TagInt}");
             if ((info.TagStr != PageHelper.SystemInfo.RouteNames[0]) ||
                 (info.Type == MapMarkerInfo.MarkerType.UNKNOWN))
             {
@@ -601,7 +600,7 @@ namespace JAFDTC.UI.Base
         /// </summary>
         public void VerbMarkerOpened(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
-            Debug.WriteLine($"ENLP:MarkerOpen {info.Type}, {info.TagStr}, {info.TagInt}");
+            Debug.WriteLine($"ENLP:MarkerOpen({param}) {info.Type}, {info.TagStr}, {info.TagInt}");
             if (info.TagStr == PageHelper.SystemInfo.RouteNames[0])
             {
                 if (EditNavptDetailPage == null)
@@ -617,7 +616,7 @@ namespace JAFDTC.UI.Base
         /// </summary>
         public void VerbMarkerMoved(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
-            Debug.WriteLine($"ENLP:VerbMarkerMoved {info.Type}, {info.TagStr}, {info.TagInt}, {info.Lat}, {info.Lon}");
+            Debug.WriteLine($"ENLP:VerbMarkerMoved({param}) {info.Type}, {info.TagStr}, {info.TagInt}, {info.Lat}, {info.Lon}");
             if (info.TagStr == PageHelper.SystemInfo.RouteNames[0])
             {
                 EditNavpt[info.TagInt - 1].Lat = info.Lat;
@@ -634,17 +633,18 @@ namespace JAFDTC.UI.Base
         /// </summary>
         public void VerbMarkerAdded(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
-            Debug.WriteLine($"ENLP:VerbMarkerAdded {info.Type}, {info.TagStr}, {info.TagInt}, {info.Lat}, {info.Lon}");
+            Debug.WriteLine($"ENLP:VerbMarkerAdded({param}) {info.Type}, {info.TagStr}, {info.TagInt}, {info.Lat}, {info.Lon}");
             if (info.TagStr == PageHelper.SystemInfo.RouteNames[0])
             {
+                _isVerbEvent = true;
                 int index = PageHelper.AddNavpoint(Config, info.TagInt - 1);
                 CopyConfigToEditState();
                 EditNavpt[index].Lat = info.Lat;
                 EditNavpt[index].Lon = info.Lon;
                 SaveEditStateToConfig();
 
-                RenumberWaypoints();
                 UpdateUIFromEditState();
+                _isVerbEvent = false;
             }
 // TODO: handle other types of markers (user pois?)
         }
@@ -654,9 +654,10 @@ namespace JAFDTC.UI.Base
         /// </summary>
         public void VerbMarkerDeleted(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
-            Debug.WriteLine($"ENLP:VerbMarkerDeleted {info.Type}, {info.TagStr}, {info.TagInt}");
+            Debug.WriteLine($"ENLP:VerbMarkerDeleted({param}) {info.Type}, {info.TagStr}, {info.TagInt}");
             if (info.TagStr == PageHelper.SystemInfo.RouteNames[0])
             {
+                _isVerbEvent = true;
                 uiNavptListView.SelectedIndex = -1;
 
                 EditNavpt.RemoveAt(info.TagInt - 1);
@@ -664,8 +665,8 @@ namespace JAFDTC.UI.Base
 
                 EditNavptDetailPage?.CancelIfEditingNavpointAtIndex(info.TagInt - 1);
 
-                RenumberWaypoints();
                 UpdateUIFromEditState();
+                _isVerbEvent = false;
             }
 // TODO: handle other types of markers (user pois?)
         }
@@ -694,7 +695,23 @@ namespace JAFDTC.UI.Base
             // TODO: this is a bit of a hack since there's no clear way to know when a re-order via drag has completed
             // TODO: other than looking for these changes.
             //
+            // if we're not in a verb-triggered event and marshalling, the collection change is comeing from a drag.
+            // in that case, we need to mirror the changes to the collection to the other observers.
+            //
             ObservableCollection<INavpointInfo> list = (ObservableCollection<INavpointInfo>)sender;
+            if (!_isVerbEvent && !_isMarshalling && (args.Action == NotifyCollectionChangedAction.Add))
+            {
+                MapMarkerInfo info = new(MapMarkerInfo.MarkerType.NAVPT, PageHelper.SystemInfo.RouteNames[0],
+                                         args.NewStartingIndex + 1,
+                                         (args.NewItems[0] as INavpointInfo).Lat, (args.NewItems[0] as INavpointInfo).Lon);
+                VerbMirror?.MirrorVerbMarkerAdded(this, info);
+            }
+            else if (!_isVerbEvent && !_isMarshalling && (args.Action == NotifyCollectionChangedAction.Remove))
+            {
+                MapMarkerInfo info = new(MapMarkerInfo.MarkerType.NAVPT, PageHelper.SystemInfo.RouteNames[0],
+                                         args.OldStartingIndex + 1);
+                VerbMirror?.MirrorVerbMarkerDeleted(this, info);
+            }
             if (!_isMarshalling && (list.Count > 0))
                 RenumberWaypoints();
         }

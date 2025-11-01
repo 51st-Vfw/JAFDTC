@@ -649,7 +649,7 @@ namespace JAFDTC.UI.F16C
         /// </summary>
         public void VerbMarkerSelected(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
-            Debug.WriteLine($"VSLP:VerbMarkerSelected {info.Type}, {info.TagStr}, {info.TagInt}");
+            Debug.WriteLine($"VSLP:VerbMarkerSelected({param}) {info.Type}, {info.TagStr}, {info.TagInt}");
             if ((info.TagStr != STPTSystem.SystemInfo.RouteNames[0]) ||
                 (info.Type == MapMarkerInfo.MarkerType.UNKNOWN))
             {
@@ -674,7 +674,7 @@ namespace JAFDTC.UI.F16C
         /// </summary>
         public void VerbMarkerOpened(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
-            Debug.WriteLine($"VSLP:MarkerOpen {info.Type}, {info.TagStr}, {info.TagInt}");
+            Debug.WriteLine($"VSLP:MarkerOpen({param}) {info.Type}, {info.TagStr}, {info.TagInt}");
             if (info.TagStr == STPTSystem.SystemInfo.RouteNames[0])
             {
                 if (EditStptDetailPage == null)
@@ -690,7 +690,7 @@ namespace JAFDTC.UI.F16C
         /// </summary>
         public void VerbMarkerMoved(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
-            Debug.WriteLine($"VSLP:VerbMarkerMoved {info.Type}, {info.TagStr}, {info.TagInt}, {info.Lat}, {info.Lon}");
+            Debug.WriteLine($"VSLP:VerbMarkerMoved({param}) {info.Type}, {info.TagStr}, {info.TagInt}, {info.Lat}, {info.Lon}");
             if (info.TagStr == STPTSystem.SystemInfo.RouteNames[0])
             {
                 EditSTPT.Points[info.TagInt - 1].Lat = info.Lat;
@@ -707,9 +707,10 @@ namespace JAFDTC.UI.F16C
         /// </summary>
         public void VerbMarkerAdded(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
-            Debug.WriteLine($"VSLP:VerbMarkerAdded {info.Type}, {info.TagStr}, {info.TagInt}, {info.Lat}, {info.Lon}");
+            Debug.WriteLine($"VSLP:VerbMarkerAdded({param}) {info.Type}, {info.TagStr}, {info.TagInt}, {info.Lat}, {info.Lon}");
             if (info.TagStr == STPTSystem.SystemInfo.RouteNames[0])
             {
+                _isVerbEvent = true;
                 SteerpointInfo stpt = EditSTPT.Add(null, info.TagInt - 1);
                 int index = EditSTPT.Points.IndexOf(stpt);
                 CopyConfigToEdit();
@@ -717,8 +718,8 @@ namespace JAFDTC.UI.F16C
                 EditSTPT.Points[index].Lon = info.Lon;
                 CopyEditToConfig(true);
 
-                RenumberSteerpoints();
                 RebuildInterfaceState();
+                _isVerbEvent = false;
             }
             // TODO: handle other types of markers (user pois?)
         }
@@ -728,9 +729,10 @@ namespace JAFDTC.UI.F16C
         /// </summary>
         public void VerbMarkerDeleted(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
-            Debug.WriteLine($"VSLP:VerbMarkerDeleted {info.Type}, {info.TagStr}, {info.TagInt}");
+            Debug.WriteLine($"VSLP:VerbMarkerDeleted({param}) {info.Type}, {info.TagStr}, {info.TagInt}");
             if (info.TagStr == STPTSystem.SystemInfo.RouteNames[0])
             {
+                _isVerbEvent = true;
                 uiStptListView.SelectedIndex = -1;
 
                 EditSTPT.Points.RemoveAt(info.TagInt - 1);
@@ -738,8 +740,8 @@ namespace JAFDTC.UI.F16C
 
                 EditStptDetailPage?.CancelIfEditingNavpointAtIndex(info.TagInt - 1);
 
-                RenumberSteerpoints();
                 RebuildInterfaceState();
+                _isVerbEvent = false;
             }
             // TODO: handle other types of markers (user pois?)
         }
@@ -768,8 +770,24 @@ namespace JAFDTC.UI.F16C
             // TODO: this is a bit of a hack since there's no clear way to know when a re-order via drag has completed
             // TODO: other than looking for these changes.
             //
+            // if we're not in a verb-triggered event and marshalling, the collection change is comeing from a drag.
+            // in that case, we need to mirror the changes to the collection to the other observers.
+            //
             ObservableCollection<SteerpointInfo> list = (ObservableCollection<SteerpointInfo>)sender;
-            if (list.Count > 0)
+            if (!_isVerbEvent && !_isMarshalling && (args.Action == NotifyCollectionChangedAction.Add))
+            {
+                MapMarkerInfo info = new(MapMarkerInfo.MarkerType.NAVPT, STPTSystem.SystemInfo.RouteNames[0],
+                                         args.NewStartingIndex + 1,
+                                         (args.NewItems[0] as INavpointInfo).Lat, (args.NewItems[0] as INavpointInfo).Lon);
+                VerbMirror?.MirrorVerbMarkerAdded(this, info);
+            }
+            else if (!_isVerbEvent && !_isMarshalling && (args.Action == NotifyCollectionChangedAction.Remove))
+            {
+                MapMarkerInfo info = new(MapMarkerInfo.MarkerType.NAVPT, STPTSystem.SystemInfo.RouteNames[0],
+                                         args.OldStartingIndex + 1);
+                VerbMirror?.MirrorVerbMarkerDeleted(this, info);
+            }
+            if (!_isMarshalling && (list.Count > 0))
                 RenumberSteerpoints();
         }
 
