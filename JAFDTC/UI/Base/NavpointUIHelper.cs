@@ -342,7 +342,7 @@ namespace JAFDTC.UI.Base
             string title = (count == 1) ? $"Delete {what}?" : $"Delete {what}s?";
             string content = (count == 1)
                 ? $"Are you sure you want to delete this {what.ToLower()}? This action cannot be undone."
-                : $"Are you sure you want to delete these {what.ToLower()}?s? This action cannot be undone.";
+                : $"Are you sure you want to delete these {what.ToLower()}s? This action cannot be undone.";
             return await Utilities.Message2BDialog(root, title, content, "Delete") == ContentDialogResult.Primary;
         }
 
