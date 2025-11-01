@@ -219,7 +219,7 @@ namespace JAFDTC.UI.Base
 
             Utilities.SetEnableState(uiBarCapture, isEditable && isDCSListening);
             Utilities.SetEnableState(uiBarImport, isEditable);
-            Utilities.SetEnableState(uiBarMap, true);
+            Utilities.SetEnableState(uiBarMap, (uiNavptListView.Items.Count > 0));
             Utilities.SetEnableState(uiBarRenumber, isEditable && (EditNavpt.Count > 0));
             Utilities.SetEnableState(uiBarImportPOIs, true);
             Utilities.SetEnableState(uiBarExportPOIs, isEditable && (EditNavpt.Count > 0));
