@@ -326,6 +326,9 @@ namespace JAFDTC.Models
             ConfigsFiltered.Clear();
             UIDtoConfigMap.Clear();
 
+            Airframe = airframe;
+            CurFilterText = "";
+
             Dictionary<string, IConfiguration> fileDict = FileManager.LoadConfigurationFiles(airframe);
             List<string> uidBlacklist = [ ];
             foreach (KeyValuePair<string, IConfiguration> kvp in fileDict)
