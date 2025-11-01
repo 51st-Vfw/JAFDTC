@@ -629,7 +629,7 @@ namespace JAFDTC.UI.Controls.Map
                     (route.Points.Count < MaxRouteLength) &&
                     (_dragState != DragStateEnum.ACTIVE_MARKER))
                 {
-                    Utilities.DispatchAfterDelay(marker.DispatcherQueue, dtHandle, false,
+                    Utilities.DispatchAfterDelay(DispatcherQueue, dtHandle, false,
                         (sender, evt) =>
                         {
                             // NOTE: remember, intParam from navpoint and handle control tags is navpoint number, *not*
@@ -782,7 +782,7 @@ namespace JAFDTC.UI.Controls.Map
                 return;
             else if (_routes.TryGetValue(info.TagStr, out RouteInfo routeInfo))
             {
-                CrackMarkerTag(_selectedMarker, out MapMarkerInfo.MarkerType type, out string tagStr, out int _);
+                CrackMarkerTag(_selectedMarker, out MapMarkerInfo.MarkerType _, out string tagStr, out int _);
                 if (tagStr == info.TagStr)
                 {
                     UnselectMarker(_selectedMarker);
