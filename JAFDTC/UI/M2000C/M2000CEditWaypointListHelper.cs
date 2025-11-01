@@ -68,9 +68,9 @@ namespace JAFDTC.UI.M2000C
 
         public override void CopyConfigToEdit(IConfiguration config, ObservableCollection<INavpointInfo> edit)
         {
-            M2000CConfiguration a10cConfig = (M2000CConfiguration)config;
+            M2000CConfiguration m2kConfig = (M2000CConfiguration)config;
             edit.Clear();
-            foreach (WaypointInfo wypt in a10cConfig.WYPT.Points)
+            foreach (WaypointInfo wypt in m2kConfig.WYPT.Points)
                 edit.Add(new WaypointInfo(wypt));
         }
 
