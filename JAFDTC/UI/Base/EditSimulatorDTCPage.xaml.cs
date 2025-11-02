@@ -361,7 +361,8 @@ namespace JAFDTC.UI.Base
                 {
                     Config.SaveMergedSimDTC(EditDTC.Template, EditDTC.OutputPath);
                     await Utilities.Message1BDialog(Content.XamlRoot, "Tape Merged",
-                                                    $"Successfully generated the merged tape at “{EditDTC.OutputPath}”");
+                                                    $"Successfully generated and saved the merged tape to the file\n\n" +
+                                                    $"{EditDTC.OutputPath}");
                 }
                 catch (Exception ex)
                 {
