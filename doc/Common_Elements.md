@@ -1,40 +1,83 @@
 # JAFDTC: Common Elements Guide
 
-**_Version 1.0.0 of 17-September-24_**
+**_Version 1.1.0 of TODO_**
 
 Though systems differ from airframe to airframe, based on the preculariites of the airframe,
 there are many concepts, layouts, and tasks in the JAFDTC user interface that share general
 similarities across airframes even where the specifics differ. This section discusses these
 common areas.
 
-> Consult the
+> As always, please consult the
 > [airframe guides](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/README.md#what-now)
 > for further details on a particular airframe.
+
+# Sharing Configurations
+
+As mentioned in the
+[User's Guide](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/README.md),
+JAFDTC can share configurations through the import and export of `.jafdtc` files. These files
+can be passed between pilots to allow sharing of key information for a sortie. Using
+[configuration composition](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/README.md#linking-systems),
+a shared configuration can be combined with pilot-specific information to build a custom
+configuration for a specific pilot in an element.
+
+You can import a `.jafdtc` file either through an import control in the user interface (such
+as the **Import** button on the
+[configuration list page](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/README.md#configuration-list-page))
+or by simply double-clicking a `.jafdtc` file from Widnows File Explorer.
+
+## Importing Configurations from Similar Airframes
+
+If the current airframe in the
+[configuration list page](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/README.md#configuration-list-page)
+matches the airframe in the configuration being imported, JAFDTC displays the following dialog,
+
+![](images/common_import_dialog.png)
+
+There are two fields in this dialog. The top field, (1), allows you to specify a name for the
+imported configuration. The bottom field, (2), is optional and specifies the pilot role to apply
+during import.
+
+> The *Pilot Role* field is only present if the airframe supports pilot roles during import.
+> Pilot roles, and how they modify an imported configuration, are airframe-specific and
+> discussed further in the relevant
+> [airframe guides](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/README.md#what-now).
+
+After filling in the fields, pressing **OK** will build a new configuration in your
+configuration library using the imported `.jafdtc` file.
+
+## Importing Configurations from Dissimilar Airframes
+
+JAFDTC does not currently support importing from dissimilar airframes. This support is planned
+for a future release, however.
 
 # Common Interface Tasks
 
 The JAFDTC user interface has tasks that can be used in multiple contexts within an airframe as
-well as tasks that may share some common features between different airframes. This section
-discusses some of these common tasks.
+well as tasks that may share some common features across different airframes. This section
+discusses these tasks from a perspective independent of airframe. Where appropriate, the 
+[airframe guides](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/README.md#what-now)
+will expand on this material with airframe-specific details.
 
 ## Loading a Configuration Into the Jet
 
-> This section focuses on JAFDTC configuration capabilities and sets aside the native DCS DTC.
+> This section focuses on JAFDTC configuration capabilities independent of the native DCS DTC.
 > The
 > [next section](#working-with-the-dcs-dtc)
 > discusses how JAFDTC can work with the native DCS DTC to configure the jet.
 
 The primary interaction between JAFDTC and DCS involves uploading configurations to the jet. To
-do so, four conditions must hold,
+upload, four conditions must hold,
 
-1. The DCS
+1. JAFDTC DCS
    [scripting support](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/README.md#dcs-support-scripts)
    must be installed.
 2. DCS must be running.
 3. A configuration must be selected from the
-   [*Configuration List Page*](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/README.md#configuration-list-page).
-4. A mission must be running with a pilot in pit in an airframe that matches the airframe of
-   the selected configuration in (3).
+   [*Configuration List Page*](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/README.md#configuration-list-page)
+   in the JAFDTC user interface.
+4. A mission must be running in DCS with a pilot in pit in an airframe that matches the
+   airframe of the selected configuration in (3).
 
 The
 [status area](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/README.md#status-area)
@@ -42,17 +85,24 @@ in the lower left corner of the
 [*Configuration List Page*](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/README.md#configuration-list-page)
 indicates the status of these conditions.
 Once these conditions are met, you can use any of the **Load to Jet** buttons in the interface
-to load the currently selected configuration to the jet. These buttons use a jet icon and
-indicate the status of the operation as below,
+to load the currently selected configuration to the jet. These buttons use an aircraft icon
+and indicate the status of the operation as below,
 
+**TODO REBUILD FOR LIGHT MODE ??**
 ![](images/Core_Base_Upload_Icons.png)
 
 The outline version shows when the jet is unavailable (dimmed) or ready to accept a
 configuration (not dimmed). If the icon is dimmed and filled in, an upload is currently in
 progress.
 
-Generally, the upload should take place before any changes are made to the avionics with all
-relevant systems powered up. Typically, shortly before taxi.
+> Some airframes also support triggering loads via cockpit controls as discussed
+> [below](#vr-quality-of-life-improvements).
+> Consult the
+> [airframe guides](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/README.md#what-now)
+> for additional details on what capabilities a particular airframe supports.
+
+Generally, an upload should take place before any changes are made to the avionics with all
+relevant systems powered up. Typically, after startup but before taxi.
 
 > In some cases, it is difficult to impossible for JAFDTC to get the jet in a known
 > configuration from a non-default starting point. In these situations, JAFDTC must rely on the
@@ -61,65 +111,212 @@ relevant systems powered up. Typically, shortly before taxi.
 > set the switch to a particular setting except if assumes the switch hasn't changed positions
 > since mission start.
 >
-> For these reasons, it is generally advisable to perform uploads prior to manually changing
-> any avionics settings that overlap with those in the JAFDTC configuration.
+> For these reasons, it is generally advisable to perform JAFDTC uploads prior to manually
+> changing any avionics settings that overlap with those in the JAFDTC configuration.
 
 Because JAFDTC works through the clickable cockpit, you should limit your interactions with
 cockpit switches while JAFDTC is loading a configuration. Interacting with controls that
-JAFDTC will use can cause incorrect command sequences that will mess up the configuration.
+JAFDTC will use may cause incorrect command sequences that will mess up the configuration.
 
-## Working with the DCS DTC
+## Working With the Native DCS DTC
 
-JAFDTC can interoperate with the native DTC system ED has introduced in DCS.
+JAFDTC can interoperate with the native DTC system that ED began rolling out in the DCS
+2.9.15.9408 release.
 
-> At present, DCS only supports a subset of DTC functionality on F-16C and F/A-18C airframes.
-> JAFDTC is in the process of rolling out support with B.47 supporting only the F-16C.
+> At present, there are only two airframes (F-16C and F/A-18C) that both JAFDTC and the
+> DCS DTC support. Of these, JAFDTC currently only fully supports the F-16C; F/A-18C
+> support is planned.
 
-Basically, what JAFDTC allows you to do is "merge" the JAFDTC configuration into a DCS .dtc
-file that can be loaded into the jet through the DCS UI. Then, JAFDTC relies on the DCS DTC
-to program those parts of the configuration and fills in the other settings the DCS DTC is
-unable to set. To use this capability,
+Conceptually, we can classify a particular system parameter (for example, the frequency for
+a preset on a radio) into one of three categories,
 
-1. Select a `.dtc` template to use. This can be a `.dtc` file exported from DCS or the
-   built-in default template that JAFDTC includes with default settings.
-2. Select the systems in the configuration that are to be merged into this template. Note
-   that only those systems the `.dtc` file supports can be merged.
-3. Load the `.dtc` file into through the DCS user interface; typically with File > Import.
-4. If are not allowing JAFDTC to drive the DTC in the jet, you will need to upload the DTC
-   through the avionics.
-5. Load the JAFDTC configuration into the jet as usual.
+- **DCS DTC Only** &ndash; Parameters that can only be set through the DCS DTC that JAFDTC
+   not support. For example, threat information for the countermeasures system.
+- **JAFDTC Only** &ndash; Parameters that can only be set thorugh JAFDTC that DCS DTC does
+   not support. For example, navigation points for the navigation system.
+- **Any DTC** &ndash; Parameters that can be set through either the DCS DTC or JAFDTC. For
+   example, radio preset frequencies.
 
-The DTC interaction is configured through a system common to all airframes,
+> These classifications will change over time as JAFDTC and the DCS DTC evolve and improve.
+> For exmaple, though not supported in the initial release, the DCS DTC will eventually
+> support navigation points.
 
-![](images/Core_Base_DCS_DTC.png)
+Before discussing the common UI JAFDTC uses to manage interoperation, it is helpful to first
+discuss basic concepts.
 
-The combo box at the top of the page allows you to select a template. JAFDTC includes a default
-template for each airframe that provides a basic setup. You can also set up your own templates
-by setting up a DTC tape in DCS, exporting it to a file, then using the import button to copy
-the file into your DCS settings. The delete button can be used to delete a previously imported
-template.
+### Basics of Merging
 
-The middle section includes a set of buttons, one for each system that corresponds to settings
-in a `.dtc` file. When merging, the JAFDTC parameters are copied into the template to replace
-the template settings. Note that settings that are unique to JAFDTC or DCS DTC are not changed
-by this process. Once merged, JAFDTC will only configure those parameters that do not have a
-counterpart in the `.dtc` file and rely on the DCS DTC to configure those parameters that do
-have a counterpart and were merged.
+JAFDTC allows you to "merge" parts of a JAFDTC configuration into a DCS `.dtc` file that
+can be loaded into the jet through the DCS UI rather than through the JAFDTC interface to the
+clickable cockpit. Generally, the DCS DTC load is much faster than JAFDTC can achieve. Merging
+occurs on a system-by-system basis. The following picture illustrates this concept. For now,
+assume there is one system in the jet.
 
-The next section specifies where to build the merged `.dtc` file. Tapping the save button
-will let you select a location (if you have not already done so) and merge the configurations
-selected above into the template. You can clear the location to save the merged file
-(preventing it from being generated) by clicking on the clear button.
+![](images/common_dtc_merge.png)
 
-> If you change the configuration of a merged system, you **must** regenerate the merged `.dtc`
-> file yourself by tapping on the save button. This must be done **before** loading the
-> merged `.dtc` into the jet via the DCS DTC user interface.
+JAFDTC combines a "*Base DCS DTC File*" and a "*JAFDTC Configuration File*" to create a
+"*Merged DCS DTC File*". The merged file, along with the JAFDTC configuration file then
+each program parameters into the jet through their respective mechanisms.
 
-If you want to manage the DTC yourself, you can unselect the checkbox at the bottom of the
-page. Otherwise, JAFDTC will start the DTC load prior to starting its own configuration.
+In this example, there are three types of parameters across the various files (remember that
+we are assuming avionics with only one system),
 
-> JAFDTC expects that the DTC is loaded **before** JAFDTC uploads its configuration. Loading
-> the DTC after a JAFDTC upload may lead to unexpected results.
+- **Pn** &ndash; There are four of these parameters (**P1** &ndash; **P4**), they are present
+  in both JAFDTC and DCS DTC, though JAFDTC only specifies values for **P1** and **P2** in
+  its configuration.
+- **In** &ndash; There is one of these parameters (**I1**), this is present only in DCS DTC.
+- **Dn** &ndash; There is one of these parameters (**D1**), this is present only in JAFDTC.
+
+For each parameter **X** that can be set by the DCS DTC and is part of a system that has been
+marked to merge (more on this below), JAFDTC constructs a merged `.dtc` file according to
+these rules
+
+- If **X** can be set by only DCS DTC the value in the merged `.dtc` is given by
+  **Base DCS DTC File**.
+- If **X** can be set by both DCS DTC and JAFDTC the value in the merged `.dtc` is given by,
+  - **JAFDTC Configuration File** &ndash; If **X** is specified in the JAFDTC configuration
+  - **Base DCS DTC File** &ndash; if **X** is *not* specified in the JAFDTC configuration
+
+During configuration load,
+
+- JAFDTC sets any parameters that it can specify but DCS DTC cannot specify.
+- JAFDTC sets any parameters that it can specify in systems that are not marked as merged
+  with the DCS DTC (note if the DCS DTC is used, it will also set these parameters).
+- DCS DTC sets all other parameters if the DCS DTC is used.
+
+In the example, **P1** is merged, replacing **P1** from DCS DTC with the value from JAFDTC.
+**I1** is given by DCS DTC as JAFDTC cannot specify that parameter. **D1** is given by
+JAFDTC as DCS DTC cannot specify that parameter.
+
+## User Interface for DTC Interoperation
+
+The user interface that supports JAFDTC and DCS DTC interoperation is largely common across
+all airframes that support the DCS DTC. Based on the discussion above, the UI needs to provide
+the following information,
+
+* A DCS DTC base file. This effectively specifies "default" values for parameters that the
+  DCS DTC can specify.
+* A list of JAFDTC systems that are to be merged with the DCS DTC. JAFDTC systems that are
+  not supported by the DCS DTC cannot, obviously, be merged. For systems that can be merged,
+  the user has the option of merging or not.
+
+> When a system can be merged, but is not, its parameters will be set by *both* DCS DTC and
+> JAFDTC. At this point, order of loading (that is, do you load from DCS DTC before or after
+> loading from JAFDTC?) determines the final value in the jet.
+
+The common user interface to specify this information looks like this,
+
+![](images/common_dtc_ui.png)
+
+There are four areas of interest on this page. The bottom part of the editor, (5), includes the
+standard controls for linking systems and operates as
+[discussed earlier](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/README.md#common-editor-controls).
+
+### Specifying the Base DTC Tape
+
+The combo box at the top of the page in area (1) allows you to select a base DTC tape (in the
+form of a DCS `.dtc` file) upon which JAFDTC builds the merged tape. JAFDTC includes default
+templates that provide the default DCS DTC setup for each supported airframe. As
+[discussed below](#creating-dcs-dtc-template-files)
+you can also build your own templates using the DCS DTC editor.
+
+To use a template you have built, you can import it into JAFDTC using the **Import** button to
+the right of the combo box. This will make a copy of the template `.dtc` file into the JAFDTC
+configuration library.
+
+To delete a template, select it in the combo box and then click the **Delete** button on the
+right of area (1). You cannot delete the default template. This removes the template from the
+JAFDTC configuration library and will cause any configurations that use the template to revert
+to the default template.
+
+### Specifying the Systems to Merge
+
+The area marked (2) in the figure allows you to select the systems that are to be merged into
+the merged DTC tape. This section will show a list of all systems in the configuration that can
+be merged. In this example for the Viper, the Radios and Countermeasures settings can be merged
+into a merged DTC. Clicking on a system toggles it between a "merge" and "don't merge" state.
+In the figure, the Radios system is set to be merged, while the Countermeasures system is not.
+
+> Different airframes may support different systems as mergable.
+
+Systems that are marked as merged on configured using a mix of the settings in the base DTC
+tape and the JAFDTC configuration, with the latter providing the value for a parameter when
+both specify a value. Systems that are marked as "don't merge" area configured with settings
+from JAFDTC. These settings may be over-written if the DCS DTC is used after JAFDTC configures
+the jet.
+
+### Specifying the Location to Save the Merged Tape
+
+Specifying where to create the merged `.dtc` file is done in area (3) of the figure above. A
+location is set by first clicking on the **Save** button at the right of the area. Doing so
+opens up a file picker that lets you specify the location for the merged `.dtc` file.
+
+> A good place to put merged `.dtc` files is in the `Missions` directory in your DCS
+> `Saved Games` area as this is the default directory DCS opens when importing a `.dtc` file.
+
+Once a location has been specified and appears in the text field at the left of the area,
+clicking the **Save** button will regenerate the merged `.dtc` file with the current
+configuration.
+
+You can clear a selected save path with the **Clear** button. Note that while there is no
+save path specified, JAFDTC will *not* generate a merged `.dtc` file.
+
+### General Behaviors
+
+The final area of the interface, (4), sets two DTC-related behaviors for JAFDTC.
+
+When enabled, JAFDTC will automatically rebuild the merged `.dtc` file any time one of the
+merged systems is changed in JAFDTC. This unconditionally over-writes any previous file. If
+this behavior is not enabled, it is the user's responsibility to rebuild the merged `.dtc`
+file whenever there are changes to any merged system by using the **Save** button
+[discussed earlier](#specifying-the-location-to-save-the-merged-tape).
+
+> For airframes that support opening the DCS DTC interface through cockpit controls, JAFDTC
+> will automatically rebuild the tape prior to opening the interface. See the
+> [airframe guides](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/README.md#what-now)
+> for more details.
+
+When enabled, JAFDTC will generate commands to load the `.dtc` file through the aircraft's
+DTC system prior to loading its own configuration. If this behavior is not enabled, the
+pilot is responsible for loading any desired DCS DTC configuration.
+
+> JAFDTC generally assumes that the DTC is loaded **before** JAFDTC uploads its configuration.
+> Loading the DTC after a JAFDTC upload can replace JAFDTC settings with those from the DCS
+> DTC.
+
+### Creating DCS DTC Template Files
+
+A base `.dtc` files for use by JAFDTC as templates for merged `.dtc` files is simply an
+exported `.dtc` file as produced by the export command in the DCS DTC. You can use the
+DCS DTC to setup the desired defaults for the parameters the DCS DTC can configure.
+After exporting, the `.dtc` file can be selected through the
+[import function](#specifying-the-base-dtc-tape)
+in the JAFDTC UI.
+
+The relevant commands in the DCS DTC UI are shown in the following screenshot.
+
+![](images/common_dtc_dcs_me.png)
+
+Clicking on the **File** text drops down a file menu with a number of commands. The
+**Save As...** command specifies the name of the DTC tape as it appears in the DTC
+interface in the aircraft. The **Export** command opens up a picker that allows you to
+select a `.dtc` file to export the DTC setup to. Once saved, this file can be imported
+into JAFDTC as a DCS DTC base file (also referred to as a template).
+
+### Cockpit Workflow Expectations
+
+If you are using the DCS DTC (either on its own or in conjunction with JAFDTC), you will need
+to load a `.dtc` tape prior to using the DTC in the aircraft avionics or using JAFDTC, if it
+is set up to trigger the DCS DTC as
+[described earlier](#general-behaviors).
+To do so, you launch the DCS DTC and then use the **Import** command listed on the **File**
+menu for the DCS DTC UI as shown in the
+[screenshot above](#creating-dcs-dtc-template-files).
+You can enter the DCS DTC thorough the **Open DTC** button on the "Fly" screen in the DCS UI
+prior to entering the cockpit or thorought the Comm/F10 menu once in pit. In addition, some
+airframes may provide a path to enter the DCS DTC UI, see the
+[airframe guides](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/README.md#what-now)
+for more details.
 
 ## Selecting & Filtering Points of Interest
 
@@ -129,6 +326,7 @@ widgets include a search box with a filter button to its right. The filter butto
 limit the points of interest to those that meet certain criteria. When a filter is applied, the
 filter button will be blue as shown here,
 
+**TODO REBUILD FOR LIGHT MODE ??**
 ![](images/Core_Base_PoI_Filter.png)
 
 Clicking the filter button brings up a dialog that lets you specify filter criteria,
@@ -157,6 +355,7 @@ Once you have set the filter, typing in the search box will show a list of point
 with names that match the typed text and properties (for example, theater) that match the
 current filter.
 
+**TODO REBUILD FOR LIGHT MODE ??**
 ![](images/Core_Base_PoI_Select.png)
 
 As you type, the list of matching points of interest updates to include the PoIs that match.
@@ -173,6 +372,7 @@ the
 [point of interest database](TODO),
 and so on. Typically, JAFDTC uses a button like this to start the capture process,
 
+**TODO REBUILD FOR LIGHT MODE**
 ![](images/Core_Base_Capture_UI.png)
 
 Clicking on this button starts DCS F10 capture. During this process, JAFDTC displays a dialog
@@ -253,9 +453,9 @@ waypoints or steerpoints) to be input into the avionics as a part of a configura
 uses two pages to configure these systems,
 
 * [**Navigation Point List**](#navigation-point-editor-ui)
-  &ndash; Summarizes the navigation points in the configuration.
+  &ndash; Summarizes the navigation points in the configuration specifies.
 * [**Navigation Point Editor**](#navigation-point-list-ui)
-  &ndash; Edits the details of a particular point such as location or elevation.
+  &ndash; Edits the details, such as location or elevation, of a specific navigation point.
 
 While the details may differ from airframe to airframe, as the
 [airframe guides](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/README.md)
@@ -269,18 +469,12 @@ for the navigation point system. This is the page you will see when you select a
 navigation system from the
 [system list](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/README.md#system-list).
 
-![](images/Core_Base_Nav_List.png)
+![](images/common_navpt_list_ui.png)
 
-The list that makes up the bulk of the editor summarizes the navigation points, their
-coordinates, name, and other airframe-specific information. This information is formated
-according to airframe conventions. You can select one or more navigation points from the list
-using the usual Windows interactions as well as right-click items to show a context menu with
-commands applicable to the selected navigation point.
+The command bar at the top of the editor in area (1) allows you to manipulate the items
+selected in the navigation point list.
 
-The command bar at the top of the editor allows you to manipulate selected items in the
-navigation point list.
-
-![](images/Core_Base_Nav_Cmd.png)
+![](images/common_navpt_command_ui.png)
 
 The command bar includes the following commands,
 
@@ -290,23 +484,33 @@ The command bar includes the following commands,
 - **Copy** &ndash; Copy the selected navigation points to the clipboard.
 - **Paste** &ndash; Paste navigation points from the clipboard into the system.
 - **Delete** &ndash; Deletes the currnetly selected navigation points from the configuration.
-- **Renumber** &ndash; Renumbers the navigation points starting from a specified number.
-- **Capture** &ndash; Capture navigation points from the DCS F10 view and add them to the
-  system.
+- **Map** &ndash; Opens up the [*Map Window*](TODO).
+- **Add From POIs** &ndash; Adds new navigation points from defined POIs.
+- **Save to POIs** &ndash; Saves navigation points to the POI database.
 - **Import** &ndash;
   [Import](#importing-and-exporting-navigation-points)
   navigation points from a file.
-- **Export** &ndash;
-  [Export](#importing-and-exporting-navigation-points)
-  all navigation points to a file.
+- **Capture** &ndash; Capture navigation points from the DCS F10 view and add them to the
+  system.
 
 All airframes generally support the same set of commands.
+
+The list that makes up the bulk of the editor in area (2) summarizes the navigation points,
+their coordinates, name, and other airframe-specific information. This information is formated
+according to airframe conventions. You can select one or more navigation points from the list
+using the usual Windows interactions as well as right-click items to show a context menu with
+commands applicable to the selected navigation point.
+
+The bottom part of the editor, (3), includes the
+standard controls for linking systems and operates as
+[discussed earlier](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/README.md#common-editor-controls).
 
 ## Navigation Point Editor UI
 
 Editing a navigation point in the navigation point list, using the **Edit** command or double-
 clicking on the navigation point in the navigation point list brings up an editor page,
 
+**TODO REBUILD**
 ![](images/Core_Base_Nav_Edit.png)
 
 At minimum, the page will contain an interface to the PoI system to allow you to select a PoI
@@ -370,6 +574,8 @@ of the user interface JAFDTC uses for coordinate capture.
 
 ## Importing and Exporting Navigation Points
 
+TODO what about .jafdtc?
+
 In addition to its own `.json` format, JAFDTC can import navigation points from DCS `.miz` and
 CombatFlite `.cf` files directly.
 
@@ -379,6 +585,8 @@ CombatFlite `.cf` files directly.
 When importing navigation points, the imported points can either replace or be appended to the
 current list of navigation points. When importing from `.miz` or `.cf` files, JAFDTC also lets
 you select the flight within the file that you wish to import navigation points from
+
+**TODO REBUILD FOR LIGHT MODE ??**
 ![](images/Core_Base_Import.png)
 
 Based on the **Navpoint Import Ignores Airframe**
@@ -409,6 +617,7 @@ for the communication system. This is the page you will see when you select an a
 communications system from the
 [system list](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/README.md#system-list).
 
+**TODO REBUILD**
 ![](images/Core_Base_Comm.png)
 
 The top row of the page provides controls to select one of the radios to edit from the
@@ -435,13 +644,9 @@ parameters (see the
 for further details) along with the common **Link** and **Reset** controls
 [discussed earlier](#common-editor-controls).
 
-## Importing and Exporting Radio Settings
-
-TODO
-
 # What Now?
 
-Now that you are familiarity with JAFDTC, you should explore the
+Now that you are familiar with JAFDTC, you should explore the
 [airframe guides](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/README.md#what-now)
 for the airframes you want to use JAFDTC. These guides build on the common elements
 outlined here to describe specific capabilities of JAFDTC on a particular airframe.

@@ -1,8 +1,9 @@
 # JAFDTC: Configuring Mirage M-2000C Airframes
 
-**_Version 1.0.0 of 17-September-24_**
+**_Version 1.1.0 of TODO_**
 
-> Support for the *Mirage* is experimental and has had limited testing.
+> Support for the Mirage is experimental and has had limited testing. As the module is
+> unavailable for purchase at this time due to... *reasons*..., support is severly limited.
 
 JAFDTC supports configuration of the following systems in the Mirage,
 
@@ -17,7 +18,7 @@ for more on the aspects of JAFDTC that are common to multiple airframes.
 
 The Mirage does not map any cockpit controls to JAFDTC functions.
 
-# Configurable Systems
+# Configurable Systems on the Mirage
 
 Mirage configurations support settings spanning the systems listed earlier. The discussion in
 this section focuses on elements that are unique to the Mirage while the

@@ -17,7 +17,12 @@ guide,
 
 General installation and troubleshooting instructions for JAFDTC can be found
 [here](https://github.com/51st-Vfw/JAFDTC/tree/master/README.md)
-and will not be covered in this document.
+and are not covered in this document.
+
+JAFDTC is intended to provide a simple DTC tool that allows avionics setups to be built and
+shared across a group of pilots. While it provides some light-weight flight planning
+capabilities, JAFDTC is not a full-blown flight planner like CombatFlite (though it may be
+sufficient to serve that role depending on your specific needs).
 
 # Preliminaries
 
@@ -30,13 +35,18 @@ JAFDTC allows you to manage multiple avionics *Configurations* for multiple airf
 Currently, JAFDTC supports A-10C Warthog, AV-8B Harrier, F-14A/B Tomcat, F-15E Strike Eagle,
 F-16C Viper, F/A-18C Hornet, and Mirage M-2000C airframes.
 
+> Most of the development effort has been focused on the Warthog and Viper. Support for
+> other airframes may be limited due both to development time as well as module availability.
+
 ### Overview
 
-In JAFDTC, a *Configuration* is composed of multiple *System Configurations*, or *Systems*,
-that each correspond to systems (strangely enough) in an airframe such as radios,
-countermeasures, navigation, and so on. *Configurations* and *Systems* are **unique** to a
-specific airframe, though different airframes may have systems that provide similar
-functionality.
+In JAFDTC, a *Configuration* is made up of multiple *System Configurations*, or *Systems*,
+that each correspond to systems (strangely enough) in the airframe. Each system has a set
+of *Parameters* that JAFDTC can set. For example, a configuration might include systems such
+as countermeasures, communications, or navigation. A communication system might have
+parameters that specify the frequency mapped to a preset button. The set of *Configurations*,
+*Systems*, and *Parameters* are **unique** to a specific airframe, though different airframes
+may have similarities.
 
 Each configuration has a unique name identifies the configuration in the user interface. This
 name is set up when the configuration is first created and may be changed later.
@@ -44,14 +54,14 @@ name is set up when the configuration is first created and may be changed later.
 > Configuration names must be unique across all configurations for an airframe and may contain
 > any character. Names are case-insensitive so "A2G" and "a2g" are treated as the same name.
 
-The specific systems available in a configuration, along with the system parameters that
-JAFDTC can set up, vary from airframe to airframe.
+The specific systems available in a configuration, along with the *parameters* of the system
+that JAFDTC can set up, vary from airframe to airframe.
 
 > Details specific to a particular airframe can be found in the
 > [airframe guides](#what-now)
 > linked below.
 
-Some systems may not exist in some airframes and even "common" systems may operate differently
+Some systems may not exist in some airframes and even similar systems may operate differently
 in different airframes.
 
 ### Storing Configurations
@@ -61,29 +71,37 @@ folder for the active profile. Configurations are found in the `Configs` folder 
 directory. Generally, you should not need to access the files in the `JAFDTC` folder as JAFDTC
 supports sharing and exchanging information through various UI functions.
 
-> As with all things, there are exceptions. A good general rule is if the JAFDTC UI can do
-> something, use the UI and don't try to work around it.
+> As with all things, there are exceptions. A good general rule is use the UI and don't try to
+> work around it.
 
 ### Avionics Defaults
 
-A configurable parameter has a "default" state that corresponds to the state DCS models when
-the jet comes out of a cold start in the absence of specific input by the pilot. Pilot
-actions may change these values. Generally, JAFDTC has knowledge of default values for a
-parameter, but may lack visibility into its "current" value.
+A parameter JAFDTC can configure has a "default" value that corresponds to the state DCS
+models when the jet comes out of a cold start in the absence of specific input by the pilot.
+Pilot actions may change these values. Generally, JAFDTC has knowledge of default values for
+a parameter, but may lack visibility into its current value at a particular point in time.
 
 Because of this, setting a parameter to a "default" value generally implies that JAFDTC will
 not change the parameter from its *current* value in the avionics even if the current value
 does not match the cold start value. Throughout this document, we will use "default" under
 the assumption that the pilot has not changed parameters (so "default" and "current" are the
-same value.
+same value).
+
+### Sharing Configurations
+
+JAFDTC can export and import configurations in a `.jafdtc` file that can be exchanged with
+other pilots for mission planning purposes. For more information on sharing configurations,
+see the
+[_Common Elements Guide_](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/Common_Elements.md).
 
 ## Linking Systems
 
-JAFDTC allows you to link *System Configurations* between different *Configurations* for the
-same airframe. When linked, changes to the source system configuration are automatically
-reflected in all linked systems.
+JAFDTC allows you to link *Systems* between different *Configurations* for the same
+airframe. When linked, changes to the source system are automatically reflected in all
+configurations that link to the source system.
 
-> Links allow you to "compose" configurations from shared setups.
+> Links allow you to *compose* configurations from shared system setups. Links are always
+> created between systems in configurations for the same airframe.
 
 Links are tracked per system. That is, Systems X and Y in Configuration A can be linked
 to those systems in a different configurations if desired. Once linked, changes to a system
@@ -96,16 +114,18 @@ indirectly.
 > Changes to System X in Configuration C will be reflected in System X in both Configraution
 > A and B.
 
-Breaking a link preserves the configuration of a linked system at the time the link is
-broken. This is, if systems in Configuration A are linked to Configuration B and you delete
-Configuration B, the linked systems in A will retain the values from B at the time it was
+Breaking a link preserves the configuration of the system at the time the link is broken.
+That is, if systems in Configuration A are linked to Configuration B and you delete
+Configuration B, the linked systems in A will retain the values from B at the time B was
 deleted.
 
-> Links are **not** preserved across configuration exports and imports.
+> Links are **not** preserved across configuration exports and imports. Exporting a system
+> generates an unlinked system that shares the setup of the linked system at the time of
+> export.
 
 Linked systems are always edited in the source configuration. The system editors in linked
 configurations will be read-only while the editor in the source configuration will allow
-changes to be made.
+changes to be made to the system.
 
 Links are particularly useful when you have setups that you tend to reuse often. For example,
 you might want to always configure your cockpit displays one way for A2G sorties and another
@@ -114,7 +134,8 @@ that sets up cockpit displays and a navigation system (NAV) that sets up steerpo
 you setup your A2G and A2A MFD configurations, you can link them from new configurations to
 avoid having to setup the MFD in each new configuration.
 
-This pictures illustrates how this works,
+Expanding on this example where a configuration has an MFD and NAV system, consider the
+following example,
 
 ![](images/Core_Cfg_Links.png)
 
@@ -202,15 +223,17 @@ interacting with DCS in any capacity.
 
 ### Working with DCS DTC
 
-ED delivered an initial DTC implementation in DCS 2.9.15.9408 released in April of 2025. While
-the DTC implementation in DCS is not yet complete, it does provide some advantages over tools
-like JAFDTC (primarily, by being able to inject configurations directly into the jet without
-needing to rely on clicking cockpit controls). JAFDTC provides the ability to push
-configurations into the jet through the ED DCS DTC, with some restrictions. The
+ED delivered an initial DTC implementation in DCS 2.9.15.9408 released in April of 2025 that
+supports some modules. While the DTC implementation in DCS is not yet complete, it does provide
+some advantages over tools like JAFDTC (primarily, by being able to inject configurations
+directly into the jet without needing to rely on clicking cockpit controls). JAFDTC provides
+the ability to push configurations into the jet through the ED DCS DTC, with some restrictions.
+The
 [_Common Elements Guide_](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/Common_Elements.md#selecting--filtering-points-of-interest)
 and
 [airframe guides](#what-now)
-provide further discussion on how JAFDTC interoperates with the DCS DTC.
+provide further discussion on how JAFDTC interoperates with the DCS DTC for those airframes
+that support the DCS DTC.
 
 Whether or not there is a place for tools like JAFDTC in the DCS ecosystem over the long
 term reamins to be seen.
@@ -224,6 +247,9 @@ driving the clickable cockpit. For example, consider a BINGO warning system. If 
 BINGO value from the default for the airframe, JAFDTC will update the BINGO value in the
 avionics when uploading. If you do not change the value, JAFDTC will not make any changes to
 that parameter in the airframe.
+
+As mentioned earlier, this setup may be performed in conjunction with the setup the DCS DTC
+performs.
 
 ### Capturing Coordinates From DCS
 
@@ -248,6 +274,7 @@ linked below.
 The main page of the JAFDTC user interface is the *Configuration List Page* that provides
 a number of controls to manipulate configurations. This page is visible after launching JAFDTC.
 
+**TODO REBUILD**
 ![](images/Core_Cfg_List_Page.png)
 
 Working from top to bottom, the primary components of this page include,
@@ -309,10 +336,12 @@ The command bar includes the following commands,
   copy of the configuration.
 - **Rename** &ndash; Renames the selected configuration.
 - **Delete** &ndash; Removes the currently selected configuration from the database.
-- **Import** &ndash; Creates a new configuration from a file previously created with the *Export*
-  command.
-- **Export** &ndash; Creates a file that contains the selected configuration suitable for import using
-  the *Import* command.
+- **Import** &ndash; Creates a new configuration from a `.jafdtc` file previously created with the
+  *Export* command. `.jafdtc` files are discused further in the
+  [_Common Elements Guide_](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/Common_Elements.md).
+- **Export** &ndash; Creates a `.jafdtc` file that contains the selected configuration suitable for
+  import using the *Import* command.  `.jafdtc` files are discused further in the
+  [_Common Elements Guide_](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/Common_Elements.md).
 - **Load to Jet** &ndash; Uploads the selected configuration to DCS, see
   [here](#interacting-with-dcs)
   for further details.
@@ -368,6 +397,7 @@ status here, each marked with a red cross or green checkmark,
 
 For example,
 
+**TODO REBUILD**
 ![](images/Core_Cfg_DCS_Status.png)
 
 shows two different status areas. On the left, DCS is not running but the Lua support is
@@ -379,31 +409,38 @@ The left side of the status area identifies the pilot and wing as specified thro
 
 ## System Editor Page
 
-The *System Editor Page* provides a list of systems from which you can display per-system
-editors. The specific systems availble in a configuration vary from airframe to airframe.
-However, the basic structure of the page on which you edit system configurations is similar.
+The *System Editor Page* provides a list of systems from which you can select a per-system
+editor to specify the settings for system parameters. The specific systems availble in a
+configuration vary from airframe to airframe. However, the basic structure of the page on
+which you edit a system configuration is similar.
 
+**TODO REBUILD**
 ![](images/Core_Cfg_Edit_Page.png)
 
 At the top of the window is the name of the current configuration being edited along with a
 back button that returns you to the
 [*Configuration List Page*](#configuration-list-page)
-when clicked. To the right is text identifying the *Current Airframe*.
+when clicked. To the right is text identifying the *Current Airframe*. The button to the
+right of the current airframe exports the configuration as a `.jafdtc` file, as discused
+further in the
+[_Common Elements Guide_](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/Common_Elements.md).
+This button is functionally identical to the export button on the
+[Configuration List Page](#configuration-list-page).
 
 ### System List
 
-The *System List* provides the systems that make up the configuration. Each system has an
+The *System List* identifies the systems that make up the configuration. Each system has an
 associated icon whose tint and badging specifies details on the configuration.
 
 ![](images/Core_Base_Edit_Icons.png)
 
-The tint of the icon indicates the state of the system: blue icons mark systems whose
+The tint of the icon indicates the state of the system: non-white icons mark systems whose
 configuration has changed from defaults, white icons mark systems that have not been changed.
 
 > JAFDTC uses the system highlight color; if you change it through Windows settings, the blue
 > icons in the screenshots in this guide may be a different color based on your choice.
 
-A small gold dot in the lower right corner of the icon marks those systems that are linked to
+A small gold dot in the lower right corner of the icon marks systems that are linked to
 other configurations.
 
 > A white icon with a gold dot indicates a system that is linked to another configuration
@@ -419,24 +456,26 @@ panel depends on the system selected from the *System List* to the left. In the 
 the editor is showing the steerpoint list associated with the selected steerpoints system. See
 the
 [airframe guides](#what-now)
-for further details on system editors for a particular airframe.
+for further details on the system editors available for a particular airframe.
 
 ### Common Editor Controls
 
 Depending on the system, the bottom edge of the system configuration editor may contain link
-and reset buttons that provide common link and reset functions for systems.
+and reset buttons that provide common link and reset functions for systems. When present,
+these buttons perform the same functions across all airframes,
 
 * **Reset** &ndash; Restores the default settings to the system. This is disabled if the system
   is in its default configruation.
 * **Link** &ndash; Links or unlinks the system to or from another configuration (see the
-  [earlier discussion](#linking-systems)).
+  [earlier discussion](#linking-systems)
+  on linking systems).
 
-The *Link* button changes based on whether or not the system is linked,
+The **Link** button changes based on whether or not the system is linked,
 
 ![](images/Core_Cfg_Edit_Link.png)
 
-When unlinked, the button displays "Link To". Clicking the button brings up a list of
-potential source configurations the system can be linked to.
+When unlinked, the button displays "Link To". Clicking the button in this state brings up a
+list of potential source configurations that the system can be linked to.
 
 > In the
 > [earlier example](#linking-systems),
@@ -449,6 +488,27 @@ configuration through the source configuration) and the button changes to "Unlin
 the name of the configuration the system is linked to. When unlinking, the system configuration
 does not change, but will no longer receive updates from the source configuration. Icons for
 linked systems are badged with a small gold dot as described earlier.
+
+## Map Window
+
+TODO
+
+double click centers map
+
+shift double click centers and re-zooms map
+
+click off marker drags map
+
+
+The command bar includes the following commands,
+
+- **Add** &ndash; Adds a new marker to the map (WIP).
+- **Edit** &ndash; Opens the selected marker in the appropriate editor if an editor is available.
+- **Delete** &ndash; Deletes the selected marker if it can be deleted.
+- **Import** &ndash; Import temporary markers from a file (WIP).
+- **Settings** &ndash; Manages settings for the map window.
+
+Adding navpoints
 
 ## Point of Interest Database
 
@@ -479,6 +539,7 @@ The **Point of Interest** command in the
 [overflow menu](#command-bar)
 opens up an editor page to manage known points of interest.
 
+**TODO REBUILD**
 ![](images/Core_Base_PoI.png)
 
 The top portion of this page contains controls to filter the PoIs listed in the PoI list along
@@ -501,8 +562,8 @@ the left of each row in this list indicates the PoI type:
 The gray text in each row identifies the campaign the PoI is associated with along with
 tags associated with the PoI.
 
-You can select PoIs from the table using the standard Windows table interactions such as
-`SHIFT`-click to extend the selection, and so on.
+You can select one or more PoIs from the table using the standard Windows table interactions
+such as `SHIFT`-click to extend the selection, and so on.
 
 ### Point of Interest Filter and Command Bar
 
@@ -514,16 +575,16 @@ These controls operate as described in the
 
 The command bar,
 
+**TODO REBUILD**
 ![](images/Core_Base_PoI_Cmd.png)
 
 includes the following commands,
 
-- **Edit** &ndash; Copies the properties from the selected PoI to the PoI editor.
-- **Duplicate to User** &ndash; Copies the properties from the selected PoI to the PoI editor
-  to create a new user PoI.
-- **Copy to Campaign** &ndash; Copies the selected PoI(s) to a campaign.
-- **Delete** &ndash; Deletes the selected PoI(s) from the database. Note that DCS PoIs cannot
+- **Copy to User** &ndash; Copies the selected PoIs to new user PoIs.
+- **Copy to Campaign** &ndash; Copies the selected PoIs to a campaign.
+- **Delete** &ndash; Deletes the selected PoIs from the database. Note that DCS PoIs cannot
   be deleted and deleting all campaign PoIs implicitly deletes the campaign.
+- **Map** &ndash; Opens up the map window.
 - **Import** &ndash; Imports new PoIs from a previously exported file.
 - **Export** &ndash; Exports selected PoIs to a file.
 
@@ -534,28 +595,37 @@ The overflow menu (exposed by clicking on the "`...`" button) holds three comman
 - **Coordiante Format** &ndash; Selects the format (e.g., DMS, DDM) to use to display PoI
   coordiantes.
 
-Depending on the state of the system, commands may be disabled. For example, **Edit** is
-disabled when the selected PoI cannot be edited.
+Depending on the state of the system, commands may be disabled. For example, **Delete** is
+disabled when the selected PoI cannot be deleted. Right-clicking on a PoI or selection in
+the PoI list will display context menu allowing you to perform many of these commands on
+the selected PoIs.
 
 ### Editing Points of Interest
 
-The controls at the bottom of the page allow you to add or update user PoIs. Depending on the
-PoI's type, double-clicking on PoI in the list, or selecting a PoI and clicking on the **Edit**
-or **Duplicate to User** commands will populate the fields (name, tags, latitude, etc.) with
-the values from the PoI.
+Clicking on a PoI copies its parameters to the PoI editor at the bottom of the page. The
+bottom button in the editor changes to,
 
-> DCS and Campaign PoIs are read-only and cannot be edited. When editing a PoI of these types,
-> JAFDTC creates a User PoI copy of the point of interest and edits that.
+- **Clear** &ndash; Clears all values from the PoI editor and unselects the selected PoI in
+  the PoI list.
 
-Based on context, the **Add** or **Update** button either adds a new User PoI to the database
-(if the PoI has a unique name) or updates an existing User PoI in the database.
+While the PoI editor has parameters from a PoI, you can update the parameters to make
+changes to the selected PoI. Once you make a change, the buttons in the editor change to,
 
-> Using the **Copy to Campaign** command will add a copy of an existing PoI (User or DCS) to
-> a campaign.
+- **Update** &ndash; Saves the changes to the PoI to the database.
+- **Reset** &ndash; Resets any changes in the editor to match the last-saved version of the
+  PoI.
 
-The **Clear**
-button clears the editor fields. Note that JAFDTC expects the PoI name to be unique within a
-type, campaign, and theater.
+A red background and border indicates a field is invalid. You will not be able to update the
+PoI until it is error-free.
+
+To add a new PoI, first clear the editor and then enter the name, latitude, longitude, and
+elevation (tags are optional). Once you do so, the buttons in the editor change to,
+
+- **Add** &ndash; Adds a new PoI to the database with the specified values. On an add, JAFDTC
+  will display a dialog allowing you to pick a campaign or user PoI type for the new PoI.
+- **Reset** &ndash; Resets the editor to an empty state.
+
+TODO
 
 ### Exporting Points of Interest
 
@@ -587,6 +657,7 @@ in-database campaign data. Campaigns that are not in the database are implicitly
 The `CSV` format is a text file of lines, one per PoI, of comma-separated fields. The format
 of the fields is as follows,
 
+**TODO: include theater here?**
 ```
 [type],[campaign],[name],[tags],[latitude],[longitude],[elevation]
 ```
@@ -653,7 +724,7 @@ there, move on to the airframe guides for airframes of interest,
 | [AV-8B Harrier](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/Airframe_AV8B.md) | Waypoints
 | [F-14A/B Tomcat](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/Airframe_F14AB.md) | Waypoints
 | [F-15E Strike Eagle](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/Airframe_F15E.md) | MPD/MPCD Formats, Radios, Steerpoints, Miscellaneous Systems
-| [F-16C Viper](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/Airframe_F16C.md) | Countermeasures, Datalink, HARM (ALIC, HTS), MFD Formats, Radios, SMS Munitions, Steerpoints, Miscellaneous Systems
+| [F-16C Viper](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/Airframe_F16C.md) | Countermeasures, Datalink, Data Cartridge (DTC), HARM (ALIC, HTS), MFD Formats, Radios, SMS Munitions, Steerpoints, Miscellaneous Systems
 | [F/A-18C Hornet](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/Airframe_FA18C.md) | Countermeasures, Pre-Planned Weapons, Radios, Waypoints
 | [Mirage M-2000C](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/Airframe_M2000C.md) | Waypoints
 

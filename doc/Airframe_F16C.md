@@ -6,6 +6,7 @@ JAFDTC supports configuration of the following systems in the Viper,
 
 * Countermeasures
 * Datalink
+* Data Cartridge (DTE/DTC)
 * HARM ALIC threat tables
 * HARM HTS manual threat table and sensor threat classes
 * MFD formats across all master modes and initial format selections
@@ -30,24 +31,32 @@ to interact with the JAFDTC window. To support this capabilty, JAFDTC reuses con
 the FLIR panel on the UFC that have no function in the the Block 50 Viper that the module
 models.
 
+**TODO REBUILD**
 ![](images/Viper_UFC_JAFDTC.png)
 
 JAFDTC currently supports four functions from the Viper cockpit,
 
-* **FLIR WX** &ndash; pressing and briefly holding this button causes JAFDTC to load the
-  currently selected F-16C configuration into the jet. JAFDTC provides feedback during
-  the upload according to the **Upload Feedback**
-  [setting](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/README.md#settings).
-* **FLIR Rocker Switch** &ndash; pressing the `UP` and `DOWN` sides of the rocker moves to the
+* **FLIR WX** &ndash; Pressing and briefly holding this button can trigger one of two actions,
+  depending on the length of the press,
+  * A press between 0.2s and 1.0s causes JAFDTC to load the currently selected F-16C
+    configuration into the jet. JAFDTC provides feedback during the upload according to the
+    **Upload Feedback**
+    [setting](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/README.md#settings).
+  * A press longer than 1.0s causes JAFDTC to open up the in-mission DCS DTE interface.
+* **FLIR Rocker Switch** &ndash; Pressing the `UP` and `DOWN` sides of the rocker moves to the
   previous and next configurations, respectively. On the first press, JAFDTC briefly displays
   the name of the currently selected configuration. Subsequent presses step up or down through
   the configuration list.
-* **FLIR GAIN/LVL/AUTO** to `GAIN` &ndash; keeps the JAFDTC window on top of the DCS
+* **FLIR GAIN/LVL/AUTO** to `GAIN` &ndash; Keeps the JAFDTC window on top of the DCS
   window in the window stack.
-* **FLIR GAIN/LVL/AUTO** to `LVL` &ndash; allows the JAFDTC window to be below the DCS
+* **FLIR GAIN/LVL/AUTO** to `LVL` &ndash; Allows the JAFDTC window to be below the DCS
   window in the window stack and does not force any particular ordering.
 
 Other functions may be implemented later.
+
+# Pilot Roles During Import
+
+TODO mostly "role" discussion
 
 # Configurable Systems on the Viper
 
@@ -68,6 +77,7 @@ This editor extends the interface of the common communication system editor the
 [_User's Guide_](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/README.md#communications-system-editors)
 describes.
 
+**TODO REBUILD**
 ![](images/Viper_Sys_COMM.png)
 
 The Viper editor includes additional controls btween the preset list and common editor controls.
@@ -81,12 +91,17 @@ value is invalid.
 Also, the COM1 (UHF) radio can be set to monitor guard through the "monitor guard" checkbox on
 the right under the preset list.
 
+TODO: integration with dcs dtc
+
 ## Countermeasures
 
 The countermeasures system manages parameters set through the CMDS DED page. These parameters
 control the operation of the countermeasures and allow you to setup different programs for the
 chaff and flare dispensers.
 
+TODO integration with dcs dtc
+
+**TODO REBUILD**
 ![](images/Viper_Sys_CMDS.png)
 
 The top row of the editor adjusts overall parameters of the countermeasures system while the
@@ -227,6 +242,14 @@ select the pilots that you want to share and click the export button (remember, 
 select multiple pilots from the list). This will bring up a standard file selection dialog
 that will let you specify a file to save the exported information to.
 
+### Adjusting Roles During Import
+
+TODO how roles adjust when doing .jafdtc import
+
+## Data Cartridge (DTC/DTE)
+
+TODO
+
 ## HARM ALIC
 
 The HARM ALIC system manages parameters set through the HARM DED page.
@@ -238,6 +261,7 @@ The HARM ALIC system manages parameters set through the HARM DED page.
 These parameters control the progarmming of the three ALIC tables that specify the threats
 (i.e., radar emitters) an AGM-88 HARM can target.
 
+**TODO REBUILD**
 ![](images/Viper_Sys_ALIC.png)
 
 The editor allows you to edit specific countermeasure programs in the countermeasure
@@ -289,6 +313,7 @@ It defines which emitters the HTS can recognize and target. The HTS system inclu
 several pre-defined, fixed, tables and a manual table, MAN, that can be set by the pilot to
 tailor known threats.
 
+**TODO REBUILD**
 ![](images/Viper_Sys_HTS.png)
 
 The structure of this editor is similar to the
@@ -314,6 +339,7 @@ The *Select Threat Classes* button allows you to specify which tables are active
 (the HTS will scan for emitters in the active tables). Active tables are selected with the
 following page,
 
+**TODO REBUILD**
 ![](images/Viper_Sys_HTS_Threat.png)
 
 To enable or disable a table, click on the checkbox in the corresponding row. Generally,
@@ -331,6 +357,7 @@ The MFD formats configuration selects which display formats are associated with 
 the left and right MFDs. This mapping between OSB and display format is unique to each
 master mode (NAV, A2G, A2A, Dogfight Missile Override, and Dogfight Override).
 
+**TODO REBUILD**
 ![](images/Viper_Sys_MFD.png)
 
 The top row of the editor has a menu to select the master mode to update. The up and down
@@ -362,6 +389,7 @@ master modes may be unique.
 The miscellaneous system covers a number of smaller systems accessed through the Viper DED
 including TACAN/ILS, ALOW, BNGO, BULL, LASR, and HMCS DED/UFC pages.
 
+**TODO REBUILD**
 ![](images/Viper_Sys_Misc.png)
 
 Most of these settings should be self-apparent.
@@ -376,6 +404,7 @@ employment mode or arming delay) for munitions loaded on the jet.
 
 TODO
 
+**TODO REBUILD**
 ![](images/Viper_Sys_SMS.png)
 
 TODO
@@ -388,6 +417,10 @@ steerpoint. This editor extends the interface of the common navigation system ed
 [_User's Guide_](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/README.md#navigation-system-editors)
 describes.
 
+TODO integration with map
+
+TODO query dcs for altitude
+
 ### Steerpoint List User Interface
 
 The *Steerpoint List* editor lists the steerpoints currently known to the configuration.
@@ -395,6 +428,7 @@ This editor extends the interface of the common *Navigation Point List* the
 [_User's Guide_](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/README.md#navigation-point-list)
 describes.
 
+**TODO REBUILD**
 ![](images/Viper_Sys_STPT_List.png)
 
 In addition to the steerpoint number, name, and position, the Viper steerpoint list includes two
@@ -422,6 +456,7 @@ associated referenced points. This editor extends the interface of the common
 [_User's Guide_](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/README.md#navigation-point-editor)
 describes.
 
+**TODO REBUILD**
 ![](images/Viper_Sys_STPT.png)
 
 The Viper steerpoint editor adds several controls to the common editor,
@@ -440,6 +475,8 @@ The remainder of the page, including the Steerpoint Initial Setup and Steerpoint
 operates as in the common navigation point editor.
 
 ### Importing
+
+TODO update for loss of .json
 
 When importing steerpoints from `.miz` or `.cf` files, JAFDTC can set up offset, VIP, and VRP
 reference points based on the steerpoint names provided by the file. This allows imports to
