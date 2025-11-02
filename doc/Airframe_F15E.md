@@ -1,6 +1,9 @@
 # JAFDTC: Configuring F-15E Strike Eagle Airframes
 
-**_Version 1.0.0 of 17-September-24_**
+**_Version 1.1.0 of TODO_**
+
+> Support for the Strike Eagle is experimental. As the module is unavailable for purchase at
+> this time due to... *reasons*..., support is severly limited.
 
 JAFDTC supports configuration of the following systems in the Strike Eagle,
 

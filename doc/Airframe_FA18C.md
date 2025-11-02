@@ -16,8 +16,6 @@ for more on the aspects of JAFDTC that are common to multiple airframes.
 
 # DCS Cockpit Integration
 
-> This functionality requires installation of the DCS Lua support. 
-
 The Hornet allows the user to operate JAFDTC from buttons in the cockpit without needing to go
 through the Windows UI. This is helpful for VR and other situations where you may not be able
 to interact with the JAFDTC window. To support this capabilty, JAFDTC reuses controls from

@@ -318,106 +318,6 @@ airframes may provide a path to enter the DCS DTC UI, see the
 [airframe guides](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/README.md#what-now)
 for more details.
 
-## Selecting & Filtering Points of Interest
-
-JAFDTC uses a common set of UI widgets to allow you to select points of interest to provide the
-coordinates for a navigation point, for example, or to filter a list of points of interest. The
-widgets include a search box with a filter button to its right. The filter button allows you to
-limit the points of interest to those that meet certain criteria. When a filter is applied, the
-filter button will be blue as shown here,
-
-**TODO REBUILD FOR LIGHT MODE ??**
-![](images/Core_Base_PoI_Filter.png)
-
-Clicking the filter button brings up a dialog that lets you specify filter criteria,
-
-![](images/Core_Base_PoI_Filter_Dlog.png)
-
-The three buttons at the bottom of the dialog make changes to the current filter and dismiss
-the dialog. The **Set** button sets the filter to match the fields in the dialog, the
-**Clear Filters** button removes the current filter, and **Cancel** leaves the current filter
-unchanged. The other fields in the dialog specify the filter,
-
-- **Theater** &ndash; Limits the points of interest to a particular DCS map or theater.
-- **Campaign** &ndash; Limits the points of interest to a particular campaign defined in the
-  PoI database.
-- **Tags** &ndash; Limits the points of interest to those that contain the specified tags. For
-  eaxmple, setting this field to `foo; bar` matches any point of interest with `foo` and `bar`
-  in its tags (comparisons are case-insensitive).
-- **Shows...** &ndash; Shows only DCS, User, or Campaign points of interest as selected.
-
-For example, setting **Theater** to "Nevada", **Campaign** to "Dark Materials", **Tags** to
-"Base; Target", and selecting only **Shows Campaign...** would limit the PoIs listed to
-campaign PoIs that are in Nevada, part of the "Dark Materials" campaign, with either "Base"
-or "Target" in their tags.
-
-Once you have set the filter, typing in the search box will show a list of points of interest
-with names that match the typed text and properties (for example, theater) that match the
-current filter.
-
-**TODO REBUILD FOR LIGHT MODE ??**
-![](images/Core_Base_PoI_Select.png)
-
-As you type, the list of matching points of interest updates to include the PoIs that match.
-Typing `RETURN` or clicking on the **Accept Filter** button sets the filter on names. Clicking
-on **Clear Filter** removes the filter on names. Clicking on an item in the matching points of
-interest list selects a single PoI.
-
-## Capturing Coordinates from DCS
-
-There are several points in the interface where you can capture coordiantes from the DCS F10
-map for use by JAFDTC including
-[navigation point editors](#navigation-system-editors),
-the
-[point of interest database](TODO),
-and so on. Typically, JAFDTC uses a button like this to start the capture process,
-
-**TODO REBUILD FOR LIGHT MODE**
-![](images/Core_Base_Capture_UI.png)
-
-Clicking on this button starts DCS F10 capture. During this process, JAFDTC displays a dialog
-like this that remains visible while you interact with DCS,
-
-![](images/Core_Base_Capture_C2.png)
-
-JAFDTC will interact with the coordinate capture in DCS as long as this dialog is active. After
-you have completed the capture in DCS, clicking “**Done**” in this dialog incorporates the
-captured coordinates into JAFDTC as appropriate.
-
-The DCS side of the interaction occurs on the F10 map.
-
-> You must be in an in-mission slot viewing the F10 map in order to capture coordiantes.
-> Capture does not work from the DCS Mission Editor.
-
-From the F10 map, type `CTRL`-`SHIFT`-`J` to show the JAFDTC capture overlay on the F10
-map,
-
-![](images/Core_Base_Capture.png)
-
-At the upper left of the overlay is a cursor made up of a `+` icon within a circle that
-indicates where on the map coordinates are captured from. To the right of this are the
-latitude, longitude, and elevation of the point under the `+`. To change the coordinate, move
-the F10 map by dragging as usual.
-
-> The overlay remains at a fixed location on the screen while the map moves under the overlay.
-
-The remainder of the overlay includes a list of captured navigation points along with buttons
-to interact with the list.
-
-- **Add STPT** &ndash; Adds the location under the cursor to the list of navigation points as a
-  steerpoint.
-- **Add TGT** &ndash; Adds the location under the cursor to the list of navigation points as a
-  target.
-- **Undo** &ndash; Removes the last navigation point added to the list.
-- **Clear** &ndash; Clears the list of navigation points.
-- **Send to JAFDTC** &ndash; Sends the navigation points in the list to JAFDTC to incorporate.
-
-The handling of target versus steerpoints added by **Add STPT** and **Add TGT** commands
-depends on the specific airframe.
-
-After sending the navigation points to JAFDTC via the **Send to JAFDTC** button, you must
-dismiss the “Capturing” dialog in JAFDTC as discussed earlier.
-
 ## VR Quality of Life Improvements
 
 To better support VR and other use cases where it may be difficult to interact with the JAFDTC
@@ -602,6 +502,28 @@ take-off steerpoints.
 When exporting navigation points, JAFDTC exports all points in the navigation list in a `.json`
 format defined by JAFDTC. At present, JAFDTC does not support exporting navigation points in
 other formats.
+
+## Map Window
+
+TODO
+
+double click centers map
+
+shift double click centers and re-zooms map
+
+click off marker drags map
+
+
+The command bar includes the following commands,
+
+- **Add** &ndash; Adds a new marker to the map (WIP).
+- **Edit** &ndash; Opens the selected marker in the appropriate editor if an editor is available.
+- **Delete** &ndash; Deletes the selected marker if it can be deleted.
+- **Import** &ndash; Import temporary markers from a file (WIP).
+- **Settings** &ndash; Manages settings for the map window.
+
+Adding navpoints
+
 
 # Communications System Editors
 
