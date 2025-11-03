@@ -80,6 +80,6 @@ namespace JAFDTC
 
         public const string VersionJAFDTC = "v1.0.0";              // current version
 
-        public const string BuildJAFDTC = "version 1.0.0 of 17-Sep-25 (build 91dd25e)";
+        public const string BuildJAFDTC = "version 1.1.0 of 2-Nov-25 (build 18e697e)";
     }
 }
