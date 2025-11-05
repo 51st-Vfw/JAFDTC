@@ -2,7 +2,7 @@
 //
 // F16CEditRadioPageHelper.cs : viper specialization for EditRadioPage
 //
-// Copyright(C) 2023-2024 ilominar/raven, JAFDTC contributors
+// Copyright(C) 2023-2025 ilominar/raven, JAFDTC contributors
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 // Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -24,7 +24,6 @@ using JAFDTC.Models.F16C.Radio;
 using JAFDTC.UI.App;
 using JAFDTC.UI.Base;
 using JAFDTC.Utilities;
-using Microsoft.UI.Xaml.Controls;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
@@ -47,11 +46,11 @@ namespace JAFDTC.UI.F16C
 
         public string SystemTag => RadioSystem.SystemTag;
 
-        public List<string> RadioNames => new()
-        {
+        public List<string> RadioNames =>
+        [
             "COM 1 – UHF AN/ARC-164",
             "COM 2 – VHF AN/ARC-222"
-        };
+        ];
 
         // ------------------------------------------------------------------------------------------------------------
         //
@@ -132,7 +131,7 @@ namespace JAFDTC.UI.F16C
             => ((F16CConfiguration)config).Radio.IsDefault;
 
         public override string RadioAux2Title(int radio)
-            => (radio == (int)Radios.COMM1) ? "Monitor Guard" : null;
+            => (radio == (int)Radios.COMM1) ? "Monitor guard" : null;
 
         public override int RadioMaxPresets(int radio) => 20;
 

@@ -178,7 +178,7 @@ namespace JAFDTC.UI.Base
             templates.Sort();
 
             uiComboTemplate.Items.Clear();
-            uiComboTemplate.Items.Add($"Default {Globals.AirframeNames[Config.Airframe]} DTC Template");
+            uiComboTemplate.Items.Add($"Default {Globals.AirframeNames[Config.Airframe]} DTC template");
             foreach (string template in templates)
                 uiComboTemplate.Items.Add(template);
 

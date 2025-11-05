@@ -74,7 +74,7 @@ https://www.gnu.org/licenses/.
             <ComboBox Grid.Row="0" Grid.Column="0" x:Name="uiComboTemplate"
                       Margin="0,12,0,0" HorizontalAlignment="Stretch"
                       SelectionChanged="ComboTemplate_SelectionChanged"
-                      ToolTipService.ToolTip="Select DTC base tape to use for the merged tape"/>
+                      ToolTipService.ToolTip="Select DTC base tape to use to help build the merged tape"/>
             <Button Grid.Row="0" Grid.Column="1" x:Name="uiBtnAddTmplt"
                     Margin="12,12,0,0" VerticalAlignment="Center"
                     Click="BtnAddTmplt_Click"
@@ -147,7 +147,7 @@ https://www.gnu.org/licenses/.
                      Margin="0,12,0,0" HorizontalAlignment="Stretch"
                      Text="{x:Bind EditDTC.OutputPath, Mode=TwoWay}"
                      IsEnabled="False"
-                     PlaceholderText="No Save Location Set for Merged Tape"/>
+                     PlaceholderText="No save location set for merged tape"/>
             <Button Grid.Row="0" Grid.Column="1" x:Name="uiBtnSetOutput"
                     Margin="12,12,0,0" VerticalAlignment="Center"
                     Click="BtnSetOutput_Click"

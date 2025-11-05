@@ -54,35 +54,49 @@ https://www.gnu.org/licenses/.
         row 0 : radio selection
         ===============================================================================================================
         -->
-        <StackPanel Grid.Row="0" Orientation="Horizontal"
+        <Grid Grid.Row="0" Margin="12,18,12,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Column="0" Orientation="Horizontal"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center">
+                <ComboBox Margin="0,0,0,0" Width="300"
+                          x:Name="uiRadSelectCombo"
+                          VerticalAlignment="Center"
+                          SelectionChanged="RadSelectCombo_SelectionChanged"
+                          ToolTipService.ToolTip="Select radio to edit">
+                    <!-- ComboBox items are built when the page is displayed according to the radio -->
+                </ComboBox>
+                <Button Margin="24,0,6,0" VerticalAlignment="Center"
+                        x:Name="uiRadPrevBtn"
+                        ToolTipService.ToolTip="Select previous radio on airframe"
+                        Click="RadBtnPrev_Click">
+                    <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE70E;"/>
+                </Button>
+                <Button VerticalAlignment="Center"
+                        x:Name="uiRadNextBtn"
+                        ToolTipService.ToolTip="Select next radio on airframe"
+                        Click="RadBtnNext_Click">
+                    <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE70D;"/>
+                </Button>
+            </StackPanel>
+            <Button Grid.Column="2" x:Name="uiAddBtn"
                     VerticalAlignment="Center"
-                    HorizontalAlignment="Center">
-            <ComboBox Margin="0,0,0,0" Width="300"
-                      x:Name="uiRadSelectCombo"
-                      VerticalAlignment="Center"
-                      SelectionChanged="RadSelectCombo_SelectionChanged"
-                      ToolTipService.ToolTip="Select radio to edit">
-                <!-- ComboBox items are built when the page is displayed according to the radio -->
-            </ComboBox>
-            <Button Margin="24,0,6,0" VerticalAlignment="Center"
-                    x:Name="uiRadPrevBtn"
-                    ToolTipService.ToolTip="Select previous radio on airframe"
-                    Click="RadBtnPrev_Click">
-                <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE70E;"/>
+                    HorizontalAlignment="Right"
+                    ToolTipService.ToolTip="Add new preset to selected radio"
+                    Click="CmdAdd_Click">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Margin="0,0,12,0" VerticalAlignment="Center">
+                        Add Preset
+                    </TextBlock>
+                    <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE710;"/>
+                </StackPanel>
             </Button>
-            <Button VerticalAlignment="Center"
-                    x:Name="uiRadNextBtn"
-                    ToolTipService.ToolTip="Select next radio on airframe"
-                    Click="RadBtnNext_Click">
-                <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE70D;"/>
-            </Button>
-            <CommandBar Margin="56,0,0,0" HorizontalAlignment="Center">
-                <AppBarButton x:Name="uiBarAdd" Icon="Add" Label="Add"
-                              Click="CmdAdd_Click"
-                              ToolTipService.ToolTip="Add new preset to selected radio"/>
-                <AppBarSeparator/>
-            </CommandBar>
-        </StackPanel>
+        </Grid>
 
         <!--
         ===============================================================================================================
@@ -193,12 +207,12 @@ https://www.gnu.org/licenses/.
 
                 <TextBlock Grid.Column="0"
                            VerticalAlignment="Center">
-                    Initial Freq./Preset
+                    Initial freq./preset
                 </TextBlock>
                 <TextBox Grid.Column="1" Margin="12,0,0,0"
                          x:Name="uiMiscValueDefaultFreq"
                          VerticalAlignment="Center"
-                         PlaceholderText="None Set"
+                         PlaceholderText="None set"
                          MaxLength="7"
                          GotFocus="TextBox_GotFocus"
                          LostFocus="InitialFreq_LostFocus"

@@ -94,13 +94,13 @@ https://www.gnu.org/licenses/.
             <!-- CHAFF BINGO -->
             <TextBlock Grid.Row="0" Grid.Column="0" Margin="0,12,12,0"
                        Style="{StaticResource EditorParamStaticTextBlockStyle}">
-                BINGO for Chaff
+                BINGO for chaff
             </TextBlock>
             <TextBox Grid.Row="0" Grid.Column="1" Margin="0,12,0,0" Tag="BingoChaff" x:Name="uiChaffValueBingo"
                      HorizontalAlignment="Stretch"
                      Style="{StaticResource EditorParamEditTextBoxStyle}" MaxLength="8"
                      LostFocus="TextBox_LostFocus" GotFocus="TextBox_GotFocus"
-                     ToolTipService.ToolTip="TODO"/>
+                     ToolTipService.ToolTip="BINGO level for chaff consumables"/>
             <TextBlock Grid.Row="0" Grid.Column="2" Margin="12,12,0,0"
                        VerticalAlignment="Center">
                 chaff
@@ -109,13 +109,13 @@ https://www.gnu.org/licenses/.
             <!-- FLARE BINGO -->
             <TextBlock Grid.Row="0" Grid.Column="4" Margin="0,12,12,0"
                        Style="{StaticResource EditorParamStaticTextBlockStyle}">
-                BINGO for Flares
+                BINGO for flares
             </TextBlock>
             <TextBox Grid.Row="0" Grid.Column="5" Margin="0,12,0,0" Tag="BingoFlare" x:Name="uiFlareValueBingo"
                      HorizontalAlignment="Stretch"
                      Style="{StaticResource EditorParamEditTextBoxStyle}" MaxLength="8"
                      LostFocus="TextBox_LostFocus" GotFocus="TextBox_GotFocus"
-                     ToolTipService.ToolTip="TODO"/>
+                     ToolTipService.ToolTip="BINGO level for flare consumables"/>
             <TextBlock Grid.Row="0" Grid.Column="6" Margin="12,12,0,0"
                        VerticalAlignment="Center">
                 flares
@@ -131,7 +131,7 @@ https://www.gnu.org/licenses/.
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center">
             <TextBlock Margin="0,0,12,0" VerticalAlignment="Center">
-                CMDS CM Program
+                CMDS CM program
             </TextBlock>
             <ComboBox Margin="0,0,0,0" Width="150" x:Name="uiPgmSelectCombo"
                       VerticalAlignment="Center"
@@ -186,56 +186,56 @@ https://www.gnu.org/licenses/.
             <!-- CHAFF BQ -->
             <TextBlock Grid.Row="1" Grid.Column="0" Margin="12,12,12,0"
                        Style="{StaticResource EditorParamStaticTextBlockStyle}">
-                Program Burst Quantity
+                Program burst quantity
             </TextBlock>
             <TextBox Grid.Row="1" Grid.Column="1" Margin="0,12,0,0" Tag="Chaff.BQ" x:Name="uiPgmChaffValueBQ"
                      HorizontalAlignment="Stretch" VerticalAlignment="Center"
                      Style="{StaticResource EditorParamEditTextBoxStyle}" MaxLength="8"
                      LostFocus="TextBox_LostFocus" GotFocus="TextBox_GotFocus"
-                     ToolTipService.ToolTip="TODO"/>
+                     ToolTipService.ToolTip="Chaff program burst quantity"/>
             <TextBlock Grid.Row="1" Grid.Column="2" Margin="6,12,0,0" VerticalAlignment="Center">chaff</TextBlock>
 
             <!-- CHAFF BI -->
             <TextBlock Grid.Row="2" Grid.Column="0" Margin="0,12,12,0"
                        Style="{StaticResource EditorParamStaticTextBlockStyle}">
-                Program Burst Interval
+                Program burst interval
             </TextBlock>
             <TextBox Grid.Row="2" Grid.Column="1" Margin="0,12,0,0" Tag="Chaff.BI" x:Name="uiPgmChaffValueBI"
                      HorizontalAlignment="Stretch" VerticalAlignment="Center"
                      Style="{StaticResource EditorParamEditTextBoxStyle}" MaxLength="8"
                      LostFocus="TextBox_LostFocus" GotFocus="TextBox_GotFocus"
-                     ToolTipService.ToolTip="TODO"/>
+                     ToolTipService.ToolTip="Chaff program burst interval"/>
             <TextBlock Grid.Row="2" Grid.Column="2" Margin="6,12,0,0" VerticalAlignment="Center">seconds</TextBlock>
 
             <!-- CHAFF SQ -->
             <TextBlock Grid.Row="3" Grid.Column="0" Margin="0,12,12,0"
                        Style="{StaticResource EditorParamStaticTextBlockStyle}">
-                Program Salvo Quanity
+                Program salvo quanity
             </TextBlock>
             <TextBox Grid.Row="3" Grid.Column="1" Margin="0,12,0,0" Tag="Chaff.SQ" x:Name="uiPgmChaffValueSQ"
                      HorizontalAlignment="Stretch" VerticalAlignment="Center"
                      Style="{StaticResource EditorParamEditTextBoxStyle}" MaxLength="8"
                      LostFocus="TextBox_LostFocus" GotFocus="TextBox_GotFocus"
-                     ToolTipService.ToolTip="TODO"/>
+                     ToolTipService.ToolTip="Chaff program salvo quantity"/>
             <TextBlock Grid.Row="3" Grid.Column="2" Margin="6,12,0,0" VerticalAlignment="Center">bursts</TextBlock>
 
             <!-- CHAFF SI -->
             <TextBlock Grid.Row="4" Grid.Column="0" Margin="0,12,12,0"
                        Style="{StaticResource EditorParamStaticTextBlockStyle}">
-                Program Salvo Interval
+                Program salvo interval
             </TextBlock>
             <TextBox Grid.Row="4" Grid.Column="1" Margin="0,12,0,0" Tag="Chaff.SI" x:Name="uiPgmChaffValueSI"
                      HorizontalAlignment="Stretch" VerticalAlignment="Center"
                      Style="{StaticResource EditorParamEditTextBoxStyle}" MaxLength="8"
                      LostFocus="TextBox_LostFocus" GotFocus="TextBox_GotFocus"
-                     ToolTipService.ToolTip="TODO"/>
+                     ToolTipService.ToolTip="Chaff program salvo interval"/>
             <TextBlock Grid.Row="4" Grid.Column="2" Margin="6,12,0,0" VerticalAlignment="Center">seconds</TextBlock>
 
             <!-- CHAFF program reset -->
             <Button Grid.Row="5" Grid.Column="1" Margin="0,12,0,0" x:Name="uiPgmChaffBtnReset"
                     HorizontalAlignment="Stretch" VerticalAlignment="Center"
                     Click="PgmChaffBtnReset_Click"
-                    ToolTipService.ToolTip="TODO">
+                    ToolTipService.ToolTip="Reset chaff program to defaults">
                 <StackPanel Orientation="Horizontal">
                     <FontIcon Margin="0,0,6,0"
                               FontFamily="Segoe Fluent Icons" FontSize="14" Glyph="&#xE894;"/>
@@ -252,56 +252,56 @@ https://www.gnu.org/licenses/.
             <!-- FLARE BQ -->
             <TextBlock Grid.Row="1" Grid.Column="4" Margin="12,12,12,0"
                        Style="{StaticResource EditorParamStaticTextBlockStyle}">
-                Program Burst Quantity
+                Program burst quantity
             </TextBlock>
             <TextBox Grid.Row="1" Grid.Column="5" Margin="0,12,0,0" Tag="Flare.BQ" x:Name="uiPgmFlareValueBQ"
                      HorizontalAlignment="Stretch" VerticalAlignment="Center"
                      Style="{StaticResource EditorParamEditTextBoxStyle}" MaxLength="8"
                      LostFocus="TextBox_LostFocus" GotFocus="TextBox_GotFocus"
-                     ToolTipService.ToolTip="TODO"/>
+                     ToolTipService.ToolTip="Flare program burst quantity"/>
             <TextBlock Grid.Row="1" Grid.Column="6" Margin="6,12,0,0" VerticalAlignment="Center">flares</TextBlock>
 
             <!-- FLARE BI -->
             <TextBlock Grid.Row="2" Grid.Column="4" Margin="0,12,12,0"
                        Style="{StaticResource EditorParamStaticTextBlockStyle}">
-                Program Burst Interval
+                Program burst interval
             </TextBlock>
             <TextBox Grid.Row="2" Grid.Column="5" Margin="0,12,0,0" Tag="Flare.BI" x:Name="uiPgmFlareValueBI"
                      HorizontalAlignment="Stretch" VerticalAlignment="Center"
                      Style="{StaticResource EditorParamEditTextBoxStyle}" MaxLength="8"
                      LostFocus="TextBox_LostFocus" GotFocus="TextBox_GotFocus"
-                     ToolTipService.ToolTip="TODO"/>
+                     ToolTipService.ToolTip="Flare program burst interval"/>
             <TextBlock Grid.Row="2" Grid.Column="6" Margin="6,12,0,0" VerticalAlignment="Center">seconds</TextBlock>
 
             <!-- FLARE SQ -->
             <TextBlock Grid.Row="3" Grid.Column="4" Margin="0,12,12,0"
                        Style="{StaticResource EditorParamStaticTextBlockStyle}">
-                 Program Salvo Quanity
+                 Program salvo quanity
             </TextBlock>
             <TextBox Grid.Row="3" Grid.Column="5" Margin="0,12,0,0" Tag="Flare.SQ" x:Name="uiPgmFlareValueSQ"
                      HorizontalAlignment="Stretch" VerticalAlignment="Center"
                      Style="{StaticResource EditorParamEditTextBoxStyle}" MaxLength="8"
                      LostFocus="TextBox_LostFocus" GotFocus="TextBox_GotFocus"
-                     ToolTipService.ToolTip="TODO"/>
+                     ToolTipService.ToolTip="Flare program salvo quantity"/>
             <TextBlock Grid.Row="3" Grid.Column="6" Margin="6,12,0,0" VerticalAlignment="Center">bursts</TextBlock>
 
             <!-- FLARE SI -->
             <TextBlock Grid.Row="4" Grid.Column="4" Margin="0,12,12,0" 
                        Style="{StaticResource EditorParamStaticTextBlockStyle}">
-                Program Salvo Interval
+                Program salvo interval
             </TextBlock>
             <TextBox Grid.Row="4" Grid.Column="5" Margin="0,12,0,0" Tag="Flare.SI" x:Name="uiPgmFlareValueSI"
                      HorizontalAlignment="Stretch" VerticalAlignment="Center"
                      Style="{StaticResource EditorParamEditTextBoxStyle}" MaxLength="8"
                      LostFocus="TextBox_LostFocus" GotFocus="TextBox_GotFocus"
-                     ToolTipService.ToolTip="TODO"/>
+                     ToolTipService.ToolTip="Flare program salvo interval"/>
             <TextBlock Grid.Row="4" Grid.Column="6" Margin="6,12,0,0" VerticalAlignment="Center">seconds</TextBlock>
 
             <!-- FLARE program reset -->
             <Button Grid.Row="5" Grid.Column="5" Margin="0,12,0,0" x:Name="uiPgmFlareBtnReset"
                     HorizontalAlignment="Stretch" VerticalAlignment="Center"
                     Click="PgmFlareBtnReset_Click"
-                    ToolTipService.ToolTip="TODO">
+                    ToolTipService.ToolTip="Reset flare program to defaults">
                 <StackPanel Orientation="Horizontal">
                     <FontIcon Margin="0,0,6,0"
                               FontFamily="Segoe Fluent Icons" FontSize="14" Glyph="&#xE894;"/>

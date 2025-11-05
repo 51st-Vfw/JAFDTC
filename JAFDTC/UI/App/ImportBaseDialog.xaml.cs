@@ -70,6 +70,8 @@ namespace JAFDTC.UI.App
                 uiRoleHelpText.Text = helpText;
             }
 
+            uiNameText.Header = $"Enter a name for the new {Globals.AirframeNames[config.Airframe]} configuration:";
+
             IsPrimaryButtonEnabled = (!string.IsNullOrEmpty(ConfigName) && (_configList.IsNameUnique(ConfigName)));
         }
 

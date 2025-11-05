@@ -116,7 +116,7 @@ namespace JAFDTC.UI.Base
     /// object presents a ui-centric generic version of the miscellaneous settings for a particular airframe suitable
     /// to binding to ui widgets.
     /// </summary>
-    public sealed class RadioMiscItem : BindableObject
+    public sealed partial class RadioMiscItem : BindableObject
     {
         public IEditRadioPageHelper PageHelper { get; }
 
@@ -215,12 +215,12 @@ namespace JAFDTC.UI.Base
 
         public EditRadioPage()
         {
-            EditPresets = new ObservableCollection<RadioPresetItem>();
+            EditPresets = [ ];
             EditRadio = 0;
             EditItemTag = 1;
 
             InitializeComponent();
-            InitializeBase(null, uiMiscValueDefaultFreq, uiCtlLinkResetBtns, new List<string>() { });
+            InitializeBase(null, uiMiscValueDefaultFreq, uiCtlLinkResetBtns, [ ]);
         }
 
         // ------------------------------------------------------------------------------------------------------------
@@ -418,9 +418,11 @@ namespace JAFDTC.UI.Base
                     newIndex++;
             }
 
-            RadioPresetItem newItem = new(PageHelper, EditItemTag++, radio);
-            newItem.Preset = newPreset.ToString();
-            newItem.Frequency = PageHelper.RadioDefaultFrequency(radio);
+            RadioPresetItem newItem = new(PageHelper, EditItemTag++, radio)
+            {
+                Preset = newPreset.ToString(),
+                Frequency = PageHelper.RadioDefaultFrequency(radio)
+            };
             newItem.ModulationItems = PageHelper.RadioModulationItems(radio, newItem.Frequency);
             if (newItem.ModulationItems != null && newItem.ModulationItems.Count > 0)
             {
@@ -437,7 +439,7 @@ namespace JAFDTC.UI.Base
         /// </summary>
         private void SortEditPresets()
         {
-            List<RadioPresetItem> sortableList = new(EditPresets);
+            List<RadioPresetItem> sortableList = [.. EditPresets ];
             sortableList.Sort((a, b) => int.Parse(a.Preset).CompareTo(int.Parse(b.Preset)));
             EditPresets = new ObservableCollection<RadioPresetItem>(sortableList);
         }
@@ -483,8 +485,7 @@ namespace JAFDTC.UI.Base
         /// </summary>
         private void RebuildRadioSelectMenu()
         {
-            Utilities.SetBulletsInBulletComboBox(uiRadSelectCombo,
-                                                 (int i) => !PageHelper.RadioModuleIsDefault(Config, i));
+            Utilities.SetBulletsInBulletComboBox(uiRadSelectCombo, i => !PageHelper.RadioModuleIsDefault(Config, i));
         }
 
         /// <summary>
@@ -515,7 +516,7 @@ namespace JAFDTC.UI.Base
             if (string.IsNullOrEmpty(EditMisc.DefaultTuning) || EditMisc.HasErrors)
                 uiMiscTextDefaultLabel.Text = "";
             else if (int.TryParse(EditMisc.DefaultTuning, out _))
-                uiMiscTextDefaultLabel.Text = "Preset";
+                uiMiscTextDefaultLabel.Text = "preset";
             else
                 uiMiscTextDefaultLabel.Text = "MHz";
         }
@@ -535,7 +536,7 @@ namespace JAFDTC.UI.Base
                 foreach (RadioPresetItem item in EditPresets)
                     item.IsEnabled = isEditable;
 
-            Utilities.SetEnableState(uiBarAdd, isEditable && (EditPresets.Count < PageHelper.RadioMaxPresets(EditRadio)));
+            Utilities.SetEnableState(uiAddBtn, isEditable && (EditPresets.Count < PageHelper.RadioMaxPresets(EditRadio)));
 
             Utilities.SetEnableState(uiMiscValueDefaultFreq, isEditable);
             Utilities.SetEnableState(uiMiscCkbxAux1, isEditable);
@@ -693,7 +694,7 @@ namespace JAFDTC.UI.Base
 
             base.OnNavigatedTo(args);
 
-            List<FrameworkElement> items = new();
+            List<FrameworkElement> items = [ ];
             for (int i = 0; i < PageHelper.RadioNames.Count; i++)
                 items.Add(Utilities.BulletComboBoxItem(PageHelper.RadioNames[i], i.ToString()));
             uiRadSelectCombo.ItemsSource = items;

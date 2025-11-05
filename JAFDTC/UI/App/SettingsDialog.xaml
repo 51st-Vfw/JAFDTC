@@ -49,7 +49,7 @@ https://www.gnu.org/licenses/.
         <StackPanel Grid.Row="0" Margin="0,12,0,0" Orientation="Horizontal"
                     HorizontalAlignment="Center">
             <TextBlock Width="120" VerticalAlignment="Center" HorizontalTextAlignment="Right">
-                Wing Name
+                Wing name
             </TextBlock>
             <TextBox Width="228" Margin="12,0,0,0"
                      VerticalAlignment="Center"
@@ -71,7 +71,7 @@ https://www.gnu.org/licenses/.
         <StackPanel Grid.Row="2" Margin="0,24,0,0" Orientation="Horizontal"
                     HorizontalAlignment="Center">
             <TextBlock Width="120" VerticalAlignment="Center" HorizontalTextAlignment="Right">
-                Upload Feedback
+                Upload feedback
             </TextBlock>
             <ComboBox Width="228" Margin="12,0,0,0"
                       x:Name="uiSetComboFeedback"
@@ -79,11 +79,11 @@ https://www.gnu.org/licenses/.
                       SelectionChanged="SetComboFeedback_SelectionChanged">
                 <!-- tag is SettingsData.UploadFeedbackTypes enum -->
                 <ComboBox.Items>
-                    <TextBlock Text="Audio Only" Tag="0"/>
-                    <TextBlock Text="Lights Test Only" Tag="4"/>
-                    <TextBlock Text="Audio &amp; Done Message" Tag="1"/>
-                    <TextBlock Text="Audio &amp; Progress Messages" Tag="2"/>
-                    <TextBlock Text="Audio &amp; Lights Test" Tag="3"/>
+                    <TextBlock Text="Audio only" Tag="0"/>
+                    <TextBlock Text="Lights test only" Tag="4"/>
+                    <TextBlock Text="Audio &amp; done message" Tag="1"/>
+                    <TextBlock Text="Audio &amp; progress messages" Tag="2"/>
+                    <TextBlock Text="Audio &amp; lights test" Tag="3"/>
                 </ComboBox.Items>
 
             </ComboBox>
@@ -92,19 +92,19 @@ https://www.gnu.org/licenses/.
                   x:Name="uiSetCkbxNPIgnoresAirframe"
                   HorizontalAlignment="Center"
                   Click="SetCkbxNPIgnoresAirframe_Click">
-            Navpoint Import Ignores Airframe
+            Navpoint import ignores airframe
         </CheckBox>
         <CheckBox Grid.Row="4" Margin="0,0,0,0"
                   x:Name="uiSetCkbxRemainOnTop"
                   HorizontalAlignment="Center"
                   Click="SetCkbxRemainOnTop_Click">
-            JAFDTC Window Remains on Top
+            JAFDTC window remains on top
         </CheckBox>
         <CheckBox Grid.Row="5" Margin="0,24,0,0"
                   x:Name="uiSetCkbxVersionCheck"
                   HorizontalAlignment="Center"
                   Click="SetCkbxVersionCheck_Click">
-            Check for New Versions at Launch
+            Check for new JAFDTC versions at launch
         </CheckBox>
         <Button Grid.Row="6" Margin="0,24,0,0"
                 x:Name="uiSetBtnInstall"
