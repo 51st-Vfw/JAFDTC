@@ -389,26 +389,21 @@ you can perform on the clicked configuration.
 
 ### Status Area
 
-The status area occupies the bottom part of the configuration list page. On the right side of
-this region is information showing the current status of DCS. There are three pieces of
-status here, each marked with a red cross or green checkmark,
+The status area occupies the bottom part of the configuration list page in area (5). On the
+right side of this region is the *DCS Status* area showing information on the current status
+of DCS. There are three pieces of status here, each marked with either a red cross or green
+checkmark,
 
 - **Lua Installed** &ndash; Indicates that the Lua support is properly installed in DCS.
 - **Running** &ndash; Indicates that DCS is currently running (though not necessarily running
   a mission).
-- **Pilot in Pit** &ndash; Indicates that DCS is currently running a mission along with the
-  type of airframe currently in use.
+- **Pilot in Pit** &ndash; Indicates that DCS is currently running a mission with a pilot in
+  pit along with the type of airframe that is currently in use.
 
-For example,
+To upload a configuration, all three status items must be marked with a green chekmark.
 
-**TODO REBUILD**
-![](images/Core_Cfg_DCS_Status.png)
-
-shows two different status areas. On the left, DCS is not running but the Lua support is
-installed. On the right, DCS is running a mission where the player is piloting an F-16C
-Viper.
-
-The left side of the status area identifies the pilot and wing as specified through the
+The left side of the status area is the *Pilot Information* area that identifies the pilot
+and wing as specified through the
 [JAFDTC Settings](#settings).
 
 ## System Editor Page
@@ -423,17 +418,19 @@ which you edit a system configuration is similar.
 Working from top to bottom, the primary components of this page include,
 
 1. [**_Configuration Information_**](#system-editor-header)
-   &ndash; TODO.
+   &ndash; Provides the name of the current configuration and a control to reutnrn to the
+   [_Configuration List Page_](#configuration-list-page).
 2. [**_Airframe Information_**](#system-editor-header)
-   &ndash; TODO.
+   &ndash; Provides the name of the current airframe and a control to export the current
+   configuration as a `.jafdtc` fie.
 3. [**_System List_**](#system-list)
-   &ndash; TODO.
+   &ndash; Lists the systems that the configuration can set up.
 4. [**_System Editor_**](#system-editor)
-   &ndash; TODO.
+   &ndash; Provides the interface to edit the system selected in the system list.
 5. [**_Other Controls_**](#other-editor-controls)
-   &ndash; TODO.
+   &ndash; Airframe-specific controls to manage other aspects of the configuration.
 6. [**_Common Editor Controls_**](#common-editor-controls)
-   &ndash; TODO.
+   &ndash; Common controls that are often part of system editors.
 
 The reaminder of this section discusses each of these elements in more detail.
 
@@ -737,7 +734,7 @@ The other fields in the dialog together specify the filter,
 - **Tags** &ndash; Limits the points of interest to those that contain the specified tags. For
   eaxmple, setting this field to `foo; bar` matches any point of interest with tags that
   include `foo` and `bar` (comparisons are case-insensitive).
-- **Shows...** &ndash; Shows only DCS, User, or Campaign points of interest as selected.
+- **Shows...** &ndash; Shows DCS, User, or Campaign points of interest as selected.
 
 For example, setting **Theater** to "Nevada", **Campaign** to "Dark Materials", **Tags** to
 "Base; Target", and selecting only **Shows Campaign...** would limit the POIs listed to

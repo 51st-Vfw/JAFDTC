@@ -6,7 +6,7 @@
 
 JAFDTC supports configuration of the following systems in the F-14A/B Tomcat,
 
-* Waypoints
+* [Waypoints](#waypoints)
 
 Each of these areas is covered in more depth below. See the
 [_User's Guide_](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/README.md) and

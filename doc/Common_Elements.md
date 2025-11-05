@@ -24,32 +24,26 @@ configuration for a specific pilot in an element.
 You can import a `.jafdtc` file either through an import control in the user interface (such
 as the **Import** button on the
 [configuration list page](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/README.md#configuration-list-page))
-or by simply double-clicking a `.jafdtc` file from Widnows File Explorer.
-
-## Importing Configurations from Similar Airframes
-
-If the current airframe in the
-[configuration list page](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/README.md#configuration-list-page)
-matches the airframe in the configuration being imported, JAFDTC displays the following dialog,
+or by simply double-clicking a `.jafdtc` file from Widnows File Explorer. After doing so,
+JAFDTC displays the following dialog,
 
 ![](images/common_import_dialog.png)
 
-There are two fields in this dialog. The top field, (1), allows you to specify a name for the
-imported configuration. The bottom field, (2), is optional and specifies the pilot role to apply
-during import.
+There are two fields in this dialog. The top field, (1), selects the name for the imported
+configuration. The bottom field, (2), specifies the pilot role to apply during import and is
+optional.
 
-> The *Pilot Role* field is only present if the airframe supports pilot roles during import.
-> Pilot roles, and how they modify an imported configuration, are airframe-specific and
+Roles allow JAFDTC to customize the configration in the `.jafdtc` file prior to import. This
+allows you to distribute a single `.jafdtc` file to all members of the flight and have JAFDTC
+update it as appropriate for each pilot's position in the flight. This is airframe-dependent.
+
+> The *Pilot Role* field is only present for airframes that support roles no import. As a
+> result, roles, and how they modify an imported configuration, are airframe-specific and
 > discussed further in the relevant
-> [airframe guides](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/README.md#what-now).
+> [airframe guide](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/README.md#what-now).
 
 After filling in the fields, pressing **OK** will build a new configuration in your
 configuration library using the imported `.jafdtc` file.
-
-## Importing Configurations from Dissimilar Airframes
-
-JAFDTC does not currently support importing from dissimilar airframes. This support is planned
-for a future release, however.
 
 # Common Interface Tasks
 

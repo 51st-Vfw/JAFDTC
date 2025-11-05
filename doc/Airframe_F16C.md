@@ -1,20 +1,26 @@
 # JAFDTC: Configuring F-16C Viper Airframes
 
-**_Version 1.0.0 of 17-September-24_**
+**_Version 1.1.0 of TODO_**
 
 JAFDTC supports configuration of the following systems in the Viper,
 
-* Countermeasures
-* Datalink
-* Data Cartridge (DTE/DTC)
-* HARM ALIC threat tables
-* HARM HTS manual threat table and sensor threat classes
-* MFD formats across all master modes and initial format selections
-* Miscellaneous DED systems such as TACAN/ILS, ALOW, BNGO, BULL, LASR, and HMCS DED/UFC
-  along with HMCS intensity
-* Radios
-* SMS munitions parameters
-* Steerpoints including OAP, VIP, and VRP reference points
+* [Countermeasures](#countermeasures)
+* [Datalink](#datalink)
+* [Data Cartridge](#data-cartridge-dtcdte)
+  (DTE/DTC)
+* [HARM ALIC](#harm-alic)
+  threat tables
+* [HARM HTS](#harm-hts)
+  manual threat table and sensor threat classes
+* [MFD formats](#mfd-formats)
+  across all master modes and initial format selections
+* [Miscellaneous DED](#miscellaneous)
+  systems such as TACAN/ILS, ALOW, BNGO, BULL, LASR, HMCS DED/UFC, and HMCS intensity
+* [Radios](#communications)
+* [SMS](#sms-munitions)
+  munitions parameters
+* [Steerpoints](#steerpoints)
+  including OAP, VIP, and VRP reference points
 
 Each of these areas is covered in more depth below. See the
 [_User's Guide_](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/README.md) and
@@ -40,7 +46,9 @@ JAFDTC currently supports four functions from the Viper cockpit,
     configuration into the jet. JAFDTC provides feedback during the upload according to the
     **Upload Feedback**
     [setting](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/README.md#settings).
-  * A press longer than 1.0s causes JAFDTC to open up the in-mission DCS DTE interface.
+  * A press longer than 1.0s causes JAFDTC to open up the in-mission DCS DTE interface. Prior
+    to doing so, JAFDTC will generate the merged `.dtc` according to the settings of the
+    [DTC system](#data-cartridge-dtcdte).
 * **FLIR Rocker Switch** &ndash; Pressing the `UP` and `DOWN` sides of the rocker moves to the
   previous and next configurations, respectively. On the first press, JAFDTC briefly displays
   the name of the currently selected configuration. Subsequent presses step up or down through
@@ -54,7 +62,47 @@ Other functions may be implemented later.
 
 # Pilot Roles During Import
 
-TODO mostly "role" discussion
+The Viper supports pilot roles when importing from a `.jafdtc` file. Roles allow JAFDTC to
+customize the imported file based on your role in the flight as
+[discussed earlier](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/Common_Elements.md#importing-configurations-from-similar-airframes). For the Viper, JAFDTC can adjust the
+following parameters from the configuration based on role,
+
+- Ownship callsign in the
+  [Datalink System](#datalink).
+- Ownship flight/element number in the
+  [Datalink System](#datalink).
+- Ownship flight lead status in the
+  [Datalink System](#datalink).
+- TACAN yardstick setup in the
+  [Miscellaneous System](#miscellaneous).
+
+The role is specified by giving the callsign information for the pilot importing the `.jafdtc`
+along with the TACAN for the flight lead. Both of these are optional.
+
+The callsign is specified in the "CCnn" format. For example, *JEDI 2-3* is represented as
+*JI23*, *VENOM1-1* as *VN11*, and so on. TACAN is specified as a channel; for example, 39Y,
+40X, etc. The following table presents some examples,
+
+|Role    |Callsign   |F/E        |Is Lead?   |TACAN Channel|TACAN Mode |
+|:------:|:---------:|:---------:|:---------:|:-----------:|:---------:|
+|CY23 39X| CY        | 23        | No        | 102X        | A/A TR    | 
+|LO31 41X| LO        | 31        | Yes       | 41X         | A/A TR    | 
+|VN11    | VN        | 11        | Yes       | Unchanged   | Unchanged |
+|38Y     | Unchanged | Unchanged | Unchanged | 38Y or 101Y | A/A TR    |
+
+Here, "unchanged" implies the value in the `.jafdtc` file is not changed during import. At
+import, JAFDTC attempts to determine the flight/element number of the pilot with the
+following procedure,
+
+- Callsign from the role string provied during import.
+- If there is no callsign in the role, infer the flight/element number by looking for the
+  pilot matching the pilot name from the
+  [JAFDTC Settings](ttps://github.com/51st-Vfw/JAFDTC/tree/master/doc/README.md#settings)
+  in the datalink team table from the configuration.
+- If unable to infer from datalink team, use the value from the configuration.
+
+Once the element number is known, the lead and TACAN setup can be determined with the
+assumption that lead will setup a yardstick will all members of the flight.
 
 # Configurable Systems on the Viper
 
@@ -69,27 +117,59 @@ powered up, stores loaded, and so on.
 ## Communications
 
 The communications configuration allow you to update the presets and initial configuration of
-the COM1/COM1 radios in the Viper. This configuration includes the presets as well as the
-initial radio frequency and guard monitor.
-This editor extends the interface of the common communication system editor the
+the COM1 (UHF) and COM2 (VHF) radios in the Viper. This configuration includes the presets as
+well as the initial radio frequency and whether or not to setup to monitor guard. This editor
+extends the interface of the common communication system editor the
 [_User's Guide_](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/README.md#communications-system-editors)
 describes.
 
-**TODO REBUILD**
-![](images/Viper_Sys_COMM.png)
+![](images/viper_comm_ui.png)
 
-The Viper editor includes additional controls btween the preset list and common editor controls.
-Below the preset list is a field to set the initial frequency or preset to select after
-uploading the configuration to the jet. The background of this field will turn red if the
-value is invalid.
+Working from top to bottom, the primary components of this page include,
 
-> Note that unless there is an initial frequency or preset specified, JAFDTC will not change
-> the frequency tuned on a radio from the default frequency.
+1. [**_Radio Selection_**](#radio-selection-and-preset-list)
+   &ndash; Selects the radio being edited and adds presets to the preset list.
+2. [**_Preset List_**](#radio-selection-and-preset-list)
+   &ndash; Lists currently defined presets.
+3. [**_Radio Details_**](#radio-details)
+   &ndash; Sets some per-radio settings.
+4. **_Common Editor Controls_**
+   &ndash; Common controls for system editors as described earlier in the
+   [_User's Guide_](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/README.md#common-editor-controls).
 
-Also, the COM1 (UHF) radio can be set to monitor guard through the "monitor guard" checkbox on
-the right under the preset list.
+The reaminder of this section discusses these elements in more detail.
 
-TODO: integration with dcs dtc
+### Radio Selection and Preset List
+
+The main portion of the radio interface in areas (1) and (2) functions as described earlier
+in the
+[_User's Guide_](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/README.md#common-editor-controls).
+The Viper supports up to 20 presets on each of its two radios.
+
+### Radio Details
+
+The Viper editor includes additional controls beyond those in the common 
+[radio interface](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/README.md#communications-system-editors)
+located in area (3) between the preset list and common editor controls. For both COM1 and
+COM2, these controls include a text box to set the initial frequency or preset to select
+after uploading the configuration to the jet. The background of this field will turn red if
+the value is invalid.
+
+> Unless there is an initial frequency or preset specified, JAFDTC will not change the
+> frequency tuned on a radio from the default frequency.
+
+In addition, for the COM1 (UHF) radio, the controls provide an option to configure the radio
+to monitor the UHF guard frequency (243.000 MHz).
+
+### Integration with DCS DTC
+
+The presets configured in this editor can be merged with the merged DTC tape as described
+in the
+[_Common Elements Guide_](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/Common_Elements.md#working-with-the-native-dcs-dtc).
+For the Viper, any COM1 or COM2 presets defined in the JAFDTC UI are copied into the merged
+tape when the system is set to be merged. Regardless of the DTC settings, JAFDTC will contine
+to set up the initial frequency/preset and guard monitoring as these parameters are not
+configured by the DCS DTC.
 
 ## Countermeasures
 
@@ -97,29 +177,37 @@ The countermeasures system manages parameters set through the CMDS DED page. The
 control the operation of the countermeasures and allow you to setup different programs for the
 chaff and flare dispensers.
 
-TODO integration with dcs dtc
+![](images/viper_cmds_ui.png)
 
-**TODO REBUILD**
-![](images/Viper_Sys_CMDS.png)
+Working from top to bottom, the primary components of this page include,
 
-The top row of the editor adjusts overall parameters of the countermeasures system while the
-bottom portion allows you to edit specific countermeasure programs in the countermeasure
-system.  The common controls implement the link and reset functionality described
-[earlier](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/README.md#common-editor-controls).
+1. [**_System Parameters_**](#countermeasure-system-parameters)
+   &ndash; Sets system-wide parameters.
+2. [**_Countermeasure Program Editor_**](#countermeasure-program-editor)
+   &ndash; TODO.
+3. [**_Countermeasure Programe Visualizer_**](#countermeasure-program-visualizer)
+   &ndash; TODO.
+4. **_Common Editor Controls_**
+   &ndash; Common controls for system editors as described earlier in the
+   [_User's Guide_](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/README.md#common-editor-controls).
+
+The reaminder of this section discusses these elements in more detail.
 
 ### Countermeasure System Parameters
 
-The system parameters include the BINGO levels for chaff and flares. These values determine
-the number of consumables (flares or chaff) that trigger a BINGO warning from the avionics.
+The system parameters include the BINGO levels for chaff and flares and are set in area (1).
+These values determine the number of consumables (flares or chaff) that trigger a BINGO
+warning from the avionics.
 
-### Countermeasure Programs
+### Countermeasure Program Editor
 
 The Viper supports six countermeasure programs: MAN1, MAN2, MAN3, MAN4, PANIC, and BYPASS. Each
 program has settings for the sequencing of dispnesing flares and chaff when running the
-program. The program selection menu selects which of the programs is being edited in the chaff
-and flare columns below. A blue dot next to the program name in the program selection menu
-indicates the program has been changed from default values. The upward- and downward-pointing
-chevrons to the right of the progam selection menu step through the available programs.
+program. The program selection menu at the top of area (2) selects which of the programs is
+being edited in the chaff and flare columns below. A blue dot next to the program name in the
+program selection menu indicates the program has been changed from default values. The upward-
+and downward-pointing chevrons to the right of the progam selection menu step through the
+available programs.
 
 In the chaff and flare columns, you can edit the burst quantity (BQ), burst interval (BI),
 salvo quantity (SQ), and salvo interval (SI) parameters for the program selected in the
@@ -132,6 +220,10 @@ four of the parameters (BQ, BI, SQ, and SI) in the column to their default value
 Below the programming table is a graphical representation of the countermeasure programs. This
 shows the timing of the flare and chaff releases on a common timeline. Gold circles represent
 flares while teal diamonds represent chaff.
+
+### Integration with DCS DTC
+
+TODO integration with dcs dtc
 
 ## Datalink
 
@@ -154,7 +246,7 @@ will share HTS information.
 
 The datalink system editor page looks like this (from Raven's perspective),
 
-![](images/Viper_Sys_DLNK_Top.png)
+![](images/viper_dlnk_ui.png)
 
 The top-most section of the page allows you to select the table entry for your ownship, your
 callsign, and whether or not you are a flight lead. The default callsign of dashes indicates
