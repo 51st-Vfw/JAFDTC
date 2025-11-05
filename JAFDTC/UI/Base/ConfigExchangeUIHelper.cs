@@ -109,45 +109,8 @@ namespace JAFDTC.UI.Base
         }
 
         /// <summary>
-        /// TODO: document
-        /// </summary>
-        private static async Task<ContentDialogResult> ImportDissimilarAirframeUI(XamlRoot root,
-                                                                                  ConfigurationList configList,
-                                                                                  IConfiguration config)
-        {
-// TODO: on disimilar imports, may want to prompt for config to merge with or allow direct import?
-            await Utilities.Message1BDialog(root, "Mismatched Airframe", $"Cannot import that file here.");
-            return ContentDialogResult.None;
-        }
-
-        /// <summary>
-        /// handle the ui for importing a configuration for an airframe that matches that of the configuration
-        /// list. updates the input configuration with the new name and adjusts it based on any role adjustements
-        /// specified. returns the result of the dialog.
-        /// </summary>
-        private static async Task<ContentDialogResult> ImportSimilarAirframeUI(XamlRoot root,
-                                                                               ConfigurationList configList,
-                                                                               IConfiguration config)
-        {
-            string importName = configList.UniquifyName(config.Name);
-            ImportBaseDialog importDialog = new(configList, config, importName)
-            {
-                XamlRoot = root,
-                Title = $"Creating New Configuration From File",
-                PrimaryButtonText = "OK",
-                CloseButtonText = "Cancel"
-            };
-            ContentDialogResult result = await importDialog.ShowAsync(ContentDialogPlacement.Popup);
-            if (result == ContentDialogResult.Primary)
-            {
-                config.Name = importDialog.ConfigName;
-                config.AdjustForRole(importDialog.ConfigRole);
-            }
-            return result;
-        }
-
-        /// <summary>
-        /// TODO: document
+        /// import the .jafdtc file with user interaction. user is prompted for a name for the new configuration
+        /// along with a pilot role (if roles are supported).
         /// </summary>
         public static async Task<IConfiguration> ConfigImportJAFDTC(XamlRoot root, ConfigurationList configList,
                                                                     string path = null)
@@ -157,29 +120,38 @@ namespace JAFDTC.UI.Base
             {
                 IConfiguration config = FileManager.ReadUnmanagedConfigurationFile(path);
 
-                ContentDialogResult result;
                 if (config.Airframe != configList.Airframe)
-                    result = await ImportDissimilarAirframeUI(root, configList, config);
-                else
-                    result = await ImportSimilarAirframeUI(root, configList, config);
+                    configList = new(config.Airframe);
+                string importName = configList.UniquifyName(config.Name);
 
+                ImportBaseDialog importDialog = new(configList, config, importName)
+                {
+                    XamlRoot = root,
+                    Title = $"Create a New Configuration From File",
+                    PrimaryButtonText = "OK",
+                    CloseButtonText = "Cancel"
+                };
+                ContentDialogResult result = await importDialog.ShowAsync(ContentDialogPlacement.Popup);
                 if (result == ContentDialogResult.Primary)
                 {
+                    config.Name = importDialog.ConfigName;
+                    config.AdjustForRole(importDialog.ConfigRole);
+
                     IConfiguration newConfig = configList.Inject(config);
-                    if (root != null)
-                    {
-                        await Utilities.Message1BDialog(root, "Success",
-                                                        $"Created a new configuration named “{config.Name}” " +
-                                                        $"from the file at:\n\n{path}");
-                        return newConfig;
-                    }
+
+                    await Utilities.Message1BDialog(root, "Success",
+                                                    $"Created a new configuration named “{config.Name}”" +
+                                                    $" for the {Globals.AirframeNames[config.Airframe]}" +
+                                                    $" from the file at:\n\n{path}");
+                    return newConfig;
                 }
             }
             return null;
         }
 
         /// <summary>
-        /// TODO: document
+        /// import the .jafdtc file silently without any user interaction. the name will be uniquified, but role
+        /// changes are not handled.
         /// </summary>
         public static IConfiguration ConfigSilentImportJAFDTC(string path, ConfigurationList configList = null)
         {

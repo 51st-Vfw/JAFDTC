@@ -178,7 +178,7 @@ namespace JAFDTC.UI.App
                         curConfig = ConfigExchangeUIHelper.ConfigSilentImportJAFDTC(path, ConfigList);
                     else
                         curConfig = await ConfigExchangeUIHelper.ConfigImportJAFDTC(Content.XamlRoot, ConfigList, path);
-                    lastConfig = (curConfig != null) ? curConfig : lastConfig;
+                    lastConfig = curConfig ?? lastConfig;
                 }
                 if (lastConfig != null)
                     uiCfgListView.SelectedItem = lastConfig;
