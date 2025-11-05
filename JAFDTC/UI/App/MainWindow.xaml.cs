@@ -145,7 +145,8 @@ namespace JAFDTC.UI.App
             string lastSetup = Settings.LastWindowSetupMain;
 
             nint hWnd = GetWindowHandleForCurrentWindow(this);
-            SizeInt32 baseSize = Utilities.BuildWindowSize(GetDpiForWindow(hWnd), _windSizeBase, lastSetup);
+            double dpiWnd = GetDpiForWindow(hWnd);
+            SizeInt32 baseSize = Utilities.BuildWindowSize(dpiWnd, _windSizeBase, lastSetup);
             AppWindow.Resize(baseSize);
 
             Microsoft.UI.WindowId windowId = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(hWnd);
@@ -153,10 +154,10 @@ namespace JAFDTC.UI.App
             if (appWind != null)
             {
                 appWind.SetIcon(@"Images/JAFDTC_Icon.ico");
-                DisplayArea dispArea = DisplayArea.GetFromWindowId(windowId, DisplayAreaFallback.Nearest);
+                DisplayArea dispArea = DisplayArea.GetFromWindowId(windowId, DisplayAreaFallback.Primary);
                 if (dispArea != null)
                 {
-                    PointInt32 posn = Utilities.BuildWindowPosition(dispArea.WorkArea, baseSize, lastSetup);
+                    PointInt32 posn = Utilities.BuildWindowPosition(dpiWnd, dispArea.WorkArea, baseSize, lastSetup);
                     appWind.Move(posn);
                     _windSizeMax.Width = Math.Max(_windSizeMax.Width, dispArea.WorkArea.Width);
                     _windSizeMax.Height = Math.Max(_windSizeMax.Height, dispArea.WorkArea.Height);

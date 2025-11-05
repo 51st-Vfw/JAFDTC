@@ -64,17 +64,31 @@ namespace JAFDTC.UI
             => $"{windPosn.X} {windPosn.Y} {windSize.Width} {windSize.Height}";
 
         /// <summary>
+        /// returns the position from a setup string.
+        /// </summary>
+        public static PointInt32 GetWindowSetupStringPosn(string setupStr)
+        {
+            List<int> fields = [.. Array.ConvertAll(setupStr.Split(' '), int.Parse)];
+            return new PointInt32() { X = fields[0], Y = fields[1] };
+        }
+
+        /// <summary>
+        /// returns the size from a setup string.
+        /// </summary>
+        public static SizeInt32 GetWindowSetupStringSize(string setupStr)
+        {
+            List<int> fields = [.. Array.ConvertAll(setupStr.Split(' '), int.Parse)];
+            return new SizeInt32() { Width = fields[2], Height = fields[3] };
+        }
+
+        /// <summary>
         /// returns the window size based on the last setup and a starting target size.
         /// </summary>
-        public static SizeInt32 BuildWindowSize(double windowDPI, SizeInt32 size, string lastSetup = null)
+        public static SizeInt32 BuildWindowSize(double windDPI, SizeInt32 size, string lastSetup = null)
         {
             if (!string.IsNullOrEmpty(lastSetup))
-            {
-                List<int> fields = [.. Array.ConvertAll(lastSetup.Split(' '), int.Parse) ];
-                size.Width = fields[2];
-                size.Height = fields[3];
-            }
-            double scaleFactor = windowDPI / 96;
+                size = GetWindowSetupStringSize(lastSetup);
+            double scaleFactor = windDPI / 96.0;
             SizeInt32 baseSize;
             baseSize.Width = (int)(size.Width * scaleFactor);
             baseSize.Height = (int)(size.Height * scaleFactor);
@@ -85,7 +99,8 @@ namespace JAFDTC.UI
         /// returns the window position based on the last setup, work area, and target window size. the window is 
         /// centered in the work area if there's no setup or the placement would put it in a corner.
         /// </summary>
-        public static PointInt32 BuildWindowPosition(RectInt32 workArea, SizeInt32 windSize, string lastSetup = null)
+        public static PointInt32 BuildWindowPosition(double windDPI, RectInt32 workArea, SizeInt32 windSize,
+                                                     string lastSetup = null)
         {
             PointInt32 windPosn = new()
             {
@@ -94,14 +109,17 @@ namespace JAFDTC.UI
             };
             if (!string.IsNullOrEmpty(lastSetup))
             {
-                List<int> fields = [.. Array.ConvertAll(lastSetup.Split(' '), int.Parse) ];
-                if (((workArea.X + workArea.Width - 100) > fields[0]) &&
-                    ((workArea.Y + workArea.Height - 100) > fields[1]))
+                PointInt32 posn = GetWindowSetupStringPosn(lastSetup);
+                if (((workArea.X <= posn.X) && (posn.X < (workArea.X + workArea.Width - 250))) &&
+                    ((workArea.Y <= posn.Y) && (posn.Y < (workArea.Y + workArea.Height - 250))))
                 {
-                    windPosn.X = fields[0];
-                    windPosn.Y = fields[1];
+                    windPosn.X = posn.X;
+                    windPosn.Y = posn.Y;
                 }
             }
+            double scaleFactor = windDPI / 96.0;
+            windPosn.X = (int)(windPosn.X * scaleFactor);
+            windPosn.Y = (int)(windPosn.Y * scaleFactor);
             return windPosn;
         }
 
