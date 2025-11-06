@@ -89,7 +89,7 @@ https://www.gnu.org/licenses/.
         <StackPanel Grid.Row="1" Margin="12,24,12,0">
             <TextBlock Style="{StaticResource EditorTitleTextBlockStyle}"
                        VerticalAlignment="Center">
-                ALIC table Programming:
+                ALIC Table Programming:
             </TextBlock>
         </StackPanel>
 

@@ -93,12 +93,12 @@ https://www.gnu.org/licenses/.
             <TextBlock Grid.Row="1" Grid.Column="0" Margin="12,12,0,12"
                        HorizontalTextAlignment="Right"
                        Style="{StaticResource EditorParamStaticTextBlockStyle}">
-                Points of Interest
+                Points of interest
             </TextBlock>
             <AutoSuggestBox Grid.Row="1" Grid.Column="1" Margin="12,12,0,12" x:Name="uiPoINameFilterBox"
                             VerticalAlignment="Center"
                             HorizontalAlignment="Stretch"
-                            PlaceholderText="Select Point of Interest by Name"
+                            PlaceholderText="Select point of interest by name"
                             QueryIcon="Find"
                             TextMemberPath="Name"
                             GotFocus="PoINameFilterBox_GotFocus"

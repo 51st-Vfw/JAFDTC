@@ -84,7 +84,7 @@ https://www.gnu.org/licenses/.
             <TextBlock Grid.Row="1" Grid.Column="0"
                        Margin="12,12,0,0" HorizontalTextAlignment="Right"
                        Style="{StaticResource EditorParamStaticTextBlockStyle}">
-                TACAN Channel
+                TACAN channel
             </TextBlock>
             <StackPanel Grid.Row="1" Grid.Column="1"
                         Margin="12,12,0,0" Orientation="Horizontal">
@@ -107,7 +107,7 @@ https://www.gnu.org/licenses/.
             <TextBlock Grid.Row="2" Grid.Column="0"
                        Margin="16,12,0,0" HorizontalTextAlignment="Right"
                        Style="{StaticResource EditorParamStaticTextBlockStyle}">
-                TACAN Mode
+                TACAN mode
             </TextBlock>
             <ComboBox Grid.Row="2" Grid.Column="1" Width="96" Tag="TACANMode" x:Name="uiTACANComboMode"
                       Margin="12,12,0,0" VerticalAlignment="Center"
@@ -130,7 +130,7 @@ https://www.gnu.org/licenses/.
             <TextBlock Grid.Row="4" Grid.Column="0"
                        Margin="12,12,0,0" HorizontalTextAlignment="Right" VerticalAlignment="Center"
                        Style="{StaticResource EditorParamStaticTextBlockStyle}">
-                CARA ALOW Setting
+                CARA ALOW setting
             </TextBlock>
             <StackPanel Grid.Row="4" Grid.Column="1"
                         Margin="12,12,0,0" Orientation="Horizontal">
@@ -148,7 +148,7 @@ https://www.gnu.org/licenses/.
             <TextBlock Grid.Row="5" Grid.Column="0" Margin="16,12,0,0"
                        Style="{StaticResource EditorParamStaticTextBlockStyle}"
                        HorizontalTextAlignment="Right">
-                MSL FLOOR Setting
+                MSL FLOOR setting
             </TextBlock>
             <StackPanel Grid.Row="5" Grid.Column="1" Margin="12,12,0,0" Orientation="Horizontal">
                 <TextBox Width="96" Tag="ALOWMSLFloor" x:Name="uiALOWValueMSLFLOOR"
@@ -173,7 +173,7 @@ https://www.gnu.org/licenses/.
             <TextBlock Grid.Row="7" Grid.Column="0"
                        Margin="16,12,0,0" HorizontalTextAlignment="Right"
                        Style="{StaticResource EditorParamStaticTextBlockStyle}">
-                BINGO Setting
+                BINGO setting
             </TextBlock>
             <StackPanel Grid.Row="7" Grid.Column="1"
                         Margin="12,12,0,0" Orientation="Horizontal">
@@ -198,7 +198,7 @@ https://www.gnu.org/licenses/.
             <TextBlock Grid.Row="9" Grid.Column="0"
                        Margin="16,12,0,0" HorizontalTextAlignment="Right"
                        Style="{StaticResource EditorParamStaticTextBlockStyle}">
-                Show BULLS References
+                Show BULLS references
             </TextBlock>
             <CheckBox Grid.Row="9" Grid.Column="1" Tag="BullseyeMode" x:Name="uiBULLCkboxShowRefs"
                       Margin="12,12,0,0" VerticalAlignment="Center"
@@ -208,7 +208,7 @@ https://www.gnu.org/licenses/.
             <TextBlock Grid.Row="10" Grid.Column="0"
                        Margin="16,12,0,0" HorizontalTextAlignment="Right"
                        Style="{StaticResource EditorParamStaticTextBlockStyle}">
-                Bullseye Steerpoint
+                Bullseye steerpoint
             </TextBlock>
             <TextBox Grid.Row="10" Grid.Column="1" Width="96" Tag="BullseyeWP" x:Name="uiBULLValueSP"
                      Margin="12,12,0,0" HorizontalAlignment="Left"
@@ -286,7 +286,7 @@ https://www.gnu.org/licenses/.
             <TextBlock Grid.Row="3" Grid.Column="0" Margin="16,12,0,0"
                        HorizontalTextAlignment="Right"
                        Style="{StaticResource EditorParamStaticTextBlockStyle}">
-                TGP Laser Code
+                ATP/TGP laser code
             </TextBlock>
             <TextBox Grid.Row="3" Grid.Column="1" Width="96" Tag="LaserTGPCode" x:Name="uiLASRValueTGP"
                      Margin="12,12,0,0" HorizontalAlignment="Left"
@@ -297,7 +297,7 @@ https://www.gnu.org/licenses/.
             <TextBlock Grid.Row="4" Grid.Column="0"
                        Margin="16,12,0,0" HorizontalTextAlignment="Right"
                        Style="{StaticResource EditorParamStaticTextBlockStyle}">
-                LST Laser Code
+                LST laser code
             </TextBlock>
             <TextBox Grid.Row="4" Grid.Column="1" Width="96" Tag="LaserLSTCode" x:Name="uiLASRValueLST"
                      Margin="12,12,0,0" HorizontalAlignment="Left"
@@ -308,7 +308,7 @@ https://www.gnu.org/licenses/.
             <TextBlock Grid.Row="5" Grid.Column="0"
                        Margin="16,12,0,0" HorizontalTextAlignment="Right"
                        Style="{StaticResource EditorParamStaticTextBlockStyle}">
-                Laser ST Time
+                Laser ST time
             </TextBlock>
             <StackPanel Grid.Row="5" Grid.Column="1"
                         Margin="12,12,0,0" Orientation="Horizontal">
@@ -334,7 +334,7 @@ https://www.gnu.org/licenses/.
             <TextBlock Grid.Row="7" Grid.Column="0"
                        Margin="16,6,0,0" HorizontalTextAlignment="Right" VerticalAlignment="Center"
                        Style="{StaticResource EditorParamStaticTextBlockStyle}">
-                HUD Blanking
+                HUD blanking
             </TextBlock>
             <CheckBox Grid.Row="7" Grid.Column="1" Tag="HMCSBlankHUD" x:Name="uiHMCSCkboxBlankHUD"
                       Margin="12,6,0,0" VerticalAlignment="Center"
@@ -345,7 +345,7 @@ https://www.gnu.org/licenses/.
                        Style="{StaticResource EditorParamStaticTextBlockStyle}"
                        HorizontalTextAlignment="Right"
                        VerticalAlignment="Center">
-                Cockpit Blanking
+                Cockpit blanking
             </TextBlock>
             <CheckBox Grid.Row="8" Grid.Column="1" Tag="HMCSBlankCockpit" x:Name="uiHMCSCkboxBlankCock"
                       Margin="12,6,0,0" VerticalAlignment="Center"
@@ -356,7 +356,7 @@ https://www.gnu.org/licenses/.
                        Style="{StaticResource EditorParamStaticTextBlockStyle}"
                        HorizontalTextAlignment="Right"
                        VerticalAlignment="Center">
-                RWR Display
+                RWR display
             </TextBlock>
             <CheckBox Grid.Row="9" Grid.Column="1" Tag="HMCSDisplayRWR" x:Name="uiHMCSCkboxShowRWR"
                       Margin="12,6,0,0" VerticalAlignment="Center"
@@ -366,7 +366,7 @@ https://www.gnu.org/licenses/.
             <TextBlock Grid.Row="10" Grid.Column="0"
                        Margin="12,12,0,0" HorizontalTextAlignment="Right" VerticalAlignment="Center"
                        Style="{StaticResource EditorParamStaticTextBlockStyle}">
-                Declutter Level
+                Declutter level
             </TextBlock>
             <ComboBox Grid.Row="10" Grid.Column="1" Width="125" Tag="HMCSDeclutterLvl" x:Name="uiHMCSComboDeclutSelect"
                       Margin="12,12,0,0" VerticalAlignment="Center"
@@ -374,16 +374,16 @@ https://www.gnu.org/licenses/.
                       ToolTipService.ToolTip="Select declutter mode for JHMCS (1 least, 3 most)">
                 <ComboBox.Items>
                     <!-- tag is enum HMCSDeclutterLevels, default is HMCSDeclutterLevels.LVL1 -->
-                    <TextBlock Text="LVL1 (Least)" Tag="+0"/>
+                    <TextBlock Text="LVL1 (least)" Tag="+0"/>
                     <TextBlock Text="LVL2" Tag="1"/>
-                    <TextBlock Text="LVL3 (Most)" Tag="2"/>
+                    <TextBlock Text="LVL3 (most)" Tag="2"/>
                 </ComboBox.Items>
             </ComboBox>
             <TextBlock Grid.Row="11" Grid.Column="0" Margin="12,12,0,0"
                        Style="{StaticResource EditorParamStaticTextBlockStyle}"
                        HorizontalTextAlignment="Right"
                        VerticalAlignment="Center">
-                Symbology Intensity
+                Symbology intensity
             </TextBlock>
             <Slider Grid.Row="11" Grid.Column="1" x:Name="uiHMCSSliderIntensity"
                     Margin="12,16,0,0" VerticalAlignment="Bottom"

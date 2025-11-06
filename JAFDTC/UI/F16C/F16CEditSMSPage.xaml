@@ -143,14 +143,14 @@ https://www.gnu.org/licenses/.
             <CheckBox Grid.Row="2" Grid.Column="2" Margin="16,12,0,0" Tag="IsProfileSelected" x:Name="uiCkboxProfileEnb"
                       VerticalAlignment="Center"
                       Click="CheckBox_Clicked">
-                Set as Current Profile
+                Set as current profile
             </CheckBox>
 
             <!-- Employment -->
             <TextBlock Grid.Row="3" Grid.Column="0" Margin="12,12,0,0" x:Name="uiLabelEmploy"
                        VerticalAlignment="Center"
                        Style="{ThemeResource EditorParamStaticTextBlockStyle}">
-                Employment Mode
+                Employment mode
             </TextBlock>
             <ComboBox Grid.Row="3" Grid.Column="1" Margin="12,12,0,0" Tag="EmplMode" x:Name="uiComboEmploy"
                       HorizontalAlignment="Stretch" VerticalAlignment="Center"
@@ -162,7 +162,7 @@ https://www.gnu.org/licenses/.
             <TextBlock Grid.Row="4" Grid.Column="0" Margin="12,12,0,0" x:Name="uiLabelRelMode"
                        VerticalAlignment="Center"
                        Style="{ThemeResource EditorParamStaticTextBlockStyle}">
-                Release Mode
+                Release mode
             </TextBlock>
             <ComboBox Grid.Row="4" Grid.Column="1" Margin="12,12,0,0" Tag="ReleaseMode" x:Name="uiComboRelMode"
                       HorizontalAlignment="Stretch" VerticalAlignment="Center"
@@ -173,7 +173,7 @@ https://www.gnu.org/licenses/.
                         Orientation="Horizontal">
                 <TextBlock Style="{ThemeResource EditorParamStaticTextBlockStyle}" x:Name="uiLabelRippleQty"
                            VerticalAlignment="Center">
-                    Ripple
+                    ripple
                 </TextBlock>
                 <TextBox Width="64" Margin="12,0,0,0" Tag="RipplePulse" x:Name="uiValueRippleQty"
                          HorizontalAlignment="Left" VerticalAlignment="Center"
@@ -252,7 +252,7 @@ https://www.gnu.org/licenses/.
             <TextBlock Grid.Row="6" Grid.Column="0" Margin="12,12,0,0" x:Name="uiLabelFuzeMode"
                        VerticalAlignment="Center"
                        Style="{ThemeResource EditorParamStaticTextBlockStyle}" >
-                Fuze Mode
+                Fuze mode
             </TextBlock>
             <ComboBox Grid.Row="6" Grid.Column="1" Margin="12,12,0,0" Tag="FuzeMode" x:Name="uiComboFuzeMode"
                       HorizontalAlignment="Stretch" VerticalAlignment="Center"
@@ -264,7 +264,7 @@ https://www.gnu.org/licenses/.
             <TextBlock Grid.Row="7" Grid.Column="0" Margin="12,12,0,0" x:Name="uiLabelArmDelay"
                        VerticalAlignment="Center"
                        Style="{ThemeResource EditorParamStaticTextBlockStyle}">
-                Arm Delay
+                Arm delay
             </TextBlock>
             <TextBox Grid.Row="7" Grid.Column="1" Margin="12,12,0,0" Tag="ArmDelay" x:Name="uiValueArmDelay"
                      VerticalAlignment="Center"
@@ -280,7 +280,7 @@ https://www.gnu.org/licenses/.
             <TextBlock Grid.Row="8" Grid.Column="0" Margin="12,12,0,0" x:Name="uiLabelArmDelayMode"
                        VerticalAlignment="Center"
                        Style="{ThemeResource EditorParamStaticTextBlockStyle}" >
-                Arm Delay
+                Arm delay
             </TextBlock>
             <ComboBox Grid.Row="8" Grid.Column="1" Margin="12,12,0,0" Tag="ArmDelayMode" x:Name="uiComboArmDelayMode"
                       HorizontalAlignment="Stretch" VerticalAlignment="Center"
@@ -297,7 +297,7 @@ https://www.gnu.org/licenses/.
             <TextBlock Grid.Row="9" Grid.Column="0" Margin="12,12,0,0" x:Name="uiLabelArmDelay2"
                        VerticalAlignment="Center"
                        Style="{ThemeResource EditorParamStaticTextBlockStyle}">
-                Arm Delay 2
+                Arm delay 2
             </TextBlock>
             <TextBox Grid.Row="9" Grid.Column="1" Margin="12,12,0,0" Tag="ArmDelay2" x:Name="uiValueArmDelay2"
                      VerticalAlignment="Center"
@@ -314,7 +314,7 @@ https://www.gnu.org/licenses/.
             <TextBlock Grid.Row="10" Grid.Column="0" Margin="12,12,0,0" x:Name="uiLabelBurstAlt"
                        VerticalAlignment="Center"
                        Style="{ThemeResource EditorParamStaticTextBlockStyle}">
-                Burst Altitude
+                Burst altitude
             </TextBlock>
             <TextBox Grid.Row="10" Grid.Column="1" Margin="12,12,0,0" Tag="BurstAlt" x:Name="uiValueBurstAlt"
                      VerticalAlignment="Center"
@@ -330,7 +330,7 @@ https://www.gnu.org/licenses/.
             <TextBlock Grid.Row="11" Grid.Column="0" Margin="12,12,0,0" x:Name="uiLabelReleaseAng"
                        VerticalAlignment="Center"
                        Style="{ThemeResource EditorParamStaticTextBlockStyle}">
-                Release Angle
+                Release angle
             </TextBlock>
             <TextBox Grid.Row="11" Grid.Column="1" Margin="12,12,0,0" Tag="ReleaseAng" x:Name="uiValueReleaseAng"
                      VerticalAlignment="Center"
@@ -346,7 +346,7 @@ https://www.gnu.org/licenses/.
             <TextBlock Grid.Row="12" Grid.Column="0" Margin="12,12,0,0" x:Name="uiLabelImpactAng"
                        VerticalAlignment="Center"
                        Style="{ThemeResource EditorParamStaticTextBlockStyle}">
-                Impact Angle
+                Impact angle
             </TextBlock>
             <TextBox Grid.Row="12" Grid.Column="1" Margin="12,12,0,0" Tag="ImpactAng" x:Name="uiValueImpactAng"
                      VerticalAlignment="Center"
@@ -363,7 +363,7 @@ https://www.gnu.org/licenses/.
             <TextBlock Grid.Row="13" Grid.Column="0" Margin="12,12,0,0" x:Name="uiLabelImpactAzi"
                        VerticalAlignment="Center"
                        Style="{ThemeResource EditorParamStaticTextBlockStyle}">
-                Impact Azimuth
+                Impact azimuth
             </TextBlock>
             <TextBox Grid.Row="13" Grid.Column="1" Margin="12,12,0,0" Tag="ImpactAzi" x:Name="uiValueImpactAzi"
                      VerticalAlignment="Center"
@@ -380,7 +380,7 @@ https://www.gnu.org/licenses/.
             <TextBlock Grid.Row="14" Grid.Column="0" Margin="12,12,0,0" x:Name="uiLabelImpactVel"
                        VerticalAlignment="Center"
                        Style="{ThemeResource EditorParamStaticTextBlockStyle}">
-                Impact Velocity
+                Impact velocity
             </TextBlock>
             <TextBox Grid.Row="14" Grid.Column="1" Margin="12,12,0,0" Tag="ImpactVel" x:Name="uiValueImpactVel"
                      VerticalAlignment="Center"
@@ -397,7 +397,7 @@ https://www.gnu.org/licenses/.
             <TextBlock Grid.Row="15" Grid.Column="0" Margin="12,12,0,0" x:Name="uiLabelCueRng"
                        VerticalAlignment="Center"
                        Style="{ThemeResource EditorParamStaticTextBlockStyle}">
-                Cue Range
+                Cue range
             </TextBlock>
             <TextBox Grid.Row="15" Grid.Column="1" Margin="12,12,0,0" Tag="CueRange" x:Name="uiValueCueRng"
                      VerticalAlignment="Center"
@@ -414,7 +414,7 @@ https://www.gnu.org/licenses/.
             <TextBlock Grid.Row="16" Grid.Column="0" Margin="12,12,0,0" x:Name="uiLabelAutoPwr"
                        VerticalAlignment="Center"
                        Style="{ThemeResource EditorParamStaticTextBlockStyle}" >
-                Auto Power
+                Auto power
             </TextBlock>
             <ComboBox Grid.Row="16" Grid.Column="1" Margin="12,12,0,0" Tag="AutoPwrMode" x:Name="uiComboAutoPwr"
                       HorizontalAlignment="Stretch" VerticalAlignment="Center"

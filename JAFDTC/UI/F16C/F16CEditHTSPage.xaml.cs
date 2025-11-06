@@ -2,7 +2,7 @@
 //
 // F16CEditHTSPage.xaml.cs : ui c# for viper hts editor page
 //
-// Copyright(C) 2023 ilominar/raven
+// Copyright(C) 2023-2025 ilominar/raven
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 // Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -24,7 +24,6 @@ using JAFDTC.Models.F16C.HTS;
 using JAFDTC.UI.App;
 using JAFDTC.UI.Base;
 using JAFDTC.Utilities;
-using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
@@ -92,8 +91,8 @@ namespace JAFDTC.UI.F16C
             InitializeComponent();
             InitializeBase(EditHTS, uiT1ValueCode, uiCtlLinkResetBtns);
 
-            _emitterTitles = new();
-            _emitterTitleMap = new();
+            _emitterTitles = [ ];
+            _emitterTitleMap = [ ];
             foreach (Emitter emitter in EmitterDbase.Instance.Find())
             {
                 string item = $"{emitter.Country} – {emitter.Type} – {emitter.Name}";
@@ -103,22 +102,22 @@ namespace JAFDTC.UI.F16C
                 _emitterTitleMap[item] = emitter;
             }
 
-            _tableEditFields = new List<FontIcon>()
-            {
+            _tableEditFields =
+            [
                 uiT1IconEdit, uiT2IconEdit, uiT3IconEdit, uiT4IconEdit,
                 uiT5IconEdit, uiT6IconEdit, uiT7IconEdit, uiT8IconEdit
-            };
-            _tableFields = new List<List<TextBlock>>()
-            {
-                new() { uiT1RWRText, uiT1ValueCountry, uiT1ValueType, uiT1ValueName },
-                new() { uiT2RWRText, uiT2ValueCountry, uiT2ValueType, uiT2ValueName },
-                new() { uiT3RWRText, uiT3ValueCountry, uiT3ValueType, uiT3ValueName },
-                new() { uiT4RWRText, uiT4ValueCountry, uiT4ValueType, uiT4ValueName },
-                new() { uiT5RWRText, uiT5ValueCountry, uiT5ValueType, uiT5ValueName },
-                new() { uiT6RWRText, uiT6ValueCountry, uiT6ValueType, uiT6ValueName },
-                new() { uiT7RWRText, uiT7ValueCountry, uiT7ValueType, uiT7ValueName },
-                new() { uiT8RWRText, uiT8ValueCountry, uiT8ValueType, uiT8ValueName }
-            };
+            ];
+            _tableFields =
+            [
+                [ uiT1RWRText, uiT1ValueCountry, uiT1ValueType, uiT1ValueName ],
+                [ uiT2RWRText, uiT2ValueCountry, uiT2ValueType, uiT2ValueName ],
+                [ uiT3RWRText, uiT3ValueCountry, uiT3ValueType, uiT3ValueName ],
+                [ uiT4RWRText, uiT4ValueCountry, uiT4ValueType, uiT4ValueName ],
+                [ uiT5RWRText, uiT5ValueCountry, uiT5ValueType, uiT5ValueName ],
+                [ uiT6RWRText, uiT6ValueCountry, uiT6ValueType, uiT6ValueName ],
+                [ uiT7RWRText, uiT7ValueCountry, uiT7ValueType, uiT7ValueName ],
+                [ uiT8RWRText, uiT8ValueCountry, uiT8ValueType, uiT8ValueName ]
+            ];
 
             // HACK: this is a stupid hack because i'm too lazy to figure out how to get this from a resource. fix
             // HACK: this at some point...
@@ -245,7 +244,7 @@ namespace JAFDTC.UI.F16C
                 fields[0].Text = (emitterList.Count != 0) ? emitterList[0].F16RWR : "–";
                 fields[1].Text = (emitterList.Count != 0) ? emitterList[0].Country : "–";
                 fields[2].Text = (emitterList.Count != 0) ? emitterList[0].Type : "–";
-                string name = (string.IsNullOrEmpty(curCode)) ? "No Emitter Programmed" : "Unknown Emitter";
+                string name = (string.IsNullOrEmpty(curCode)) ? "No emitter programmed" : "Unknown emitter";
                 if (emitterList.Count != 0)
                 {
                     name = emitterList[0].Name;
@@ -266,7 +265,7 @@ namespace JAFDTC.UI.F16C
         {
             UpdateThreatTable();
 
-            List<string> threats = new();
+            List<string> threats = [ ];
             for (int threat = 1; threat < EditHTS.EnabledThreats.Length; threat++)
                 if (EditHTS.EnabledThreats[threat])
                     threats.Add($"T{threat}");

@@ -65,7 +65,7 @@ https://www.gnu.org/licenses/.
         <Grid Grid.Row="1" Margin="12,12,0,0">
             <StackPanel Orientation="Horizontal">
                 <TextBlock VerticalAlignment="Center">
-                    Ownship TNDL Entry
+                    Ownship TNDL entry
                 </TextBlock>
                 <ComboBox Width="72" Margin="12,0,0,0"
                           x:Name="uiOwnComboEntry"
@@ -107,7 +107,7 @@ https://www.gnu.org/licenses/.
                           x:Name="uiOwnCkbxLead"
                           IsChecked="{x:Bind EditDLNK.IsOwnshipLead, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
                           Click="OwnCkbxLead_Click">
-                    Flight Lead
+                    Flight lead
                 </CheckBox>
                 <TextBlock Margin="0,0,0,0" VerticalAlignment="Center">
                 </TextBlock>
@@ -465,7 +465,7 @@ https://www.gnu.org/licenses/.
                       x:Name="uiOwnCkbxFill"
                       IsChecked="{x:Bind EditDLNK.IsFillEmptyTNDL, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
                       Click="OwnCkbxFill_Click">
-                Set Empty Table Entries To TNDL
+                Set all empty table entries to TNDL
             </CheckBox>
             <TextBox Margin="12,0,0,0"
                      Width="102"

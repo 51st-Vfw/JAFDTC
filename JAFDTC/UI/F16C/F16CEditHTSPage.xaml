@@ -449,9 +449,8 @@ https://www.gnu.org/licenses/.
             </Grid.ColumnDefinitions>
 
             <TextBlock Grid.Column="0"
-                       VerticalAlignment="Center"
-                       Style="{StaticResource EditorTitleTextBlockStyle}">
-                Enabled HTS Threat Classes:
+                       VerticalAlignment="Center">
+                Enabled HTS threat classes:
             </TextBlock>
             <TextBlock Grid.Column="1" Margin="12,4,0,0" x:Name="uiThreatTextList"
                        VerticalAlignment="Center">

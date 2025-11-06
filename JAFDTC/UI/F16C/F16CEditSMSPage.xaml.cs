@@ -105,29 +105,29 @@ namespace JAFDTC.UI.F16C
 
             _munitions = FileManager.LoadF16CMunitions();
 
-            _textForProfile = new[] { "PROF1", "PROF2", "PROF3", "PROF4" };
-            _textForEmplMode = new[] { "CCIP", "CCRP", "DTOS", "LADD", "MAN", "PRE", "VIS", "BORE" };
-            _textForRippleMode = new[] { "SGL", "PAIR", "Single", "Front/Back", "Left/Right", "1", "2",
-                                         "SGL", "RP 1", "RP 2", "RP 3", "RP 4" };
-            _textForFuzeMode = new[] { "NSTL", "NOSE", "TAIL", "NSTL (HI)", "NOSE (LO)", "TAIL (HI)" };
+            _textForProfile = [ "PROF1", "PROF2", "PROF3", "PROF4" ];
+            _textForEmplMode = [ "CCIP", "CCRP", "DTOS", "LADD", "MAN", "PRE", "VIS", "BORE" ];
+            _textForRippleMode = [ "SGL", "PAIR", "Single", "Front/Back", "Left/Right", "1", "2",
+                                         "SGL", "RP 1", "RP 2", "RP 3", "RP 4" ];
+            _textForFuzeMode = [ "NSTL", "NOSE", "TAIL", "NSTL (HI)", "NOSE (LO)", "TAIL (HI)" ];
 
             InitializeComponent();
             InitializeBase(EditSetup, uiValueRippleQty, uiCtlLinkResetBtns);
 
-            _elemsProfile = new() { uiLabelProfile, uiComboProfile, uiCkboxProfileEnb };
-            _elemsRelease = new() { uiLabelRelMode, uiComboRelMode, uiStackRelMode };
-            _elemsSpin = new() { uiLabelSpin, uiComboSpin, uiLabelSpinUnits };
-            _elemsFuze = new() { uiLabelFuzeMode, uiComboFuzeMode };
-            _elemsArmDelay = new() { uiLabelArmDelay, uiValueArmDelay, uiLabelArmDelayUnits };
-            _elemsArmDelay2 = new() { uiLabelArmDelay2, uiValueArmDelay2, uiLabelArmDelay2Units };
-            _elemsArmDelayMode = new() { uiLabelArmDelayMode, uiComboArmDelayMode, uiLabelArmDelayModeUnits };
-            _elemsBurstAlt = new() { uiLabelBurstAlt, uiValueBurstAlt, uiLabelBurstAltUnits };
-            _elemsReleaseAng = new() { uiLabelReleaseAng, uiValueReleaseAng, uiLabelReleaseAngUnits };
-            _elemsImpactAng = new() { uiLabelImpactAng, uiValueImpactAng, uiLabelImpactAngUnits };
-            _elemsImpactAzi = new() { uiLabelImpactAzi, uiValueImpactAzi, uiLabelImpactAziUnits };
-            _elemsImpactVel = new() { uiLabelImpactVel, uiValueImpactVel, uiLabelImpactVelUnits };
-            _elemsCueRange = new() { uiLabelCueRng, uiValueCueRng, uiLabelCueRngUnits };
-            _elemsAutoPwr = new() { uiLabelAutoPwr, uiComboAutoPwr, null, uiStackAutoPwr };
+            _elemsProfile = [ uiLabelProfile, uiComboProfile, uiCkboxProfileEnb ];
+            _elemsRelease = [ uiLabelRelMode, uiComboRelMode, uiStackRelMode ];
+            _elemsSpin = [ uiLabelSpin, uiComboSpin, uiLabelSpinUnits ];
+            _elemsFuze = [ uiLabelFuzeMode, uiComboFuzeMode ];
+            _elemsArmDelay = [ uiLabelArmDelay, uiValueArmDelay, uiLabelArmDelayUnits ];
+            _elemsArmDelay2 = [ uiLabelArmDelay2, uiValueArmDelay2, uiLabelArmDelay2Units ];
+            _elemsArmDelayMode = [ uiLabelArmDelayMode, uiComboArmDelayMode, uiLabelArmDelayModeUnits ];
+            _elemsBurstAlt = [ uiLabelBurstAlt, uiValueBurstAlt, uiLabelBurstAltUnits ];
+            _elemsReleaseAng = [ uiLabelReleaseAng, uiValueReleaseAng, uiLabelReleaseAngUnits ];
+            _elemsImpactAng = [ uiLabelImpactAng, uiValueImpactAng, uiLabelImpactAngUnits ];
+            _elemsImpactAzi = [ uiLabelImpactAzi, uiValueImpactAzi, uiLabelImpactAziUnits ];
+            _elemsImpactVel = [ uiLabelImpactVel, uiValueImpactVel, uiLabelImpactVelUnits ];
+            _elemsCueRange = [ uiLabelCueRng, uiValueCueRng, uiLabelCueRngUnits ];
+            _elemsAutoPwr = [ uiLabelAutoPwr, uiComboAutoPwr, null, uiStackAutoPwr ];
         }
 
         // ------------------------------------------------------------------------------------------------------------
@@ -197,11 +197,11 @@ namespace JAFDTC.UI.F16C
                 // all mav variants share the same munition settings. we'll replicate the EditSetup properties
                 // across all mav variants.
                 //
-                List<Munitions> muniIDs = new() { EditMuniID };
+                List<Munitions> muniIDs = [ EditMuniID ];
                 if ((EditMuniID == Munitions.AGM_65D) || (EditMuniID == Munitions.AGM_65G) ||
                     (EditMuniID == Munitions.AGM_65H) || (EditMuniID == Munitions.AGM_65K))
                 {
-                    muniIDs = new() { Munitions.AGM_65D, Munitions.AGM_65G, Munitions.AGM_65H, Munitions.AGM_65K };
+                    muniIDs = [ Munitions.AGM_65D, Munitions.AGM_65G, Munitions.AGM_65H, Munitions.AGM_65K ];
                 }
 
                 // remap the EditSetup properties based on defaults from _munitions. if the edit settings match the
@@ -287,11 +287,11 @@ namespace JAFDTC.UI.F16C
             int profileID = int.Parse(EditProfileID);
             if (string.IsNullOrEmpty(spec))
                 spec = ";";
-            List<string> fields = spec.Split(';').ToList();
-            List<string> defaults = fields[0].Split(',').ToList();
+            List<string> fields = [.. spec.Split(';') ];
+            List<string> defaults = [.. fields[0].Split(',') ];
 
             defaultTag = (defaults.Count > 0) ? defaults[(profileID < defaults.Count) ? profileID : 0] : "";
-            tags = fields[1].Split(',').ToList();
+            tags = [.. fields[1].Split(',') ];
         }
 
         /// <summary>
@@ -329,7 +329,7 @@ namespace JAFDTC.UI.F16C
         private void SetComboItemsFromSpec(ComboBox combo, string spec, string[] textMap,
                                            Func<string, string, FrameworkElement> buildItem)
         {
-            List<FrameworkElement> items = new();
+            List<FrameworkElement> items = [ ];
             if (!string.IsNullOrEmpty(spec))
             {
                 CrackComboBoxSpec(spec, out string defaultTag, out List<string> tags);
@@ -513,7 +513,7 @@ namespace JAFDTC.UI.F16C
 
             // change release mode label to line up with the way mavs handle ripples versus other munitions.
             //
-            uiLabelRelMode.Text = (isMav) ? "Ripple Quantity" : "Release Mode";
+            uiLabelRelMode.Text = (isMav) ? "Ripple quantity" : "Release mode";
 
             // change text field placeholders and maximum lengths to line up with the parameter ranges for the
             // selected munition.
