@@ -28,6 +28,7 @@ using JAFDTC.Models.DCS;
 using JAFDTC.Models.F16C;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
@@ -556,50 +557,111 @@ namespace JAFDTC.Utilities
         // ------------------------------------------------------------------------------------------------------------
 
         /// <summary>
-        /// load the database at the given path. here, a "database" is persisted as a List<T> of objects of type T
-        /// that is serialized to a .json file. return an empty list on error.
+        /// return the type and data information from an internal or sharable database file as a ( type, json )
+        /// tuple. the file is either in the format "{json}" (internal) or "<{type}> {json}". on error, returns
+        /// the tuple ( null, null ).
         /// </summary>
-        private static List<T> LoadDbaseCore<T>(string path)
+        private static Tuple<string, string> CoreCrackDbaseFile(string path, string typeStr = null)
         {
-            List<T> dbase = [ ];
             try
             {
-                string json = ReadFile(path);
-                dbase = (List<T>)JsonSerializer.Deserialize<List<T>>(json);
+                string data = ReadFile(path).Trim();
+                if (data[0] == '<')
+                {
+                    int index = data.IndexOf(' ');
+                    if ((index < 3) || (data[index - 1] != '>'))
+                        throw new Exception("Invalid <type> marker");
+                    typeStr = data[1..(index - 1)];
+                    data = data[(index + 1)..];
+                }
+                return new(typeStr, data);
             }
             catch (Exception ex)
             {
                 FileManager.Log($"FileManager:LoadDbaseCore exception reading {path}, {ex}");
             }
-            return dbase;
+            return new(null, null);
         }
 
         /// <summary>
-        /// load a system database (a .json serialized List<T>) from the "Data" directory in the app bundle. system
+        /// return the database (List<T> of database objects) extracted from the file. this handles internal
+        /// databases (List<T> serialized to .json) as well as sharable database (type string followed by List<T>
+        /// serialized to .json) formats. on error, the database contents are an empty list.
+        /// </summary>
+        private static List<T> CoreLoadDbase<T>(string path)
+        {
+            Tuple<string, string> tuple = CoreCrackDbaseFile(path, typeof(T).Name);
+            try
+            {
+                if (typeof(T).Name == tuple.Item1)
+                    return (List<T>)JsonSerializer.Deserialize<List<T>>(tuple.Item2);
+            }
+            catch (Exception ex)
+            {
+                FileManager.Log($"FileManager:LoadDbaseCore exception reading {path}, {ex}");
+            }
+            return [ ];
+        }
+
+        /// <summary>
+        /// return the type encoded in a sharable database, null if there is no type or an error happened.
+        /// </summary>
+        public static string GetSharableDbaseType(string path) => CoreCrackDbaseFile(path).Item1;
+
+        /// <summary>
+        /// load a shared databse (type string followed by List<T> serialzed to .json) from the given path. returns
+        /// and empty list on error.
+        /// </summary>
+        public static List<T> LoadSharableDbase<T>(string path) => CoreLoadDbase<T>(path);
+
+        /// <summary>
+        /// save a shared databse (type string followed by List<T> serialzed to .json) to the given path. returns
+        /// true on success, false on failure.
+        /// </summary>
+        public static bool SaveSharableDatabase<T>(string path, List<T> dbase, Func<T, Boolean> fnFilter = null)
+        {
+            fnFilter ??= entry => true;
+            List<T> dbFilter = [.. dbase.Where(fnFilter) ];
+
+            try
+            {
+                string data = $"<{typeof(T).Name}> " + JsonSerializer.Serialize<List<T>>(dbFilter, Configuration.JsonOptions);
+                WriteFile(path, data);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                FileManager.Log($"FileManager:SaveSharableDatabase exception saving {path}, {ex}");
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// load a system database (List<T> serialized to .json) from the "Data" directory in the app bundle. system
         /// databases are immutable and cannot be updated. returns an empty list on error.
         /// </summary>
         public static List<T> LoadSystemDbase<T>(string name)
         {
             string path = Path.Combine(_appDirPath, "Data", name);
-            return (File.Exists(path)) ? LoadDbaseCore<T>(path) : [ ];
+            return (File.Exists(path)) ? CoreLoadDbase<T>(path) : [ ];
         }
 
         /// <summary>
-        /// load the user database (a .json serialized List<T>) with the given name from the database area in the
+        /// load the user database (List<T> serialized to .json) with the given name from the database area in the
         /// jafdtc settings directory. user databases are mutable and may be updated. returns an empty list on error.
         /// </summary>
         public static List<T> LoadUserDbase<T>(string name)
         {
             string path = Path.Combine(_settingsDirPath, "Dbase");
             Directory.CreateDirectory(path);
-            return LoadDbaseCore<T>(Path.Combine(path, name));
+            return CoreLoadDbase<T>(Path.Combine(path, name));
         }
 
         /// <summary>
-        /// save the user database (a .json serialized List<T>) with the given name to the database area in the jafdtc
-        /// settings directory (creating the file if necessary). entries in the database are only persisted if the
-        /// given filter function returns true when passed the entry (default function always returns true). returns
-        /// true on success, false on failure.
+        /// save the user database (List<T> serialized to .json) with the given name to the database area in the
+        /// jafdtc settings directory (creating the file if necessary). entries in the database are only persisted
+        /// if the given filter function returns true when passed the entry (default filter function always returns
+        /// true). returns true on success, false on failure.
         /// </summary>
         public static bool SaveUserDbase<T>(string name, List<T> dbase, Func<T,Boolean> fnFilter = null)
         {
@@ -623,8 +685,8 @@ namespace JAFDTC.Utilities
         }
 
         /// <summary>
-        /// delete the user database (a .json serialized List<T>) with the given name from the database area in the
-        /// jafdtc settings directory.
+        /// delete the user database (List<T> serialized to .json) with the given name from the database area in
+        /// the jafdtc settings directory.
         /// </summary>
         public static void DeleteUserDatabase(string name)
         {
@@ -702,44 +764,23 @@ namespace JAFDTC.Utilities
 
         // ------------------------------------------------------------------------------------------------------------
         //
-        // emitters database
-        //
-        // ------------------------------------------------------------------------------------------------------------
-
-        /// <summary>
-        /// return the emitter database that provides information on known emitters for harm alic/hts systems.
-        /// </summary>
-        public static List<F16CEmitter> LoadEmitters()
-        {
-            return LoadSystemDbase<F16CEmitter>("db-f16c-emitters.json");
-        }
-
-        // ------------------------------------------------------------------------------------------------------------
-        //
-        // A-10C munitions database
+        // system databases
         //
         // ------------------------------------------------------------------------------------------------------------
 
         /// <summary>
         /// return the A-10C munitions database that provides information on weapons for the hawg.
         /// </summary>
-        public static List<A10CMunition> LoadA10Munitions()
-        {
-            return LoadSystemDbase<A10CMunition>("db-a10c-munitions.json");
-        }
+        public static List<A10CMunition> LoadA10Munitions() => LoadSystemDbase<A10CMunition>("db-a10c-munitions.json");
 
-        // ------------------------------------------------------------------------------------------------------------
-        //
-        // F-16C munitions database
-        //
-        // ------------------------------------------------------------------------------------------------------------
+        /// <summary>
+        /// return the emitter database that provides information on known emitters for harm alic/hts systems.
+        /// </summary>
+        public static List<F16CEmitter> LoadF16CEmitters() => LoadSystemDbase<F16CEmitter>("db-f16c-emitters.json");
 
         /// <summary>
         /// return the F-16C munitions database that provides information on weapons for the viper.
         /// </summary>
-        public static List<F16CMunition> LoadF16CMunitions()
-        {
-            return LoadSystemDbase<F16CMunition>("db-f16c-munitions.json");
-        }
+        public static List<F16CMunition> LoadF16CMunitions() => LoadSystemDbase<F16CMunition>("db-f16c-munitions.json");
     }
 }

@@ -49,7 +49,7 @@ namespace JAFDTC.Models.F16C
 
         private F16CEmitterDbase()
         {
-            List<F16CEmitter> emitters = FileManager.LoadEmitters();
+            List<F16CEmitter> emitters = FileManager.LoadF16CEmitters();
 
             Dbase = [ ];
             foreach (F16CEmitter emitter in emitters)
