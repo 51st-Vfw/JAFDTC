@@ -711,7 +711,7 @@ namespace JAFDTC.Utilities
         /// </summary>
         public static List<Emitter> LoadEmitters()
         {
-            return LoadSystemDbase<Emitter>("db-emitters.json");
+            return LoadSystemDbase<Emitter>("db-f16c-emitters.json");
         }
 
         // ------------------------------------------------------------------------------------------------------------
