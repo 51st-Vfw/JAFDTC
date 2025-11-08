@@ -1,6 +1,6 @@
 ﻿// ********************************************************************************************************************
 //
-// Emitter.cs -- emitter class
+// F16CEmitter.cs -- emitter class
 //
 // Copyright(C) 2021-2023 the-paid-actor & others
 // Copyright(C) 2023-2025 ilominar/raven

@@ -1,6 +1,6 @@
 ﻿// ********************************************************************************************************************
 //
-// EmitterDbase.cs -- emitter dabase
+// F16CEmitterDbase.cs -- emitter dabase
 //
 // Copyright(C) 2021-2023 the-paid-actor & others
 // Copyright(C) 2023-2025 ilominar/raven
