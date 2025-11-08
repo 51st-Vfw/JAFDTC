@@ -26,7 +26,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.Devices.Bluetooth.GenericAttributeProfile;
 
-namespace JAFDTC.Models.DCS
+namespace JAFDTC.Models.F16C
 {
     internal class EmitterDbase
     {
@@ -64,7 +64,7 @@ namespace JAFDTC.Models.DCS
             }
             else
             {
-                list = (Dbase.ContainsKey(alicCode)) ? Dbase[alicCode] : new List<Emitter>();
+                list = Dbase.ContainsKey(alicCode) ? Dbase[alicCode] : new List<Emitter>();
             }
             return list;
         }

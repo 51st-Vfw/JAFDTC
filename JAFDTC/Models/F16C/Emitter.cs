@@ -18,7 +18,7 @@
 //
 // ********************************************************************************************************************
 
-namespace JAFDTC.Models.DCS
+namespace JAFDTC.Models.F16C
 {
     public sealed class Emitter
     {
