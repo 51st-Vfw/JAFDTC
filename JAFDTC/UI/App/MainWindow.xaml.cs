@@ -267,9 +267,9 @@ namespace JAFDTC.UI.App
                 if (Settings.IsVersionUpdated)
                     await Utilities.Message1BDialog(Content.XamlRoot, "Welcome to JAFDTC!", $"Version {Settings.VersionJAFDTC}");
 
-                await CheckForPulledPork(app.CmdLnArgs.ArgValuePack);
+                await CheckForPulledPork(app.CmdLnArgValuePack);
 
-                ConfigListPage.FileActivations(app.CmdLnArgs.ArgPaths);
+                ConfigListPage.FileActivations(app.CmdLnArgPathsWithConfigs);
 
                 if (!Settings.IsNewVersCheckDisabled)
                     await CheckForUpdates();

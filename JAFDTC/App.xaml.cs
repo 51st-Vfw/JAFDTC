@@ -45,29 +45,6 @@ using static JAFDTC.Utilities.SettingsData;
 namespace JAFDTC
 {
     /// <summary>
-    /// encodes the jafdtc command line.
-    /// 
-    ///     jafdtc [--open {path}] [--pack {version}] [path] .. [path]
-    ///
-    /// where
-    /// 
-    ///     --open      open the .jafdtc file at {path} and act appropriately (expect no user interaction)
-    ///     --pack      download the .msi package from github for version {version}
-    ///     [path]      .jafdtc file to open and process (may have user interaction)
-    ///     
-    /// </summary>
-    public sealed class CmdLnArgInfo
-    {
-        public string Summary { get; }
-        public string ArgValueOpen { get; }
-        public string ArgValuePack { get; }
-        public List<string> ArgPaths { get; }
-
-        public CmdLnArgInfo(string _sum = null, string _avOpen = null, string _avPack = null, List<string> _path = null)
-            => ( Summary, ArgValueOpen, ArgValuePack, ArgPaths ) = ( _sum, _avOpen, _avPack, _path );
-    }
-
-    /// <summary>
     /// Provides application-specific behavior to supplement the default Application class.
     /// 
     /// HACK: this class uses a hack to handle file activations on Microsoft.UI.Xaml.Application as the base class
@@ -76,6 +53,41 @@ namespace JAFDTC
     /// </summary>
     public partial class App : Application
     {
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // private classes
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
+        /// <summary>
+        /// encodes the jafdtc command line.
+        /// 
+        ///     jafdtc [--open {path_jafdtc}] [--pack {version}] [path] .. [path]
+        ///
+        /// where
+        /// 
+        ///     --open      open the .jafdtc file at {path_jafdtc} and act appropriately (expect no user interaction)
+        ///     --pack      download the .msi package from github for version {version}
+        ///     [path]      jafdtc file to open and process (may have user interaction)
+        ///
+        /// note that while we support muliptle [path] arguments, typically windows will not send a single file
+        /// activation with multiple files, instead preferring to do multiple activations with a single file each.
+        /// 
+        /// the [path] argument are grouped by file extension.
+        /// </summary>
+        private sealed class CmdLnArgInfo
+        {
+            public string Summary { get; }
+            public string ArgValueOpen { get; }
+            public string ArgValuePack { get; }
+            public List<string> ArgPaths { get; }
+
+            public CmdLnArgInfo(string _sum = null, string _avOpen = null, string _avPack = null, List<string> _paths = null)
+                => (Summary, ArgValueOpen, ArgValuePack, ArgPaths) = (_sum, _avOpen, _avPack, _paths);
+        }
+
+        // ============================================================================================================
+
         // ------------------------------------------------------------------------------------------------------------
         //
         // windoze interfaces & data structs
@@ -121,7 +133,9 @@ namespace JAFDTC
 
         public MainWindow Window { get; private set; }
 
-        public CmdLnArgInfo CmdLnArgs { get; private set; }
+        public string CmdLnArgValuePack => CmdLnArgs.ArgValuePack;
+
+        public List<string> CmdLnArgPathsWithConfigs => ExtractPathsWithExtension(".jafdtc", CmdLnArgs.ArgPaths);
 
         public bool IsAppStartupGood { get; private set; }
 
@@ -132,12 +146,16 @@ namespace JAFDTC
         public IConfiguration CurrentConfig { get; set; }
 
 #if DCS_TELEM_INCLUDES_LAT_LON
+
         public double DCSLastLat { get; private set; }
 
         public double DCSLastLon { get; private set; }
+
 #endif
 
         // ---- private properties
+
+        private CmdLnArgInfo CmdLnArgs { get; set; }
 
         private DispatcherTimer CheckDCSTimer { get; set; }
 
@@ -310,8 +328,10 @@ namespace JAFDTC
                 InitializeComponent();
 
 #if DCS_TELEM_INCLUDES_LAT_LON
+
                 DCSLastLat = 0.0;
                 DCSLastLon = 0.0;
+
 #endif
 
                 LastDCSExportCheck = System.DateTimeOffset.Now;
@@ -378,12 +398,14 @@ namespace JAFDTC
         /// 
         /// paths parameter has individual paths, a path may be prefixed by "--noui" to supress user interaction.
         /// </summary>
-        public void FileActivationHandler(List<string> paths, bool isNoUI, bool isRestart)
+        private void FileActivationHandler(List<string> paths, bool isNoUI, bool isRestart)
         {
             // NOTE: this method should not be called before the universe is mature. note that the server thread
             // NOTE: cannot call us until the ui is up as its invocations rely on event loop dispatch.
 
-            Window.ConfigListPage.FileActivations(paths, isNoUI);
+            List<string> configPaths = ExtractPathsWithExtension(".jafdtc", paths);
+            if (configPaths.Count > 0)
+                Window.ConfigListPage.FileActivations(configPaths, isNoUI);
 
             if (isRestart)
             {
@@ -452,7 +474,7 @@ namespace JAFDTC
         /// it to the running instance to handle (at that point, our work here will be done). returns true if
         /// an instance of the app is not currently running, false otherwise.
         /// </summary>
-        public bool FileActivationSetup(CmdLnArgInfo args)
+        private bool FileActivationSetup(CmdLnArgInfo args)
         {
 
 #if ENABLE_FILE_ACTIVATION
@@ -465,6 +487,9 @@ namespace JAFDTC
             {
                 // we are the og jafdtc. we are legion. fear us.
                 //
+                // command line args that can be handled without a ui are taken care of in OnLaunched() below
+                // while those args that need a ui are handled in MainWindow.AppContentFrame_Loaded().
+                //
                 Thread serverThread = new(this.FileActivationServerThread);
                 serverThread.Start();
             }
@@ -472,7 +497,7 @@ namespace JAFDTC
             {
                 // there is already a jafdtc instance running. the og will have started an activation server
                 // that we will pass our work (i.e., command line arguments) on to before bouncing. the og
-                // instance will then do us a solid and do the work.
+                // instance will then do us a solid and do the work in FileActivationHandler().
                 //
                 if ((args.ArgPaths.Count > 0) || !string.IsNullOrEmpty(args.ArgValueOpen))
                 {
@@ -526,6 +551,18 @@ namespace JAFDTC
                 summary = summary + " " + args[i];
             }
             return new CmdLnArgInfo(summary, argValueOpen, argValuePack, argPath);
+        }
+
+        /// <summary>
+        /// returns the paths that have the requested extension from a list of paths.
+        /// </summary>
+        private static List<string> ExtractPathsWithExtension(string extension, List<string> paths)
+        {
+            List<string> pathList = [ ];
+            foreach (string path in paths)
+                if (Path.GetExtension(path).Equals(extension, StringComparison.CurrentCultureIgnoreCase))
+                    pathList.Add(path);
+            return pathList;
         }
 
         // ------------------------------------------------------------------------------------------------------------
