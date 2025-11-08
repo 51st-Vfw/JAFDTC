@@ -75,7 +75,7 @@ namespace JAFDTC.UI.F16C
 
 
         private readonly List<string> _emitterTitles;
-        private readonly Dictionary<string, Emitter> _emitterTitleMap;
+        private readonly Dictionary<string, F16CEmitter> _emitterTitleMap;
 
         private readonly List<TextBox> _tableCodeFields;
         private readonly List<FontIcon> _tableEditFields;
@@ -96,7 +96,7 @@ namespace JAFDTC.UI.F16C
 
             _emitterTitles = new();
             _emitterTitleMap = new();
-            foreach (Emitter emitter in EmitterDbase.Instance.Find())
+            foreach (F16CEmitter emitter in F16CEmitterDbase.Instance.Find())
             {
                 string item = $"{emitter.Country} – {emitter.Type} – {emitter.Name}";
                 if (!string.IsNullOrEmpty(emitter.NATO))
@@ -271,7 +271,7 @@ namespace JAFDTC.UI.F16C
 
             if (int.TryParse((string.IsNullOrEmpty(curCode)) ? dfltCode : curCode, out int alicCode))
             {
-                List<Emitter> emitterList = EmitterDbase.Instance.Find(alicCode);
+                List<F16CEmitter> emitterList = F16CEmitterDbase.Instance.Find(alicCode);
 
                 _tableEditFields[tableRow].Visibility = (string.IsNullOrEmpty(curCode) || (curCode == dfltCode))
                                                       ? Visibility.Collapsed : Visibility.Visible;
@@ -376,7 +376,7 @@ namespace JAFDTC.UI.F16C
             if (await dialog.ShowAsync() == ContentDialogResult.Primary)
             {
                 Button button = (Button)sender;
-                Emitter emitter = _emitterTitleMap[(string)dialog.SelectedItem];
+                F16CEmitter emitter = _emitterTitleMap[(string)dialog.SelectedItem];
                 int entry = int.Parse((string)button.Tag);
                 EditTable.Table[entry].Code = emitter.ALICCode.ToString("000");
 

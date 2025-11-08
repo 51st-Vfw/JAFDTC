@@ -162,7 +162,7 @@ namespace JAFDTC.UI.F16C
         // add emitter information to an existing emitter list item. we accumulate into the item with one emitter per
         // line of text.
         //
-        private static void AddEmitterToEmitterListItem(bool isEnabled, EmitterListItem item, Emitter emitter)
+        private static void AddEmitterToEmitterListItem(bool isEnabled, EmitterListItem item, F16CEmitter emitter)
         {
             item.IsEnabled = isEnabled;
             string sep = PrepareToAddEmitter(item);
@@ -181,8 +181,8 @@ namespace JAFDTC.UI.F16C
         //
         private void BuildThreatTables()
         {
-            List<Emitter> dbEmitters = EmitterDbase.Instance.Find();
-            dbEmitters.Sort(delegate (Emitter a, Emitter b)
+            List<F16CEmitter> dbEmitters = F16CEmitterDbase.Instance.Find();
+            dbEmitters.Sort(delegate (F16CEmitter a, F16CEmitter b)
             {
                 int result = string.Compare(a.Country, b.Country);
                 if (result == 0)
@@ -201,7 +201,7 @@ namespace JAFDTC.UI.F16C
             {
                 threatTableMap.Add(i, new EmitterListItem(i.ToString(), "No Emitters Defined in this Threat Class"));
             }
-            foreach (Emitter emitter in dbEmitters)
+            foreach (F16CEmitter emitter in dbEmitters)
             {
                 AddEmitterToEmitterListItem(NavArgs.IsUnlinked, threatTableMap[emitter.HTSTable], emitter);
             }
@@ -211,8 +211,8 @@ namespace JAFDTC.UI.F16C
             {
                 if (!string.IsNullOrEmpty(Config.HTS.MANTable[row].Code))
                 {
-                    dbEmitters = EmitterDbase.Instance.Find(int.Parse(Config.HTS.MANTable[row].Code));
-                    foreach (Emitter emitter in dbEmitters)
+                    dbEmitters = F16CEmitterDbase.Instance.Find(int.Parse(Config.HTS.MANTable[row].Code));
+                    foreach (F16CEmitter emitter in dbEmitters)
                     {
                         AddEmitterToEmitterListItem(NavArgs.IsUnlinked, item, emitter);
                     }

@@ -23,7 +23,7 @@ namespace JAFDTC.Models.F16C
     /// <summary>
     /// properties of an emitter for use by f16c avionics (primarily harm and hts).
     /// </summary>
-    public sealed class Emitter
+    public sealed class F16CEmitter
     {
         public string Country { get; set; }
 

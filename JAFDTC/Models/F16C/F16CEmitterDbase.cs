@@ -28,7 +28,7 @@ namespace JAFDTC.Models.F16C
     /// database of information on emitters for the f-16c viper. this database is a singleton and includes names,
     /// hts threat classes, rwr information, and alic table codes.
     /// </summary>
-    internal class EmitterDbase
+    internal class F16CEmitterDbase
     {
         // ------------------------------------------------------------------------------------------------------------
         //
@@ -36,10 +36,10 @@ namespace JAFDTC.Models.F16C
         //
         // ------------------------------------------------------------------------------------------------------------
 
-        private static readonly Lazy<EmitterDbase> lazy = new(() => new EmitterDbase());
-        public static EmitterDbase Instance { get => lazy.Value; }
+        private static readonly Lazy<F16CEmitterDbase> lazy = new(() => new F16CEmitterDbase());
+        public static F16CEmitterDbase Instance { get => lazy.Value; }
 
-        private Dictionary<int, List<Emitter>> Dbase { get; set; }
+        private Dictionary<int, List<F16CEmitter>> Dbase { get; set; }
 
         // ------------------------------------------------------------------------------------------------------------
         //
@@ -47,14 +47,14 @@ namespace JAFDTC.Models.F16C
         //
         // ------------------------------------------------------------------------------------------------------------
 
-        private EmitterDbase()
+        private F16CEmitterDbase()
         {
-            List<Emitter> emitters = FileManager.LoadEmitters();
+            List<F16CEmitter> emitters = FileManager.LoadEmitters();
 
             Dbase = [ ];
-            foreach (Emitter emitter in emitters)
+            foreach (F16CEmitter emitter in emitters)
             {
-                if (!Dbase.TryGetValue(emitter.ALICCode, out List<Emitter> value))
+                if (!Dbase.TryGetValue(emitter.ALICCode, out List<F16CEmitter> value))
                 {
                     value = [ ];
                     Dbase[emitter.ALICCode] = value;
@@ -72,18 +72,18 @@ namespace JAFDTC.Models.F16C
         /// <summary>
         /// return a list of emitters matching an alic code (-1 implies all emitters).
         /// </summary>
-        public List<Emitter> Find(int alicCode = -1)
+        public List<F16CEmitter> Find(int alicCode = -1)
         {
-            List<Emitter> list;
+            List<F16CEmitter> list;
             if (alicCode < 0)
             {
                 list = [ ];
-                foreach (List<Emitter> emitterList in Dbase.Values)
+                foreach (List<F16CEmitter> emitterList in Dbase.Values)
                     list = [.. list, .. emitterList ];
             }
             else
             {
-                list = Dbase.TryGetValue(alicCode, out List<Emitter> value) ? value : [ ];
+                list = Dbase.TryGetValue(alicCode, out List<F16CEmitter> value) ? value : [ ];
             }
             return list;
         }

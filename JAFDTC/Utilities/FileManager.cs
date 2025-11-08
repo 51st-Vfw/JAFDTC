@@ -709,9 +709,9 @@ namespace JAFDTC.Utilities
         /// <summary>
         /// return the emitter database that provides information on known emitters for harm alic/hts systems.
         /// </summary>
-        public static List<Emitter> LoadEmitters()
+        public static List<F16CEmitter> LoadEmitters()
         {
-            return LoadSystemDbase<Emitter>("db-f16c-emitters.json");
+            return LoadSystemDbase<F16CEmitter>("db-f16c-emitters.json");
         }
 
         // ------------------------------------------------------------------------------------------------------------
