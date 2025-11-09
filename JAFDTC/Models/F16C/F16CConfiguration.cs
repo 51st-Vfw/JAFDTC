@@ -36,6 +36,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
 
 namespace JAFDTC.Models.F16C
 {
@@ -58,6 +59,13 @@ namespace JAFDTC.Models.F16C
         // properties
         //
         // ------------------------------------------------------------------------------------------------------------
+
+        // ---- regular expressions
+
+        [GeneratedRegex(@"^[0-7]{5}$")]
+        public static partial Regex RegexTNDL();
+
+        // ---- public properties
 
         public CMDSSystem CMDS { get; set; }
 

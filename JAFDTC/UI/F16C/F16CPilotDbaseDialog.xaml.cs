@@ -17,6 +17,7 @@
 //
 // ********************************************************************************************************************
 
+using JAFDTC.Models.F16C;
 using JAFDTC.Models.F16C.DLNK;
 using JAFDTC.Utilities;
 using Microsoft.UI.Xaml;
@@ -42,11 +43,6 @@ namespace JAFDTC.UI.F16C
         // properties
         //
         // ------------------------------------------------------------------------------------------------------------
-
-        // ---- regular expressions
-
-        [GeneratedRegex(@"^[0-7]{5}$")]
-        private static partial Regex TNDLRegex();
 
         // ---- properties
 
@@ -154,7 +150,7 @@ namespace JAFDTC.UI.F16C
             }
             SetFieldValidState(uiPDbValueCallsign, isCallsignValid || string.IsNullOrEmpty(uiPDbValueCallsign.Text));
 
-            bool isTNDLValid = TNDLRegex().IsMatch(uiPDbValueTNDL.Text);
+            bool isTNDLValid = F16CConfiguration.RegexTNDL().IsMatch(uiPDbValueTNDL.Text);
             SetFieldValidState(uiPDbValueTNDL, isTNDLValid || string.IsNullOrEmpty(uiPDbValueTNDL.Text));
 
             Utilities.SetEnableState(uiPDbBtnAdd, isCallsignValid && isTNDLValid);

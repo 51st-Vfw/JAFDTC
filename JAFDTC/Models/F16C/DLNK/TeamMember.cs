@@ -2,7 +2,7 @@
 //
 // TeamMember.cs -- f-16c datalink system team member information
 //
-// Copyright(C) 2023 ilominar/raven
+// Copyright(C) 2023-2025 ilominar/raven
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 // Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -20,17 +20,14 @@
 using JAFDTC.Utilities;
 using System.Diagnostics;
 using System.Text.Json.Serialization;
-using System.Text.RegularExpressions;
 
 namespace JAFDTC.Models.F16C.DLNK
 {
     /// <summary>
     /// TODO: document
     /// </summary>
-    public class TeamMember : BindableObject
+    public partial class TeamMember : BindableObject
     {
-        private static readonly Regex tndlRegex = new(@"^[0-7]{5}$");
-
         // ------------------------------------------------------------------------------------------------------------
         //
         // properties
@@ -50,7 +47,7 @@ namespace JAFDTC.Models.F16C.DLNK
             get => _tndl;
             set
             {
-                string error = ((IsRegexFieldValid(value, tndlRegex))) ? null : "Invalid TNDL value";
+                string error = ((IsRegexFieldValid(value, F16CConfiguration.RegexTNDL()))) ? null : "Invalid TNDL value";
                 SetProperty(ref _tndl, value, error);
             }
         }

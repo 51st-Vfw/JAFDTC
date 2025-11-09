@@ -28,7 +28,7 @@ namespace JAFDTC.Models.F16C.DLNK
     /// class to capture the settings of the DLNK system. most DLNK fields are encoded as strings. a field value of
     /// "" implies that the field is set to the default value in the avionics.
     /// </summary>
-    public class DLNKSystem : SystemBase
+    public partial class DLNKSystem : SystemBase
     {
         public const string SystemTag = "JAFDTC:F16C:DLNK";
 
@@ -42,7 +42,6 @@ namespace JAFDTC.Models.F16C.DLNK
 
         private static readonly Regex _callRegex = new(@"^[a-zA-Z][a-zA-Z]$");
         private static readonly Regex _numRegex = new(@"^[1-9][1-9]$");
-        private static readonly Regex _tndlRegex = new(@"^[0-7]{5}$");
 
         // ---- public properties
 
@@ -102,7 +101,7 @@ namespace JAFDTC.Models.F16C.DLNK
             get => _fillEmptyTNDL;
             set
             {
-                string error = ((IsRegexFieldValid(value, _tndlRegex))) ? null : "Invalid TNDL value";
+                string error = ((IsRegexFieldValid(value, F16CConfiguration.RegexTNDL()))) ? null : "Invalid TNDL value";
                 SetProperty(ref _fillEmptyTNDL, value, error);
             }
         }
