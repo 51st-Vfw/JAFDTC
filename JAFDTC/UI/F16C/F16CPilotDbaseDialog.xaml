@@ -111,7 +111,8 @@ https://www.gnu.org/licenses/.
                            Style="{StaticResource TableHeaderTextStyle}">
                     TNDL
                 </TextBlock>
-                <TextBlock Grid.Row="0" Grid.Column="1"
+                <TextBlock Grid.Row="0" Grid.Column="1" Margin="8,0,0,0"
+                           HorizontalAlignment="Left"
                            Style="{StaticResource TableHeaderTextStyle}">
                     Callsign
                 </TextBlock>
@@ -162,22 +163,46 @@ https://www.gnu.org/licenses/.
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <Button Width="44" Height="34" Grid.Row="0" Margin="0,12,0,0"
+                        x:Name="uiPDbBtnDelete"
+                        ToolTipService.ToolTip="Delete the selected pilots from the database">
+                    <Button.Flyout>
+                        <Flyout>
+                            <StackPanel>
+                                <TextBlock Style="{ThemeResource BaseTextBlockStyle}" Margin="0,0,0,12">
+                                    Delete selected pilots from database?
+                                </TextBlock>
+                                <Button Click="PDbBtnDeleteFlyout_Click"
+                                        HorizontalAlignment="Center">
+                                    Yes, Delete Pilots
+                                </Button>
+                            </StackPanel>
+                        </Flyout>
+                    </Button.Flyout>
+                    <FontIcon FontFamily="Segoe Fluent Icons" FontSize="16" Glyph="&#xE74D;"/>
+                </Button>
+                <Button Width="44" Height="34" Grid.Row="1" Margin="0,36,0,0"
                         x:Name="uiPDbBtnExport"
                         Click="PDbBtnExport_Click"
-                        ToolTipService.ToolTip="Export the selected pilots to a file">
+                        ToolTipService.ToolTip="Export all pilots to a file">
                     <FontIcon FontFamily="Segoe Fluent Icons" FontSize="16" Glyph="&#xE898;"/>
                 </Button>
-                <Button Width="44" Height="34" Grid.Row="1" Margin="0,12,0,0"
+                <Button Width="44" Height="34" Grid.Row="2" Margin="0,12,0,0"
                         x:Name="uiPDbBtnImport"
-                        Click="PDbBtnImport_Click"
-                        ToolTipService.ToolTip="Import pilots from an export file">
+                        ToolTipService.ToolTip="Import all pilots from an export file">
+                    <Button.Flyout>
+                        <Flyout>
+                            <StackPanel>
+                                <TextBlock Style="{ThemeResource BaseTextBlockStyle}" Margin="0,0,0,12">
+                                    Import replaces all pilots currently in the database. Is that OK?
+                                </TextBlock>
+                                <Button Click="PDbBtnFlyoutImport_Click"
+                                        HorizontalAlignment="Center">
+                                    Yes, Replace Pilots
+                                </Button>
+                            </StackPanel>
+                        </Flyout>
+                    </Button.Flyout>
                     <FontIcon FontFamily="Segoe Fluent Icons" FontSize="16" Glyph="&#xE896;"/>
-                </Button>
-                <Button Width="44" Height="34" Grid.Row="2" Margin="0,24,0,12"
-                        x:Name="uiPDbBtnDelete"
-                        Click="PDbBtnDelete_Click"
-                        ToolTipService.ToolTip="Delete the selected pilots from the database">
-                    <FontIcon FontFamily="Segoe Fluent Icons" FontSize="16" Glyph="&#xE74D;"/>
                 </Button>
             </Grid>
         </Grid>

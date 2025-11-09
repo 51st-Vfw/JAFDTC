@@ -18,11 +18,15 @@
 // ********************************************************************************************************************
 
 using JAFDTC.Models.F16C.DLNK;
+using JAFDTC.Utilities;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
+using Microsoft.Windows.Storage.Pickers;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -33,13 +37,18 @@ namespace JAFDTC.UI.F16C
     /// </summary>
     public sealed partial class F16CPilotDbaseDialog : ContentDialog
     {
-        private static readonly Regex tndlRegex = new(@"^[0-7]{5}$");
-
         // ------------------------------------------------------------------------------------------------------------
         //
         // properties
         //
         // ------------------------------------------------------------------------------------------------------------
+
+        // ---- regular expressions
+
+        [GeneratedRegex(@"^[0-7]{5}$")]
+        private static partial Regex TNDLRegex();
+
+        // ---- properties
 
         private ObservableCollection<ViperDriver> _pilots;
         public ObservableCollection<ViperDriver> Pilots
@@ -55,13 +64,13 @@ namespace JAFDTC.UI.F16C
             }
         }
 
-        public bool IsExportRequested { get; set; }
+        public string ErrorOperation { get; set; }
 
-        public bool IsImportRequested { get; set; }
+        public string ErrorMessage { get; set; }
 
         // ---- TODO
 
-        public List<ViperDriver> SelectedDrivers => new(uiPDbListView.SelectedItems.Cast<ViperDriver>());
+        public List<ViperDriver> SelectedDrivers => [.. uiPDbListView.SelectedItems.Cast<ViperDriver>() ];
 
         private readonly Brush _defaultBorderBrush;
         private readonly Brush _defaultBkgndBrush;
@@ -79,8 +88,8 @@ namespace JAFDTC.UI.F16C
             InitializeComponent();
 
             Pilots = new ObservableCollection<ViperDriver>(pilots);
-            IsExportRequested = false;
-            IsImportRequested = false;
+
+            Opened += (s, e) => { ErrorOperation = null; ErrorMessage = null; };
 
             _defaultBorderBrush = uiPDbValueCallsign.BorderBrush;
             _defaultBkgndBrush = uiPDbValueCallsign.Background;
@@ -101,12 +110,10 @@ namespace JAFDTC.UI.F16C
         {
             if ((Pilots != null) && (Pilots.Count > 0))
             {
-                List<ViperDriver> sortableList = new(Pilots);
+                List<ViperDriver> sortableList = [.. Pilots ];
                 sortableList.Sort((a, b) => a.Name.CompareTo(b.Name));
                 for (int i = 0; i < sortableList.Count; i++)
-                {
                     Pilots.Move(Pilots.IndexOf(sortableList[i]), i);
-                }
             }
         }
 
@@ -132,14 +139,14 @@ namespace JAFDTC.UI.F16C
         /// </summary>
         private void RebuildInterfaceState()
         {
-            Utilities.SetEnableState(uiPDbBtnExport, uiPDbListView.SelectedItems.Count > 0);
+            Utilities.SetEnableState(uiPDbBtnExport, true);
             Utilities.SetEnableState(uiPDbBtnImport, true);
             Utilities.SetEnableState(uiPDbBtnDelete, uiPDbListView.SelectedItems.Count > 0);
 
             bool isCallsignValid = uiPDbValueCallsign.Text.Length > 0;
             foreach (ViperDriver driver in Pilots)
             {
-                if (uiPDbValueCallsign.Text.ToLower() == driver.Name.ToLower())
+                if (uiPDbValueCallsign.Text.Equals(driver.Name, System.StringComparison.CurrentCultureIgnoreCase))
                 {
                     isCallsignValid = false;
                     break;
@@ -147,7 +154,7 @@ namespace JAFDTC.UI.F16C
             }
             SetFieldValidState(uiPDbValueCallsign, isCallsignValid || string.IsNullOrEmpty(uiPDbValueCallsign.Text));
 
-            bool isTNDLValid = tndlRegex.IsMatch(uiPDbValueTNDL.Text);
+            bool isTNDLValid = TNDLRegex().IsMatch(uiPDbValueTNDL.Text);
             SetFieldValidState(uiPDbValueTNDL, isTNDLValid || string.IsNullOrEmpty(uiPDbValueTNDL.Text));
 
             Utilities.SetEnableState(uiPDbBtnAdd, isCallsignValid && isTNDLValid);
@@ -201,31 +208,86 @@ namespace JAFDTC.UI.F16C
         // ---- pilot list commands -----------------------------------------------------------------------------------
 
         /// <summary>
-        /// on import button clicks, note an import was requested and dismiss the dialog.
+        /// on confirm flyout for delete button clicks, delete the selected pilots from the list.
         /// </summary>
-        private void PDbBtnImport_Click(object sender, RoutedEventArgs e)
-        {
-            IsImportRequested = true;
-            Hide();
-        }
-
-        /// <summary>
-        /// on export button clicks, note an import was requested and dismiss the dialog.
-        /// </summary>
-        private void PDbBtnExport_Click(object sender, RoutedEventArgs e)
-        {
-            IsExportRequested = true;
-            Hide();
-        }
-
-        /// <summary>
-        /// on delete button clicks, delete the selected pilots from the list.
-        /// </summary>
-        private void PDbBtnDelete_Click(object sender, RoutedEventArgs e)
+        private void PDbBtnDeleteFlyout_Click(object sender, RoutedEventArgs e)
         {
             foreach (ViperDriver driver in uiPDbListView.SelectedItems.Cast<ViperDriver>())
-            {
                 Pilots.Remove(driver);
+        }
+
+        /// <summary>
+        /// on confirm flyong for import button clicks, note an import was requested and dismiss the dialog. if the
+        /// import fails, hide the dialog and set the error information.
+        /// </summary>
+        private async void PDbBtnFlyoutImport_Click(object sender, RoutedEventArgs e)
+        {
+            // ---- pick file
+
+            FileOpenPicker picker = new((Application.Current as JAFDTC.App).Window.AppWindow.Id)
+            {
+                CommitButtonText = "Import Viper Pilots",
+                SuggestedStartLocation = PickerLocationId.Desktop,
+                ViewMode = PickerViewMode.List
+            };
+            picker.FileTypeFilter.Add(".jafdtc_db");
+
+            PickFileResult resultPick = await picker.PickSingleFileAsync();
+            try
+            {
+                // ---- do the import
+
+                if ((resultPick != null) && (Path.GetExtension(resultPick.Path.ToLower()) == ".jafdtc_db"))
+                {
+                    List<ViperDriver> fileDrivers = FileManager.LoadSharableDbase<ViperDriver>(resultPick.Path);
+                    if (fileDrivers != null)
+                    {
+                        Pilots.Clear();
+                        foreach (ViperDriver driver in fileDrivers)
+                            Pilots.Add(driver);
+                        SortPilots();
+                    }
+                    else
+                    {
+                        throw new Exception("LoadSharableDbase fails");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                FileManager.Log($"F16CPilotDbaseDialog:PDbBtnFlyoutImport_Click exception {ex}");
+                ErrorOperation = "Import";
+                ErrorMessage = $"Unable to import the pilots from the database file at:\n\n{resultPick.Path}";
+                Hide();
+            }
+        }
+
+        /// <summary>
+        /// on export button clicks, open a file picker and export pilots to the specified file. if the export
+        /// fails, hide the dialog and set the error information.
+        /// </summary>
+        private async void PDbBtnExport_Click(object sender, RoutedEventArgs e)
+        {
+            FileSavePicker picker = new((Application.Current as JAFDTC.App).Window.AppWindow.Id)
+            {
+                CommitButtonText = "Export Viper Pilots",
+                SuggestedStartLocation = PickerLocationId.Desktop,
+                SuggestedFileName = "Viper Drivers"
+            };
+            picker.FileTypeChoices.Add("JAFDTC Db", [".jafdtc_db"]);
+
+            PickFileResult resultPick = await picker.PickSaveFileAsync();
+            try
+            {
+                if (resultPick != null)
+                    FileManager.SaveSharableDatabase(resultPick.Path, [.. Pilots ]);
+            }
+            catch (Exception ex)
+            {
+                FileManager.Log($"F16CPilotDbaseDialog:PDbBtnExport_Click exception {ex}");
+                ErrorOperation = "Export";
+                ErrorMessage = $"Unable to export the pilots to the database file at:\n\n{resultPick.Path}";
+                Hide();
             }
         }
     }

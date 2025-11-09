@@ -18,8 +18,13 @@
 // ********************************************************************************************************************
 
 using JAFDTC.Models;
+using JAFDTC.Models.F16C;
+using JAFDTC.Models.F16C.DLNK;
 using JAFDTC.UI.App;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 
@@ -48,8 +53,14 @@ namespace JAFDTC.UI.F16C
     /// </summary>
     public class F16CConfigurationEditor : ConfigurationEditor
     {
-        private static readonly ObservableCollection<ConfigEditorPageInfo> _configEditorPageInfo = new()
-        {
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // properties
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
+        private static readonly ObservableCollection<ConfigEditorPageInfo> _configEditorPageInfo =
+        [
                 F16CEditSteerpointListPage.PageInfo,
                 F16CEditMFDPage.PageInfo,
                 F16CEditRadioPageHelper.PageInfo,
@@ -60,12 +71,18 @@ namespace JAFDTC.UI.F16C
                 F16CEditDLNKPage.PageInfo,
                 F16CEditMiscPage.PageInfo,
                 F16CEditSimulatorDTCPageHelper.PageInfo
-        };
+        ];
 
-        private static readonly ObservableCollection<ConfigAuxCommandInfo> _configAuxCmdInfo = new()
-        {
+        private static readonly ObservableCollection<ConfigAuxCommandInfo> _configAuxCmdInfo =
+        [
             new("PDb", "Edit Pilot Database", Glyphs.PILOT_DB)
-        };
+        ];
+
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // ConfigurationEditor methods
+        //
+        // ------------------------------------------------------------------------------------------------------------
 
         public override ObservableCollection<ConfigEditorPageInfo> ConfigEditorPageInfo() => _configEditorPageInfo;
 
@@ -75,10 +92,43 @@ namespace JAFDTC.UI.F16C
 
         public override bool HandleAuxCommand(ConfigurationPage configPage, ConfigAuxCommandInfo cmd)
         {
-            F16CConfigAuxCmdPilotDbase cmdHelper = new((Application.Current as JAFDTC.App)?.Window,
-                                                       configPage.Content.XamlRoot);
-            cmdHelper.RunPilotDbEditorUI(configPage, cmd);
+            if (cmd.Tag == "PDb")
+                RunPilotDbEditorUI(configPage.Content.XamlRoot, configPage, cmd);
             return false;
+        }
+
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // aux command methods
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
+        /// <summary>
+        /// run the ui for the pilot dbase editor until the user dismisses it. will export or import the database
+        /// as requested by F16CPilotDbaseDialog.
+        /// </summary>
+        public static async void RunPilotDbEditorUI(XamlRoot root, ConfigurationPage configPage, ConfigAuxCommandInfo cmd)
+        {
+            List<ViperDriver> pilotDbase = F16CPilotsDbase.LoadDbase();
+            F16CPilotDbaseDialog dialog = new(root, pilotDbase);
+            while (true)
+            {
+                ContentDialogResult result = await dialog.ShowAsync();
+                if (!string.IsNullOrEmpty(dialog.ErrorOperation))
+                {
+                    await Utilities.Message1BDialog(root, $"{dialog.ErrorOperation} Failed", dialog.ErrorMessage);
+                }
+                else
+                {
+                    if (result == ContentDialogResult.Primary)
+                    {
+                        pilotDbase = [.. dialog.Pilots];
+                        F16CPilotsDbase.UpdateDbase(pilotDbase);
+                        configPage.RaiseAuxCommandInvoked(cmd);
+                    }
+                    break;
+                }
+            }
         }
     }
 }
