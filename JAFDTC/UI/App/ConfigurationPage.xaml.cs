@@ -275,7 +275,7 @@ namespace JAFDTC.UI.App
         {
             try
             {
-                ConfigExchangeUIHelper.ConfigExportJAFDTC(Content.XamlRoot, Config);
+                ExchangeConfigUIHelper.ConfigExportJAFDTC(Content.XamlRoot, Config);
             }
             catch (Exception ex)
             {

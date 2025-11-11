@@ -886,7 +886,7 @@ namespace JAFDTC
                 if (!string.IsNullOrEmpty(CmdLnArgs.ArgValueOpen))
                 {
                     FileManager.Log($"Opening unmanaged config file: {CmdLnArgs.ArgValueOpen}");
-                    IConfiguration config = ConfigExchangeUIHelper.ConfigSilentImportJAFDTC(CmdLnArgs.ArgValueOpen);
+                    IConfiguration config = ExchangeConfigUIHelper.ConfigSilentImportJAFDTC(CmdLnArgs.ArgValueOpen);
                     Settings.LastConfigFilenameSelection = config.Filename;
                 }
 

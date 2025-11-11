@@ -175,9 +175,9 @@ namespace JAFDTC.UI.App
                     FileManager.Log($"ConfigurationListPage:FileActivations noui={isNoUI}, {path}");
                     IConfiguration curConfig;
                     if (isNoUI)
-                        curConfig = ConfigExchangeUIHelper.ConfigSilentImportJAFDTC(path, ConfigList);
+                        curConfig = ExchangeConfigUIHelper.ConfigSilentImportJAFDTC(path, ConfigList);
                     else
-                        curConfig = await ConfigExchangeUIHelper.ConfigImportJAFDTC(Content.XamlRoot, ConfigList, path);
+                        curConfig = await ExchangeConfigUIHelper.ConfigImportJAFDTC(Content.XamlRoot, ConfigList, path);
                     lastConfig = curConfig ?? lastConfig;
                 }
                 if (lastConfig != null)
@@ -577,7 +577,7 @@ namespace JAFDTC.UI.App
         {
             try
             {
-                IConfiguration config = await ConfigExchangeUIHelper.ConfigImportJAFDTC(Content.XamlRoot, ConfigList);
+                IConfiguration config = await ExchangeConfigUIHelper.ConfigImportJAFDTC(Content.XamlRoot, ConfigList);
                 if (config != null)
                     uiCfgListView.SelectedItem = config;
             }
@@ -600,7 +600,7 @@ namespace JAFDTC.UI.App
                 configClean.ResetUID();
                 configClean.UnlinkSystem(null);
 
-                ConfigExchangeUIHelper.ConfigExportJAFDTC(Content.XamlRoot, configClean);
+                ExchangeConfigUIHelper.ConfigExportJAFDTC(Content.XamlRoot, configClean);
             }
             catch (Exception ex)
             {

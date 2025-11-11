@@ -1,6 +1,6 @@
 ﻿// ********************************************************************************************************************
 //
-// ConfigExchangeUIHelper.cs : helper classes for configuration exchange (import/export) ui
+// ExchangeConfigUIHelper.cs : helper classes for configuration exchange (import/export) ui
 //
 // Copyright(C) 2025 ilominar/raven
 //
@@ -36,7 +36,7 @@ namespace JAFDTC.UI.Base
     /// helper class to provide a number of static support functions for use in the user interface around exchanging
     /// configuration files.
     /// </summary>
-    public partial class ConfigExchangeUIHelper
+    public partial class ExchangeConfigUIHelper
     {
         // ------------------------------------------------------------------------------------------------------------
         //
