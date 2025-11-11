@@ -135,7 +135,7 @@ namespace JAFDTC.Models.DCS
 
 #if DEBUG_POI_UID_HUMAN_FRIENDLY
 
-        public string UniqueID => $"{(int)Type}:{Theater.ToLower()}:{Name.ToLower()}:{Tags.ToLower()}";
+        public string UniqueID => $"{(int)Type}:{Theater.ToLower()}:{Name.ToLower()}:{SanitizedTags(Tags).ToLower()}";
 
 #else
 
@@ -178,7 +178,7 @@ namespace JAFDTC.Models.DCS
         /// <summary>
         /// constructs a point of interest from a line of csv text. format of the line is,
         ///
-        ///     [type],[campaign],[name],[tags],[latitude],[longitude],[elevation]
+        ///     [name],[tags],[campaign],[latitude],[longitude],[elevation]
         ///     
         /// where the Theater is inferred from the decimal [latitude] and [longitude] and set to null if there are
         /// multiple potential theaters. if the string is unable to be parsed, the PointOfInterest is set to
@@ -198,21 +198,21 @@ namespace JAFDTC.Models.DCS
             Elevation = "";
 
             string[] cols = csv.Split(",");
-            if (cols.Length >= 7)
+            if (cols.Length == 6)
             {
-                string lat = cols[4].Trim();
-                string lon = cols[5].Trim();
+                string lat = cols[3].Trim();
+                string lon = cols[4].Trim();
                 List<string> theaters = TheatersForCoords(lat, lon);
-                if (int.TryParse(cols[0].Trim(), out int type) && (theaters.Count >= 1))
+                if ((theaters != null) && (theaters.Count >= 1))
                 {
-                    Type = (PointOfInterestType)type;
                     Theater = (theaters.Count == 1) ? theaters[0] : null;
-                    Campaign = cols[1].Trim();
-                    Name = cols[2].Trim();
-                    Tags = cols[3].Trim();
+                    Name = cols[0].Trim();
+                    Tags = cols[1].Trim();
+                    Campaign = cols[2].Trim();
                     Latitude = lat;
                     Longitude = lon;
-                    Elevation = cols[6].Trim();
+                    Elevation = cols[5].Trim();
+                    Type = (string.IsNullOrEmpty(Campaign)) ? PointOfInterestType.USER : PointOfInterestType.CAMPAIGN;
                 }
             }
         }
@@ -262,7 +262,7 @@ namespace JAFDTC.Models.DCS
         /// </summary>
         public static string SanitizedTags(string tags)
         {
-            string cleanTags = tags;
+            string cleanTags = tags ?? "";
             if (!string.IsNullOrEmpty(tags))
             {
                 cleanTags = "";
