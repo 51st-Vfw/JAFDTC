@@ -88,6 +88,29 @@ namespace JAFDTC.Models.DCS
     {
         // ------------------------------------------------------------------------------------------------------------
         //
+        // constants
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
+        public static Dictionary<string, TheaterInfo> TheaterInfo => new()
+        {
+            //                         lat-    lat+     lon-     lon+    z
+            ["Afghanistan"]     = new( 23.00,  38.75,   60.25,   73.25,  5),    // UTC +5
+            ["Caucasus"]        = new( 40.00,  46.00,   33.00,   46.00,  4),    // UTC +4
+            ["Germany"]         = new( 49.50,  54.50,    6.50,   16.00,  2),    // UTC +2
+            ["Iraq"]            = new( 26.25,  37.00,   38.50,   52.00,  4),    // UTC +4
+            ["Kola"]            = new( 64.00,  71.25,   12.00,   39.00,  3),    // UTC +3
+            ["Marianas"]        = new( 11.75,  22.00,  141.00,  149.00, 10),    // UTC +10
+            ["Nevada"]          = new( 34.50,  38.75, -118.50, -113.00, -8),    // UTC -8
+            ["Persian Gulf"]    = new( 22.00,  30.75,   50.00,   59.00,  4),    // UTC +4
+            ["Sinai"]           = new( 26.50,  34.00,   29.50,   35.75,  3),    // UTC +3
+            ["South Atlantic"]  = new(-57.00, -48.00,  -77.00,  -55.00, -3),    // UTC -3
+            ["Syria"]           = new( 31.25,  37.50,   30.75,   41.00,  3)     // UTC +3
+        };
+        public static List<string> Theaters => [.. TheaterInfo.Keys];
+
+        // ------------------------------------------------------------------------------------------------------------
+        //
         // properties
         //
         // ------------------------------------------------------------------------------------------------------------
@@ -109,23 +132,6 @@ namespace JAFDTC.Models.DCS
         public string Longitude { get; set; }                   // longitude (decimal degrees)
         
         public string Elevation { get; set; }                   // elevation (feet)
-
-        public static Dictionary<string, TheaterInfo> TheaterInfo => new()
-        {
-            //                         lat-    lat+     lon-     lon+    z
-            ["Afghanistan"]     = new( 23.00,  38.75,   60.25,   73.25,  5),    // UTC +5
-            ["Caucasus"]        = new( 40.00,  46.00,   33.00,   46.00,  4),    // UTC +4
-            ["Germany"]         = new( 49.50,  54.50,    6.50,   16.00,  2),    // UTC +2
-            ["Iraq"]            = new( 26.25,  37.00,   38.50,   52.00,  4),    // UTC +4
-            ["Kola"]            = new( 64.00,  71.25,   12.00,   39.00,  3),    // UTC +3
-            ["Marianas"]        = new( 11.75,  22.00,  141.00,  149.00, 10),    // UTC +10
-            ["Nevada"]          = new( 34.50,  38.75, -118.50, -113.00, -8),    // UTC -8
-            ["Persian Gulf"]    = new( 22.00,  30.75,   50.00,   59.00,  4),    // UTC +4
-            ["Sinai"]           = new( 26.50,  32.00,   29.50,   35.75,  3),    // UTC +3
-            ["South Atlantic"]  = new(-57.00, -48.00,  -77.00,  -55.00, -3),    // UTC -3
-            ["Syria"]           = new( 31.25,  37.50,   30.75,   41.00,  3)     // UTC +3
-        };
-        public static List<string> Theaters => [.. TheaterInfo.Keys ];
 
 #if DEBUG_POI_UID_HUMAN_FRIENDLY
 
@@ -174,8 +180,11 @@ namespace JAFDTC.Models.DCS
         ///
         ///     [type],[campaign],[name],[tags],[latitude],[longitude],[elevation]
         ///     
-        /// where the Theater is inferred from the decimal [latitude] and [longitude]. if the string is unable ot be
-        /// parsed, the PointOfInterest is set to PointOfInterestType.UNKNOWN.
+        /// where the Theater is inferred from the decimal [latitude] and [longitude] and set to null if there are
+        /// multiple potential theaters. if the string is unable to be parsed, the PointOfInterest is set to
+        /// PointOfInterestType.UNKNOWN.
+        /// 
+        /// NOTE: this can construct a poi with a null Theater. it is the caller's responsibility to clean that up.
         /// </summary>
         public PointOfInterest(string csv)
         {
@@ -193,12 +202,11 @@ namespace JAFDTC.Models.DCS
             {
                 string lat = cols[4].Trim();
                 string lon = cols[5].Trim();
-// TODO: overlapping theaters need some help here, likely to put theater in the csv, but that creates other issues
                 List<string> theaters = TheatersForCoords(lat, lon);
-                if (int.TryParse(cols[0].Trim(), out int type) && (theaters.Count == 1))
+                if (int.TryParse(cols[0].Trim(), out int type) && (theaters.Count >= 1))
                 {
                     Type = (PointOfInterestType)type;
-                    Theater = theaters[0];
+                    Theater = (theaters.Count == 1) ? theaters[0] : null;
                     Campaign = cols[1].Trim();
                     Name = cols[2].Trim();
                     Tags = cols[3].Trim();
