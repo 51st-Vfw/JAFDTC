@@ -296,11 +296,37 @@ namespace JAFDTC.Models.DCS
         }
 
         /// <summary>
-        /// parse a multi-line comma-separated value string to build a list of points of interest.
+        /// return the list of "consensus" theaters for a point of interest list. a "consensus theater" is a
+        /// theater that all points in the list lies within.
+        /// </summary>
+        public static List<string> ConsensusTheaters(List<PointOfInterest> pois)
+        {
+            Dictionary<string, int> mapTheater = [];
+            foreach (PointOfInterest poi in pois)
+                if (string.IsNullOrEmpty(poi.Theater))
+                    foreach (string theater in PointOfInterest.TheatersForCoords(poi.Latitude, poi.Longitude))
+                        mapTheater[theater] = mapTheater.GetValueOrDefault(theater, 0) + 1;
+                else
+                    mapTheater[poi.Theater] = mapTheater.GetValueOrDefault(poi.Theater, 0) + 1;
+
+            List<string> consensusTheaters = [ ];
+            foreach (string theater in mapTheater.Keys)
+                if (mapTheater[theater] == pois.Count)
+                    consensusTheaters.Add(theater);
+
+            return consensusTheaters;
+        }
+
+        /// <summary>
+        /// parse a multi-line comma-separated value string to build a list of points of interest. lines are
+        /// skipped if they parse to an unknown type. returns list of successfully parsed pois.
+        /// 
+        /// NOTE: pois in the returned list may have null theaters in the event ParseCSV is unable to figure
+        /// NOTE: out where the pois are (because they lie in multiple theaters). callers are responsible for
+        /// NOTE: cleaning this up.
         /// </summary>
         public static List<PointOfInterest> ParseCSV(string csv)
         {
-            // TODO: this needs to change to csv...
             List<PointOfInterest> pois = [ ];
             string[] lines = (string.IsNullOrEmpty(csv)) ? [ ] : csv.Replace("\r", "").Split('\n');
             foreach (string line in lines)
@@ -308,7 +334,15 @@ namespace JAFDTC.Models.DCS
                 PointOfInterest poi = new(line);
                 if (poi.Type != PointOfInterestType.UNKNOWN)
                     pois.Add(poi);
+                else
+                    FileManager.Log($"PointOfInterestDbase.ParseCSV(): warning: parse fails '{line}'; skipping add.");
             }
+
+            List<string> consensusTheaters = ConsensusTheaters(pois);
+            if (consensusTheaters.Count == 1)
+                foreach (PointOfInterest poi in pois)
+                    poi.Theater = consensusTheaters[0];
+
             return pois;
         }
 
@@ -347,7 +381,11 @@ namespace JAFDTC.Models.DCS
         {
             PointOfInterestType type = PointOfInterestType.CAMPAIGN;
             if (_dbase.TryGetValue(type, out Dictionary<string, List<PointOfInterest>> value) && value.ContainsKey(campaign))
+            {
+                foreach (PointOfInterest poi in value[campaign])
+                    _uniqueIDs.Remove(poi.UniqueID);
                 value.Remove(campaign);
+            }
 
             if (isPersist)
                 Save(campaign, true);
@@ -366,7 +404,8 @@ namespace JAFDTC.Models.DCS
         }
 
         /// <summary>
-        /// add a point of interest to the database, persisting the database to storage if requested.
+        /// add a point of interest to the database, persisting the database to storage if requested. returns
+        /// true on success, false on failure.
         /// </summary>
         public bool AddPointOfInterest(PointOfInterest poi, bool isPersist = true)
         {
@@ -374,6 +413,11 @@ namespace JAFDTC.Models.DCS
             {
                 FileManager.Log($"PointOfInterestDbase.AddPointOfInterest(): warning: poi with unique id '{poi.UniqueID}'" +
                                 " already exists in database; skipping add.");
+                return false;
+            }
+            else if (string.IsNullOrEmpty(poi.Theater))
+            {
+                FileManager.Log($"PointOfInterestDbase.AddPointOfInterest(): warning: poi missing theater, skipping add.");
                 return false;
             }
 
