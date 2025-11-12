@@ -1,6 +1,6 @@
 # JAFDTC: User’s Guide
 
-**_Version 1.1.0 of TODO_**
+***Version 1.1.0 of TODO***
 
 _Just Another #%*@^!% DTC_ (JAFDTC) is a native Windows application that allows you to upload
 data typically saved on a data cartridge in real life, such as steerpoints/waypoints and other
@@ -15,7 +15,7 @@ There are three components to the user's guide,
 
 - This document provides a broad overview of JAFDTC
 - The
-  [_Common Elements Guide_](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/Common_Elements.md)
+  [*Common Elements Guide*](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/Common_Elements.md)
   discusses topics that are common across multiple airframes
 - The
   [airframe guides](#what-now)
@@ -93,7 +93,7 @@ same value).
 JAFDTC can export and import configurations in a `.jafdtc` file that can be exchanged with
 other pilots for mission planning purposes. For more information on sharing configurations,
 see the
-[_Common Elements Guide_](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/Common_Elements.md).
+[*Common Elements Guide*](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/Common_Elements.md).
 
 ## Linking Systems
 
@@ -189,7 +189,7 @@ locations. Points of interest are discussed further
 ## DCS Integration
 
 This section focuses on a brief overview of the integration between JAFDTC and DCS. The
-[_Common Elements Guide_](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/Common_Elements.md)
+[*Common Elements Guide*](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/Common_Elements.md)
 covers the user interface aspects in more depth.
 
 ### DCS Support Scripts
@@ -230,7 +230,7 @@ some advantages over tools like JAFDTC (primarily, by being able to inject confi
 directly into the jet without needing to rely on clicking cockpit controls). JAFDTC provides
 the ability to push configurations into the jet through the ED DCS DTC, with some restrictions.
 The
-[_Common Elements Guide_](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/Common_Elements.md#selecting--filtering-points-of-interest)
+[*Common Elements Guide*](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/Common_Elements.md#selecting--filtering-points-of-interest)
 and
 [airframe guides](#what-now)
 provide further discussion on how JAFDTC interoperates with the DCS DTC for those airframes
@@ -266,29 +266,30 @@ for an airframe and allows you to edit the specfic systems in a configuration. T
 covers the aspects of this user interface that are independent of the specific airframe.
 Additional details on user interface elements that are common to multiple airframes can be
 found in the
-[_Common Elements Guide_](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/Common_Elements.md)
+[*Common Elements Guide*](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/Common_Elements.md)
 while details that are specific to a single airframe can be found in the
 [airframe guides](#what-now)
 linked below.
 
 ## Configuration List Page
 
-The main page of the JAFDTC user interface is the *Configuration List Page* that provides
-a number of controls to manipulate configurations. This page is visible after launching JAFDTC.
+The main window of the JAFDTC user interface contains the *Configuration List Page* that
+provides a number of controls to manipulate configurations. This page is visible after
+launching JAFDTC.
 
 ![](images/uguide_config_list_ui.png)
 
 Working from top to bottom, the primary components of this page include,
 
-1. [**_Filter Field_**](#filter-field)
+1. [***Filter Field***](#filter-field)
    &ndash; Filters the configurations shown in the configuration list by name.
-2. [**_Current Airframe_**](#current-airframe-selection)
+2. [***Current Airframe***](#current-airframe-selection)
    &ndash; Selects the current airframe to display configurations for.
-3. [**_Command Bar_**](#command-bar)
+3. [***Command Bar***](#command-bar)
    &ndash; Triggers commands to manipulate configurations.
-4. [**_Configuration List_**](#configuration-list)
+4. [***Configuration List***](#configuration-list)
    &ndash; Lists the available configurations for the current airframe.
-5. [**_Status Area_**](#status-area)
+5. [***Status Area***](#status-area)
    &ndash; Shows information on the current DCS status and pilot.
 
 The reaminder of this section discusses each of these elements in more detail.
@@ -296,7 +297,7 @@ The reaminder of this section discusses each of these elements in more detail.
 ### Filter Field
 
 The filter field in (1) controls which configurations the
-[_Configuration List_](#configuration-list)
+[*Configuration List*](#configuration-list)
 in the center of the page displays. To be displayed in the configuration list, a configuration
 must match the filter by containing the specified text. For example, typing `test` will match
 configurations that contain "test" anywhere in their name (comparisons are case-insensitive).
@@ -313,7 +314,7 @@ airframe.
 
 The combo box control in the upper right of the page in area (2) selects the airframe currently
 in use. The
-[_Configuration List_](#configuration-list)
+[*Configuration List*](#configuration-list)
 in area (4) that makes up the bulk of the page displays known configurations for the selected
 airframe only. JAFDTC remembers the last airframe you selected and will return to that airframe
 the next time it is launched.
@@ -341,10 +342,10 @@ The command bar includes the following commands,
 - **Delete** &ndash; Removes the currently selected configuration from the database.
 - **Import** &ndash; Creates a new configuration from a `.jafdtc` file previously created with the
   *Export* command. `.jafdtc` files are discused further in the
-  [_Common Elements Guide_](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/Common_Elements.md).
+  [*Common Elements Guide*](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/Common_Elements.md).
 - **Export** &ndash; Creates a `.jafdtc` file that contains the selected configuration suitable for
   import using the *Import* command.  `.jafdtc` files are discused further in the
-  [_Common Elements Guide_](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/Common_Elements.md).
+  [*Common Elements Guide*](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/Common_Elements.md).
 - **Load to Jet** &ndash; Uploads the selected configuration to DCS, see
   [here](#interacting-with-dcs)
   for further details.
@@ -408,28 +409,35 @@ and wing as specified through the
 
 ## System Editor Page
 
-The *System Editor Page* provides a list of systems from which you can select a per-system
-editor to specify the settings for system parameters. The specific systems availble in a
-configuration vary from airframe to airframe. However, the basic structure of the page on
-which you edit a system configuration is similar.
+The *System Editor Page* replaces the
+[Configuration List Page](#configuration-list-page)
+in the main window when you open a configuration for editing by double-clicking a configuration
+or opening on via the **Edit** command in the *Configuration List*
+[command bar](#command-bar). This page provides a list of systems from which you can select a
+per-system editor to specify the settings for system parameters.
+
+The specific systems availble in a configuration vary from
+airframe to airframe. However, the basic structure of the page on which you edit a system
+configuration is similar.
 
 ![](images/uguide_sys_editor_ui.png)
 
 Working from top to bottom, the primary components of this page include,
 
-1. [**_Configuration Information_**](#system-editor-header)
-   &ndash; Provides the name of the current configuration and a control to reutnrn to the
-   [_Configuration List Page_](#configuration-list-page).
-2. [**_Airframe Information_**](#system-editor-header)
-   &ndash; Provides the name of the current airframe and a control to export the current
-   configuration as a `.jafdtc` fie.
-3. [**_System List_**](#system-list)
+1. [***Configuration Information***](#system-editor-header)
+   &ndash; Provides the name of the current configuration and a control on the left that
+   returns to the
+   [*Configuration List Page*](#configuration-list-page).
+2. [***Airframe Information***](#system-editor-header)
+   &ndash; Provides the name of the current airframe and a control on the right to export the
+   current configuration to a `.jafdtc` fie.
+3. [***System List***](#system-list)
    &ndash; Lists the systems that the configuration can set up.
-4. [**_System Editor_**](#system-editor)
+4. [***System Editor***](#system-editor)
    &ndash; Provides the interface to edit the system selected in the system list.
-5. [**_Other Controls_**](#other-editor-controls)
+5. [***Other Controls***](#other-editor-controls)
    &ndash; Airframe-specific controls to manage other aspects of the configuration.
-6. [**_Common Editor Controls_**](#common-editor-controls)
+6. [***Common Editor Controls***](#common-editor-controls)
    &ndash; Common controls that are often part of system editors.
 
 The reaminder of this section discusses each of these elements in more detail.
@@ -442,7 +450,7 @@ along with a back button that returns you to the
 when clicked. To the right in area (2) is text identifying the *Current Airframe*.
 The button to the right of the current airframe exports the configuration as a `.jafdtc` file,
 as discused further in the
-[_Common Elements Guide_](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/Common_Elements.md).
+[*Common Elements Guide*](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/Common_Elements.md).
 This button is functionally identical to the export button on the
 [*Configuration List Page*](#configuration-list-page).
 
@@ -532,14 +540,14 @@ DCS theaters. This database consists of three types of entries as
 [navigation system editors](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/Common_Elements.md#navigation-system-editors)
 and other location-aware systems.
 
-Generally, DCS and User POIs are treated as independent locations in the world. These points
-are intended to support usages like tracking an often-used airfield or approach fix to allow
-the points to be loaded into a navigation point list.
+DCS and User POIs are treated as independent locations in the world. These points are intended
+to support usages like tracking an often-used airfield or approach fix to allow the points to
+be loaded into a navigation point list in navigation avionics.
 
-Campaign POIs differ in that they encompass a set of locations relevant to a mission or set of
-missions. These POI sets might include target DPIs for various targets or ingress points for a
-mission. While individual DCS and User POIs are independent, Campaign POIs are intended to be
-managed as a set.
+Campaign POIs encompass a set of related locations relevant to a mission or set of missions.
+These POI sets might include target DPIs for various targets or ingress points for a mission.
+While individual DCS and User POIs are independent, Campaign POIs are intended to be managed
+as a set.
 
 For example, consider a campaign covering multiple missions. Prior to campaign start, you can
 build campaign POIs that include DPIs for all potential targets, ingress and egress
@@ -551,24 +559,26 @@ campaign POIs can be updated and redistributed.
 The **Point of Interest** command in the
 [overflow menu](#command-bar)
 on the
-[_Configuration List Page_](#configuration-list-page)
-command bar opens up an editor page to manage known points of interest.
+[*Configuration List Page*](#configuration-list-page)
+command bar opens up an editor page to manage known points of interest, replacing the
+[*Configuration List Page*](#configuration-list-page)
+in the main window.
 
 ![](images/uguide_poi_editor_ui.png)
 
 Working from top to bottom, the primary components of this page include,
 
-1. [**_POI Filter_**](#point-of-interest-filter)
+1. [***POI Filter***](#point-of-interest-filter)
    &ndash; Filters the points of interest displayed in the
    [*Point of Interest List*](#point-of-interst-list).
-2. [**_Command Bar_**](#point-of-interest-command-bar)
+2. [***Command Bar***](#point-of-interest-command-bar)
    &ndash; Defines operations you can apply to the selected POIs in the
    [*Point of Interest List*](#point-of-interst-list).
-3. [**_POI List_**](#point-of-interest-list)
+3. [***POI List***](#point-of-interest-list)
    &ndash; Lists the POIs that match the current filter the
    [*Point of Interest Filter*](#point-of-interest-filter)
    specifies.
-4. [**_POI Editor_**](#TODO)
+4. [***POI Editor***](#TODO)
    &ndash; Editor to add and update POIs in the database.
 
 The reaminder of this section discusses each of these elements in more detail.
@@ -591,11 +601,12 @@ The command bar in area (2) provides commands you can apply to POIs selected fro
 The command bar includes the following commands,
 
 - **Copy to User** &ndash; Copies the selected POIs to new user POIs.
-- **Copy to Campaign** &ndash; Copies the selected POIs to a campaign.
+- **Copy to Campaign** &ndash; Copies the selected POIs to new POIs in a campaign.
 - **Delete** &ndash; Deletes the selected POIs from the database. Note that DCS POIs cannot
   be deleted and that deleting all campaign POIs implicitly deletes the campaign.
 - **Map** &ndash; Opens up a map window to aid editing POIs.
-- **Import** &ndash; Imports new POIs from a previously exported file.
+- **Import** &ndash; Imports POIs from a previously exported file, updating or adding POIs
+  as appropriate.
 - **Export** &ndash; Exports selected POIs to a file.
 
 The overflow menu (exposed by clicking on the "`...`" button) holds three commands,
@@ -614,7 +625,7 @@ the selected POIs.
 
 The *Point of Interest List* in the center of the page lists known points of interest in the
 database as filtered by the
-[_Point of Interest Filter_](#poiunt-of-interest-filter).
+[*Point of Interest Filter*](#poiunt-of-interest-filter).
 Each row in the *Point of Interest List* corresponds to a single POI in the database and
 provides information such as name and position (latitude, longitude, elevation). The icon at
 the left of each row in this list indicates the POI type:
@@ -666,11 +677,17 @@ for more information on capturing location information from DCS.
 
 Using the **Export** command from the
 [*Point of Interest Command Bar*](#point-of-interest-command-bar)
-lets you export selected POIs from the database in an internal `JSON` based format. To start
-and export, select one or more POIs and then select **Export**. When exporting a campaign POI,
-you have the option of exporting only the selected campaign POIs or including all POIs from the
-campaigns matching the selected POIs. Once what to export is establisehd, JAFDTC displays a
-standard Windows file picker to allow you to specify the file to export to.
+lets you export selected POIs from the database to a `.jafdtc_db` file. To start an export,
+select one or more POIs and then select **Export**. The selected POIs must meet one of two
+criteria,
+
+* Selected POIs must all be user POIs.
+* Selected POIs must all be campaign POIs from the same campaign.
+
+When exporting a campaign POI, you have the option of exporting only the selected campaign
+POIs or including all POIs from the campaign matching the selected POIs. Once what to export
+is establisehd, JAFDTC displays a standard Windows file picker to allow you to specify the
+file to export to.
 
 Exporting preserves the type and campaign of the exported POIs with one exception: DCS POIs
 are always converted to User POIs prior to export.
@@ -679,30 +696,36 @@ are always converted to User POIs prior to export.
 
 Using the **Import** command from the
 [*Point of Interest Command Bar*](#point-of-interest-command-bar)
-lets you export selected POIs from the database in an internal `JSON` or `CSV` based formats.
+lets you export selected POIs from the database in `.jafdtc_db` or `CSV` based formats. The
+POIs in the file must match the export criteria
+[outlined above](#exporting-points-of-interest).
 
 > The `CSV` format is intended primarily for use in creating POI lists for campaigns and
 > so on from other source material such as a spreadsheet.
 
+In addition, `.jafdtc_db` files for POIs also can be imported by double-clicking on them
+from the Windows File Explorer.
+
 After selecting **Import**, JAFDTC will display a standard Windows file picker to allow you
-to specify the file to import from. The import process will update POIs that are in the
-imported data as well as the current database. When importing a campaign that is also
-currently in the database, the user can select merging the imported data or replacing the
-in-database campaign data. Campaigns that are not in the database are implicitly created.
+to specify the file to import from. The import process will update POIs from the database
+that match POIs in the imported data. POIs from the import file that are not in the database
+are added. When importing a campaign that is also currently in the database, the user can
+select merging the imported data or replacing the in-database campaign data with the POIs
+from the import file. Campaigns that are not in the database are implicitly created.
 
 The `CSV` format is a text file of lines, one per POI, of comma-separated fields. The format
-of the fields is as follows,
+of the fields on each line is,
 
-**TODO: include theater here? lat/lon outside of known theaters?**
 ```
-[type],[campaign],[name],[tags],[latitude],[longitude],[elevation]
+[name],[tags],[campaign],[latitude],[longitude],[elevation]
 ```
 
-Where `[type]` is the integer 1 (User) or 2 (Campaign), `[campaign]` and `[name]` are strings,
+Where `[name]` and `[campaign]` are strings (`[campaign]` may be empty, `[name]` may not be),
 `[tags]` is a semicolon-separated list of tags like "`Airbase;Target;Required`", `[latitude]`
-and `[longitude]` are in decimal degrees positions, and `[elevation]` is an integer in feet.
+and `[longitude]` are in decimal degrees positions within a DCS theater, and `[elevation]` is
+an integer in feet. JAFDTC infers the theater from the latitude and longitude.
 
-## Selecting & Filtering Points of Interest
+## Filtering & Selecting Points of Interest
 
 JAFDTC uses a common set of UI widgets to allow you to filter and select from a list of points
 of interest as
@@ -858,7 +881,7 @@ changes in the dialog, while “**Cancel**” will discard any changes.
 # What Now?
 
 Now that you have a basic familiarity with JAFDTC, you can take a look at the
-[_Common Elements Guide_](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/Common_Elements.md)
+[*Common Elements Guide*](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/Common_Elements.md)
 that provides the next level of detail on JAFDTC, its operation, and its user interface. From
 there, move on to the airframe guides for airframes of interest,
 

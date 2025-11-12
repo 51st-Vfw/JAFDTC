@@ -45,6 +45,10 @@ update it as appropriate for each pilot's position in the flight. This is airfra
 After filling in the fields, pressing **OK** will build a new configuration in your
 configuration library using the imported `.jafdtc` file.
 
+# Sharing Databases
+
+TODO
+
 # Common Interface Tasks
 
 The JAFDTC user interface has tasks that can be used in multiple contexts within an airframe as

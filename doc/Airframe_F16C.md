@@ -35,37 +35,40 @@ to interact with the JAFDTC window. To support this capabilty, JAFDTC reuses con
 the FLIR panel on the UFC that have no function in the the Block 50 Viper that the module
 models.
 
-**TODO REBUILD**
-![](images/Viper_UFC_JAFDTC.png)
+![](images/viper_cockpit_ctrl.png)
 
-JAFDTC currently supports four functions from the Viper cockpit,
+JAFDTC currently supports three functions from the Viper cockpit,
 
-* **FLIR WX** &ndash; Pressing and briefly holding this button can trigger one of two actions,
-  depending on the length of the press,
-  * A press between 0.2s and 1.0s causes JAFDTC to load the currently selected F-16C
+- **FLIR WX** (1) &ndash; Pressing and briefly holding this button can trigger one of two
+  actions, depending on the duration the button is held down,
+  -  A press between 0.2s and 1.0s causes JAFDTC to load the currently selected F-16C
     configuration into the jet. JAFDTC provides feedback during the upload according to the
     **Upload Feedback**
     [setting](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/README.md#settings).
-  * A press longer than 1.0s causes JAFDTC to open up the in-mission DCS DTE interface. Prior
+  - A press longer than 1.0s causes JAFDTC to open up the in-mission DCS DTE interface. Prior
     to doing so, JAFDTC will generate the merged `.dtc` according to the settings of the
     [DTC system](#data-cartridge-dtcdte).
-* **FLIR Rocker Switch** &ndash; Pressing the `UP` and `DOWN` sides of the rocker moves to the
-  previous and next configurations, respectively. On the first press, JAFDTC briefly displays
-  the name of the currently selected configuration. Subsequent presses step up or down through
-  the configuration list.
-* **FLIR GAIN/LVL/AUTO** to `GAIN` &ndash; Keeps the JAFDTC window on top of the DCS
-  window in the window stack.
-* **FLIR GAIN/LVL/AUTO** to `LVL` &ndash; Allows the JAFDTC window to be below the DCS
-  window in the window stack and does not force any particular ordering.
+- **FLIR Rocker Switch** (2) &ndash; Pressing the `UP` and `DOWN` sides of the rocker moves to
+  the previous and next configurations, respectively. On the first press, JAFDTC briefly
+  displays the name of the currently selected configuration. Subsequent presses step up or
+  down through the configuration list.
+- **FLIR GAIN/LVL/AUTO** (3) &ndash; Controls window stacking behavior based on switch
+  position,
+  - `GAIN` &ndash; Keeps the JAFDTC window on top of the DCS window in the window stack.
+  - `LVL` &ndash; Allows the JAFDTC window to be below the DCS window in the window stack and
+    does not force any particular ordering.
 
 Other functions may be implemented later.
 
-# Pilot Roles During Import
+# Pilot Roles for Import
 
 The Viper supports pilot roles when importing from a `.jafdtc` file. Roles allow JAFDTC to
 customize the imported file based on your role in the flight as
-[discussed earlier](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/Common_Elements.md#importing-configurations-from-similar-airframes). For the Viper, JAFDTC can adjust the
-following parameters from the configuration based on role,
+[discussed earlier](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/Common_Elements.md#importing-configurations-from-similar-airframes).
+and are entered into the area (2) text box from the
+[import dialog figure](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/Common_Elements.md#sharing-configurations).
+For the Viper, JAFDTC can adjust the following parameters in the imported configuration based
+on the entered rolerole,
 
 - Ownship callsign in the
   [Datalink System](#datalink).
@@ -83,16 +86,18 @@ The callsign is specified in the "CCnn" format. For example, *JEDI 2-3* is repre
 *JI23*, *VENOM1-1* as *VN11*, and so on. TACAN is specified as a channel; for example, 39Y,
 40X, etc. The following table presents some examples,
 
-|Role    |Callsign   |F/E        |Is Lead?   |TACAN Channel|TACAN Mode |
-|:------:|:---------:|:---------:|:---------:|:-----------:|:---------:|
-|CY23 39X| CY        | 23        | No        | 102X        | A/A TR    | 
-|LO31 41X| LO        | 31        | Yes       | 41X         | A/A TR    | 
-|VN11    | VN        | 11        | Yes       | Unchanged   | Unchanged |
-|38Y     | Unchanged | Unchanged | Unchanged | 38Y or 101Y | A/A TR    |
+|Role Text  |Callsign   |F/E        |Is Lead?   |TACAN Channel|TACAN Mode |
+|:---------:|:---------:|:---------:|:---------:|:-----------:|:---------:|
+|`CY23 39X` | CY        | 23        | No        | 102X        | A/A TR    | 
+|`LO31 41X` | LO        | 31        | Yes       | 41X         | A/A TR    | 
+|`VN11`     | VN        | 11        | Yes       | Unchanged   | Unchanged |
+|`38Y`      | Unchanged | Unchanged | Unchanged | 38Y or 101Y | A/A TR    |
 
-Here, "unchanged" implies the value in the `.jafdtc` file is not changed during import. At
-import, JAFDTC attempts to determine the flight/element number of the pilot with the
-following procedure,
+The *Role Text* would be entered in area (2) of the import dialog shown in the
+[_Common Elements Guide_](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/Common_Elements.md#sharing-configurations).
+In the table above, "unchanged" implies the parameter value in the `.jafdtc` file is not
+changed during import. At import, JAFDTC attempts to determine the flight/element number of
+the pilot with the following procedure,
 
 - Callsign from the role string provied during import.
 - If there is no callsign in the role, infer the flight/element number by looking for the
@@ -102,7 +107,9 @@ following procedure,
 - If unable to infer from datalink team, use the value from the configuration.
 
 Once the element number is known, the lead and TACAN setup can be determined with the
-assumption that lead will setup a yardstick will all members of the flight.
+assumption that lead will setup a yardstick will all members of the flight (with lead on
+TACAN channel number *T* and all others on TACAN channel number *T*&nbsp;+&nbsp;63; for
+example 38Y and 101Y).
 
 # Configurable Systems on the Viper
 
@@ -223,7 +230,11 @@ flares while teal diamonds represent chaff.
 
 ### Integration with DCS DTC
 
-TODO integration with dcs dtc
+The presets configured in this editor can be merged with the merged DTC tape as described
+in the
+[_Common Elements Guide_](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/Common_Elements.md#working-with-the-native-dcs-dtc).
+For the Viper, the CMDS programs for the MAN1-MAN4, PANIC, and BYPASS programs along with
+BINGO levels are copied into the merged tape when the system is set to be merged.
 
 ## Datalink
 
@@ -232,113 +243,214 @@ operation of the datalink system and allow you to assign aircraft to your "team"
 purpose of sharing information. By default, the system shares contact information between the
 team and may optionally share information used by the HTS pod to locate emitters.
 
-As an example, consider the following setup for a sortie where Venom and Jedi flights will work
-together on SEAD tasking,
+For example, consider the following setup for a SEAD sortie where VENOM1 and JEDI1 flights
+will work together,
 
-|Flight     |Pilot     |TNDL   |   |Flight    |Pilot      |TNDL   |
+|Callsign   |Pilot     |TNDL   |   |Callsign  |Pilot      |TNDL   |
 |:---------:|:--------:|:-----:|---|:--------:|:---------:|:-----:|
-| Venom 1-1 | Rage     | 67333 |   | Jedi 1-1 | Raven     | 67327 |
-| Venom 1-2 | Blackdog | 67404 |   | Jedi 1-2 | Cadet FNG | 12377 |
+| VENOM 1-1 | Rage     | 67333 |   | JEDI 1-1 | Raven     | 67327 |
+| VENOM 1-2 | Blackdog | 67404 |   | JEDI 1-2 | Cadet FNG | 12377 |
 
 Here, we have two 2-ships that are going to be part of the same team. We will set the data link
 up such that Venom shows up as #1 and #2 on HSD and Jedi shows up as #5 and #6. All four jets
 will share HTS information.
 
-The datalink system editor page looks like this (from Raven's perspective),
+When set up, the datalink system editor page looks like this (from Rage's perspective),
 
 ![](images/viper_dlnk_ui.png)
 
-The top-most section of the page allows you to select the table entry for your ownship, your
-callsign, and whether or not you are a flight lead. The default callsign of dashes indicates
-JAFDTC will not change the callsign set up in the jet. As we shall discuss shortly, JAFDTC will
-automatically set the ownship table entry when it can determine which entry corresponds to the
-ownship. The common controls implement the link and reset functionality described
-[earlier](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/README.md#common-editor-controls).
+Working from top to bottom, the primary components of this page include,
 
-The middle part of the page allows you to edit the entries in the table that specify the team
-members. For each table entry, there are three controls,
+1. [**_Ownship Setup_**](#ownship-setup)
+   &ndash; Sets parameters related to the ownship including TNDL entry, callsign, and flight
+   lead status.
+2. [**_TNDL Table Setup_**](#tndl-table-setup)
+   &ndash; Sets the contents of the team TNDL table in the datalink system.
+3. [**_Pilot Database Access_**](#pilot-database)
+   &ndash; Opens the Viper pilot database editor.
+4. **_Common Editor Controls_**
+   &ndash; Common controls for system editors as described earlier in the
+   [_User's Guide_](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/README.md#common-editor-controls).
 
-* **TDOA** &ndash; enables or disables sharing of HTS information within the team.
-* **TNDL** &ndash;  specifies the five-digit octal code assigned to the jet (that is, 5 digits
+The reaminder of this section discusses these elements in more detail.
+
+### Ownship Setup
+
+The top-most section of the page in area (1) allows you to select parameters related to the
+ownship. These include the TNDL table entry for your ownship, your callsign, and whether or not
+you are a flight lead. Dashes in the callsign fields indicates JAFDTC will not change the
+callsign set up in the jet. As
+[discussed below](#setting-up-multiple-pilots),
+JAFDTC will automatically set the ownship table entry when it can determine which entry corresponds to the ownship.
+
+### TNDL Table Setup
+
+The middle part of the page in area (2) allows you to edit the entries in the TNDL table that
+specify details on team members. For each table entry, there are three controls,
+
+* **TDOA** &ndash; Enables or disables sharing of HTS information within the team.
+* **TNDL** &ndash;  Specifies the five-digit octal code assigned to the jet (that is, 5 digits
   where all digits are between 0 and 7, inclusive).
-* **Callsign** &ndash;  allows you to select a pilot from the pilot database or a "generic"
-  pilot.
+* **Callsign** &ndash; Selects a pilot from the
+  [pilot database](#setting-up-multiple-pilots)
+  or a "generic" pilot.
 
 The TNDL field is only editable if the callsign control does not select a pilot from the pilot
-database (in this case, the callsign control is blank as in entry 6 above). The background of
+database (in this case, the callsign control is blank as in entry 8 above). The background of
 the TNDL field will turn red when the value in the field is invalid. Selecting yourself from
 the pilot database will cause JAFDTC to track the corresponding entry as your ownship. Your
-pilot entry in the database is indicated by a bullet (see entry 5 above) and is determined by
+pilot entry in the database is indicated by a bullet (see entry 1 above) and is determined by
 looking for a callsign in the pilot database that matches the callsign set through the
 [JAFDTC settings](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/README.md#settings).
 
 > You should make sure to set up your callsign through the
 > [JAFDTC settings](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/README.md#settings)
-> to get the most out of the datalink support in JAFDTC.
+> to get the most out of the Viper datalink support in JAFDTC.
 
-### Setting Up Multiple Pilots
-
-All four pilots will set up the datalink team table with the same pilots in the *same* entries.
-That is, all four pilots will have Rage in entry 1, Blackdog in entry 2, Raven in entry 5 and
-FNG in entry 6. What each of them sees will differ though,
-
-![](images/Viper_Sys_DLNK_Views.png)
-
-Here, Rage's perspective is on the left and FNG's perspective is on the right. For Rage,
-
-* JAFDTC recognizes entry 1 as ownship since the callsign ("Rage") matches the callsign in
-  the JAFDTC settings and sets the ownship entry to 1 (note the ownship control is disabled).
-* JAFDTC fills in the TNDL with the value from the pilot database (67333).
-* As Rage is flight lead for Venom, he will check "Flight Lead".
-* The table matches Raven's table above in terms of who within the sortie occupies which
-  entries. Note that Rage's callsign is shown with the bullet from his perspective.
-
-For FNG,
-
-* The callsign is set to "generic" (that is, blank), FNG must set his ownship entry manually
-  to 6 (note the ownship control is enabled).
-* As FNG is a wingman ("...and if you're not a wingman, then to hell with you..." - DG), she
-  does not check flight lead.
-* As the callsign is generic, FNG must enter her TNDL (12377) into the TNDL field in entry 6.
-* Again, the team members are the same.
-
-The button below the team member table allows you to modify the pilot database.
+The button below the table allows you to swap entries 1-4 and 5-8. The checkbox at the bottom
+of the area specifies a TNDL value to enter in any empty table entries (if left unspecified,
+JAFDTC will not change these entries from whatever happends to be in the avionics).
 
 ### Pilot Database
 
 The pilot database associates callsigns with fixed TNDL numbers to allow you to rapidly
-construct datalink configurations. Clicking on this button brings up the pilot database
-editor,
+construct Viper datalink configurations. Clicking on the button in area (3) brings up the
+Viper pilot database editor,
 
-![](images/Viper_Sys_DLNK_PDb.png)
+![](images/viper_pilot_db_ui.png)
 
-The dialog is made up of three regions:
+The primary components of this page include,
 
-* The list in the center lists the currently defined pilots and their assigned TNDLs.
-* The top part of the dialog allows you to enter a new pilot and TNDL.
-* The right edge of the dialog has controls to manipulate the database.
+1. [**_New Pilot Information_**](#adding-a-new-pilot-to-the-database)
+   &ndash; Adds new pilots to the database.
+2. [**_Pilot Delete Button_**](#deleting-pilots-from-the-database)
+   &ndash; Deletes pilots selected in the pilot database list from the database.
+3. [**_Import and Export_**](#deleting-pilots-from-the-database)
+   &ndash; Imports and exports the pilot database from `.jafdtc_db` files.
+4. [**_Pilot Database List_**](#pilot-database-list)
+   &ndash; Lists the current contents of the pilot database.
+
+The reaminder of this section discusses these elements in more detail.
+
+#### Adding a New Pilot to the Database
 
 To add a new pilot, simply enter a unique callsign (case is ignored) along with a vaild 5-digit
 TNDL, then click the `+` button. The background of either of these fields will be red if they
 contain an invalid value. You will not be allowed to add a pilot until both the callsign and
 TNDL value are valid.
 
-To delete pilots, select them in the pilot list in the center of the display. The list supports
-multiple selections (with either `SHIFT` or `ALT` clicks as normal). After selecting the pilots
-to delete, click the trashcan icon to perform the delete.
+> Once entered, pilots cannot be edited. To update a pilot, delete their record and then add a
+> new record with the desired updates.
 
-The import and export buttons allow you to share pilot databases with others. To export, you
-select the pilots that you want to share and click the export button (remember, you can
-select multiple pilots from the list). This will bring up a standard file selection dialog
-that will let you specify a file to save the exported information to.
+#### Pilot Database List
+
+The pilot data base list in area (2) lists the pilots in the current database along with
+their TNDL numbers. The list supports multiple selections (with either `SHIFT` or `ALT` clicks
+as usual).
+
+#### Deleting Pilots from the Database
+
+To delete pilots, select them in the pilot list in the center of the display. After selecting
+the pilots to delete, click the trashcan icon in area (3) to perform the delete. This operation
+cannot be undone, so JAFDTC will first prompt you to confirm the delete.
+
+#### Pilot Database Import and Export
+
+The import and export buttons in area (4) allow you to share pilot databases with others.
+To export, click the export button. This will bring up a standard file selection dialog
+that will let you specify a `.jafdtc_db` file to save the exported database to.
+
+Import is similar. After selecting import, a standard file selection dialog is displayed
+that lets you specify a `.jafdtc_db` file to import from. Imports replace the **entire**
+database and cannot be undone, so JAFDTC will first prompt you to confirm the import.
+
+**TODO** discuss double-click installs of `.jafdtc_db` when supported
+
+### Setting Up Multiple Pilots
+
+All pilots within a team should set up the datalink team table with the same pilots in the
+*same* entries. That is, in our exmaple flight, all four pilots should have Rage in entry 1,
+Blackdog in entry 2, Raven in entry 5 and FNG in entry 6.
+
+Generally, when using the Viper DLNK, it is helpful to have a shared common
+[pilot database](#pilot-database)
+that everone can use. The pilot database
+[export/import](#pilot-database-import-and-export)
+functions are useful in making sure everyone is working from the same database. In a virtual
+squadon environment, it is useful to have a single common database containing all pilots that
+all pilots can share.
+
+> Because of the way in which JAFDTC works, it is not enough for individuals to independently
+> build their own databases that contain the same pilots.
+
+Though all members of the team configure the team tables the same, what the pilots see differs,
+
+**TODO REBUILD**
+![](images/Viper_Sys_DLNK_Views.png)
+
+Here, Rage's perspective is on the left and FNG's perspective is on the right. For Rage,
+
+* JAFDTC recognizes entry 1 as ownship since the callsign ("Rage") matches the callsign in
+  the
+  [JAFDTC settings](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/README.md#settings)
+  and sets the ownship entry to 1 (note the ownship control is disabled because JAFDTC can
+  determine which table entry corresponds to ownship). The bullet and bold text in the
+  callsign indicates the entry JAFDTC believes matches.
+* JAFDTC fills in the TNDL with the value from the
+  [pilot database](#pilot-database)
+  for Rage (67333).
+* As Rage is flight lead for VENOM1, he will check "Flight Lead" and set the appropriate
+  callsign for VENOM1-1.
+
+For FNG,
+
+* The callsign is set to "generic" (that is, blank), FNG must set her ownship entry manually
+  to 6 (note the ownship control is enabled as JAFDTC cannot determine which entry corresponds
+  to ownship in this case).
+* As the callsign in the TNDL table is generic, FNG must enter her TNDL (12377) into the TNDL
+  field in entry 6.
+* As FNG is a wingman ("...and if you're not a wingman, then to hell with you..." - DG), she
+  does not check flight lead and sets the appropriate callsign for JEDI1-1.
+
+When using shared `.jafdtc` files as the basis for a configuration, you can manually set
+various fields (callsign, ownship, flight lead, etc.) from the source `.jafdtc` file.
+There is also automation to help with this task as discussed in the
+[next section](#adjusting-roles-during-import).
 
 ### Adjusting Roles During Import
 
-TODO how roles adjust when doing .jafdtc import
+The pilot roles used when importing from a `.jafdtc` file can greatly simplify some of the
+per-pilot datalink setup mentioned above. See the
+[earlier discussion](#pilot-roles-for-import)
+for links to the discussion in the
+[_Common Elements Guide_](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/Common_Elements.md#importing-configurations-from-similar-airframes)
+along with information on the capability.
+
+We'll revisit our earlier VENOM1 and JEDI1 example to see how the pilot roles and sharing
+`.jafdtc` files work together to automatically handle some aspects of data link setup.
+First, someone in the mission would build a JAFDTC configuration for the mission. In our
+exmaple, that only contain setup for the data link system, but, in general, it could also
+include common setup for other systems in the jet (as the sortie is SEAD, it might
+include ALIC or HTS setup).
+
+In our example, let's assume Rage builds a configuration for the flight and exports it as
+a `.jafdtc` file. The data link system is configured as
+[shown above](#setting-up-multiple-pilots).
+
+
+
 
 ## Data Cartridge (DTC/DTE)
 
-TODO
+The data cartridge system in the Viper follows the common 
+[user interface](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/Common_Elements.md#user-interface-for-dtc-interoperation)
+outlined earlier (the general discussion of
+[interpoerating with the native DCS DTC](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/Common_Elements.md#working-with-the-native-dcs-dtc)
+may also be helpful). The Viper can merge its
+[countermeasures](#countermeasures)
+and
+[communications](#communications)
+systems with the native ED DCS DTC.
 
 ## HARM ALIC
 
