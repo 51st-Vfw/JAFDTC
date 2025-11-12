@@ -220,20 +220,20 @@ https://www.gnu.org/licenses/.
                 <ListView.Resources>
                     <MenuFlyout x:Name="uiPoiListCtxMenuFlyout">
                         <MenuFlyout.Items>
-                            <MenuFlyoutItem Text="Copy to User..."
+                            <MenuFlyoutItem Text="Copy to New User POI..."
                                             Click="CmdCopyUser_Click">
                                 <MenuFlyoutItem.Icon>
                                     <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE718;"/>
                                 </MenuFlyoutItem.Icon>
                             </MenuFlyoutItem>
-                            <MenuFlyoutItem Text="Copy to Campaign..." 
+                            <MenuFlyoutItem Text="Copy to New Campaign POI..." 
                                             Click="CmdCopyCampaign_Click">
                                 <MenuFlyoutItem.Icon>
                                     <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE7C1;"/>
                                 </MenuFlyoutItem.Icon>
                             </MenuFlyoutItem>
                             <MenuFlyoutSeparator/>
-                            <MenuFlyoutItem Text="Export" Icon="Upload" Click="CmdExport_Click"/>
+                            <MenuFlyoutItem Text="Export..." Icon="Upload" Click="CmdExport_Click"/>
                             <MenuFlyoutSeparator/>
                             <MenuFlyoutItem Text="Delete" Icon="Delete" Click="CmdDelete_Click"/>
                         </MenuFlyout.Items>
