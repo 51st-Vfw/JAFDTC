@@ -163,7 +163,8 @@ namespace JAFDTC.UI.App
         // ------------------------------------------------------------------------------------------------------------
 
         /// <summary>
-        /// TODO: document
+        /// handle file activations for .jafdtc files (encoded IConfiguration instances) by inserting the activiated
+        /// file into the configuration database, interacting with the user as necessary/requested.
         /// </summary>
         public async void FileActivations(List<string> paths, bool isNoUI = false)
         {
@@ -293,7 +294,8 @@ namespace JAFDTC.UI.App
         // ------------------------------------------------------------------------------------------------------------
 
         /// <summary>
-        /// TODO: document
+        /// advance the selected configuration to the next one in the list. play an audio beep if we're already at
+        /// the end of the list.
         /// </summary>
         public void NextConfiguration(bool isFirst)
         {
@@ -316,7 +318,8 @@ namespace JAFDTC.UI.App
         }
 
         /// <summary>
-        /// TODO: document
+        /// advance the selected configuration to the previous one in the list. play an audio beep if we're already
+        /// at the beginning of the list.
         /// </summary>
         public void PreviousConfiguration(bool isFirst)
         {
