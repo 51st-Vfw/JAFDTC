@@ -59,7 +59,7 @@ namespace JAFDTC.Models.DCS
     ///
     /// string comparisons are always case-insensitive.
     /// </summary>
-    internal class PointOfInterestDbQuery
+    public class PointOfInterestDbQuery
     {
         public readonly PointOfInterestTypeMask Types;          // types of points of interest to search
 
@@ -86,7 +86,7 @@ namespace JAFDTC.Models.DCS
     /// class is a singleton that supports find operations to query the known pois. the database is built from fixed
     /// dcs pois (such as airfields) as well as user-defined pois.
     /// </summary>
-    internal class PointOfInterestDbase
+    public class PointOfInterestDbase
     {
         // ------------------------------------------------------------------------------------------------------------
         //
@@ -412,7 +412,7 @@ namespace JAFDTC.Models.DCS
             if (_uniqueIDs.ContainsKey(poi.UniqueID))
             {
                 FileManager.Log($"PointOfInterestDbase.AddPointOfInterest(): warning: poi with unique id '{poi.UniqueID}'" +
-                                " already exists in database; skipping add.");
+                                $" already exists in database; skipping add.");
                 return false;
             }
             else if (string.IsNullOrEmpty(poi.Theater))
