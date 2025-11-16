@@ -19,6 +19,7 @@
 
 using JAFDTC.Models.F16C;
 using JAFDTC.Models.F16C.DLNK;
+using JAFDTC.UI.Base;
 using JAFDTC.Utilities;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -30,6 +31,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace JAFDTC.UI.F16C
 {
@@ -213,47 +215,26 @@ namespace JAFDTC.UI.F16C
         }
 
         /// <summary>
-        /// on confirm flyong for import button clicks, note an import was requested and dismiss the dialog. if the
-        /// import fails, hide the dialog and set the error information.
+        /// on confirm flyover for import button clicks, attempt to import the database from a user-selected dbase
+        /// file. if the import fails, hide the dialog and set the error information.
         /// </summary>
         private async void PDbBtnFlyoutImport_Click(object sender, RoutedEventArgs e)
         {
-            // ---- pick file
+            // NOTE: the interaction model is a bit wonky here as we can't nest dialogs
 
-            FileOpenPicker picker = new((Application.Current as JAFDTC.App).Window.AppWindow.Id)
+            List<ViperDriver> dbase = await ExchangeViperPilotUIHelper.ImportFile(null, null);
+            if ((dbase != null) && (dbase.Count > 0))
             {
-                CommitButtonText = "Import Viper Pilots",
-                SuggestedStartLocation = PickerLocationId.Desktop,
-                ViewMode = PickerViewMode.List
-            };
-            picker.FileTypeFilter.Add(".jafdtc_db");
-
-            PickFileResult resultPick = await picker.PickSingleFileAsync();
-            try
-            {
-                // ---- do the import
-
-                if ((resultPick != null) && (Path.GetExtension(resultPick.Path.ToLower()) == ".jafdtc_db"))
-                {
-                    List<ViperDriver> fileDrivers = FileManager.LoadSharableDbase<ViperDriver>(resultPick.Path);
-                    if (fileDrivers != null)
-                    {
-                        Pilots.Clear();
-                        foreach (ViperDriver driver in fileDrivers)
-                            Pilots.Add(driver);
-                        SortPilots();
-                    }
-                    else
-                    {
-                        throw new Exception("LoadSharableDbase fails");
-                    }
-                }
+                Pilots.Clear();
+                foreach (ViperDriver driver in dbase)
+                    Pilots.Add(driver);
+                SortPilots();
             }
-            catch (Exception ex)
+            else if (dbase == null)
             {
-                FileManager.Log($"F16CPilotDbaseDialog:PDbBtnFlyoutImport_Click exception {ex}");
+                FileManager.Log("F16CPilotDbaseDialog:PDbBtnFlyoutImport_Click fails");
                 ErrorOperation = "Import";
-                ErrorMessage = $"Unable to import the pilots from the database file at:\n\n{resultPick.Path}";
+                ErrorMessage = "Unable to import the pilots from the specified database";
                 Hide();
             }
         }
@@ -264,25 +245,14 @@ namespace JAFDTC.UI.F16C
         /// </summary>
         private async void PDbBtnExport_Click(object sender, RoutedEventArgs e)
         {
-            FileSavePicker picker = new((Application.Current as JAFDTC.App).Window.AppWindow.Id)
-            {
-                CommitButtonText = "Export Viper Pilots",
-                SuggestedStartLocation = PickerLocationId.Desktop,
-                SuggestedFileName = "Viper Drivers"
-            };
-            picker.FileTypeChoices.Add("JAFDTC Db", [".jafdtc_db"]);
+            // NOTE: the interaction model is a bit wonky here as we can't nest dialogs
 
-            PickFileResult resultPick = await picker.PickSaveFileAsync();
-            try
+            bool? isSuccess = await ExchangeViperPilotUIHelper.ExportFile(null, [.. Pilots ], null);
+            if (isSuccess == null)
             {
-                if (resultPick != null)
-                    FileManager.SaveSharableDatabase(resultPick.Path, [.. Pilots ]);
-            }
-            catch (Exception ex)
-            {
-                FileManager.Log($"F16CPilotDbaseDialog:PDbBtnExport_Click exception {ex}");
+                FileManager.Log("F16CPilotDbaseDialog:PDbBtnExport_Click fails");
                 ErrorOperation = "Export";
-                ErrorMessage = $"Unable to export the pilots to the database file at:\n\n{resultPick.Path}";
+                ErrorMessage = "Unable to export the pilots to the specified database file.";
                 Hide();
             }
         }
