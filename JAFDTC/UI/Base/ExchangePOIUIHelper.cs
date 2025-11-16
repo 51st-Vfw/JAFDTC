@@ -1,6 +1,6 @@
 ﻿// ********************************************************************************************************************
 //
-// ExchangePOIUIHelper.cs : helper classes for poi exchange (import/export) ui
+// ExchangePOIUIHelper.cs : helper class for poi exchange (import/export) ui
 //
 // Copyright(C) 2025 ilominar/raven
 //
@@ -36,7 +36,7 @@ namespace JAFDTC.UI.Base
     /// helper class to provide a number of static support functions for use in the user interface around exchanging
     /// points of interest files.
     /// </summary>
-    public partial class ExchangePOIUIHelper
+    public partial class ExchangePOIUIHelper : ExchangeUIHelperBase
     {
         // ------------------------------------------------------------------------------------------------------------
         //
@@ -68,23 +68,6 @@ namespace JAFDTC.UI.Base
         // ------------------------------------------------------------------------------------------------------------
 
         /// <summary>
-        /// manage a FileSavePicker to select a .jafdtc_db file to save to. returns the path of the selected file,
-        /// null if no selection was made.
-        /// </summary>
-        private static async Task<string> SavePickerUI(string filename = null)
-        {
-            FileSavePicker picker = new((Application.Current as JAFDTC.App).Window.AppWindow.Id)
-            {
-                CommitButtonText = "Export POIs",
-                SuggestedStartLocation = PickerLocationId.Desktop,
-                SuggestedFileName = filename ?? "JAFDTC POIs"
-            };
-            picker.FileTypeChoices.Add("JAFDTC Db", [".jafdtc_db"]);
-            PickFileResult resultPick = await picker.PickSaveFileAsync();
-            return resultPick?.Path;
-        }
-
-        /// <summary>
         /// export a list of user pois to a .jafdtc_db file at the given path (null path causes prompt via picker
         /// for non-null root). notes success and failure via a message dialog if root is not null.
         /// </summary>
@@ -92,7 +75,7 @@ namespace JAFDTC.UI.Base
         {
             Debug.Assert((root != null) || (path == null));
 
-            path ??= await SavePickerUI(null);
+            path ??= await SavePickerUI("Export POIs", "JAFDTC POIs", "JAFDTC Db", ".jafdtc_db");
             if ((path != null) && (pois.Count > 0))
             {
                 bool isSuccess = FileManager.SaveSharableDatabase(path, pois);
@@ -110,7 +93,7 @@ namespace JAFDTC.UI.Base
         /// causes prompt via picker for non-null root). if the entire campaign is not exported, inform user whole
         /// campaign will be exported. notes success and failure via a message dialog if root is not null.
         /// 
-        /// no ui behavior (ie, root is null) only imports specified pois.
+        /// user interaction disabled if root is null.
         /// </summary>
         public static async void ExportFileForCampaign(XamlRoot root, List<PointOfInterest> pois, string path = null)
         {
@@ -140,7 +123,7 @@ namespace JAFDTC.UI.Base
                 pois = PointOfInterestDbase.Instance.Find(query);
             }
 
-            path ??= await SavePickerUI(campaignName);
+            path ??= await SavePickerUI("Export POIs", campaignName, "JAFDTC Db", ".jafdtc_db");
             if (path != null)
             {
                 bool isSuccess = FileManager.SaveSharableDatabase(path, pois);
@@ -164,24 +147,6 @@ namespace JAFDTC.UI.Base
         /// </summary>
         private static bool IsPathCSV(string path)
             => System.IO.Path.GetExtension(path).Equals(".csv", StringComparison.CurrentCultureIgnoreCase);
-
-        /// <summary>
-        /// manage a FileSavePicker to select a .jafdtc_db or .csv file to load from. returns the path of the selected
-        /// file, null if no selection was made.
-        /// </summary>
-        private static async Task<string> OpenPickerUI()
-        {
-            FileOpenPicker picker = new((Application.Current as JAFDTC.App).Window.AppWindow.Id)
-            {
-                CommitButtonText = "Import POIs",
-                SuggestedStartLocation = PickerLocationId.Desktop,
-                ViewMode = PickerViewMode.List
-            };
-            picker.FileTypeFilter.Add(".jafdtc_db");
-            picker.FileTypeFilter.Add(".csv");
-            PickFileResult resultPick = await picker.PickSingleFileAsync();
-            return resultPick?.Path;
-        }
 
         /// <summary>
         /// load the pois from a file, using either csv import (for .csv files), or the shareable database support
@@ -263,13 +228,15 @@ namespace JAFDTC.UI.Base
         }
 
         /// <summary>
-        /// import points of interest from a .jafdtc_db or .csv file. user is prompted for a name for the new configuration
-        /// along with a pilot role (if roles are supported).
+        /// import points of interest from a .jafdtc_db or .csv file providing status information to user as
+        /// needed. returns list of points of interest imported, empty on error or user cancel.
+        /// 
+        /// user interaction disabled if root is null.
         /// </summary>
         public static async Task<List<PointOfInterest>> ImportFile(XamlRoot root, PointOfInterestDbase dbase,
                                                                    string path = null)
         {
-            path ??= await OpenPickerUI();
+            path ??= await OpenPickerUI("Import POIs", [ ".jafdtc_db", ".csv" ]);
             if (path == null)
                 return [ ];                                     // EXITS: picker canceled
 
@@ -291,15 +258,18 @@ namespace JAFDTC.UI.Base
                 string campaign = importPoIs[0].Campaign;
                 if (!string.IsNullOrEmpty(campaign) && (dbase.CountPoIInCampaign(campaign) > 0))
                 {
-                    ContentDialogResult result = await Utilities.Message2BDialog(
-                        root,
-                        $"Campaign Exists",
-                        $"Import file contains points of interest for the campaign “{campaign}”, a campaign that" +
-                        $" is already in the database. Replace the campaign in the database with the imported data?",
-                        "Replace",
-                        "Cancel");
-                    if (result == ContentDialogResult.None)
-                        return [ ];                             // EXITS: import canceled
+                    if (root != null)
+                    {
+                        ContentDialogResult result = await Utilities.Message2BDialog(
+                            root,
+                            $"Campaign Exists",
+                            $"Import file contains points of interest for the campaign “{campaign}”, a campaign that" +
+                            $" is already in the database. Replace the campaign in the database with the imported data?",
+                            "Replace",
+                            "Cancel");
+                        if (result == ContentDialogResult.None)
+                            return [ ];                         // EXITS: import canceled
+                    }
                     dbase.DeleteCampaign(campaign, false);
                 }
                 if (!string.IsNullOrEmpty(campaign) && (dbase.CountPoIInCampaign(campaign) == 0))
