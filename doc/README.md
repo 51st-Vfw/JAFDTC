@@ -6,10 +6,10 @@ _Just Another #%*@^!% DTC_ (JAFDTC) is a native Windows application that allows 
 data typically saved on a data cartridge in real life, such as steerpoints/waypoints and other
 avionics setup, into a DCS module during a flight.
 
-JAFDTC is intended to provide a simple DTC tool that allows avionics setups to be built and
-shared across a group of pilots. While it provides some light-weight flight planning
-capabilities, JAFDTC is not a full-blown flight planner like CombatFlite (though it may be
-sufficient to serve that role depending on your specific needs).
+> JAFDTC is intended to provide a simple DTC tool that allows avionics setups to be built and
+> shared across a group of pilots. While it provides some light-weight flight planning
+> capabilities, JAFDTC is not a full-blown flight planner like CombatFlite (though it may be
+> sufficient to serve that role depending on your specific needs).
 
 There are three components to the user's guide,
 
@@ -27,12 +27,12 @@ and are not covered in this document.
 
 # Preliminaries
 
-Before discussing the user interface, it is helpful to outline some of the key abstractions
-that JAFDTC uses.
+It is helpful to outline some of the key abstractions that JAFDTC uses before digging into
+its operation.
 
 ## Configurations & Systems
 
-JAFDTC allows you to manage multiple avionics *Configurations* for multiple airframes.
+JAFDTC allows you to manage multiple avionics *Configurations* across several airframes.
 Currently, JAFDTC supports A-10C Warthog, AV-8B Harrier, F-14A/B Tomcat, F-15E Strike Eagle,
 F-16C Viper, F/A-18C Hornet, and Mirage M-2000C airframes.
 
@@ -42,7 +42,7 @@ F-16C Viper, F/A-18C Hornet, and Mirage M-2000C airframes.
 ### Overview
 
 In JAFDTC, a *Configuration* is made up of multiple *System Configurations*, or *Systems*,
-that each correspond to systems (strangely enough) in the airframe. Each system has a set
+that each correspond to a system (strangely enough) in the airframe. Each system has a set
 of *Parameters* that JAFDTC can set. For example, a configuration might include systems such
 as countermeasures, communications, or navigation. A communication system might have
 parameters that specify the frequency mapped to a preset button. The set of *Configurations*,
@@ -112,7 +112,7 @@ indirectly.
 > For example, say System X in Configuration A is linked to Configuration B and System X in
 > Configuration B is linked to Configuration C.
 >
-> Changes to System X in Configuration C will be reflected in System X in both Configraution
+> Changes to System X in Configuration C will be reflected in System X in both Configrautions
 > A and B.
 
 Breaking a link preserves the configuration of the system at the time the link is broken.
@@ -409,16 +409,16 @@ and wing as specified through the
 
 ## System Editor Page
 
-The *System Editor Page* replaces the
+A *System Editor Page* replaces the
 [Configuration List Page](#configuration-list-page)
-in the main window when you open a configuration for editing by double-clicking a configuration
-or opening on via the **Edit** command in the *Configuration List*
-[command bar](#command-bar). This page provides a list of systems from which you can select a
-per-system editor to specify the settings for system parameters.
+in the main window when you open a configuration for editing by either double-clicking or opening it via the **Edit** command in the *Configuration List*
+[command bar](#command-bar). This page provides a list of systems appropriate for the
+current airframe from which you can select a per-system editor to specify the settings for
+system parameters.
 
 The specific systems availble in a configuration vary from
 airframe to airframe. However, the basic structure of the page on which you edit a system
-configuration is similar.
+configuration is similar across all airframes.
 
 ![](images/uguide_sys_editor_ui.png)
 
@@ -459,25 +459,26 @@ This button is functionally identical to the export button on the
 The *System List* in area (3) identifies the systems that make up the configuration. Each
 system has an associated icon whose tint and badging specifies details on the configuration.
 
-**TODO REBUILD FOR LIGHT MODE ??**
-![](images/Core_Base_Edit_Icons.png)
+![](images/uguide_sys_editor_icons.png)
 
 The tint of the icon indicates the state of the system: white icons mark systems that have not
-been changed while tinted icons mark systems whose configuration has changed from defaults.
+been changed while tinted icons mark systems whose configuration have been changed from
+defaults.
 
-> JAFDTC uses the system highlight color for tinting; if you change it through Windows
+> JAFDTC uses the Windows system highlight color for tinting; if you change it through Windows
 > settings, the blue icons in the screenshots in this guide may be a different color based
 > on your choice.
 
-A small gold dot in the lower right corner of the icon marks systems that are linked to
-other configurations.
+A small gold dot in the lower right corner of the icon marks systems that are
+[linked](#linking-systems)
+to other configurations.
 
 > A white icon with a gold dot indicates a system that is linked to another configuration
-> in which the system has not been changed from defaults.
+> in which the system has not been changed from its defaults.
 
-Clicking on a row in this list changes the
+Clicking on a row in the system list in area (3) changes the
 [*System Editor*](#system-editor)
-panel to the right to a panel appropriate for editing the selected system.
+panel to the right in area (4) to a panel appropriate for editing the selected system.
 
 ### System Editor
 
@@ -485,17 +486,17 @@ The bulk of the page is taken up by the system editor panel on the right in area
 content of this panel depends on both the system selected from the
 [*System List*](#system-list)
 to the left along with the airframe. In the figure above, the editor is showing the
-steerpoint list associated with the steerpoints system that is selected in the *System List*.
-See the
+steerpoint list associated with the F-16C steerpoints system that is selected in the
+*System List*. See the
 [airframe guides](#what-now)
 for further details on the system editors available for a particular airframe.
 
 ### Other Editor Controls
 
 Some airframes have additional controls in the lower left corner of the page in area (5).
-Geneally, a **Load Tape to Jet** that loads the configuration to the jet is present here
-regardless of airframe. Most of the controls in this part of the interface are specific to
-an airframe. See the
+Geneally, all airframes have a **Load Tape to Jet** that loads the configuration to the jet
+button here. Some airframes may have additional airframe-specific controls such as a
+control to select Pilot or WSO systems. See the
 [airframe guides](#what-now)
 for further details on the other editor controls available for a particular airframe.
 
@@ -506,20 +507,16 @@ most systems contains **Link** and **Reset** buttons that provide common link an
 functions for systems. When present, these buttons perform the same functions regardless of
 airframe,
 
-* **Reset** &ndash; Restores the default settings to the system. This is disabled if the system
-  is in its default configruation.
 * **Link** &ndash; Links or unlinks the system to or from another configuration (see the
   [earlier discussion](#linking-systems)
   on linking systems).
+* **Reset** &ndash; Restores the default settings to the system. This is disabled if the system
+  is in its default configruatio to the right of the button.
 
-The **Link** button changes based on whether or not the system is linked,
-
-**TODO REBUILD FOR LIGHT MODE ??**
-![](images/Core_Cfg_Edit_Link.png)
-
-When unlinked, the **Link** button displays "Link To". Clicking the button in this state brings
-up a list of potential source configurations that the system can be linked to. Once linked,
-the **Link** button displays "Unlink From" along with the name of the linked configuration.
+The **Link** button changes based on whether or not the system is linked, When unlinked, the
+**Link** button displays "Link To". Clicking the button in this state brings up a list of
+potential source configurations that the system can be linked to. Once linked, the **Link**
+button displays "Unlink From" along with the name of the linked configuration.
 
 > In the
 > [earlier example](#linking-systems),
@@ -604,7 +601,9 @@ The command bar includes the following commands,
 - **Copy to Campaign** &ndash; Copies the selected POIs to new POIs in a campaign.
 - **Delete** &ndash; Deletes the selected POIs from the database. Note that DCS POIs cannot
   be deleted and that deleting all campaign POIs implicitly deletes the campaign.
-- **Map** &ndash; Opens up a map window to aid editing POIs.
+- **Map** &ndash; Opens up a
+  [map window](#map-window)
+  to aid editing POIs.
 - **Import** &ndash; Imports POIs from a previously exported file, updating or adding POIs
   as appropriate.
 - **Export** &ndash; Exports selected POIs to a file.
@@ -684,13 +683,9 @@ criteria,
 * Selected POIs must all be user POIs.
 * Selected POIs must all be campaign POIs from the same campaign.
 
-When exporting a campaign POI, you have the option of exporting only the selected campaign
-POIs or including all POIs from the campaign matching the selected POIs. Once what to export
-is establisehd, JAFDTC displays a standard Windows file picker to allow you to specify the
-file to export to.
-
-Exporting preserves the type and campaign of the exported POIs with one exception: DCS POIs
-are always converted to User POIs prior to export.
+When exporting a campaign POI, the export will always include all POIs from the campaign
+matching the selected POIs. JAFDTC displays a standard Windows file picker to allow you to
+specify the file to export to.
 
 ### Importing Points of Interest
 
@@ -700,8 +695,8 @@ lets you export selected POIs from the database in `.jafdtc_db` or `CSV` based f
 POIs in the file must match the export criteria
 [outlined above](#exporting-points-of-interest).
 
-> The `CSV` format is intended primarily for use in creating POI lists for campaigns and
-> so on from other source material such as a spreadsheet.
+> The `CSV` format is intended primarily for use in creating POI lists for campaigns or
+> common sets of points from other source material such as a spreadsheet.
 
 In addition, `.jafdtc_db` files for POIs also can be imported by double-clicking on them
 from the Windows File Explorer.
@@ -714,27 +709,31 @@ select merging the imported data or replacing the in-database campaign data with
 from the import file. Campaigns that are not in the database are implicitly created.
 
 The `CSV` format is a text file of lines, one per POI, of comma-separated fields. The format
-of the fields on each line is,
+of each line is,
 
 ```
 [name],[tags],[campaign],[latitude],[longitude],[elevation]
 ```
 
-Where `[name]` and `[campaign]` are strings (`[campaign]` may be empty, `[name]` may not be),
-`[tags]` is a semicolon-separated list of tags like "`Airbase;Target;Required`", `[latitude]`
-and `[longitude]` are in decimal degrees positions within a DCS theater, and `[elevation]` is
-an integer in feet. JAFDTC infers the theater from the latitude and longitude.
+Fields may not be empty unless otherwise noted and should not contain commas. On each line,
+`[name]` and `[campaign]` are strings (`[campaign]` may be empty), `[tags]` is a
+semicolon-separated list of tags like "`Airbase;Target;Required`" and may be empty,
+`[latitude]` and `[longitude]` are in decimal degrees, and `[elevation]` is an integer in
+feet. JAFDTC infers the theater from the latitude and longitude and expects the point of
+interest location to fall within a DCS theater.
 
 ## Filtering & Selecting Points of Interest
 
 JAFDTC uses a common set of UI widgets to allow you to filter and select from a list of points
-of interest as
+of interest (POI) as
 [described earlier](#point-of-interest-filter).
-This makes it easier to use the POI database by limiting displayed POIs to a relevant subset of
-all POIs JAFDTC knows about. The widgets include a search box with a filter button to its
-right. The filter button allows you to limit the points of interest to those that meet certain
-criteria. The highlight state of the filter button indicates whether or not a filter is being
-applied with a tinted or highlighted button indicating the POIs are currently filtered,
+Systems, such as navigation systems, that allow you to interact with the POI database may use
+these widgets to make it easier to use the POI database by limiting displayed POIs to a
+relevant subset of all POIs JAFDTC knows about. The widgets include a search box with a filter
+button to its right. The filter button allows you to limit the points of interest to those that
+meet certain criteria. The highlight state of the filter button indicates whether or not a
+filter is being applied with a tinted or highlighted button indicating the POIs are currently
+filtered,
 
 ![](images/uguide_poi_filter_state.png)
 
@@ -768,13 +767,38 @@ Once you have set the filter, typing in the search box will show a list of point
 with names that match the typed text and other properties (for example, theater) that match the
 current filter.
 
-**TODO REBUILD FOR LIGHT MODE ??**
-![](images/Core_Base_PoI_Select.png)
+![](images/uguide_poi_list_filter_ui.png)
 
 As you type, the list of matching points of interest updates to include the PoIs that match.
 Typing `RETURN` or clicking on the **Accept Filter** button sets the filter on names. Clicking
 on **Clear Filter** removes the filter on names. Clicking on an item in the matching points of
 interest list selects a single PoI.
+
+The
+[airframe guides](#what-now)
+detail the specific systems that make these controls available when configuring airframe
+systems.
+
+## Map Window
+
+TODO
+
+double click centers map
+
+shift double click centers and re-zooms map
+
+click off marker drags map
+
+
+The command bar includes the following commands,
+
+- **Add** &ndash; Adds a new marker to the map (WIP).
+- **Edit** &ndash; Opens the selected marker in the appropriate editor if an editor is available.
+- **Delete** &ndash; Deletes the selected marker if it can be deleted.
+- **Import** &ndash; Import temporary markers from a file (WIP).
+- **Settings** &ndash; Manages settings for the map window.
+
+Adding navpoints
 
 ## Capturing Coordinates from DCS
 

@@ -501,28 +501,6 @@ When exporting navigation points, JAFDTC exports all points in the navigation li
 format defined by JAFDTC. At present, JAFDTC does not support exporting navigation points in
 other formats.
 
-## Map Window
-
-TODO
-
-double click centers map
-
-shift double click centers and re-zooms map
-
-click off marker drags map
-
-
-The command bar includes the following commands,
-
-- **Add** &ndash; Adds a new marker to the map (WIP).
-- **Edit** &ndash; Opens the selected marker in the appropriate editor if an editor is available.
-- **Delete** &ndash; Deletes the selected marker if it can be deleted.
-- **Import** &ndash; Import temporary markers from a file (WIP).
-- **Settings** &ndash; Manages settings for the map window.
-
-Adding navpoints
-
-
 # Communications System Editors
 
 Many airframes JAFDTC supports provide a communication system that allows configuration of
