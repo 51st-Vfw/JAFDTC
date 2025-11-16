@@ -26,6 +26,7 @@ using Microsoft.Windows.Storage.Pickers;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Reflection;
 using System.Threading.Tasks;
 using Windows.Storage;
 
@@ -44,10 +45,10 @@ namespace JAFDTC.UI.Base
         // ------------------------------------------------------------------------------------------------------------
 
         /// <summary>
-        /// TODO: document
+        /// display a dialog with a status message if root is non-null.
         /// </summary>
         public static async void ExchangeResultUI(XamlRoot root, bool isGood, string what, string prep, string path,
-                                                   string msg)
+                                                  string msg)
         {
             string title = $"{what} Successful";
             if (!isGood)
@@ -87,7 +88,7 @@ namespace JAFDTC.UI.Base
         /// export a list of user pois to a .jafdtc_db file at the given path (null path causes prompt via picker
         /// for non-null root). notes success and failure via a message dialog if root is not null.
         /// </summary>
-        public static async void POIExportUserJAFDTCDb(XamlRoot root, List<PointOfInterest> pois, string path = null)
+        public static async void ExportFileForUser(XamlRoot root, List<PointOfInterest> pois, string path = null)
         {
             Debug.Assert((root != null) || (path == null));
 
@@ -100,41 +101,41 @@ namespace JAFDTC.UI.Base
                 ExchangeResultUI(root, isSuccess, "Export", "to", path, message);
 
                 if (!isSuccess)
-                    FileManager.Log($"ExchangePOIUIHelper:ConfigExportUserPOIJAFDTCDb SaveSharableDatabase fails");
+                    FileManager.Log($"ExchangePOIUIHelper:ExportFileForUser SaveSharableDatabase fails");
             }
         }
 
         /// <summary>
         /// export a list of campaign pois from a single campaign to a .jafdtc_db file at the given path (null path
-        /// causes prompt via picker for non-null root). if the entire campaign is not exported, asks user if they
-        /// want to export the whole campaign. notes success and failure via a message dialog if root is not null.
+        /// causes prompt via picker for non-null root). if the entire campaign is not exported, inform user whole
+        /// campaign will be exported. notes success and failure via a message dialog if root is not null.
         /// 
         /// no ui behavior (ie, root is null) only imports specified pois.
         /// </summary>
-        public static async void POIExportCampaignJAFDTCDb(XamlRoot root, List<PointOfInterest> pois, string path = null)
+        public static async void ExportFileForCampaign(XamlRoot root, List<PointOfInterest> pois, string path = null)
         {
             Debug.Assert((root != null) || (path == null));
 
             if (pois.Count == 0)
                 return;
 
-            // if the export pois do not include the entire campaign, ask the user if they want to pull the whole
+            // if the export pois do not include the entire campaign, inform the user export will pull the whole
             // campaign (if root is non-null).
             //
-            ContentDialogResult result = ContentDialogResult.Secondary;
             string campaignName = pois[0].Campaign;
-            if ((root != null) && (PointOfInterestDbase.Instance.CountPoIInCampaign(campaignName) != pois.Count))
+            if (PointOfInterestDbase.Instance.CountPoIInCampaign(campaignName) != pois.Count)
             {
-                string msg = $"The export does not include all points of interest from campaign “{campaignName}”." +
-                             $" Would you like to include all points of interest from this campaign?";
-                result = await Utilities.Message3BDialog(root, "Partial Export", msg, "All", "Only Selected");
-            }
-            if (result == ContentDialogResult.None)             // EXIT: user cancels
-            {
-                return;
-            }
-            else if (result != ContentDialogResult.Secondary)   // add all
-            {
+                ContentDialogResult result = ContentDialogResult.Primary;
+                if (root != null)
+                {
+                    string msg = $"The selected points of interest do not include all points from campaign" +
+                                 $" “{campaignName}”. Would you like to include all points of interest from" +
+                                 $" this campaign in the export?";
+                    result = await Utilities.Message2BDialog(root, "Partial Export", msg, "Include All Points");
+                }
+                if (result == ContentDialogResult.None)             // EXIT: user cancels
+                    return;
+
                 PointOfInterestDbQuery query = new(PointOfInterestTypeMask.ANY, null, campaignName);
                 pois = PointOfInterestDbase.Instance.Find(query);
             }
@@ -148,7 +149,7 @@ namespace JAFDTC.UI.Base
                 ExchangeResultUI(root, isSuccess, "Export", "to", path, message);
 
                 if (!isSuccess)
-                    FileManager.Log($"ExchangePOIUIHelper:POIExportCampaignJAFDTCDb SaveSharableDatabase fails");
+                    FileManager.Log($"ExchangePOIUIHelper:ExportFileForCampaign SaveSharableDatabase fails");
             }
         }
 
@@ -253,7 +254,7 @@ namespace JAFDTC.UI.Base
                     campaignMap[poi.Campaign] = campaignMap.GetValueOrDefault(poi.Campaign, 0) + 1;
             }
 
-            // poi list should either be all user or all campaign (from a single campaign). check this.
+            // poi list should either be all user or all campaign (from a single campaign). validate this.
             //
             if ((isUser && (campaignMap.Count > 0)) || (campaignMap.Count > 1))
                 throw new Exception("Import file mixes POIs from different types or campaigns");
@@ -265,7 +266,8 @@ namespace JAFDTC.UI.Base
         /// import points of interest from a .jafdtc_db or .csv file. user is prompted for a name for the new configuration
         /// along with a pilot role (if roles are supported).
         /// </summary>
-        public static async Task<List<PointOfInterest>> POIImportFile(XamlRoot root, string path = null)
+        public static async Task<List<PointOfInterest>> ImportFile(XamlRoot root, PointOfInterestDbase dbase,
+                                                                   string path = null)
         {
             path ??= await OpenPickerUI();
             if (path == null)
@@ -280,12 +282,67 @@ namespace JAFDTC.UI.Base
                 // for .csv imports, there may be issues in the import set that we need to clean up such as non-unique names
                 // ambiguous theaters, bad poi type mixes, etc. make a pass through the import set to clean up any of those
                 // issues.
+                //
+                if (IsPathCSV(path))
+                    importPoIs = await CleanupImportCSV(root, importPoIs);
 
-                return (IsPathCSV(path)) ? await CleanupImportCSV(root, importPoIs) : importPoIs;
+                // on campaign imports, inform import is going to wipe out any existing campaign with the same name.
+                //
+                string campaign = importPoIs[0].Campaign;
+                if (!string.IsNullOrEmpty(campaign) && (dbase.CountPoIInCampaign(campaign) > 0))
+                {
+                    ContentDialogResult result = await Utilities.Message2BDialog(
+                        root,
+                        $"Campaign Exists",
+                        $"Import file contains points of interest for the campaign “{campaign}”, a campaign that" +
+                        $" is already in the database. Replace the campaign in the database with the imported data?",
+                        "Replace",
+                        "Cancel");
+                    if (result == ContentDialogResult.None)
+                        return [ ];                             // EXITS: import canceled
+                    dbase.DeleteCampaign(campaign, false);
+                }
+                if (!string.IsNullOrEmpty(campaign) && (dbase.CountPoIInCampaign(campaign) == 0))
+                    dbase.AddCampaign(campaign, false);
+
+                // update database. create new pois for those that are not in the database; otherwise, update the
+                // existing pois to match import.
+                //
+                foreach (PointOfInterest poi in importPoIs)
+                {
+                    PointOfInterest poiCur = PointOfInterestDbase.Instance.Find(poi.UniqueID);
+                    if (poiCur != null)
+                    {
+                        poiCur.Theater = poi.Theater;
+                        poiCur.Campaign = poi.Campaign;
+                        poiCur.Name = poi.Name;
+                        poiCur.Tags = poi.Tags;
+                        poiCur.Latitude = poi.Latitude;
+                        poiCur.Longitude = poi.Longitude;
+                        poiCur.Elevation = poi.Elevation;
+                    }
+                    else
+                    {
+                        dbase.AddPointOfInterest(new((string.IsNullOrEmpty(campaign)) ? PointOfInterestType.USER
+                                                                                      : PointOfInterestType.CAMPAIGN,
+                                                     poi.Theater, poi.Campaign, poi.Name, poi.Tags,
+                                                     poi.Latitude, poi.Longitude, poi.Elevation),
+                                                 false);
+                    }
+                }
+                dbase.Save(campaign);
+
+                string what = (importPoIs.Count > 1) ? "points" : "point";
+                string msg = $"Imported {importPoIs.Count} {what} of interest.";
+                if (!string.IsNullOrEmpty(campaign))
+                    msg = $"Imported {importPoIs.Count} {what} of interest to campaign “{campaign}”.";
+                ExchangePOIUIHelper.ExchangeResultUI(root, true, "Import", "from", null, msg);
+
+                return importPoIs;
             }
             catch (Exception ex)
             {
-                FileManager.Log($"ExchangePOIUIHelper:POIImportFile exception {ex}");
+                FileManager.Log($"ExchangePOIUIHelper:ImportFile exception {ex}");
                 ExchangeResultUI(root, false, "Import", "from", path, $"{ex.Message}. ");
             }
 

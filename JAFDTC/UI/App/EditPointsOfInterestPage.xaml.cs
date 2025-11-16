@@ -1051,54 +1051,16 @@ namespace JAFDTC.UI.App
         /// </summary>
         private async void CmdImport_Click(object sender, RoutedEventArgs args)
         {
+// TODO: could probably handle this without closing map window...
             MapWindow?.Close();
 
-            List<PointOfInterest> pois = await ExchangePOIUIHelper.POIImportFile(Content.XamlRoot);
-            if ((pois == null) || (pois.Count == 0)) 
-                return;                                         // EXIT: cancel or failed
-
-            // should have a clean set of pois from the import file now. this list should be made up
-            // exclusively of user pois or exclusively of pois from a campaign. if we are importing
-            // a campaign that exists, check if the user wants to update or replace.
-            //
-            string campaign = pois[0].Campaign;
-            if (!string.IsNullOrEmpty(campaign) && (PointOfInterestDbase.Instance.CountPoIInCampaign(campaign) > 0))
+            List<PointOfInterest> pois = await ExchangePOIUIHelper.ImportFile(Content.XamlRoot,
+                                                                              PointOfInterestDbase.Instance);
+            if ((pois != null) && (pois.Count > 0))
             {
-                ContentDialogResult result = await Utilities.Message3BDialog(
-                    Content.XamlRoot,
-                    $"Campaign Exists",
-                    $"Import file contains points of interest for the campaign “{campaign}” that is already in" +
-                    $" the database. Would you like to merge the points of interest with the existing campaign or" +
-                    $" replace the points of interest in the existing campaign?",
-                    "Merge",
-                    "Replace",
-                    "Cancel");
-                if (result == ContentDialogResult.Secondary)                            // "replace"
-                    PointOfInterestDbase.Instance.DeleteCampaign(campaign, false);
-                else if (result == ContentDialogResult.None)
-                    return;                                                             // EXIT: cancel
+                RebuildPoIList();
+                RebuildInterfaceState();
             }
-            if (!string.IsNullOrEmpty(campaign) && (PointOfInterestDbase.Instance.CountPoIInCampaign(campaign) == 0))
-                PointOfInterestDbase.Instance.AddCampaign(campaign, false);
-
-            int index = _llFmtToIndexMap[LLDisplayFmt];
-            foreach (PointOfInterest poi in pois)
-            {
-                PoIDetails tmpltPoI = new(poi, LLDisplayFmt, index)
-                {
-                    SourceUID = poi.UniqueID
-                };
-                CoreCommitEditChanges(tmpltPoI, poi.Theater, poi.Campaign, true);
-            }
-
-            string what = (pois.Count > 1) ? "points" : "point";
-            string msg = $"Imported {pois.Count} {what} of interest.";
-            if (!string.IsNullOrEmpty(campaign))
-                msg = $"Imported {pois.Count} {what} of interest to campaign “{campaign}”.";
-            ExchangePOIUIHelper.ExchangeResultUI(Content.XamlRoot, true, "Import", "from", null, msg);
-
-            RebuildPoIList();
-            RebuildInterfaceState();
         }
 
         /// <summary>
@@ -1115,9 +1077,9 @@ namespace JAFDTC.UI.App
             Dictionary<PointOfInterestType, List<PointOfInterest>> selectionByType = CrackSelectedPoIsByType();
 
             if (selectionByType.TryGetValue(PointOfInterestType.USER, out List<PointOfInterest> userPoIs))
-                ExchangePOIUIHelper.POIExportUserJAFDTCDb(Content.XamlRoot, userPoIs);
+                ExchangePOIUIHelper.ExportFileForUser(Content.XamlRoot, userPoIs);
             else if (selectionByType.TryGetValue(PointOfInterestType.CAMPAIGN, out List<PointOfInterest> campaignPoIs))
-                ExchangePOIUIHelper.POIExportCampaignJAFDTCDb(Content.XamlRoot, campaignPoIs);
+                ExchangePOIUIHelper.ExportFileForCampaign(Content.XamlRoot, campaignPoIs);
         }
 
         // ---- campaign commands -------------------------------------------------------------------------------------
