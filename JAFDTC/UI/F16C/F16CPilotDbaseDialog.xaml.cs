@@ -24,14 +24,9 @@ using JAFDTC.Utilities;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
-using Microsoft.Windows.Storage.Pickers;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace JAFDTC.UI.F16C
 {
@@ -222,15 +217,15 @@ namespace JAFDTC.UI.F16C
         {
             // NOTE: the interaction model is a bit wonky here as we can't nest dialogs
 
-            List<ViperDriver> dbase = await ExchangeViperPilotUIHelper.ImportFile(null, null);
-            if ((dbase != null) && (dbase.Count > 0))
+            bool? isSuccess = await ExchangeViperPilotUIHelper.ImportFile(null, null);
+            if (isSuccess == true)
             {
                 Pilots.Clear();
-                foreach (ViperDriver driver in dbase)
+                foreach (ViperDriver driver in F16CPilotsDbase.LoadDbase())
                     Pilots.Add(driver);
                 SortPilots();
             }
-            else if (dbase == null)
+            else if (isSuccess == false)
             {
                 FileManager.Log("F16CPilotDbaseDialog:PDbBtnFlyoutImport_Click fails");
                 ErrorOperation = "Import";
@@ -248,7 +243,7 @@ namespace JAFDTC.UI.F16C
             // NOTE: the interaction model is a bit wonky here as we can't nest dialogs
 
             bool? isSuccess = await ExchangeViperPilotUIHelper.ExportFile(null, [.. Pilots ], null);
-            if (isSuccess == null)
+            if (isSuccess == false)
             {
                 FileManager.Log("F16CPilotDbaseDialog:PDbBtnExport_Click fails");
                 ErrorOperation = "Export";

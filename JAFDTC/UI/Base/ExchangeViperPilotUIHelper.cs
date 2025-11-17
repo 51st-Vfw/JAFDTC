@@ -44,11 +44,11 @@ namespace JAFDTC.UI.Base
         /// export a viper pilot database to a path. if path is null, prompts the user for a file location via a
         /// FileSavePicker. returns null on cancel, true on success, and false on failure.
         /// 
-        /// user interaction (aside from file pickers) is disabled if xaml root is null.
+        /// user interaction (with the exceptoin of pickters) is disabled if xaml root is null.
         /// </summary>
         public static async Task<bool?> ExportFile(XamlRoot root, List<ViperDriver> dbase, string path = null)
         {
-            Debug.Assert((root != null) || (path == null));
+            // Debug.Assert((root != null) || (path != null));
 
             path ??= await SavePickerUI("Export Viper Pilots", "Viper Pilots", "JAFDTC Db", ".jafdtc_db");
             if (path == null)
@@ -66,25 +66,29 @@ namespace JAFDTC.UI.Base
 
         /// <summary>
         /// import a viper pilot database from a path. if path is null, prompts prompts the user for a file location
-        /// via a FileOpenPicker. returns null on cancel, a list of imported ViperDriver objects on success, and an
-        /// empty list on failures.
+        /// via a FileOpenPicker. returns null on cancel, true on success, and false on failure.
         ///
-        /// user interaction (aside from file pickers) is disabled if xaml root is null.
+        /// user interaction (with the exceptoin of pickers) is disabled if xaml root is null.
         /// </summary>
-        public static async Task<List<ViperDriver>> ImportFile(XamlRoot root, string path = null)
+        public static async Task<bool?> ImportFile(XamlRoot root, string path = null)
         {
-            Debug.Assert((root != null) || (path == null));
-
-            List<ViperDriver> importDb = null;
+            // Debug.Assert((root != null) || (path != null));
 
             path ??= await OpenPickerUI("Import Viper Pilots", [ ".jafdtc_db" ]);
             if ((path != null) && (Path.GetExtension(path.ToLower()) == ".jafdtc_db"))
             {
-                importDb = FileManager.LoadSharableDbase<ViperDriver>(path);
+                List<ViperDriver> importDb = FileManager.LoadSharableDbase<ViperDriver>(path);
                 if (importDb.Count > 0)
+                {
                     F16CPilotsDbase.UpdateDbase(importDb);
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
-            return importDb;
+            return null;
         }
     }
 }
