@@ -97,7 +97,7 @@ namespace JAFDTC.UI.Base
         /// </summary>
         public static async void ExportFileForCampaign(XamlRoot root, List<PointOfInterest> pois, string path = null)
         {
-            Debug.Assert((root != null) || (path == null));
+            Debug.Assert((root != null) || (path != null));
 
             if (pois.Count == 0)
                 return;
@@ -233,12 +233,14 @@ namespace JAFDTC.UI.Base
         /// 
         /// user interaction disabled if root is null.
         /// </summary>
-        public static async Task<List<PointOfInterest>> ImportFile(XamlRoot root, PointOfInterestDbase dbase,
+        public static async Task<bool?> ImportFile(XamlRoot root, PointOfInterestDbase dbase,
                                                                    string path = null)
         {
+            Debug.Assert((root != null) || (path != null));
+
             path ??= await OpenPickerUI("Import POIs", [ ".jafdtc_db", ".csv" ]);
             if (path == null)
-                return [ ];                                     // EXITS: picker canceled
+                return null;                                    // EXITS: picker canceled
 
             try
             {
@@ -268,7 +270,7 @@ namespace JAFDTC.UI.Base
                             "Replace",
                             "Cancel");
                         if (result == ContentDialogResult.None)
-                            return [ ];                         // EXITS: import canceled
+                            return null;                        // EXITS: import canceled
                     }
                     dbase.DeleteCampaign(campaign, false);
                 }
@@ -307,16 +309,15 @@ namespace JAFDTC.UI.Base
                 if (!string.IsNullOrEmpty(campaign))
                     msg = $"Imported {importPoIs.Count} {what} of interest to campaign “{campaign}”.";
                 ExchangePOIUIHelper.ExchangeResultUI(root, true, "Import", "from", null, msg);
-
-                return importPoIs;
             }
             catch (Exception ex)
             {
                 FileManager.Log($"ExchangePOIUIHelper:ImportFile exception {ex}");
                 ExchangeResultUI(root, false, "Import", "from", path, $"{ex.Message}. ");
+                return false;
             }
 
-            return [ ];
+            return true;
         }
     }
 }

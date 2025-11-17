@@ -1054,9 +1054,8 @@ namespace JAFDTC.UI.App
 // TODO: could probably handle this without closing map window...
             MapWindow?.Close();
 
-            List<PointOfInterest> pois = await ExchangePOIUIHelper.ImportFile(Content.XamlRoot,
-                                                                              PointOfInterestDbase.Instance);
-            if ((pois != null) && (pois.Count > 0))
+            bool? isSuccess = await ExchangePOIUIHelper.ImportFile(Content.XamlRoot, PointOfInterestDbase.Instance);
+            if (isSuccess == true)
             {
                 RebuildPoIList();
                 RebuildInterfaceState();
