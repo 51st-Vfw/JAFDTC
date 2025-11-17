@@ -17,6 +17,8 @@
 //
 // ********************************************************************************************************************
 
+using JAFDTC.Models.DCS;
+using JAFDTC.Models.F16C.DLNK;
 using JAFDTC.UI.Base;
 using JAFDTC.Utilities;
 using Microsoft.UI.Windowing;
@@ -30,9 +32,21 @@ using System.Net.Http;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Windows.Graphics;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace JAFDTC.UI.App
 {
+    /// <summary>
+    /// event arguments for a file activation event. when handling an event, the subscriber is responsible for any
+    /// user interaction (error reporting, additional prompts, etc.).
+    /// </summary>
+    public sealed class FileActivationEventArgs(string path) : EventArgs
+    {
+        public string Path { get; set; } = path;
+    }
+
+    // ================================================================================================================
+
     /// <summary>
     /// main window for jafdtc.
     /// </summary>
@@ -103,6 +117,13 @@ namespace JAFDTC.UI.App
         // properties
         //
         // ------------------------------------------------------------------------------------------------------------
+
+        // ---- events
+
+        public event EventHandler<FileActivationEventArgs> ViperDbFileActivation;
+        public event EventHandler<FileActivationEventArgs> POIDbFileActivation;
+
+        // ---- public properties
 
         public ConfigurationListPage ConfigListPage { get; private set; }
 
@@ -249,6 +270,48 @@ namespace JAFDTC.UI.App
 
         // ------------------------------------------------------------------------------------------------------------
         //
+        // file activation support
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
+        /// <summary>
+        /// handle double-tap/open semantics on the provided list of configurations and database files that were
+        /// submitted to jafdtc via a file activation. this method may be called before the user interface is up.
+        /// </summary>
+        public async void FileActivations(List<string> configPaths, List<string> dbasePaths, bool isNoUI = false)
+        {
+            ConfigListPage.FileActivations(configPaths, isNoUI);
+
+            foreach (string path in dbasePaths)
+            {
+                FileManager.Log($"MainWindow:FileActivations noui={isNoUI}, {path}");
+
+                // for a databse file, check if there's ui up that is editing the database (as indicated by
+                // subscribers to the per-db "*FileActivation" events. if so, we let the subscribers handle
+                // the activation. otherwise, we will handle them here.
+
+                string type = FileManager.GetSharableDbaseType(path);
+                if ((type == typeof(ViperDriver).Name) && (ViperDbFileActivation?.GetInvocationList().Length > 0))
+                {
+                    ViperDbFileActivation?.Invoke(this, new FileActivationEventArgs(path));
+                }
+                else if (type == typeof(ViperDriver).Name)
+                {
+                    await ExchangeViperPilotUIHelper.ImportFile(null, path);
+                }
+                else if ((type == typeof(PointOfInterest).Name) && (POIDbFileActivation?.GetInvocationList().Length > 0))
+                {
+                    POIDbFileActivation?.Invoke(this, new FileActivationEventArgs(path));
+                }
+                else if (type == typeof(PointOfInterest).Name)
+                {
+                    await ExchangePOIUIHelper.ImportFile(null, PointOfInterestDbase.Instance, path);
+                }
+            }
+        }
+
+        // ------------------------------------------------------------------------------------------------------------
+        //
         // startup support
         //
         // ------------------------------------------------------------------------------------------------------------
@@ -267,14 +330,14 @@ namespace JAFDTC.UI.App
                 if (Settings.IsVersionUpdated)
                     await Utilities.Message1BDialog(Content.XamlRoot, "Welcome to JAFDTC!", $"Version {Settings.VersionJAFDTC}");
 
-                await CheckForPulledPork(app.CmdLnArgValuePack);
-
-                ConfigListPage.FileActivations(app.CmdLnArgPathsWithConfigs);
-
                 if (!Settings.IsNewVersCheckDisabled)
                     await CheckForUpdates();
 
                 Sploosh(DCSLuaManager.LuaCheck());
+
+                await CheckForPulledPork(app.CmdLnArgValuePack);
+
+                FileActivations(app.CmdLnArgPathsWithConfigs, app.CmdLnArgPathsWithDbases);
             }
             else
             {
@@ -509,6 +572,7 @@ namespace JAFDTC.UI.App
         /// </summary>
         private void MainWindow_Closed(object sender, WindowEventArgs args)
         {
+            FileManager.Log("MainWindow closed, exiting...");
             Settings.LastWindowSetupMain = Utilities.BuildWindowSetupString(_windPosnCur, _windSizeCur);
         }
 

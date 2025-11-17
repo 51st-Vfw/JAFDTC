@@ -25,6 +25,12 @@
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
+        "Entry"
+        {
+        "MsmKey" = "8:_FFC72E687B22476F9C14226A2F1C15FA"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
     }
     "Configurations"
     {
@@ -162,6 +168,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_FFC72E687B22476F9C14226A2F1C15FA"
+            {
+            "SourcePath" = "8:..\\JAFDTC\\Images\\JAFDTC_Db_Icon.ico"
+            "TargetName" = "8:JAFDTC_Db_Icon.ico"
+            "Tag" = "8:"
+            "Folder" = "8:_317C8FB995AB4638A7906463197DE148"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
         }
         "FileType"
         {
@@ -180,6 +206,29 @@
                 "Verbs"
                 {
                     "{95C0C507-CBF0-42B8-B119-07219E384A4A}:_7222D455784249FF9B9CFDA347C891AC"
+                    {
+                    "Command" = "8:&Open"
+                    "Verb" = "8:open"
+                    "Arguments" = "8:\"%1\""
+                    "Order" = "3:0"
+                    }
+                }
+            }
+            "{5EB83D71-FA18-4901-BE56-DE22E13CC478}:_E0D15F26A0A5481282DF930DD6152379"
+            {
+            "Name" = "8:JAFDTC Db File"
+            "Description" = "8:"
+            "Extensions" = "8:.jafdtc_db"
+            "MIME" = "8:"
+            "Icon" = "8:_FFC72E687B22476F9C14226A2F1C15FA"
+            "IconIndex" = "3:0"
+                "Command"
+                {
+                "Command" = "8:_2C362B37881F40EFACBD557EF069DEA5"
+                }
+                "Verbs"
+                {
+                    "{95C0C507-CBF0-42B8-B119-07219E384A4A}:_DA10E8E5ACB24CFF89B9CE2BBB2255BB"
                     {
                     "Command" = "8:&Open"
                     "Verb" = "8:open"
@@ -242,7 +291,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:JAFDTC"
         "ProductCode" = "8:{16FFC6C2-E79D-451D-9337-59846807891F}"
-        "PackageCode" = "8:{D219A6A7-A803-4A15-9DFD-728D2E2C523A}"
+        "PackageCode" = "8:{355A5DFA-B2B3-46AC-88AE-A6EB94473F1A}"
         "UpgradeCode" = "8:{D978BA41-44A4-483B-B26B-8F2AC4897C51}"
         "AspNetVersion" = "8:2.0.50727.0"
         "RestartWWWService" = "11:FALSE"

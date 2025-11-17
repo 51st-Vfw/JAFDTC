@@ -72,8 +72,6 @@ namespace JAFDTC
         ///
         /// note that while we support muliptle [path] arguments, typically windows will not send a single file
         /// activation with multiple files, instead preferring to do multiple activations with a single file each.
-        /// 
-        /// the [path] argument are grouped by file extension.
         /// </summary>
         private sealed class CmdLnArgInfo
         {
@@ -136,6 +134,8 @@ namespace JAFDTC
         public string CmdLnArgValuePack => CmdLnArgs.ArgValuePack;
 
         public List<string> CmdLnArgPathsWithConfigs => ExtractPathsWithExtension(".jafdtc", CmdLnArgs.ArgPaths);
+
+        public List<string> CmdLnArgPathsWithDbases => ExtractPathsWithExtension(".jafdtc_db", CmdLnArgs.ArgPaths);
 
         public bool IsAppStartupGood { get; private set; }
 
@@ -319,12 +319,16 @@ namespace JAFDTC
             IsAppStartupGood = false;
             IsMainWindowBuilt = false;
 
-            // TODO: this likely needs changes to work for packaged applications. see the discussion around
-            // TODO: IApplicationActivationManager.ActivateApplication
+            // TODO: the entire file activation flow likely needs changes to work for packaged applications. this
+            // TODO: implemention is a bit of a hack for .msi packed applications. see the discussion around
+            // TODO: IApplicationActivationManager.ActivateApplication for more.
             //
             CmdLnArgs = ParseCommandLine([.. Environment.GetCommandLineArgs() ]);
             if (FileActivationSetup(CmdLnArgs))
             {
+                // there is not currently an instance of jafdtc running. go through the full initialization
+                // to stand an instance up. this will be the "og" instance of jafdtc until it exits.
+                //
                 InitializeComponent();
 
 #if DCS_TELEM_INCLUDES_LAT_LON
@@ -365,6 +369,10 @@ namespace JAFDTC
             }
             else
             {
+                // there is already an instance of jafdtc running. FileActivationSetup() has passed along any
+                // command line arguments (representing file activiations) to the running jafdtc instance, so
+                // we can exit this process.
+                //
                 // NOTE: this is super icky, but we don't really want the app to continue its startup sequence in
                 // NOTE: the event we have a file activation as there's a bunch of assumptions baked in that a ui
                 // NOTE: is coming up, which is not the case if we've got a file activiation.
@@ -394,18 +402,20 @@ namespace JAFDTC
 
         /// <summary>
         /// handle a file activation event for a set of files. this function should be called on the main thread and
-        /// will re-launch the file activation server thread if requested.
+        /// will re-launch the file activation server thread if requested. this function only runs on the initial
+        /// jafdtc instance (the "og" instance).
         /// 
         /// paths parameter has individual paths, a path may be prefixed by "--noui" to supress user interaction.
         /// </summary>
         private void FileActivationHandler(List<string> paths, bool isNoUI, bool isRestart)
         {
             // NOTE: this method should not be called before the universe is mature. note that the server thread
-            // NOTE: cannot call us until the ui is up as its invocations rely on event loop dispatch.
+            // NOTE: cannot call us until the ui is up as its invocations rely on event loop dispatch which should
+            // NOTE: ensure sufficient maturity.
 
-            List<string> configPaths = ExtractPathsWithExtension(".jafdtc", paths);
-            if (configPaths.Count > 0)
-                Window.ConfigListPage.FileActivations(configPaths, isNoUI);
+            if (paths.Count > 0)
+                Window.FileActivations(ExtractPathsWithExtension(".jafdtc", paths),
+                                       ExtractPathsWithExtension(".jafdtc_db", paths), isNoUI);
 
             if (isRestart)
             {
@@ -416,8 +426,8 @@ namespace JAFDTC
         }
 
         /// <summary>
-        /// server thread to run under the initial instance of jafdtc. sets up a named pipe to accepts paths
-        /// from subsequent app launches that specify files. when data arrives, thread exits after invoking
+        /// server thread to run under the initial ("og") instance of jafdtc. sets up a named pipe to accepts
+        /// paths from subsequent app launches that specify files. when data arrives, thread exits after invoking
         /// the handler.
         /// </summary>
         private void FileActivationServerThread()
@@ -427,6 +437,8 @@ namespace JAFDTC
             // NOTE: this thread can be started basically right after the big bang. do not expect fully
             // NOTE: formed galaxies and so forth to exist for a while. need to ensure we don't start
             // NOTE: processing activation requests until things are more mature...
+            //
+            // NOTE: this thread runs on only the og jafdtc instance.
 
             try
             {
@@ -440,13 +452,18 @@ namespace JAFDTC
                     string filePaths = reader.ReadLine();
                     if (!string.IsNullOrEmpty(filePaths))
                     {
+                        FileManager.Log($"App:FileActivationServerThread paths: {filePaths}");
+
+                        // another instance of jaftdc was launched and has shipped us some file paths to
+                        // handle as file activiations. do the thing.
+                        //
                         // NOTE: at this point, we need to have the ui up as we're about to use the event
                         // NOTE: loop. should be fine as the sleep loop above will not exit until the app
                         // NOTE: startup is noted.
 
                         List<string> paths = [.. filePaths.Split('|') ];
-                        List<string> pathsUI = [];
-                        List<string> pathsNI = [];
+                        List<string> pathsUI = [ ];
+                        List<string> pathsNI = [ ];
                         foreach (string path in paths)
                             if (path.StartsWith("--noui "))
                                 pathsNI.Add(path["--noui ".Length..]);
@@ -485,7 +502,7 @@ namespace JAFDTC
 
             if (MutexJAFDTC.WaitOne(10, false))
             {
-                // we are the og jafdtc. we are legion. fear us.
+                // as we got the jafdtc mutex, we are the og jafdtc. we are legion. fear us.
                 //
                 // command line args that can be handled without a ui are taken care of in OnLaunched() below
                 // while those args that need a ui are handled in MainWindow.AppContentFrame_Loaded().
@@ -496,19 +513,21 @@ namespace JAFDTC
             else
             {
                 // there is already a jafdtc instance running. the og will have started an activation server
-                // that we will pass our work (i.e., command line arguments) on to before bouncing. the og
-                // instance will then do us a solid and do the work in FileActivationHandler().
+                // that we will pass our work (i.e., command line arguments) on to before bouncing. send a
+                // list of paths to the og instance via the named pipe it set up. the og instance will then
+                // do us a solid and do the work in FileActivationHandler().
                 //
                 if ((args.ArgPaths.Count > 0) || !string.IsNullOrEmpty(args.ArgValueOpen))
                 {
+                    string msg = string.Join("|", args.ArgPaths);
+                    string sep = (msg.Length > 0) ? "|" : "";
+                    if (!string.IsNullOrEmpty(args.ArgValueOpen))
+                        msg = $"--noui {args.ArgValueOpen}{sep}{msg}";
+
                     using NamedPipeClientStream client = new(JAFDTCFileActPipeName);
-                    client.Connect(500);
+                    client.Connect(5000);
                     if (client.IsConnected)
                     {
-                        string msg = string.Join("|", args.ArgPaths);
-                        string sep = (msg.Length > 0) ? "|" : "";
-                        if (!string.IsNullOrEmpty(args.ArgValueOpen))
-                            msg = $"--noui {args.ArgValueOpen}{sep}{msg}";
                         using StreamWriter writer = new(client);
                         writer.WriteLine(msg);
                         writer.Flush();
@@ -519,7 +538,7 @@ namespace JAFDTC
 
 #endif // #if ENABLE_FILE_ACTIVATION
 
-            return true;
+                    return true;
         }
 
         // ------------------------------------------------------------------------------------------------------------
@@ -862,7 +881,7 @@ namespace JAFDTC
             // NOTE: we should not get here if an og instance of jafdtc is already running; if we are here, we are
             // NOTE: the og. reaching here as a non-og instance is prohibited by the "aborting launch" exception
             // NOTE: above that triggers during application construction after we have (1) realized we're not the
-            // NOTE: og instance, and (2) handed off activations to the og instance.
+            // NOTE: og instance, and (2) handed off any activations to the og instance.
 
             try
             {
@@ -883,7 +902,8 @@ namespace JAFDTC
                 // for any --pack and [path] args, we will wait until MainWindow.AppContentFrame_Loaded to process
                 // the args to allow additional initialization to finish up as these operations may require ui.
                 //
-                if (!string.IsNullOrEmpty(CmdLnArgs.ArgValueOpen))
+                if (!string.IsNullOrEmpty(CmdLnArgs.ArgValueOpen) &&
+                    Path.GetExtension(CmdLnArgs.ArgValueOpen).Equals(".jafdtc", StringComparison.CurrentCultureIgnoreCase))
                 {
                     FileManager.Log($"Opening unmanaged config file: {CmdLnArgs.ArgValueOpen}");
                     IConfiguration config = ExchangeConfigUIHelper.ConfigSilentImportJAFDTC(CmdLnArgs.ArgValueOpen);
