@@ -906,8 +906,9 @@ namespace JAFDTC
                     Path.GetExtension(CmdLnArgs.ArgValueOpen).Equals(".jafdtc", StringComparison.CurrentCultureIgnoreCase))
                 {
                     FileManager.Log($"Opening unmanaged config file: {CmdLnArgs.ArgValueOpen}");
-                    IConfiguration config = ExchangeConfigUIHelper.ConfigSilentImportJAFDTC(CmdLnArgs.ArgValueOpen);
-                    Settings.LastConfigFilenameSelection = config.Filename;
+                    IConfiguration config = ExchangeConfigUIHelper.SilentImportFile(CmdLnArgs.ArgValueOpen);
+                    if (config != null)
+                        Settings.LastConfigFilenameSelection = config.Filename;
                 }
 
                 IsJAFDTCPinnedToTop = Settings.IsAlwaysOnTop;

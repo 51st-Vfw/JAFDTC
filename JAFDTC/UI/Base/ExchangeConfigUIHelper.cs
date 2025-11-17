@@ -23,6 +23,7 @@ using JAFDTC.Utilities;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -43,27 +44,43 @@ namespace JAFDTC.UI.Base
         // ------------------------------------------------------------------------------------------------------------
 
         /// <summary>
-        /// export a configuration to a .jafdtc file at the given path (null path causes prompt via picker). notes
-        /// success via a message dialog if root is non-null. throws an exception on issues, caller should catch.
+        /// export a configuration to a .jafdtc file at the given path. if path is null, prompts the user for a file
+        /// location via a FileSavePicker. reports successful status to user via ui. returns null on cancel, true on
+        /// success, and false on failure.
+        /// 
+        /// user interaction is disabled if xaml root is null.
         /// </summary>
-        public static async void ConfigExportJAFDTC(XamlRoot root, IConfiguration config, string path = null)
+        public static async Task<bool?> ExportFile(XamlRoot root, IConfiguration config, string path = null)
         {
+            Debug.Assert((root != null) || (path != null));
+
             char[] invalidChars = Path.GetInvalidFileNameChars();
             string cleanConfigName = new([.. config.Name.Where(m => !invalidChars.Contains(m)) ]);
 
             path ??= await SavePickerUI("Export Configuration", cleanConfigName, "JAFDTC", ".jafdtc");
             if (path != null)
             {
-                StorageFile file = await StorageFile.GetFileFromPathAsync(path);
+                try
+                {
+                    StorageFile file = await StorageFile.GetFileFromPathAsync(path);
 
-                IConfiguration cleanConfig = config.Clone();
-                cleanConfig.Sanitize();
-                await FileIO.WriteTextAsync(file, cleanConfig.Serialize());
+                    IConfiguration cleanConfig = config.Clone();
+                    cleanConfig.Sanitize();
+                    await FileIO.WriteTextAsync(file, cleanConfig.Serialize());
 
-                if (root != null)
-                    await Utilities.Message1BDialog(root, "Success",
-                                                    $"Exported configuration “{config.Name}” to the file at:\n\n“{path}”.");
+                    if (root != null)
+                        await Utilities.Message1BDialog(root, "Success",
+                                                        $"Exported configuration “{config.Name}” to the file at:\n\n“{path}”.");
+
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    FileManager.Log($"ExchangeConfigUIHelper:ExportFile fails {ex}");
+                    return false;
+                }
             }
+            return null;
         }
 
         // ------------------------------------------------------------------------------------------------------------
@@ -74,64 +91,86 @@ namespace JAFDTC.UI.Base
 
         /// <summary>
         /// import the .jafdtc file with user interaction. user is prompted for a name for the new configuration
-        /// along with a pilot role (if roles are supported). returns imported configuration, null on error.
+        /// along with a pilot role (if roles are supported). returns imported configuration, null on error or user
+        /// cancellation.
+        /// 
+        /// user interaction is disabled if xaml root is null.
         /// </summary>
-        public static async Task<IConfiguration> ConfigImportJAFDTC(XamlRoot root, ConfigurationList configList,
-                                                                    string path = null)
+        public static async Task<IConfiguration> ImportFile(XamlRoot root, ConfigurationList configList, string path = null)
         {
+            Debug.Assert((root != null) || (path != null));
+
+            IConfiguration config = null;
+            bool isNoList = (configList == null);
+
             path ??= await OpenPickerUI("Import Configuration", [ ".jafdtc" ]);
             if (path != null)
             {
-                IConfiguration config = FileManager.ReadUnmanagedConfigurationFile(path);
-
-                if (config.Airframe != configList.Airframe)
-                    configList = new(config.Airframe);
-                string importName = configList.UniquifyName(config.Name);
-
-                ImportBaseDialog importDialog = new(configList, config, importName)
+                try
                 {
-                    XamlRoot = root,
-                    Title = $"Create a New Configuration From File",
-                    PrimaryButtonText = "OK",
-                    CloseButtonText = "Cancel"
-                };
-                ContentDialogResult result = await importDialog.ShowAsync(ContentDialogPlacement.Popup);
-                if (result == ContentDialogResult.Primary)
+                    config = FileManager.ReadUnmanagedConfigurationFile(path);
+                    if (isNoList || (config.Airframe != configList.Airframe))
+                        configList = new(config.Airframe);
+                    string importName = configList.UniquifyName(config.Name);
+                    config.Name = importName;
+
+                    if (root != null)
+                    {
+                        ImportBaseDialog importDialog = new(configList, config, importName)
+                        {
+                            XamlRoot = root,
+                            Title = $"Create a New Configuration From File",
+                            PrimaryButtonText = "OK",
+                            CloseButtonText = "Cancel"
+                        };
+                        ContentDialogResult result = await importDialog.ShowAsync(ContentDialogPlacement.Popup);
+                        if (result == ContentDialogResult.Primary)
+                        {
+                            config.Name = importDialog.ConfigName;
+                            config.AdjustForRole(importDialog.ConfigRole);
+
+                            await Utilities.Message1BDialog(root, "Success",
+                                                            $"Created a new configuration named “{config.Name}”" +
+                                                            $" for the {Globals.AirframeNames[config.Airframe]}" +
+                                                            $" from the file at:\n\n{path}");
+                        }
+                        else if (result == ContentDialogResult.None)
+                        {
+                            return null;                                                // **** EXIT: user cancelled
+                        }
+                    }
+                }
+                catch (Exception ex)
                 {
-                    config.Name = importDialog.ConfigName;
-                    config.AdjustForRole(importDialog.ConfigRole);
+                    FileManager.Log($"ExchangeConfigUIHelper:ImportFile fails {ex}");
+                    return null;                                                        // **** EXIT: config read error
+                }
 
-                    IConfiguration newConfig = configList.Inject(config);
-
-                    await Utilities.Message1BDialog(root, "Success",
-                                                    $"Created a new configuration named “{config.Name}”" +
-                                                    $" for the {Globals.AirframeNames[config.Airframe]}" +
-                                                    $" from the file at:\n\n{path}");
-                    return newConfig;
+                if (isNoList)
+                {
+                    config.Sanitize(true);
+                    config.Save();
+                }
+                else
+                {
+                    configList.Inject(config);
                 }
             }
-            return null;
+
+            return config;
         }
 
         /// <summary>
         /// import the .jafdtc file silently without any user interaction. the name will be uniquified, but role
         /// changes are not handled. returns imported configuration, null on error.
         /// </summary>
-        public static IConfiguration ConfigSilentImportJAFDTC(string path, ConfigurationList configList = null)
+        public static IConfiguration SilentImportFile(string path)
         {
             IConfiguration config = FileManager.ReadUnmanagedConfigurationFile(path);
-            if (configList == null)
-            {
-                configList = new(config.Airframe);
-                config.Name = configList.UniquifyName(config.Name);
-                config.Sanitize(true);
-                config.Save();
-            }
-            else
-            {
-                config.Name = configList.UniquifyName(config.Name);
-                configList.Inject(config);
-            }
+            ConfigurationList configList = new(config.Airframe);
+            config.Name = configList.UniquifyName(config.Name);
+            config.Sanitize(true);
+            config.Save();
             return config;
         }
     }

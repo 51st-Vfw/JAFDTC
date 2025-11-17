@@ -174,11 +174,8 @@ namespace JAFDTC.UI.App
                 foreach (string path in paths)
                 {
                     FileManager.Log($"ConfigurationListPage:FileActivations noui={isNoUI}, {path}");
-                    IConfiguration curConfig;
-                    if (isNoUI)
-                        curConfig = ExchangeConfigUIHelper.ConfigSilentImportJAFDTC(path, ConfigList);
-                    else
-                        curConfig = await ExchangeConfigUIHelper.ConfigImportJAFDTC(Content.XamlRoot, ConfigList, path);
+                    XamlRoot root = (isNoUI) ? null : Content.XamlRoot;
+                    IConfiguration curConfig = await ExchangeConfigUIHelper.ImportFile(root, ConfigList, path);
                     lastConfig = curConfig ?? lastConfig;
                 }
                 if (lastConfig != null)
@@ -580,7 +577,7 @@ namespace JAFDTC.UI.App
         {
             try
             {
-                IConfiguration config = await ExchangeConfigUIHelper.ConfigImportJAFDTC(Content.XamlRoot, ConfigList);
+                IConfiguration config = await ExchangeConfigUIHelper.ImportFile(Content.XamlRoot, ConfigList);
                 if (config != null)
                     uiCfgListView.SelectedItem = config;
             }
@@ -597,19 +594,13 @@ namespace JAFDTC.UI.App
         /// </summary>
         private async void CmdExport_Click(object sender, RoutedEventArgs argse)
         {
-            try
-            {
-                IConfiguration configClean = ((IConfiguration)uiCfgListView.SelectedItem).Clone();
-                configClean.ResetUID();
-                configClean.UnlinkSystem(null);
+            IConfiguration configClean = ((IConfiguration)uiCfgListView.SelectedItem).Clone();
+            configClean.ResetUID();
+            configClean.UnlinkSystem(null);
 
-                ExchangeConfigUIHelper.ConfigExportJAFDTC(Content.XamlRoot, configClean);
-            }
-            catch (Exception ex)
-            {
-                FileManager.Log($"ConfigurationListPage:CmdExport_Click exception {ex}");
+            bool? isSuccess = await ExchangeConfigUIHelper.ExportFile(Content.XamlRoot, configClean);
+            if (isSuccess == false)
                 await Utilities.Message1BDialog(Content.XamlRoot, "Export Failed", "Unable to export the configuration.");
-            }
         }
 
         /// <summary>

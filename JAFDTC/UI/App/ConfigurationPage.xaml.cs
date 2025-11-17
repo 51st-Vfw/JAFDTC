@@ -273,15 +273,9 @@ namespace JAFDTC.UI.App
         /// </summary>
         private async void HdrBtnExport_Click(object sender, RoutedEventArgs args)
         {
-            try
-            {
-                ExchangeConfigUIHelper.ConfigExportJAFDTC(Content.XamlRoot, Config);
-            }
-            catch (Exception ex)
-            {
-                FileManager.Log($"ConfigurationListPage:CmdExport_Click exception {ex}");
+            bool? isSuccess = await ExchangeConfigUIHelper.ExportFile(Content.XamlRoot, Config);
+            if (isSuccess == false)
                 await Utilities.Message1BDialog(Content.XamlRoot, "Export Failed", "Unable to export the configuration.");
-            }
         }
 
         /// <summary>
