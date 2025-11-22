@@ -1,6 +1,6 @@
 # JAFDTC: Configuring F-14A/B Tomcat Airframes
 
-**_Version 1.1.0 of TODO_**
+**_Version 1.1.2 of 22 November 2025_**
 
 > Support for the *Tomcat* is experimental and has had limited testing.
 

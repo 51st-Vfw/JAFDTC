@@ -1,11 +1,11 @@
 # JAFDTC: Just Another #%*@^!& DTC
 
-**_Version 1.0.0 of 17-September-24_**
+**_Version 1.1.2 of 22 November 2025_**
 
-Just Another #%*@^!% DTC (JAFDTC) is a native C# WinUI Windows application for Windows 10 and
-Windows 11 that allows you to upload data typically saved on a data cartridge, such as
-steerpoints/waypoints and other avionics setup, into a DCS module at the start of a flight. The
-application supports the following DCS airframes and systems,
+Just Another #%*@^!% DTC (JAFDTC) is a native C# WinUI Windows application for Windows 11 that
+allows you to upload data typically saved on a data cartridge, such as steerpoints/waypoints
+and other avionics setup, into a DCS module at the start of a flight. The application supports
+the following DCS airframes and systems,
 
 - *A-10C Warthog* &ndash; DSMS, HMCS, IFFCC, Radios, TGP, Waypoints, Miscellaneous Systems
 - *AV-8B Harrier* &ndash; Waypoints
@@ -17,7 +17,8 @@ application supports the following DCS airframes and systems,
 - *Mirage M-2000C* &ndash; Waypoints
 
 > Support for the *Harrier*, *Tomcat*, and *Mirage* airframes is experimental and has had
-> limited testing.
+> limited testing. While the application should run under Windows 10, all development is on
+> Windows 11.
 
 This document describes how to get JAFDTC installed and running on your system. See the
 [_User's Guide_](https://github.com/51st-Vfw/JAFDTC/tree/master/doc)
@@ -49,7 +50,8 @@ A detailed user's guide is availble
 
 A Windows `.msi` installation package for JAFDTC is available
 [here](https://github.com/51st-Vfw/JAFDTC/releases).
-Installation is easy,
+JAFDTC should work on Windows 10, though development focus is on Windows 11. Installation is
+easy,
 
 1. Download the `.msi`
 2. Double-click the `.msi`
@@ -148,4 +150,5 @@ JAFDTC is based on code from
 [DCSWE](https://github.com/51st-Vfw/DCSWaypointEditor),
 [DCSWaypointEditor](https://github.com/Santi871/DCSWaypointEditor),
 [DCS-BIOS](https://github.com/DCS-Skunkworks/dcs-bios)
-and a long line of similar tools that have been developed by the community over the years.
+and a long line of similar tools that have been developed by the DCS community over the years.
+Standing on the shoulders of giants and all that...

@@ -1,16 +1,19 @@
 # JAFDTC: Configuring F-15E Strike Eagle Airframes
 
-**_Version 1.1.0 of TODO_**
+**_Version 1.1.2 of 22 November 2025_**
 
 > Support for the Strike Eagle is experimental. As the module is unavailable for purchase at
 > this time due to... *reasons*..., support is severly limited.
 
 JAFDTC supports configuration of the following systems in the Strike Eagle,
 
-- Radios
-- Steerpoints including routes, target points, and reference points
-- Miscellaneous systems configured through UFC such as TACAN, ILS, and altitude warning
-- Miscellaneous systems not configured through UFC such as BINGO
+- [Radios](#radios)
+- [Steerpoints](#steerpoints)
+  including routes, target points, and reference points
+- [Miscellaneous systems](#miscellaneous)
+  configured through UFC such as TACAN, ILS, and altitude warning
+- [Miscellaneous systems](#miscellaneous)
+  not configured through UFC such as BINGO
 
 Each of these areas is covered in more depth below. See the
 [_User's Guide_](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/README.md) and

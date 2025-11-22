@@ -1,6 +1,6 @@
 # JAFDTC: Configuring AV-8B Harrier Airframes
 
-**_Version 1.1.0 of TODO_**
+**_Version 1.1.2 of 22 November 2025_**
 
 > Support for the Harrier is experimental and has had limited testing. As the module is
 > unavailable for purchase at this time due to... *reasons*..., support is severly limited.

@@ -1,15 +1,24 @@
 # JAFDTC: Common Elements Guide
 
-**_Version 1.1.0 of TODO_**
+**_Version 1.1.2 of 22 November 2025_**
 
 Though systems differ from airframe to airframe, based on the preculariites of the airframe,
 there are many concepts, layouts, and tasks in the JAFDTC user interface that share general
-similarities across airframes even where the specifics differ. This section discusses these
+similarities across airframes even where the specifics differ. This guide discusses these
 common areas.
 
-> As always, please consult the
-> [airframe guides](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/README.md#what-now)
-> for further details on a particular airframe.
+As always, please consult the airframe guides for further details on a specific airframe.
+
+* [A-10C Warthog](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/Airframe_A10C.md)
+* [AV-8B Harrier](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/Airframe_AV8B.md)
+* [F-14A/B Tomcat](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/Airframe_F14AB.md)
+* [F&#x2011;15E&nbsp;Strike&nbsp;Eagle](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/Airframe_F15E.md)
+* [F-16C Viper](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/Airframe_F16C.md)
+* [F/A-18C Hornet](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/Airframe_FA18C.md)
+* [Mirage M-2000C](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/Airframe_M2000C.md)
+
+This guide starts by looking at sharing information between pilots before discussing common
+user interface and interaction techniques.
 
 # Sharing Configurations
 
@@ -47,7 +56,31 @@ configuration library using the imported `.jafdtc` file.
 
 # Sharing Databases
 
-TODO
+JAFDTC contains a number of user-editable databases such as the
+[point of interest database](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/README.md#points-of-interest).
+Selections from these databases can be exported to `.jafdtc_db` files through the user
+interface to allow you to easily exchange information with other pilots. For example, you can
+use a `.jafdtc_db` file that contains exported POIs from a campaign to share common locations
+with others. Updates to the POIs can be made and then redistributed to others.
+
+You can import a `.jafdtc_db` into a database at appropriate points in the user interface.
+In addition, double-clicking on a `.jafdtc_db` file in Windows File Explorer will cause
+JAFDTC to import the database file into the appropriate database.
+
+A workflow might look like this,
+
+* Mission commanders build a set of Campaign POIs in the
+  [point of interest database](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/README.md#points-of-interest)
+  that contains navigation and target locations relevant to the mission set.
+* Mission commanders export the campaign as a `.jafdtc_db` file using the
+  [point of interest database page](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/README.md#points-of-interest-database-page).
+* The `.jafdtc_db` file is provided to pilots for import into their JAFDTC databases.
+* Flight leads build steerpoints and so on based in part on the appropriate campaign POIs.
+* Following the mission, mission commanders update the campaign POIs (for example, removing
+  destroyed targets or adding new targets) and the process repeats with the export of a new
+  `.jafdtc_db` file.
+
+Other approaches are possible as well.
 
 # Common Interface Tasks
 
@@ -86,7 +119,7 @@ Once these conditions are met, you can use any of the **Load to Jet** buttons in
 to load the currently selected configuration to the jet. These buttons use an aircraft icon
 and indicate the status of the operation as below,
 
-**TODO REBUILD FOR LIGHT MODE ??**
+**TODO REBUILD**
 ![](images/Core_Base_Upload_Icons.png)
 
 The outline version shows when the jet is unavailable (dimmed) or ready to accept a
@@ -474,15 +507,15 @@ of the user interface JAFDTC uses for coordinate capture.
 
 TODO what about .jafdtc?
 
-In addition to its own `.json` format, JAFDTC can import navigation points from DCS `.miz` and
-CombatFlite `.cf` files directly.
+In addition to its own `.jafdtc` format, JAFDTC can import navigation points from DCS `.miz`
+and CombatFlite `.cf` files directly.
 
-> For `.miz` import, JAFDTC currently supports Caucasus, Marianas, Nevada, Persian Gulf, Sinai,
-> South Atlantic, and Syria DCS maps.
+> For `.miz` import, JAFDTC currently supports Afghanistan, Caucasus, Germany, Iraq, Kola,
+> Marianas, Nevada, Persian Gulf, Sinai, South Atlantic, and Syria DCS maps.
 
 When importing navigation points, the imported points can either replace or be appended to the
 current list of navigation points. When importing from `.miz` or `.cf` files, JAFDTC also lets
-you select the flight within the file that you wish to import navigation points from
+you select the flight within the file that you wish to import navigation points from,
 
 **TODO REBUILD FOR LIGHT MODE ??**
 ![](images/Core_Base_Import.png)
@@ -497,9 +530,9 @@ take-off steerpoints.
 > The *Time on Steerpoint* option is not available on airframes that do not support that
 > function.
 
-When exporting navigation points, JAFDTC exports all points in the navigation list in a `.json`
-format defined by JAFDTC. At present, JAFDTC does not support exporting navigation points in
-other formats.
+JAFDTC only exports navigation points as a system within a `.jafdtc` file. Sharing navigation
+points in an airframe-neutral format is supported through `.jafdtc_db` files that contain
+campaign or user POIs.
 
 # Communications System Editors
 

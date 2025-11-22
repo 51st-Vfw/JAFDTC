@@ -1,17 +1,17 @@
 # JAFDTC: Configuring A-10C Warthog Airframes
 
-**_Version 1.0.0 of 17-September-24_**
+**_Version 1.1.2 of 22 November 2025_**
 
 JAFDTC supports configuration of the following systems in the A-10C II Warthog,
 
-* DSMS
-* HMCS
-* IFFCC
-* Radios
-* TAD
-* TGP
-* Waypoints
-* Miscellaneous Systems
+* [DSMS](#dsms)
+* [HMCS](#hmcs)
+* [IFFCC](#iffcc)
+* [Radios](#radios)
+* [TAD](#tad)
+* [TGP](#tgp)
+* [Waypoints](#waypoints)
+* [Miscellaneous Systems](#miscellaneous)
 
 Each of these areas is covered in more depth below. See the
 [_User's Guide_](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/README.md) and

@@ -1,6 +1,6 @@
 # JAFDTC: User’s Guide
 
-***Version 1.1.0 of TODO***
+**_Version 1.1.2 of 22 November 2025_**
 
 _Just Another #%*@^!% DTC_ (JAFDTC) is a native Windows application that allows you to upload
 data typically saved on a data cartridge in real life, such as steerpoints/waypoints and other
@@ -166,7 +166,7 @@ link with "A2G Mission", the MFD settings in "A2G Mission" will match the MFD se
 
 ## Points of Interest
 
-JAFDTC supports a collection of points of interest (POI) that can be used to speed up creation
+JAFDTC supports a database of points of interest (POI) that can be used to speed up creation
 of navigation points or target locations. There are three basic types of POI,
 
 - **DCS** &ndash; Includes airfields and other features defined on the supported DCS maps; for
@@ -185,6 +185,10 @@ classifies the point of interest.
 The user interface provides mechanisms to search and select POIs from the set of known
 locations. Points of interest are discussed further
 [later](#point-of-interest-database).
+
+## Threats
+
+TODO
 
 ## DCS Integration
 
@@ -205,7 +209,7 @@ depending which versions of DCS are installed on your system.
 
 > As of the DCS 2.9.2.49940 release, the open beta and stable versions of DCS are the same
 > though the folder names may still reflect the pre-2.9.2.49940 split between stable and
-> open beta.
+> open beta versions of DCS.
 
 Within these areas, JAFDTC makes three changes,
 
@@ -227,14 +231,14 @@ interacting with DCS in any capacity.
 ED delivered an initial DTC implementation in DCS 2.9.15.9408 released in April of 2025 that
 supports some modules. While the DTC implementation in DCS is not yet complete, it does provide
 some advantages over tools like JAFDTC (primarily, by being able to inject configurations
-directly into the jet without needing to rely on clicking cockpit controls). JAFDTC provides
-the ability to push configurations into the jet through the ED DCS DTC, with some restrictions.
-The
-[*Common Elements Guide*](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/Common_Elements.md#selecting--filtering-points-of-interest)
+directly into the jet without needing to rely on clicking cockpit controls). For some
+airframes, JAFDTC provides the ability to push configurations into the jet through the ED DCS
+DTC, with some restrictions. The
+[*Common Elements Guide*](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/Common_Elements.md#working-with-the-native-dcs-dtc)
 and
 [airframe guides](#what-now)
-provide further discussion on how JAFDTC interoperates with the DCS DTC for those airframes
-that support the DCS DTC.
+provide further discussion on the interoperation capabilities JAFDTC provides for those
+airframes that support the DCS DTC.
 
 Whether or not there is a place for tools like JAFDTC in the DCS ecosystem over the long
 term reamins to be seen.
@@ -336,15 +340,15 @@ The command bar includes the following commands,
   [System Editor Page](#system-editor-page)
   for the selected configuration to allow you to edit the configuration. You can also edit a
   configuration by double-clicking on the configuration in the configuration list.
-- **Duplicate** &ndash; Creates a copy of the selected configuration after prompting for a name for the
-  copy of the configuration.
+- **Duplicate** &ndash; Creates a copy of the selected configuration after prompting for a name
+  for the copy of the configuration.
 - **Rename** &ndash; Renames the selected configuration.
 - **Delete** &ndash; Removes the currently selected configuration from the database.
 - **Import** &ndash; Creates a new configuration from a `.jafdtc` file previously created with the
-  *Export* command. `.jafdtc` files are discused further in the
+  **Export** command. `.jafdtc` files are discused further in the
   [*Common Elements Guide*](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/Common_Elements.md).
 - **Export** &ndash; Creates a `.jafdtc` file that contains the selected configuration suitable for
-  import using the *Import* command.  `.jafdtc` files are discused further in the
+  import using the **Import** command.  `.jafdtc` files are discused further in the
   [*Common Elements Guide*](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/Common_Elements.md).
 - **Load to Jet** &ndash; Uploads the selected configuration to DCS, see
   [here](#interacting-with-dcs)
@@ -452,7 +456,8 @@ The button to the right of the current airframe exports the configuration as a `
 as discused further in the
 [*Common Elements Guide*](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/Common_Elements.md).
 This button is functionally identical to the export button on the
-[*Configuration List Page*](#configuration-list-page).
+[*Configuration List Page*](#configuration-list-page)
+and saves the configuration to a `.jafdtc` file.
 
 ### System List
 
@@ -604,9 +609,13 @@ The command bar includes the following commands,
 - **Map** &ndash; Opens up a
   [map window](#map-window)
   to aid editing POIs.
-- **Import** &ndash; Imports POIs from a previously exported file, updating or adding POIs
-  as appropriate.
-- **Export** &ndash; Exports selected POIs to a file.
+- **Import** &ndash; Imports POIs from a previously exported `.jafdtc_db` file created with the
+  **Export** command, updating or adding POIs and campaigns as appropriate. `.jafdtc_db` files
+  are discused further in the
+  [*Common Elements Guide*](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/Common_Elements.md).
+- **Export** &ndash; Creates a `.jafdtc_db` file that contains the selected POIs suitable for
+  import using the **Import** command.  `.jafdtc_db` files are discused further in the
+  [*Common Elements Guide*](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/Common_Elements.md).
 
 The overflow menu (exposed by clicking on the "`...`" button) holds three commands,
 
@@ -692,14 +701,14 @@ specify the file to export to.
 Using the **Import** command from the
 [*Point of Interest Command Bar*](#point-of-interest-command-bar)
 lets you export selected POIs from the database in `.jafdtc_db` or `CSV` based formats. The
-POIs in the file must match the export criteria
+POIs present in the file must match the export criteria
 [outlined above](#exporting-points-of-interest).
+
+> A `.jafdtc_db` file for POIs also can be imported by double-clicking on it in the Windows
+> File Explorer.
 
 > The `CSV` format is intended primarily for use in creating POI lists for campaigns or
 > common sets of points from other source material such as a spreadsheet.
-
-In addition, `.jafdtc_db` files for POIs also can be imported by double-clicking on them
-from the Windows File Explorer.
 
 After selecting **Import**, JAFDTC will display a standard Windows file picker to allow you
 to specify the file to import from. The import process will update POIs from the database
@@ -779,6 +788,10 @@ The
 detail the specific systems that make these controls available when configuring airframe
 systems.
 
+## Threat Database Page
+
+TODO
+
 ## Map Window
 
 TODO
@@ -805,36 +818,38 @@ Adding navpoints
 There are several points in the interface where you can capture coordiantes from the DCS F10
 map for use by JAFDTC including navigation point editors or the
 [Point of Interest Database](#points-of-interest).
-Typically, JAFDTC uses a button like this to start the capture process,
 
-**TODO REBUILD FOR LIGHT MODE**
-![](images/Core_Base_Capture_UI.png)
+> You must be in an in-mission slot viewing the F10 map in order to capture coordiantes.
+> Capture does not work from the DCS Mission Editor.
+
+Typically, JAFDTC uses a button like this to start the capture process (in saome cases, the
+button may not include the "DCS" label),
+
+![](images/uguide_capture_button.png)
 
 Clicking on this button starts DCS F10 capture. During this process, JAFDTC displays a dialog
 like this that remains visible while you interact with DCS,
 
-**TODO REBUILD**
-![](images/Core_Base_Capture_C2.png)
+![](images/uguide_capture_client_ui.png)
 
 JAFDTC will interact with the coordinate capture in DCS as long as this dialog is active. After
 you have completed the capture in DCS, clicking “**Done**” in this dialog incorporates the
 captured coordinates into JAFDTC as appropriate.
 
-The DCS side of the interaction occurs on the F10 map.
+> This example shows the user interface associated with capturing the coordinate of a single
+> navpoint from a 
+> [navigation point editor](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/Common_Elements.md#navigation-point-editor-ui).
 
-> You must be in an in-mission slot viewing the F10 map in order to capture coordiantes.
-> Capture does not work from the DCS Mission Editor.
+The DCS side of the interaction occurs on the F10 map. From the F10 map, type
+`CTRL`-`SHIFT`-`J` to how the JAFDTC capture overlay on the F10 map,
 
-From the F10 map, type `CTRL`-`SHIFT`-`J` to show the JAFDTC capture overlay on the F10
-map,
+![](images/uguide_capture_dcs_ui.png)
 
-**TODO REBUILD**
-![](images/Core_Base_Capture.png)
-
-At the upper left of the overlay is a cursor made up of a `+` icon within a circle that
-indicates where on the map coordinates are captured from. To the right of this are the
-latitude, longitude, and elevation of the point under the `+`. To change the coordinate, move
-the F10 map by dragging as usual.
+At the upper left of the overlay in area (1) is a cursor made up of a `+` icon within a circle
+that indicates where on the map coordinates are captured from. To the right of this in area (2)
+are the latitude, longitude, and elevation of the point under the `+`. To change the coordinate,
+move the F10 map by dragging as usual. The list in area (3) shows the coordinates that have
+been captured.
 
 > The overlay remains at a fixed location on the screen while the map moves under the overlay.
 
@@ -849,10 +864,10 @@ to interact with the list.
 - **Clear** &ndash; Clears the list of navigation points.
 - **Send to JAFDTC** &ndash; Sends the navigation points in the list to JAFDTC to incorporate.
 
-The handling of target versus steerpoints added by **Add STPT** and **Add TGT** commands
-depends on the specific airframe. See the
-[airframe guides](#what-now)
-for further details.
+> The handling of target versus steerpoints added by **Add STPT** and **Add TGT** commands
+> depends on the specific airframe. See the
+> [airframe guides](#what-now)
+> for further details.
 
 After sending the navigation points to JAFDTC via the **Send to JAFDTC** button, you must
 dismiss the “Capturing” dialog in JAFDTC as discussed earlier.
@@ -864,7 +879,7 @@ menu as
 [described earlier](#configuration-list-page).
 The settings dialog box appears as follows,
 
-![](images/Core_Settings.png)
+![](images/uguide_settings_ui.png)
 
 There are multiple controls in the settings,
 
@@ -884,9 +899,8 @@ There are multiple controls in the settings,
     indicating the progress of the upload.
   - *Audio &amp; Light Test* &ndash; Audio cues and brief trigger of the "lamp test"
     function (on some airframes).
-- **Navpoint Import Ignores Airframe** &ndash; When selected, importing navpoints from a
-  [file](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/Common_Elements.md#importing-and-exporting-navigation-points)
-  will not require the airframe in the file to match the airframe of the configuration.
+- **Navpoint Import Ignores Airframe** &ndash; When selected, input files can include
+  navpoints from any airframe, not just the airframe that matches the configuration.
 - **JAFDTC Window Remains on Top** &ndash; Selects whether JAFDTC will always remain on
   top of the window stack, even while DCS has focus. This allows you to keep the DCS UI
   visible in non-VR operation.

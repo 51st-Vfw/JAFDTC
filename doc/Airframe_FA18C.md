@@ -1,13 +1,14 @@
 # JAFDTC: Configuring F/A-18C Hornet Airframes
 
-*Version 1.0.0-B.31 of 5-May-24*
+**_Version 1.1.2 of 22 November 2025_**
+
 
 JAFDTC supports configuration of the following systems in the Hornet,
 
-* Countermeasures
-* Pre-Planned Weapons
-* Radios
-* Waypoints
+* [Countermeasures](#countermeasures)
+* [Pre-Planned Weapons](#pre-planned-weapons)
+* [Radios](#radios)
+* [Waypoints](#waypoints)
 
 Each of these areas is covered in more depth below. See the
 [_User's Guide_](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/README.md) and
