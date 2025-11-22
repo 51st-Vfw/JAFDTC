@@ -19,19 +19,22 @@
 
 using JAFDTC.Models.F16C;
 using JAFDTC.Models.F16C.DLNK;
+using JAFDTC.UI.App;
 using JAFDTC.UI.Base;
-using JAFDTC.Utilities;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 
 namespace JAFDTC.UI.F16C
 {
     /// <summary>
-    /// TODO: document
+    /// ContentDialog for the viper pilot database editor. presents a ui to edit the pilot database in a dialog. as
+    /// we cannot nest ContentDialog, the dialog can request the caller to display a status dialog on completion
+    /// of this dialog through the StatusTitle and StatusMessage properties.
     /// </summary>
     public sealed partial class F16CPilotDbaseDialog : ContentDialog
     {
@@ -57,13 +60,13 @@ namespace JAFDTC.UI.F16C
             }
         }
 
-        public string ErrorOperation { get; set; }
+        public string StatusTitle { get; set; }
 
-        public string ErrorMessage { get; set; }
-
-        // ---- TODO
+        public string StatusMessage { get; set; }
 
         public List<ViperDriver> SelectedDrivers => [.. uiPDbListView.SelectedItems.Cast<ViperDriver>() ];
+
+        // ---- private properties
 
         private readonly Brush _defaultBorderBrush;
         private readonly Brush _defaultBkgndBrush;
@@ -80,9 +83,10 @@ namespace JAFDTC.UI.F16C
 
             InitializeComponent();
 
-            Pilots = new ObservableCollection<ViperDriver>(pilots);
+            Opened += F16CPilotDbaseDialog_Opened;
+            Closed += F16CPilotDbaseDialog_Closed;
 
-            Opened += (s, e) => { ErrorOperation = null; ErrorMessage = null; };
+            Pilots = new ObservableCollection<ViperDriver>(pilots);
 
             _defaultBorderBrush = uiPDbValueCallsign.BorderBrush;
             _defaultBkgndBrush = uiPDbValueCallsign.Background;
@@ -124,6 +128,18 @@ namespace JAFDTC.UI.F16C
         {
             field.BorderBrush = (isValid) ? _defaultBorderBrush : (SolidColorBrush)Resources["ErrorFieldBorderBrush"];
             field.Background = (isValid) ? _defaultBkgndBrush : (SolidColorBrush)Resources["ErrorFieldBackgroundBrush"];
+        }
+
+        /// <summary>
+        /// TODO: document
+        /// </summary>
+        private void RebuildPilotDbase()
+        {
+            Pilots.Clear();
+            foreach (ViperDriver driver in F16CPilotsDbase.LoadDbase())
+                Pilots.Add(driver);
+            SortPilots();
+            RebuildInterfaceState();
         }
 
         /// <summary>
@@ -211,7 +227,7 @@ namespace JAFDTC.UI.F16C
 
         /// <summary>
         /// on confirm flyover for import button clicks, attempt to import the database from a user-selected dbase
-        /// file. if the import fails, hide the dialog and set the error information.
+        /// file. if the import fails, hide the dialog and set the error information in the status properties.
         /// </summary>
         private async void PDbBtnFlyoutImport_Click(object sender, RoutedEventArgs e)
         {
@@ -220,36 +236,93 @@ namespace JAFDTC.UI.F16C
             bool? isSuccess = await ExchangeViperPilotUIHelper.ImportFile(null, null);
             if (isSuccess == true)
             {
-                Pilots.Clear();
-                foreach (ViperDriver driver in F16CPilotsDbase.LoadDbase())
-                    Pilots.Add(driver);
-                SortPilots();
+                RebuildPilotDbase();
+                string count = $"{Pilots.Count}" + ((Pilots.Count == 1) ? $" pilot" : $" pilots");
+                StatusTitle = "Import Successful";
+                StatusMessage = $"Imported {count} from the specified database file.";
+                Hide();
             }
             else if (isSuccess == false)
             {
-                FileManager.Log("F16CPilotDbaseDialog:PDbBtnFlyoutImport_Click fails");
-                ErrorOperation = "Import";
-                ErrorMessage = "Unable to import the pilots from the specified database";
+                StatusTitle = "Import Failed";
+                StatusMessage = "Unable to import the pilots from the specified database file.";
                 Hide();
             }
         }
 
         /// <summary>
         /// on export button clicks, open a file picker and export pilots to the specified file. if the export
-        /// fails, hide the dialog and set the error information.
+        /// fails, hide the dialog and set the error information in the status properties.
         /// </summary>
         private async void PDbBtnExport_Click(object sender, RoutedEventArgs e)
         {
             // NOTE: the interaction model is a bit wonky here as we can't nest dialogs
 
             bool? isSuccess = await ExchangeViperPilotUIHelper.ExportFile(null, [.. Pilots ], null);
-            if (isSuccess == false)
+            if (isSuccess == true)
             {
-                FileManager.Log("F16CPilotDbaseDialog:PDbBtnExport_Click fails");
-                ErrorOperation = "Export";
-                ErrorMessage = "Unable to export the pilots to the specified database file.";
+                string count = $"{Pilots.Count}" + ((Pilots.Count == 1) ? $" pilot" : $" pilots");
+                StatusTitle = "Export Successful";
+                StatusMessage = $"Exported {count} to the specified database file.";
                 Hide();
             }
+            else if (isSuccess == false)
+            {
+                StatusTitle = "Export Failed";
+                StatusMessage = "Unable to export the pilots to the specified database file.";
+                Hide();
+            }
+        }
+
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // handlers
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
+        /// <summary>
+        /// on dialog window opened, add the activation handler to the main window's list of activation handlers and
+        /// clear the status properties.
+        /// </summary>
+        private void F16CPilotDbaseDialog_Opened(ContentDialog sender, ContentDialogOpenedEventArgs args)
+        {
+            (Application.Current as JAFDTC.App).Window.ViperDbFileActivation += Window_FileActivation;
+            StatusTitle = null;
+            StatusMessage = null;
+        }
+
+        /// <summary>
+        /// on dialog window closed, remove the activation handler to the main window's list of activation handlers.
+        /// </summary>
+        private void F16CPilotDbaseDialog_Closed(ContentDialog sender, ContentDialogClosedEventArgs args)
+        {
+            (Application.Current as JAFDTC.App).Window.ViperDbFileActivation -= Window_FileActivation;
+        }
+
+        /// <summary>
+        /// on file activations, import the pilot database via the exchange helper and update the interface.
+        /// we will hide the dialog to give a chance for a status dialog to be presented.
+        /// </summary>
+        private async void Window_FileActivation(object sender, FileActivationEventArgs args)
+        {
+            bool? isSuccess = await ExchangeViperPilotUIHelper.ImportFile(null, args.Path) ?? false;
+            if (isSuccess == true)
+            {
+                RebuildPilotDbase();
+                string count = $"{Pilots.Count}" + ((Pilots.Count == 1) ? $" pilot" : $" pilots");
+                StatusTitle = "Import Successful";
+                StatusMessage = $"Imported {count} from a file activation for the" +
+                                $" database file:\n\n{args.Path}";
+                Hide();
+            }
+            else if (isSuccess == false)
+            {
+                StatusTitle = "Import Failed";
+                StatusMessage = $"Unable to import pilots for a file activation from the" +
+                                $" database file:\n\n{args.Path}";
+                Hide();
+            }
+            args.IsReportSuccess = null;
         }
     }
 }

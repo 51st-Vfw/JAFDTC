@@ -34,6 +34,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
 
 namespace JAFDTC.UI.App
@@ -163,31 +164,30 @@ namespace JAFDTC.UI.App
         // ------------------------------------------------------------------------------------------------------------
 
         /// <summary>
-        /// handle file activations for .jafdtc files (encoded IConfiguration instances) by inserting the activiated
-        /// file into the configuration database, interacting with the user as necessary/requested.
+        /// handle file activations for one or more .jafdtc files (encoded IConfiguration instances) by inserting the
+        /// activiated file(s) into the configuration database, updating the currently-selected configuration in the
+        /// configuration list, and interacting with the user as necessary/requested. returns true on success, null
+        /// on error or cancellation (method will alert users if the ui is enabled and there was an error).
         /// </summary>
-        public async void FileActivations(List<string> paths, bool isNoUI = false)
+        public async Task<bool?> ImportFile(XamlRoot root, string path)
         {
             try
             {
-                IConfiguration lastConfig = null;
-                foreach (string path in paths)
+                FileManager.Log($"ConfigurationListPage:ImportFiles {path}");
+                IConfiguration curConfig = await ExchangeConfigUIHelper.ImportFile(root, ConfigList, path);
+                if (curConfig != null)
                 {
-                    FileManager.Log($"ConfigurationListPage:FileActivations noui={isNoUI}, {path}");
-                    XamlRoot root = (isNoUI) ? null : Content.XamlRoot;
-                    IConfiguration curConfig = await ExchangeConfigUIHelper.ImportFile(root, ConfigList, path);
-                    lastConfig = curConfig ?? lastConfig;
+                    uiCfgListView.SelectedItem = curConfig;
+                    return true;
                 }
-                if (lastConfig != null)
-                    uiCfgListView.SelectedItem = lastConfig;
             }
             catch (Exception ex)
             {
-                FileManager.Log($"ConfigurationListPage:FileActivations exception {ex}");
-                if (!isNoUI)
-                    await Utilities.Message1BDialog(Content.XamlRoot, "Import Failed",
-                                                    "Unable to import into a new configuration.");
+                FileManager.Log($"ConfigurationListPage:ImportFiles exception {ex}");
+                if (root != null)
+                    await Utilities.Message1BDialog(root, "Import Failed", "Unable to import into a new configuration.");
             }
+            return null;
         }
 
         // ------------------------------------------------------------------------------------------------------------

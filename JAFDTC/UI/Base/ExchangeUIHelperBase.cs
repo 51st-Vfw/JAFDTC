@@ -38,6 +38,26 @@ namespace JAFDTC.UI.Base
         // ------------------------------------------------------------------------------------------------------------
 
         /// <summary>
+        /// display a dialog with a status message if root is non-null. the status message is either the provided
+        /// message on success, or a canned message of the form "Unable to [verb] [what] [prep] the file at [path]"
+        /// on failure.
+        /// </summary>
+        public static async void ExchangeResultUI(XamlRoot root, bool isSuccess, string verb, string what, string prep,
+                                                  string path, string msg)
+        {
+            string title = $"{verb} Successful";
+            if (!isSuccess)
+            {
+                title = $"{verb} Fails";
+                msg = msg ?? "";
+                msg = $"{msg}Unable to {verb.ToLower()} {what} {prep} the database file:\n\n{path}";
+            }
+            if (root != null)
+                await Utilities.Message1BDialog(root, title, msg);
+        }
+
+
+        /// <summary>
         /// manage a FileSavePicker to select a file to save to. returns the path of the selected file, null if no
         /// selection was made.
         /// </summary>

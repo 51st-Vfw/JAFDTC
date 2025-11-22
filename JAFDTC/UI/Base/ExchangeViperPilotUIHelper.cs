@@ -41,8 +41,9 @@ namespace JAFDTC.UI.Base
         // ------------------------------------------------------------------------------------------------------------
 
         /// <summary>
-        /// export a viper pilot database to a path. if path is null, prompts the user for a file location via a
-        /// FileSavePicker. returns null on cancel, true on success, and false on failure.
+        /// export a viper pilot database to a path and inform the user of the results. if path is null, prompts the
+        /// user for a file location via a FileSavePicker. returns null on cancel, true on success, and false on
+        /// failure.
         /// 
         /// user interaction (with the exceptoin of pickters) is disabled if xaml root is null.
         /// </summary>
@@ -51,11 +52,20 @@ namespace JAFDTC.UI.Base
             // Debug.Assert((root != null) || (path != null));
 
             path ??= await SavePickerUI("Export Viper Pilots", "Viper Pilots", "JAFDTC Db", ".jafdtc_db");
-            if (path == null)
-                return null;
-            else if (FileManager.SaveSharableDatabase(path, dbase))
-                return true;
-            return false;
+            if (path != null)
+            {
+                bool isSuccess = false;
+                string msg = null;
+                if (FileManager.SaveSharableDatabase(path, dbase))
+                {
+                    string what = (dbase.Count > 1) ? "pilots" : "pilot";
+                    msg = $"Exported {dbase.Count} {what} to the databse file:\n\n{path}";
+                    isSuccess = true;
+                }
+                ExchangeResultUI(root, isSuccess, "Export", "pilots", "to", path, msg);
+                return isSuccess;
+            }
+            return null;
         }
 
         // ------------------------------------------------------------------------------------------------------------
@@ -65,10 +75,11 @@ namespace JAFDTC.UI.Base
         // ------------------------------------------------------------------------------------------------------------
 
         /// <summary>
-        /// import a viper pilot database from a path. if path is null, prompts prompts the user for a file location
-        /// via a FileOpenPicker. returns null on cancel, true on success, and false on failure.
+        /// import a viper pilot database from a path and inform the user of the results. if path is null, prompts
+        /// prompts the user for a file location via a FileOpenPicker. returns null on cancel, true on success, and
+        /// false on failure.
         ///
-        /// user interaction (with the exceptoin of pickers) is disabled if xaml root is null.
+        /// user interaction (with the exception of pickers) is disabled if xaml root is null.
         /// </summary>
         public static async Task<bool?> ImportFile(XamlRoot root, string path = null)
         {
@@ -77,16 +88,18 @@ namespace JAFDTC.UI.Base
             path ??= await OpenPickerUI("Import Viper Pilots", [ ".jafdtc_db" ]);
             if ((path != null) && (Path.GetExtension(path.ToLower()) == ".jafdtc_db"))
             {
+                bool isSuccess = false;
+                string msg = null;
                 List<ViperDriver> importDb = FileManager.LoadSharableDbase<ViperDriver>(path);
                 if (importDb.Count > 0)
                 {
                     F16CPilotsDbase.UpdateDbase(importDb);
-                    return true;
+                    string what = (importDb.Count > 1) ? "pilots" : "pilot";
+                    msg = $"Imported {importDb.Count} {what} from from the database file:\n\n{path}";
+                    isSuccess = true;
                 }
-                else
-                {
-                    return false;
-                }
+                ExchangeResultUI(root, isSuccess, "Import", "pilots", "from", path, msg);
+                return isSuccess;
             }
             return null;
         }

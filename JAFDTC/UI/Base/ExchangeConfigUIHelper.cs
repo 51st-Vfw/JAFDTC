@@ -70,7 +70,7 @@ namespace JAFDTC.UI.Base
 
                     if (root != null)
                         await Utilities.Message1BDialog(root, "Success",
-                                                        $"Exported configuration “{config.Name}” to the file at:\n\n“{path}”.");
+                                                        $"Exported configuration “{config.Name}” to the file:\n\n{path}");
 
                     return true;
                 }
@@ -132,7 +132,7 @@ namespace JAFDTC.UI.Base
                             await Utilities.Message1BDialog(root, "Success",
                                                             $"Created a new configuration named “{config.Name}”" +
                                                             $" for the {Globals.AirframeNames[config.Airframe]}" +
-                                                            $" from the file at:\n\n{path}");
+                                                            $" from the file:\n\n{path}");
                         }
                         else if (result == ContentDialogResult.None)
                         {

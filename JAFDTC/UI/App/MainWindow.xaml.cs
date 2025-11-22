@@ -24,25 +24,29 @@ using JAFDTC.Utilities;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml.Media;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Net.Http;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Windows.Graphics;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace JAFDTC.UI.App
 {
     /// <summary>
     /// event arguments for a file activation event. when handling an event, the subscriber is responsible for any
-    /// user interaction (error reporting, additional prompts, etc.).
+    /// user interaction (error reporting, additional prompts, etc.) unless IsReportSuccess is non-null in which
+    /// case publisher may report success or error.
     /// </summary>
-    public sealed class FileActivationEventArgs(string path) : EventArgs
+    public sealed class FileActivationEventArgs(string path, bool? isReportSuccess) : EventArgs
     {
         public string Path { get; set; } = path;
+        public bool? IsReportSuccess { get; set; } = isReportSuccess;
     }
 
     // ================================================================================================================
@@ -276,14 +280,38 @@ namespace JAFDTC.UI.App
 
         /// <summary>
         /// handle double-tap/open semantics on the provided list of configurations and database files that were
-        /// submitted to jafdtc via a file activation. this method may be called before the user interface is up.
+        /// submitted to jafdtc via a file activation. invocations may be asynchronous to other ui activity. as a
+        /// result, we will Hide() any open ContentDialog pop-up prior to handling the files.
+        /// 
+        /// this method may be called before the user interface is up.
         /// </summary>
         public async void FileActivations(List<string> configPaths, List<string> dbasePaths, bool isNoUI = false)
         {
-            ConfigListPage.FileActivations(configPaths, isNoUI);
+            JAFDTC.App app = Application.Current as JAFDTC.App;
+            XamlRoot root = null;
+            if (!isNoUI)
+            {
+                root = app.Window.Content.XamlRoot;
+                IReadOnlyList<Popup> popUps = VisualTreeHelper.GetOpenPopupsForXamlRoot(root);
+                foreach (var popup in popUps)
+                    if (popup.Child is ContentDialog dialog)
+                        dialog.Hide();
+            }
+
+            bool? isSuccess = null;
+
+            foreach (string path in configPaths)
+            {
+                isSuccess = await ConfigListPage.ImportFile(root, path);
+                if (isSuccess == false)
+                    break;
+            }
 
             foreach (string path in dbasePaths)
             {
+                if (isSuccess == false)
+                    break;
+
                 FileManager.Log($"MainWindow:FileActivations noui={isNoUI}, {path}");
 
                 // for a databse file, check if there's ui up that is editing the database (as indicated by
@@ -293,21 +321,27 @@ namespace JAFDTC.UI.App
                 string type = FileManager.GetSharableDbaseType(path);
                 if ((type == typeof(ViperDriver).Name) && (ViperDbFileActivation?.GetInvocationList().Length > 0))
                 {
-                    ViperDbFileActivation?.Invoke(this, new FileActivationEventArgs(path));
+                    FileActivationEventArgs args = new(path, null);
+                    ViperDbFileActivation?.Invoke(this, args);
+                    isSuccess = args.IsReportSuccess;
                 }
                 else if (type == typeof(ViperDriver).Name)
                 {
-                    await ExchangeViperPilotUIHelper.ImportFile(null, path);
+                    isSuccess = await ExchangeViperPilotUIHelper.ImportFile(root, path);
                 }
                 else if ((type == typeof(PointOfInterest).Name) && (POIDbFileActivation?.GetInvocationList().Length > 0))
                 {
-                    POIDbFileActivation?.Invoke(this, new FileActivationEventArgs(path));
+                    FileActivationEventArgs args = new(path, null);
+                    POIDbFileActivation?.Invoke(this, args);
+                    isSuccess = args.IsReportSuccess;
                 }
                 else if (type == typeof(PointOfInterest).Name)
                 {
-                    await ExchangePOIUIHelper.ImportFile(null, PointOfInterestDbase.Instance, path);
+                    isSuccess = await ExchangePOIUIHelper.ImportFile(root, PointOfInterestDbase.Instance, path);
                 }
             }
+
+            // TODO: handle notification if isSuccess is true or false?
         }
 
         // ------------------------------------------------------------------------------------------------------------

@@ -104,8 +104,7 @@ namespace JAFDTC.UI.F16C
         // ------------------------------------------------------------------------------------------------------------
 
         /// <summary>
-        /// run the ui for the pilot dbase editor until the user dismisses it. will export or import the database
-        /// as requested by F16CPilotDbaseDialog.
+        /// run the ui for the pilot dbase editor until the user dismisses it.
         /// </summary>
         public static async void RunPilotDbEditorUI(XamlRoot root, ConfigurationPage configPage, ConfigAuxCommandInfo cmd)
         {
@@ -114,15 +113,15 @@ namespace JAFDTC.UI.F16C
             while (true)
             {
                 ContentDialogResult result = await dialog.ShowAsync();
-                if (!string.IsNullOrEmpty(dialog.ErrorOperation))
+                if (!string.IsNullOrEmpty(dialog.StatusTitle))
                 {
-                    await Utilities.Message1BDialog(root, $"{dialog.ErrorOperation} Failed", dialog.ErrorMessage);
+                    await Utilities.Message1BDialog(root, dialog.StatusTitle, dialog.StatusMessage);
                 }
                 else
                 {
                     if (result == ContentDialogResult.Primary)
                     {
-                        pilotDbase = [.. dialog.Pilots];
+                        pilotDbase = [.. dialog.Pilots ];
                         F16CPilotsDbase.UpdateDbase(pilotDbase);
                         configPage.RaiseAuxCommandInvoked(cmd);
                     }

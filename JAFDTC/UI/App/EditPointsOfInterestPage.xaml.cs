@@ -1101,11 +1101,13 @@ namespace JAFDTC.UI.App
                 PrimaryButtonText = "OK",
             };
 
-            string campaignName;
+            string campaignName = null;
             ContentDialogResult result;
             while (true)
             {
                 result = await nameDialog.ShowAsync();
+                if (result == ContentDialogResult.None)
+                    break;
                 campaignName = nameDialog.Value.Trim(' ');
                 string message = null;
                 foreach (string campaign in PointOfInterestDbase.Instance.KnownCampaigns)
@@ -1116,7 +1118,7 @@ namespace JAFDTC.UI.App
                     }
                 if (!CampaignNameRegex().IsMatch(campaignName))
                     message = $"Campaign name “{campaignName}” may only contain alphanumeric characters. Please select a different name.";
-                if ((result == ContentDialogResult.None) || (message == null))
+                if (message == null)
                     break;
                 errDialog.Content = message;
                 await errDialog.ShowAsync();
@@ -1554,6 +1556,27 @@ namespace JAFDTC.UI.App
 
         // ------------------------------------------------------------------------------------------------------------
         //
+        // handlers
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
+        /// <summary>
+        /// on file activations, import the poi database via the exchange helper and update the interface.
+        /// </summary>
+        private async void Window_FileActivation(object sender, FileActivationEventArgs args)
+        {
+            bool? isSuccess = await ExchangePOIUIHelper.ImportFile(Content.XamlRoot,
+                                                                   PointOfInterestDbase.Instance, args.Path) ?? false;
+            if (isSuccess == true)
+            {
+                RebuildPoIList();
+                RebuildInterfaceState();
+            }
+            args.IsReportSuccess = null;
+        }
+
+        // ------------------------------------------------------------------------------------------------------------
+        //
         // events
         //
         // ------------------------------------------------------------------------------------------------------------
@@ -1582,6 +1605,8 @@ namespace JAFDTC.UI.App
 
             if (Settings.IsMapWindowAutoOpen)
                 Utilities.DispatchAfterDelay(DispatcherQueue, 1.0, false, (s, e) => CoreOpenMap(false));
+
+            (Application.Current as JAFDTC.App).Window.POIDbFileActivation += Window_FileActivation;
         }
 
         /// <summary>
@@ -1589,6 +1614,8 @@ namespace JAFDTC.UI.App
         /// </summary>
         protected override void OnNavigatedFrom(NavigationEventArgs args)
         {
+            (Application.Current as JAFDTC.App).Window.POIDbFileActivation -= Window_FileActivation;
+
             MapWindow?.Close();
 
             base.OnNavigatedFrom(args);

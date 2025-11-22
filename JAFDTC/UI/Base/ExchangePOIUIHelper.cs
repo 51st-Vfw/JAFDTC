@@ -40,29 +40,6 @@ namespace JAFDTC.UI.Base
     {
         // ------------------------------------------------------------------------------------------------------------
         //
-        // general functions
-        //
-        // ------------------------------------------------------------------------------------------------------------
-
-        /// <summary>
-        /// display a dialog with a status message if root is non-null.
-        /// </summary>
-        public static async void ExchangeResultUI(XamlRoot root, bool isGood, string what, string prep, string path,
-                                                  string msg)
-        {
-            string title = $"{what} Successful";
-            if (!isGood)
-            {
-                title = $"{what} Fails";
-                msg = msg ?? "";
-                msg = $"{msg}Unable to {what.ToLower()} POIs {prep} the file at:\n\n{path}";
-            }
-            if (root != null)
-                await Utilities.Message1BDialog(root, title, msg);
-        }
-
-        // ------------------------------------------------------------------------------------------------------------
-        //
         // poi export functions
         //
         // ------------------------------------------------------------------------------------------------------------
@@ -80,8 +57,9 @@ namespace JAFDTC.UI.Base
             {
                 bool isSuccess = FileManager.SaveSharableDatabase(path, pois);
                 string what = (pois.Count > 1) ? "points" : "point";
-                string message = $"Exported {pois.Count} {what} of interest from JAFDTC User POIs to the file at:\n\n{path}";
-                ExchangeResultUI(root, isSuccess, "Export", "to", path, message);
+                string message = $"Exported {pois.Count} {what} of interest from JAFDTC User POIs to the" +
+                                 $" database file:\n\n{path}";
+                ExchangeResultUI(root, isSuccess, "Export", "POIs", "to", path, message);
 
                 if (!isSuccess)
                     FileManager.Log($"ExchangePOIUIHelper:ExportFileForUser SaveSharableDatabase fails");
@@ -123,13 +101,14 @@ namespace JAFDTC.UI.Base
                 pois = PointOfInterestDbase.Instance.Find(query);
             }
 
-            path ??= await SavePickerUI("Export POIs", campaignName, "JAFDTC Db", ".jafdtc_db");
+            path ??= await SavePickerUI("Export POIs", $"POIs {campaignName}", "JAFDTC Db", ".jafdtc_db");
             if (path != null)
             {
                 bool isSuccess = FileManager.SaveSharableDatabase(path, pois);
                 string what = (pois.Count > 1) ? "points" : "point";
-                string message = $"Exported {pois.Count} {what} of interest from campaign “{campaignName}” to the file at:\n\n{path}";
-                ExchangeResultUI(root, isSuccess, "Export", "to", path, message);
+                string message = $"Exported {pois.Count} {what} of interest from campaign “{campaignName}”" +
+                                 $" to the database file:\n\n{path}";
+                ExchangeResultUI(root, isSuccess, "Export", "POIs", "to", path, message);
 
                 if (!isSuccess)
                     FileManager.Log($"ExchangePOIUIHelper:ExportFileForCampaign SaveSharableDatabase fails");
@@ -233,8 +212,7 @@ namespace JAFDTC.UI.Base
         /// 
         /// user interaction disabled if root is null.
         /// </summary>
-        public static async Task<bool?> ImportFile(XamlRoot root, PointOfInterestDbase dbase,
-                                                                   string path = null)
+        public static async Task<bool?> ImportFile(XamlRoot root, PointOfInterestDbase dbase, string path = null)
         {
             Debug.Assert((root != null) || (path != null));
 
@@ -248,14 +226,14 @@ namespace JAFDTC.UI.Base
                 if (importPoIs.Count == 0)
                     throw new Exception("Cannot load or parse the import file");
 
-                // for .csv imports, there may be issues in the import set that we need to clean up such as non-unique names
-                // ambiguous theaters, bad poi type mixes, etc. make a pass through the import set to clean up any of those
-                // issues.
+                // for .csv imports, there may be issues in the import set that we need to clean up such as
+                // non-unique names ambiguous theaters, bad poi type mixes, etc. make a pass through the import set
+                // to clean up any of those issues.
                 //
                 if (IsPathCSV(path))
                     importPoIs = await CleanupImportCSV(root, importPoIs);
 
-                // on campaign imports, inform import is going to wipe out any existing campaign with the same name.
+                // on campaign imports, inform import is going to wipe out any existing campaign with same name.
                 //
                 string campaign = importPoIs[0].Campaign;
                 if (!string.IsNullOrEmpty(campaign) && (dbase.CountPoIInCampaign(campaign) > 0))
@@ -307,13 +285,14 @@ namespace JAFDTC.UI.Base
                 string what = (importPoIs.Count > 1) ? "points" : "point";
                 string msg = $"Imported {importPoIs.Count} {what} of interest.";
                 if (!string.IsNullOrEmpty(campaign))
-                    msg = $"Imported {importPoIs.Count} {what} of interest to campaign “{campaign}”.";
-                ExchangePOIUIHelper.ExchangeResultUI(root, true, "Import", "from", null, msg);
+                    msg = $"Imported {importPoIs.Count} {what} of interest to campaign “{campaign}”" +
+                          $" from the database file:\n\n{path}";
+                ExchangePOIUIHelper.ExchangeResultUI(root, true, "Import", "POIs", "from", null, msg);
             }
             catch (Exception ex)
             {
                 FileManager.Log($"ExchangePOIUIHelper:ImportFile exception {ex}");
-                ExchangeResultUI(root, false, "Import", "from", path, $"{ex.Message}. ");
+                ExchangeResultUI(root, false, "Import", "POIs", "from", path, $"{ex.Message}. ");
                 return false;
             }
 
