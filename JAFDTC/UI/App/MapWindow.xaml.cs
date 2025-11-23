@@ -350,6 +350,7 @@ namespace JAFDTC.UI.App
             uiTxtMouseLat.Width = width;
             uiTxtMouseLon.Width = width + 8.0;
 
+            uiMap.SetTheater(Theater);
             uiMap.SetupMapContent(routes, marks);
 
             BoundingBox bounds = uiMap.GetMarkerBoundingBox(2.0);

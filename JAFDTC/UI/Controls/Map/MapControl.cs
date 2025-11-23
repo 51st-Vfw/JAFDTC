@@ -31,7 +31,7 @@ using System.Diagnostics;
 using Windows.Foundation;
 using Windows.System;
 using Windows.UI;
-
+using WinRT.JAFDTCGenericHelpers;
 using static JAFDTC.UI.Controls.Map.MapMarkerControl;
 
 namespace JAFDTC.UI.Controls.Map
@@ -50,10 +50,10 @@ namespace JAFDTC.UI.Controls.Map
         // ------------------------------------------------------------------------------------------------------------
 
         /// <summary>
-        /// information on a route rendered by a route path control including the route's navpoint locations. used
-        /// internally by the control to associate ui elements with data.
+        /// information on a route rendered by a path control such as a route path. includes the lat/lon of each
+        /// point on the path. used internally by the control to associate ui elements with data.
         /// </summary>
-        private sealed class Route(ObservableCollection<Location> locations)
+        private sealed class MapControlPath(ObservableCollection<Location> locations)
         {
             public ObservableCollection<Location> Locations { get; set; } = locations;
         }
@@ -77,7 +77,25 @@ namespace JAFDTC.UI.Controls.Map
             //
             // TODO: does this need a MapItemsControl?
             //
-            public List<Route> Paths { get; set; } = [ ];
+            public List<MapControlPath> Paths { get; set; } = [ ];
+        }
+
+        // ================================================================================================================
+
+        /// <summary>
+        /// information on a theater bounds path including the path the control renders.
+        /// </summary>
+        private sealed class TheaterBoundsControlInfo()
+        {
+            public MapItemsControl Control { get; set; } = null;
+            //
+            // extra level of hierarchy here (Paths is a list of one element: a list of Locations) is due to the way
+            // xaml-map-control implements MapItemsControl as a ListBox. ListBox expects an ItemSource (Paths in our
+            // case) which provides items that the ui elements can pull from via bindings to build screen content.
+            //
+            // TODO: does this need a MapItemsControl?
+            //
+            public List<MapControlPath> Paths { get; set; } = [ ];
         }
 
         // ================================================================================================================
@@ -173,6 +191,8 @@ namespace JAFDTC.UI.Controls.Map
         private DragStateEnum _dragState = DragStateEnum.IDLE;
         private bool _isNewMarker = false;
 
+        private TheaterBoundsControlInfo _theaterBounds;
+
         // ---- read-only properties
 
         private readonly Dictionary<string, RouteInfo> _routes = [ ];
@@ -182,6 +202,8 @@ namespace JAFDTC.UI.Controls.Map
 
         private readonly Dictionary<MapMarkerInfo.MarkerType, int> _mapMarkerZ = new()
         {
+            // z of 5 reserved for current selection, MAP_MARKER_Z_THEATER_BOX
+            //
             [MapMarkerInfo.MarkerType.DCS_CORE] = 10,
             [MapMarkerInfo.MarkerType.BULLSEYE] = 11,
             [MapMarkerInfo.MarkerType.USER] = 12,
@@ -194,9 +216,10 @@ namespace JAFDTC.UI.Controls.Map
             [MapMarkerInfo.MarkerType.NAVPT_HANDLE] = 21,
             [MapMarkerInfo.MarkerType.NAVPT] = 22,
             //
-            // z of 21 reserved for current selection, MAP_MARKER_Z_SELECTION
+            // z of 23 reserved for current selection, MAP_MARKER_Z_SELECTION
         };
 
+        private const int MAP_MARKER_Z_THEATER_BOX = 5;
         private const int MAP_MARKER_Z_ROUTE_PATH = 20;
         private const int MAP_MARKER_Z_SELECTION = 23;
 
@@ -272,6 +295,45 @@ namespace JAFDTC.UI.Controls.Map
         }
 
         /// <summary>
+        /// TODO: document
+        /// </summary>
+        public void SetTheater(string theater)
+        {
+            if (_theaterBounds != null)
+            {
+                Children.Remove(_theaterBounds.Control);
+                _theaterBounds = null;
+            }
+
+            if (PointOfInterest.TheaterInfo.TryGetValue(theater, out TheaterInfo info))
+            {
+                ObservableCollection<Location> path = [ ];
+                path.Add(new Location(info.LatMin, info.LonMin));
+                path.Add(new Location(info.LatMin, info.LonMax));
+                path.Add(new Location(info.LatMax, info.LonMax));
+                path.Add(new Location(info.LatMax, info.LonMin));
+                path.Add(new Location(info.LatMin, info.LonMin));
+                _theaterBounds = new();
+                _theaterBounds.Paths.Add(new MapControlPath(path));
+
+                MapItemsControl control = new()
+                {
+                    Tag = "<TheaterBoundary>"
+                };
+                Canvas.SetZIndex(control, MAP_MARKER_Z_THEATER_BOX);
+                Children.Add(control);
+                //
+                // TODO: since the route paths use MapItemsControl (a ListBox), they need a data template. no way to
+                // TODO: build those programatically without basically parsing xaml here. this implies that colors
+                // TODO: are (for now) setup and specified in .xaml.
+                //
+                if (Resources.TryGetValue("BoundaryLineTemplate", out object template))
+                    control.ItemTemplate = template as DataTemplate;
+                control.ItemsSource = _theaterBounds.Paths;
+            }
+        }
+
+        /// <summary>
         /// configure the control from the dictionaries for routes and marks. any selection is cleared and any
         /// previous routes or marks are removed form the map.
         /// </summary>
@@ -302,7 +364,8 @@ namespace JAFDTC.UI.Controls.Map
         }
 
         /// <summary>
-        /// add a mark to the control by creating a new maker and adding it to the list of known marks.
+        /// add a mark to the control by creating a new maker at the lat/lon of a poi and adding it to the
+        /// list of known marks.
         /// </summary>
         private void AddMark(string tagStr, PointOfInterest poi)
         {
@@ -311,7 +374,8 @@ namespace JAFDTC.UI.Controls.Map
         }
 
         /// <summary>
-        /// add a mark to the control by creating a new maker and adding it to the list of known marks.
+        /// add a mark to the control by creating a new maker at a lat/lon and adding it to the list of known
+        /// marks.
         /// </summary>
         private void AddMark(MapMarkerInfo.MarkerType type, string tagStr, Location location)
         {
@@ -328,7 +392,7 @@ namespace JAFDTC.UI.Controls.Map
 
             RouteInfo route = new();
 
-            ObservableCollection<Location> locations = [];
+            ObservableCollection<Location> locations = [ ];
             for (int i = 0; i < npts.Count; i++)
                 locations.Add(new Location(double.Parse(npts[i].Lat), double.Parse(npts[i].Lon)));
 

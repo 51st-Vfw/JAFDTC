@@ -139,6 +139,11 @@ https://www.gnu.org/licenses/.
                      ManipulationMode="All">
                 <ctrl:MapControl.Resources>
                     <!--
+                    brushes for theater bounding box.
+                    -->
+                    <SolidColorBrush x:Key="Boundary_Bkgnd_Brush" Color="#FFA0A0A0"/>
+
+                    <!--
                     brushes for base map markers in r/w state.
                     -->
                     <SolidColorBrush x:Key="MapMarker_Bkgnd_Brush" Color="#ffffffff"/>
@@ -167,7 +172,19 @@ https://www.gnu.org/licenses/.
                     <SolidColorBrush x:Key="MapMarker_IMPORT_S2A_RO_Brush" Color="#FF890011"/>
 
                     <!--
-                    stroke colors for the RouteLine?FgTemplate data templates need to be kept in sync with the
+                    stroke setups for the boundary line data template.
+                    -->
+                    <DataTemplate x:Key="BoundaryLineTemplate">
+                        <ctrl:MapRoutePath Stroke="{StaticResource Boundary_Bkgnd_Brush}"
+                                           StrokeThickness="1.5"
+                                           StrokeLineJoin="Round"
+                                           StrokeDashCap="Round"
+                                           StrokeDashArray="5,4"
+                                           Locations="{Binding Locations}" />
+                    </DataTemplate>
+
+                    <!--
+                    stroke setups for the RouteLine?FgTemplate data templates need to be kept in sync with the
                     source code. this is a bit of a mess as i'm probably fighting aginst xaml here.
                     -->
                     <DataTemplate x:Key="RouteLineBgTemplate">
