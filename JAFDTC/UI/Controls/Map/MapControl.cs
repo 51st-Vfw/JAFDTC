@@ -31,7 +31,7 @@ using System.Diagnostics;
 using Windows.Foundation;
 using Windows.System;
 using Windows.UI;
-using WinRT.JAFDTCGenericHelpers;
+
 using static JAFDTC.UI.Controls.Map.MapMarkerControl;
 
 namespace JAFDTC.UI.Controls.Map
@@ -209,7 +209,7 @@ namespace JAFDTC.UI.Controls.Map
             [MapMarkerInfo.MarkerType.USER] = 12,
             [MapMarkerInfo.MarkerType.CAMPAIGN] = 13,
             [MapMarkerInfo.MarkerType.IMPORT_GEN] = 14,
-            [MapMarkerInfo.MarkerType.IMPORT_S2A] = 15,
+            [MapMarkerInfo.MarkerType.IMPORT_WEZ] = 15,
             //
             // z of 20 reserved for route paths, MAP_MARKER_Z_ROUTE_PATH
             //
@@ -490,7 +490,7 @@ namespace JAFDTC.UI.Controls.Map
                 MapMarkerInfo.MarkerType.CAMPAIGN
                     => new MapMarkerCircleControl(brush, brush, new Size(22.0, 22.0)),
                 MapMarkerInfo.MarkerType.IMPORT_GEN
-                or MapMarkerInfo.MarkerType.IMPORT_S2A
+                or MapMarkerInfo.MarkerType.IMPORT_WEZ
                     => new MapMarkerTriangleControl(brush, brush, new Size(22.0, 22.0)),
                 MapMarkerInfo.MarkerType.BULLSEYE
 // TODO: use different shape?

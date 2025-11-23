@@ -1,7 +1,7 @@
 ﻿
 // ********************************************************************************************************************
 //
-// MapRouteControl.cs : path geometry for a route in map window
+// MapRoutePath.cs : path geometry for a route in map window
 //
 // Copyright(C) 2025 ilominar/raven
 //
@@ -54,7 +54,7 @@ using System.Linq;
 namespace JAFDTC.UI.Controls.Map
 {
     /// <summary>
-    /// TODO: document
+    /// MapPath for a straight-line path that defines a route between multiple lat/lon locations.
     /// </summary>
     public partial class MapRoutePath : MapPath
     {

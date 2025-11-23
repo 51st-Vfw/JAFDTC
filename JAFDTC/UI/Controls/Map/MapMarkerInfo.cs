@@ -48,7 +48,7 @@ namespace JAFDTC.UI.Controls.Map
             NAVPT = 16,
             NAVPT_HANDLE = 17,
             IMPORT_GEN = 18,
-            IMPORT_S2A = 19,
+            IMPORT_WEZ = 19,
             BULLSEYE = 20,
             ANY = 31
         }
@@ -68,7 +68,7 @@ namespace JAFDTC.UI.Controls.Map
             NAVPT = 1 << MarkerType.NAVPT,
             NAVPT_HANDLE = 1 << MarkerType.NAVPT_HANDLE,
             IMPORT_GEN = 1 << MarkerType.IMPORT_GEN,
-            IMPORT_S2A = 1 << MarkerType.IMPORT_S2A,
+            IMPORT_WEZ = 1 << MarkerType.IMPORT_WEZ,
             BULLSEYE = 1 << MarkerType.BULLSEYE
         }
 

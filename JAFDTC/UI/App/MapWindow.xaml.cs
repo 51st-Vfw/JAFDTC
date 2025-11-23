@@ -117,7 +117,7 @@ namespace JAFDTC.UI.App
         //
         public const MapMarkerInfo.MarkerTypeMask RO_MARKER_TYPES = (MapMarkerInfo.MarkerTypeMask.DCS_CORE |
                                                                      MapMarkerInfo.MarkerTypeMask.IMPORT_GEN |
-                                                                     MapMarkerInfo.MarkerTypeMask.IMPORT_S2A);
+                                                                     MapMarkerInfo.MarkerTypeMask.IMPORT_WEZ);
 
         // ------------------------------------------------------------------------------------------------------------
         //

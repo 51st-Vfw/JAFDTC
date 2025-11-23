@@ -139,9 +139,9 @@ https://www.gnu.org/licenses/.
                      ManipulationMode="All">
                 <ctrl:MapControl.Resources>
                     <!--
-                    brushes for theater bounding box.
+                    brushes for boundary lines.
                     -->
-                    <SolidColorBrush x:Key="Boundary_Bkgnd_Brush" Color="#FFA0A0A0"/>
+                    <SolidColorBrush x:Key="BoundaryLine_Bkgnd_Brush" Color="#FFA0A0A0"/>
 
                     <!--
                     brushes for base map markers in r/w state.
@@ -155,8 +155,8 @@ https://www.gnu.org/licenses/.
                     <SolidColorBrush x:Key="MapMarker_NAVPT1_Brush" Color="#FF3296B0"/>
                     <SolidColorBrush x:Key="MapMarker_NAVPT2_Brush" Color="#FFB30ED4"/>
                     <SolidColorBrush x:Key="MapMarker_NAVPT3_Brush" Color="#FF3B6B04"/>
-                    <SolidColorBrush x:Key="MapMarker_IMPORT_GEN_Brush" Color="#FF890011"/>
-                    <SolidColorBrush x:Key="MapMarker_IMPORT_S2A_Brush" Color="#FF890011"/>
+                    <SolidColorBrush x:Key="MapMarker_IMPORT_GEN_Brush" Color="#FFA00011"/>
+                    <SolidColorBrush x:Key="MapMarker_IMPORT_WEZ_Brush" Color="#FFA00011"/>
 
                     <!--
                     brushes for base map markers in r/o state.
@@ -168,14 +168,14 @@ https://www.gnu.org/licenses/.
                     <SolidColorBrush x:Key="MapMarker_NAVPT1_RO_Brush" Color="#FF8ACCBF"/>
                     <SolidColorBrush x:Key="MapMarker_NAVPT2_RO_Brush" Color="#FFE77EEF"/>
                     <SolidColorBrush x:Key="MapMarker_NAVPT3_RO_Brush" Color="#FF96B77B"/>
-                    <SolidColorBrush x:Key="MapMarker_IMPORT_GEN_RO_Brush" Color="#FF890011"/>
-                    <SolidColorBrush x:Key="MapMarker_IMPORT_S2A_RO_Brush" Color="#FF890011"/>
+                    <SolidColorBrush x:Key="MapMarker_IMPORT_GEN_RO_Brush" Color="#FFA04050"/>
+                    <SolidColorBrush x:Key="MapMarker_IMPORT_WEZ_RO_Brush" Color="#FFA04050"/>
 
                     <!--
                     stroke setups for the boundary line data template.
                     -->
                     <DataTemplate x:Key="BoundaryLineTemplate">
-                        <ctrl:MapRoutePath Stroke="{StaticResource Boundary_Bkgnd_Brush}"
+                        <ctrl:MapRoutePath Stroke="{StaticResource BoundaryLine_Bkgnd_Brush}"
                                            StrokeThickness="1.5"
                                            StrokeLineJoin="Round"
                                            StrokeDashCap="Round"
