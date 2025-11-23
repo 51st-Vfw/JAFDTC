@@ -105,7 +105,7 @@ namespace JAFDTC.Models.DCS
             ["Persian Gulf"]    = new( 22.00,  30.75,   50.00,   59.00,  4),    // UTC +4
             ["Sinai"]           = new( 26.50,  34.00,   29.50,   35.75,  3),    // UTC +3
             ["South Atlantic"]  = new(-57.00, -48.00,  -77.00,  -55.00, -3),    // UTC -3
-            ["Syria"]           = new( 31.25,  37.50,   30.75,   41.00,  3)     // UTC +3
+            ["Syria"]           = new( 31.25,  37.75,   30.75,   41.00,  3)     // UTC +3
         };
         public static List<string> Theaters => [.. TheaterInfo.Keys];
 
