@@ -764,6 +764,44 @@ namespace JAFDTC.Utilities
 
         // ------------------------------------------------------------------------------------------------------------
         //
+        // threat database
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
+        /// <summary>
+        /// return a list of threats in the database that provides parameters on known threats. this list is the union
+        /// of a read-only system dbase that carries base dcs threats and a user dbase that holds editable
+        /// user-specified threats.
+        /// </summary>
+        public static List<Threat> LoadThreats()
+        {
+            List<Threat> dbase = LoadSystemDbase<Threat>("db-threats.json");
+
+            string path = Path.Combine(_settingsDirPath, "Dbase");
+            Directory.CreateDirectory(path);
+            foreach (string srcFile in Directory.GetFiles(path))
+            {
+                string fileName = Path.GetFileName(srcFile);
+                if (fileName.ToLower().Equals("jafdtc-threats.json", StringComparison.CurrentCultureIgnoreCase))
+                {
+                    dbase.AddRange(LoadUserDbase<Threat>(fileName));
+                    break;
+                }
+            }
+            return dbase;
+        }
+
+        /// <summary>
+        /// saves threats to the user threat database. database is persisted as a list of Threat instances. returns
+        /// true on success, false otherwise.
+        /// </summary>
+        public static bool SaveUserThreats(List<Threat> userThreats)
+        {
+            return SaveUserDbase<Threat>("jafdtc-pois-user.json", userThreats);
+        }
+
+        // ------------------------------------------------------------------------------------------------------------
+        //
         // system databases
         //
         // ------------------------------------------------------------------------------------------------------------

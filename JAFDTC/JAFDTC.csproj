@@ -49,6 +49,7 @@
     <None Remove="Data\db-a10c-munitions.json" />
     <None Remove="Data\db-f16c-munitions.json" />
     <None Remove="Data\db-pois-airbases.json" />
+    <None Remove="Data\db-threats.json" />
     <None Remove="Data\params-map-tiles.json" />
     <None Remove="DCS\DTC\F-16C_50.dtc" />
     <None Remove="DCS\DTC\FA-18C_hornet.dtc" />
@@ -109,6 +110,7 @@
     <Content Include="Data\db-a10c-munitions.json" />
     <Content Include="Data\db-f16c-munitions.json" />
     <Content Include="Data\db-pois-airbases.json" />
+    <Content Include="Data\db-threats.json" />
     <Content Include="Data\params-map-tiles.json" />
     <Content Include="DCS\DTC\F-16C_50.dtc" />
     <Content Include="DCS\DTC\FA-18C_hornet.dtc" />

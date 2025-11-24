@@ -1,0 +1,107 @@
+﻿[
+  {
+    "Type": 0,
+    "TypeDCS": "S_75M_Volhov",
+    "Coalition": 0,
+    "Name": "SA-2",
+    "RadiusWEZ": 23.0
+  },
+  {
+    "Type": 0,
+    "TypeDCS": "5p73 s-125 ln",
+    "Coalition": 0,
+    "Name": "SA-3",
+    "RadiusWEZ": 10.0
+  },
+  {
+    "Type": 0,
+    "TypeDCS": "S-200_Launcher",
+    "Coalition": 0,
+    "Name": "SA-5",
+    "RadiusWEZ": 135.0
+  },
+  {
+    "Type": 0,
+    "TypeDCS": "Kub 2P25 ln",
+    "Coalition": 0,
+    "Name": "SA-6",
+    "RadiusWEZ": 13.0
+  },
+  {
+    "Type": 0,
+    "TypeDCS": "S-300PS 5P85C ln",
+    "Coalition": 0,
+    "Name": "SA-10",
+    "RadiusWEZ": 64.0
+  },
+  {
+    "Type": 0,
+    "TypeDCS": "S-300PS 5P85D ln",
+    "Coalition": 0,
+    "Name": "SA-10",
+    "RadiusWEZ": 64.0
+  },
+  {
+    "Type": 0,
+    "TypeDCS": "SA-11 Buk LN 9A310M1",
+    "Coalition": 0,
+    "Name": "SA-11",
+    "RadiusWEZ": 64.0
+  },
+  {
+    "Type": 0,
+    "TypeDCS": "CHAP_PantsirS1",
+    "Coalition": 0,
+    "Name": "SA-22",
+    "RadiusWEZ": 10.7
+  },
+  {
+    "Type": 0,
+    "TypeDCS": "2S6 Tunguska",
+    "Coalition": 0,
+    "Name": "SA-19",
+    "RadiusWEZ": 4.3
+  },
+  {
+    "Type": 0,
+    "TypeDCS": "Tor 9A331",
+    "Coalition": 0,
+    "Name": "SA-15",
+    "RadiusWEZ": 6.6
+  },
+  {
+    "Type": 0,
+    "TypeDCS": "CHAP_TorM2",
+    "Coalition": 0,
+    "Name": "SA-15.M2",
+    "RadiusWEZ": 8.8
+  },
+  {
+    "Type": 0,
+    "TypeDCS": "Strela-10M3",
+    "Coalition": 0,
+    "Name": "SA-13",
+    "RadiusWEZ": 2.7
+  },
+  {
+    "Type": 0,
+    "TypeDCS": "Strela-1 9P31",
+    "Coalition": 0,
+    "Name": "SA-9",
+    "RadiusWEZ": 2.3
+  },
+  {
+    "Type": 0,
+    "TypeDCS": "Osa 9A33 ln",
+    "Coalition": 0,
+    "Name": "SA-8",
+    "RadiusWEZ": 5.5
+  },
+  {
+    "Type": 0,
+    "TypeDCS": "Osa 9A33 ln",
+    "Coalition": 0,
+    "Name": "SA-8",
+    "RadiusWEZ": 5.5
+  }
+]
