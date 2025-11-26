@@ -82,6 +82,25 @@ namespace JAFDTC.Models.DCS
         }
 
         /// <summary>
+        /// return the threat in the database that matches the specified dcs type, null if no match is found. the
+        /// method reports the user threat if there are both user and dcs core threats matching the type.
+        /// </summary>
+        public Threat Find(string dcsType)
+        {
+            if (_dbase.TryGetValue(ThreatType.USER, out Dictionary<string, Threat> userThreats) &&
+                userThreats.TryGetValue(dcsType, out Threat userThreat))
+            {
+                return userThreat;
+            }
+            else if (_dbase.TryGetValue(ThreatType.DCS_CORE, out Dictionary<string, Threat> coreThreats) &&
+                     coreThreats.TryGetValue(dcsType, out Threat coreThreat))
+            {
+                return coreThreat;
+            }
+            return null;
+        }
+
+        /// <summary>
         /// add a threat to the database, persisting the database to storage if requested. returns true on success,
         /// false on failure.
         /// </summary>
