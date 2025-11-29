@@ -110,45 +110,42 @@ namespace JAFDTC.TacView
 
         internal static IEnumerable<UnitItem> GetUnits(List<string> lines, double timeMarker)
         {
-            var units = new Dictionary<string, UnitItem>(StringComparer.OrdinalIgnoreCase);
-            double? currentMarker = null;
+            var result = new Dictionary<string, UnitItem>(StringComparer.OrdinalIgnoreCase);
 
             foreach (var line in lines) //i HATE event streams...
             {
                 if (line.StartsWith("#", StringComparison.Ordinal)) //linear log of time marker...
                 {
-                    if (double.TryParse(line.Substring(1).Trim(), NumberStyles.Float, CultureInfo.InvariantCulture, out var sec))
-                        currentMarker = sec;
+                    if (double.TryParse(line.Substring(1).Trim(), NumberStyles.Float, CultureInfo.InvariantCulture, out var currentMarker))
+                    {
+                        if (currentMarker > timeMarker)
+                            break; //we are passed the marker we care about.. ignore anything further....
+                    }
                     else
-                        currentMarker = null; //throw error?
-
-                    if (currentMarker > timeMarker)
-                        break; //we are passed the marker we care about.. ignore anything further....
+                    {
+                        //throw error???
+                    }
                 } 
-                else if (line.Contains("Color=")) //first instance of the unit... or bulls...
+                else if (line.Contains("Color=")) //primary instance of the unit...
                 {
                     var unitItem = UnitParser.Parse(line);
                     if (unitItem != null)
-                        units[unitItem.Id] = unitItem; //last one wins...
+                        result[unitItem.Id] = unitItem; //last one wins...
                 }
                 else if (line.StartsWith("-", StringComparison.Ordinal)) //unit was deleted/killed
                 {
-                    if (units.TryGetValue(line.Substring(1).Trim(), out var u)) //ensure it exists...
+                    if (result.TryGetValue(line.Substring(1).Trim(), out var u))
                         u.IsAlive = false;
                 }
                 else if (line.Contains("T=")) //subset of data that is just position updates... existing units on the move...
                 {
                     var id = line[..line.IndexOf(',')];
-                    if (units.TryGetValue(id, out var u)) //ensure it exists...
-                        u.Position = PositionParser.Parse(line[(id.Length + 1)..].ToCleanValue()) ?? u.Position; //last update wins... if its null, use the previous position...
+                    if (result.TryGetValue(id, out var u))
+                        u.Position = PositionParser.Parse(line[(id.Length + 1)..].ToCleanValue()) ?? u.Position; //last update wins... if its null (ie didnt move), use the previous position...
                 }
             }
 
-            //var debugUnitType = units.Values
-            //    .Select(p=> p.DebugInfo2).Distinct().OrderBy(p=>p).ToList();
-            //var debugUnitType = units.Values.Where(p=>p.Unit == UnitType.Unknown).Select(p => p.DebugInfo2).Distinct().OrderBy(p => p).ToList();
-
-            return units.Values; //everything found up to the time marker...
+            return result.Values;
         }
 
         public void Dispose()

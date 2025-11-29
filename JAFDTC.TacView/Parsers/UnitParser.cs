@@ -42,7 +42,7 @@ namespace JAFDTC.TacView.Parsers
                 IsAlive = true, //default to alive; deletions will set to false below
 
                 //for testing....
-                //DebugInfo = value,
+                DebugInfo = value,
                 //DebugInfo2 = fields[2].ToCleanValue()
                 //DebugInfo2 = fieldDict.ToCleanValue("Name"),
             };
@@ -52,6 +52,12 @@ namespace JAFDTC.TacView.Parsers
                 result.GroupName = result.UnitName = $"Bullseye_{result.Coalition}";
                 result.Unit = UnitType.BULLSEYE;
             }
+
+            if (string.IsNullOrWhiteSpace(result.UnitName))
+                result.UnitName = $"Unit {result.Unit} ({result.Id})"; //or something?
+
+            if (string.IsNullOrWhiteSpace(result.GroupName))
+                result.GroupName = $"Group {result.UnitName} ({result.Id})"; //or something?
 
             return result;
         }

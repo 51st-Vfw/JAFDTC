@@ -5,6 +5,19 @@ namespace JAFDTC.TacView.Tests
     [TestClass]
     public sealed class ExtractorTest
     {
+        [TestMethod] 
+        [Ignore] //when you need more extensive test data...
+        public void Test_Extract__LOCALFILES()
+        {
+            using var ectractor = new Extractor();
+
+            // var result = ectractor.Extract(new() { FilePath = @"C:\Users\VT\Downloads\Tacview-20251127-051510-DCS-Host-SPS-Contention-Syria-SARH-1.9.txt.acmi" });
+            var result = ectractor.Extract(new() { FilePath = @"C:\Users\VT\Downloads\Tacview-20251025-121807-DCS-Host-SPS-Contention-Caucasus-Modern.txt.acmi" });
+
+            //test for various data issues/states (new enums, etc)
+            Assert.IsTrue(result != null);
+        }
+
         [TestMethod]
         public void Test_Extract_Null()
         {
@@ -127,14 +140,5 @@ namespace JAFDTC.TacView.Tests
             Assert.IsTrue(result.Count() < full.Count());
         }
 
-        //[TestMethod] //when you need more extensive test data...
-        public void Test_Extract_File_ZIP_LOCALFILES()
-        {
-            using var ectractor = new Extractor();
-
-            var result = ectractor.Extract(new() { FilePath = @"C:\Users\VT\Downloads\Tacview-20251127-051510-DCS-Host-SPS-Contention-Syria-SARH-1.9.txt.acmi" });
-
-            Assert.IsTrue(result != null);
-        }
     }
 }
