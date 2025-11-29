@@ -87,8 +87,12 @@ namespace JAFDTC.Models.DCS
         /// </summary>
         public Threat Find(string dcsType)
         {
-            if (_dbase.TryGetValue(ThreatType.USER, out Dictionary<string, Threat> userThreats) &&
-                userThreats.TryGetValue(dcsType, out Threat userThreat))
+            if (string.IsNullOrEmpty(dcsType))
+            {
+                return null;
+            }
+            else if (_dbase.TryGetValue(ThreatType.USER, out Dictionary<string, Threat> userThreats) &&
+                     userThreats.TryGetValue(dcsType, out Threat userThreat))
             {
                 return userThreat;
             }
