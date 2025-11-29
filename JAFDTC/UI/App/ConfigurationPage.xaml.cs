@@ -347,6 +347,11 @@ namespace JAFDTC.UI.App
                 if (uiNavListEditors.SelectedIndex != Config.LastSystemEdited)
                     Config.AfterSystemEditorCompletes(EditorPages[Config.LastSystemEdited].Tag);
                 Config.LastSystemEdited = uiNavListEditors.SelectedIndex;
+                //
+                // we don't do this through Config.Save() here to avoid some notifications that are not needed.
+                // just save explicitly through file manager.
+                //
+                FileManager.SaveConfigurationFile(Config);
 
                 CloseAuxWindows();
             }
