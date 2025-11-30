@@ -1,10 +1,5 @@
 ﻿using JAFDTC.TacView.Extensions;
 using JAFDTC.TacView.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace JAFDTC.TacView.Parsers
 {

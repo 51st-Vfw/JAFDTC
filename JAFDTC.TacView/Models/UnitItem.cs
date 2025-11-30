@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace JAFDTC.TacView.Models
+﻿namespace JAFDTC.TacView.Models
 {
     public class UnitItem
     {
@@ -12,6 +6,7 @@ namespace JAFDTC.TacView.Models
         public required PositionItem Position { get; set; }
         public required CoalitionType Coalition { get; set; }
         public required CategoryType Category { get; set; }
+        public required ColorType Color { get; set; }
         public required UnitType Unit { get; set; }
         public required string GroupName { get; set; }
         public required string UnitName { get; set; }

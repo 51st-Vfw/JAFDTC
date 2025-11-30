@@ -1,10 +1,5 @@
 ﻿using JAFDTC.TacView.Extensions;
 using JAFDTC.TacView.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace JAFDTC.TacView.Parsers
 {
@@ -19,6 +14,8 @@ namespace JAFDTC.TacView.Parsers
 
         public static UnitItem? Parse(string value)
         {
+            //104,T=4.4097307|5.3318376|1840.03|-3.8|1.6|321|112075.78|-383873.53|318.9,Type=Air+FixedWing,Color=Blue,Coalition=Enemies,Name=F-16C_50,Pilot=51st | Slinger,Group=Jedi-1,Country=us
+
             var fieldDict = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase); //fields can SWAP ORDER!
             foreach (var pair in value.Split(','))
             {
@@ -36,6 +33,7 @@ namespace JAFDTC.TacView.Parsers
                 Position = PositionParser.Parse(fieldDict.ToCleanValue("T")), //to be overwritten at final Marker point...
                 Category = cat.ToCategory(),
                 Coalition = fieldDict.ToCleanValue("Coalition").ToCoalition(),
+                Color = fieldDict.ToCleanValue("Color").ToColor(),
                 Unit = fieldDict.ToCleanValue("Name").ToUnit(),
                 GroupName = fieldDict.ToCleanValue("Group"),
                 UnitName = fieldDict.ToCleanValue("Pilot"),
@@ -57,7 +55,7 @@ namespace JAFDTC.TacView.Parsers
                 result.UnitName = $"Unit {result.Unit} ({result.Id})"; //or something?
 
             if (string.IsNullOrWhiteSpace(result.GroupName))
-                result.GroupName = $"Group {result.UnitName} ({result.Id})"; //or something?
+                result.GroupName = $"Group {result.UnitName}"; //or something?
 
             return result;
         }

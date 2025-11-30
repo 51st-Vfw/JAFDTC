@@ -1,5 +1,3 @@
-using System;
-
 namespace JAFDTC.TacView.Models
 {
     /// <summary>

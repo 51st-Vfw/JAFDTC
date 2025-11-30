@@ -61,6 +61,17 @@ namespace JAFDTC.TacView.Extensions
             };
         }
 
+        public static ColorType ToColor(this string? value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                return ColorType.Unknown;
+
+            if (Enum.TryParse<ColorType>(value, true, out var result))
+                return result;
+
+            return ColorType.Unknown;
+        }
+
         public static UnitType ToUnit(this string? value)
         {
             if (string.IsNullOrWhiteSpace(value))
