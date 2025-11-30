@@ -17,11 +17,20 @@
 //
 // ********************************************************************************************************************
 using JAFDTC.TacView.Models;
+using System.Linq;
 
 namespace JAFDTC.TacView.Extensions
 {
     public static class FilterExtension
     {
+        public static IEnumerable<UnitItem> LimitColors(this IEnumerable<UnitItem> values, ColorType[]? colors)
+        {
+            if (colors == null || !colors.Any())
+                return values;
+
+            return values.Where(u => colors.Contains(u.Color));
+        }
+
         public static IEnumerable<UnitItem> LimitCoalitions(this IEnumerable<UnitItem> values, CoalitionType[]? coalitions)
         {
             if (coalitions == null || !coalitions.Any())

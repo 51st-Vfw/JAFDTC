@@ -86,6 +86,39 @@ namespace JAFDTC.TacView.Tests
         }
 
         [TestMethod]
+        public void Test_Extract_Filter_TYPICAL()
+        {
+            using var ectractor = new Extractor();
+            var result = ectractor.Extract(new()
+            {
+                FilePath = Path.Combine(Directory.GetParent(Environment.ProcessPath).FullName, "..\\..\\..\\appdata\\test2.zip.acmi"),
+                IsAlive = true, //just whats alive
+                Coalitions = null, //we want all for now.. just use colors to limit..
+                Colors = [
+                    ColorType.Red
+                ],
+                Categories = //non air / wpn...
+                [
+                    CategoryType.Navaid_Static_Bullseye,
+
+                    CategoryType.Ground_AntiAircraft,
+                    CategoryType.Ground_Heavy_Armor_Vehicle_Tank,
+                    CategoryType.Ground_Static_Aerodrome,
+                    CategoryType.Ground_Static_Building,
+                    CategoryType.Ground_Vehicle,
+
+                    CategoryType.Sea_Watercraft,
+                    CategoryType.Sea_Watercraft_AircraftCarrier,
+                    CategoryType.Sea_Watercraft_Warship,
+                ],
+                TimeSnippet = null //usually last frame will suffice
+            });
+
+            Assert.IsTrue(result != null);
+            Assert.IsTrue(result.Count() > 0);
+        }
+
+        [TestMethod]
         public void Test_Extract_Null()
         {
             using var ectractor = new Extractor();

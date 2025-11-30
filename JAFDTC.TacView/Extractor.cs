@@ -45,6 +45,7 @@ namespace JAFDTC.TacView
             var timeMarker = GetTimeMarker(allLines, extractCriteria.TimeSnippet);
 
             var result = GetUnits(allLines, timeMarker)
+                .LimitColors(extractCriteria.Colors)
                 .LimitCoalitions(extractCriteria.Coalitions)
                 .LimitCategories(extractCriteria.Categories) //todo: parent categories such as Air Def... SAM, SHORAD, etc etc misc groupings...
                 .LimitAlive(extractCriteria.IsAlive)
