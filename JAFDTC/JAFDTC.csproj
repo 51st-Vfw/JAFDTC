@@ -18,9 +18,13 @@
 <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="JAFDTC\**" />
     <Compile Remove="Models\F16C\COMM\**" />
+    <EmbeddedResource Remove="JAFDTC\**" />
     <EmbeddedResource Remove="Models\F16C\COMM\**" />
+    <None Remove="JAFDTC\**" />
     <None Remove="Models\F16C\COMM\**" />
+    <Page Remove="JAFDTC\**" />
     <Page Remove="Models\F16C\COMM\**" />
   </ItemGroup>
   <ItemGroup>
@@ -393,5 +397,9 @@
 
   <ItemGroup>
     <Resource Remove="UI\A10C\A10CEditIFFCCPage.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PRIResource Remove="JAFDTC\**" />
   </ItemGroup>
 </Project>

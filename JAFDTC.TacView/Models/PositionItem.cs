@@ -1,0 +1,31 @@
+﻿// ********************************************************************************************************************
+//
+// PositionItem.cs -- <one_line_descripti8on>
+//
+// Copyright(C) 2025 rage
+//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
+// Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
+// option) any later version.
+//
+// This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
+// implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+// for more details.
+//
+// You should have received a copy of the GNU General Public License along with this program.  If not, see
+// <https://www.gnu.org/licenses/>.
+//
+// ********************************************************************************************************************
+namespace JAFDTC.TacView.Models
+{
+    public class PositionItem
+    {
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
+        public double Altitude { get; set; }
+        //public int Heading { get; set; }
+        //public double X { get; set; }
+        //public double Y { get; set; }
+        //public double Knots { get; set; }
+    }
+}
