@@ -16,7 +16,6 @@
 // <https://www.gnu.org/licenses/>.
 //
 // ********************************************************************************************************************
-
 using JAFDTC.TacView.Models;
 
 namespace JAFDTC.TacView
