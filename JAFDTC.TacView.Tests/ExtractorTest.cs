@@ -1,4 +1,23 @@
-﻿using JAFDTC.TacView.Extensions;
+﻿// ********************************************************************************************************************
+//
+// ExtractorTest.cs -- <one_line_descripti8on>
+//
+// Copyright(C) 2025 rage
+//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
+// Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
+// option) any later version.
+//
+// This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
+// implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+// for more details.
+//
+// You should have received a copy of the GNU General Public License along with this program.  If not, see
+// <https://www.gnu.org/licenses/>.
+//
+// ********************************************************************************************************************
+
+using JAFDTC.TacView.Extensions;
 using JAFDTC.TacView.Models;
 
 namespace JAFDTC.TacView.Tests
@@ -13,9 +32,10 @@ namespace JAFDTC.TacView.Tests
             using var ectractor = new Extractor();
 
             // var result = ectractor.Extract(new() { FilePath = @"C:\Users\VT\Downloads\Tacview-20251127-051510-DCS-Host-SPS-Contention-Syria-SARH-1.9.txt.acmi" });
-            var result = ectractor.Extract(new() { FilePath = @"C:\Users\VT\Downloads\Tacview-20251025-121807-DCS-Host-SPS-Contention-Caucasus-Modern.txt.acmi" });
+            //var result = ectractor.Extract(new() { FilePath = @"C:\Users\VT\Downloads\Tacview-20251025-121807-DCS-Host-SPS-Contention-Caucasus-Modern.txt.acmi" });
             //var result = ectractor.Extract(new() { FilePath = @"C:\Users\VT\Downloads\Tacview-20251130-035316-DCS-Host-SPS-Contention-Syria-CW-E1.txt.acmi" });
             //var result = ectractor.Extract(new() { FilePath = @"C:\Users\VT\Downloads\Tacview-20251130-035916-DCS-Host-SPS-Contention-Syria-SARH-1.9.txt.acmi" });
+            var result = ectractor.Extract(new() { FilePath = @"C:\Users\VT\Downloads\Tacview-20251130-122605-DCS-Host-Server_1_Operation_Urban_Thunder_V7.7.88.txt.acmi" });
 
             //test for various data issues/states (new enums, etc)
             var colors = result.Select(x => x.DebugInfoDict["Color"]).Distinct().Order().ToList();
