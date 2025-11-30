@@ -13,5 +13,6 @@
         public required bool IsAlive { get; set; }
         public string? DebugInfo { get; set; }
         public string? DebugInfo2 { get; set; }
+        public Dictionary<string, string>? DebugInfoDict { get; set; }
     }
 }

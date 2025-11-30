@@ -16,12 +16,7 @@ namespace JAFDTC.TacView.Parsers
         {
             //104,T=4.4097307|5.3318376|1840.03|-3.8|1.6|321|112075.78|-383873.53|318.9,Type=Air+FixedWing,Color=Blue,Coalition=Enemies,Name=F-16C_50,Pilot=51st | Slinger,Group=Jedi-1,Country=us
 
-            var fieldDict = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase); //fields can SWAP ORDER!
-            foreach (var pair in value.Split(','))
-            {
-                var kv = pair.Split('=');
-                fieldDict[kv[0]] = kv.Length == 2 ? kv[1] : string.Empty;
-            }
+            var fieldDict = GetKeyValuePairs(value);
 
             var cat = fieldDict.ToCleanValue("Type");
             if (_IgnoreCategoryTypes.Any(cat.Contains)) //we never care about these.. so skip em...
@@ -41,6 +36,7 @@ namespace JAFDTC.TacView.Parsers
 
                 //for testing....
                 DebugInfo = value,
+                DebugInfoDict = fieldDict,
                 //DebugInfo2 = fields[2].ToCleanValue()
                 //DebugInfo2 = fieldDict.ToCleanValue("Name"),
             };
@@ -57,6 +53,17 @@ namespace JAFDTC.TacView.Parsers
             if (string.IsNullOrWhiteSpace(result.GroupName))
                 result.GroupName = $"Group {result.UnitName}"; //or something?
 
+            return result;
+        }
+
+        public static Dictionary<string, string> GetKeyValuePairs(string value)
+        {
+            var result = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase); //fields can SWAP ORDER!
+            foreach (var pair in value.Split(','))
+            {
+                var kv = pair.Split('=');
+                result[kv[0]] = kv.Length == 2 ? kv[1] : kv[0];
+            }
             return result;
         }
     }

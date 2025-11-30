@@ -1,4 +1,5 @@
-﻿using JAFDTC.TacView.Models;
+﻿using JAFDTC.TacView.Extensions;
+using JAFDTC.TacView.Models;
 
 namespace JAFDTC.TacView.Tests
 {
@@ -6,15 +7,61 @@ namespace JAFDTC.TacView.Tests
     public sealed class ExtractorTest
     {
         [TestMethod] 
-        [Ignore] //when you need more extensive test data...
+        //[Ignore] //when you need more extensive test data...
         public void Test_Extract__LOCALFILES()
         {
             using var ectractor = new Extractor();
 
             // var result = ectractor.Extract(new() { FilePath = @"C:\Users\VT\Downloads\Tacview-20251127-051510-DCS-Host-SPS-Contention-Syria-SARH-1.9.txt.acmi" });
             var result = ectractor.Extract(new() { FilePath = @"C:\Users\VT\Downloads\Tacview-20251025-121807-DCS-Host-SPS-Contention-Caucasus-Modern.txt.acmi" });
+            //var result = ectractor.Extract(new() { FilePath = @"C:\Users\VT\Downloads\Tacview-20251130-035316-DCS-Host-SPS-Contention-Syria-CW-E1.txt.acmi" });
+            //var result = ectractor.Extract(new() { FilePath = @"C:\Users\VT\Downloads\Tacview-20251130-035916-DCS-Host-SPS-Contention-Syria-SARH-1.9.txt.acmi" });
 
             //test for various data issues/states (new enums, etc)
+            var colors = result.Select(x => x.DebugInfoDict["Color"]).Distinct().Order().ToList();
+            var missingColors = result.Where(p => p.Color == ColorType.Unknown).Select(x => x.DebugInfoDict["Color"]).Distinct().Order().ToList();
+            if (missingColors.Count > 0)
+            {
+
+            }
+
+            var coalitions = result.Select(x => x.DebugInfoDict["Coalition"]).Distinct().Order().ToList();
+            var missingCoalitions = result.Where(p => p.Coalition == CoalitionType.Unknown).Select(x => x.DebugInfoDict["Coalition"]).Distinct().Order().ToList();
+            if (missingCoalitions.Count > 0)
+            {
+
+            }
+
+            var categories = result.Select(x => x.DebugInfoDict["Type"]).Distinct().Order().ToList();
+            var missingCategories = result.Where(p => p.Category == CategoryType.Unknown).Select(x => x.DebugInfoDict["Type"]).Distinct().Order().ToList();
+            if (missingCategories.Count > 0)
+            {
+
+            }
+            
+            var units = result.Select(x => { x.DebugInfoDict.TryGetValue("Name", out var r); return r; }).Distinct().Order().ToList();
+            var missingUnits = result.Where(p => p.Unit == UnitType.Unknown).Select(x => x.DebugInfoDict["Name"]).Distinct().Order().ToList();
+            if (missingUnits.Count > 0)
+            {
+                var unitHash = new HashSet<string>(Enum.GetNames<UnitType>());
+                unitHash.Remove("Unknown");
+                unitHash.Remove("BULLSEYE");
+
+                foreach (var unit in missingUnits)
+                {
+                    var cleaned = unit.ToNormalized();
+                    if (!unitHash.Contains(cleaned))
+                        unitHash.Add(cleaned);
+                }
+
+                //merged total
+                var output = string.Join("\r\n", unitHash.Select(p => $"{p},").Order());
+            }
+
+            var groups = result.Select(x => { x.DebugInfoDict.TryGetValue("Group", out var r); return r; }).Distinct().Order().ToList();
+            var names = result.Select(x => { x.DebugInfoDict.TryGetValue("Pilot", out var r); return r; }).Distinct().Order().ToList();
+
+
             Assert.IsTrue(result != null);
         }
 

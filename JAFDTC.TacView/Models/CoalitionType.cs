@@ -7,8 +7,10 @@ namespace JAFDTC.TacView.Models
     public enum CoalitionType
     {
         Unknown = 0,
+
         Allies,
         Enemies,
+        Neutral,
         Neutrals
     }
 }

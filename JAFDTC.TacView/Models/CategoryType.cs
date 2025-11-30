@@ -24,6 +24,7 @@
         Sea_Watercraft,
         Sea_Watercraft_AircraftCarrier,
         Sea_Watercraft_Warship,
+        Shrapnel,
         Weapon_Bomb,
         Weapon_Missile,
         Weapon_Rocket

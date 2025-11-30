@@ -7,66 +7,23 @@ namespace JAFDTC.TacView.Extensions
     {
         public static CategoryType ToCategory(this string? value)
         {
-            if (string.IsNullOrWhiteSpace(value))
-                return CategoryType.Unknown;
+            if (Enum.TryParse<CategoryType>(value.ToNormalized(), true, out var result))
+                return result;
 
-            switch (value)
-            {
-                case "Air+FixedWing": return CategoryType.Air_FixedWing;
-                case "Air+Rotorcraft": return CategoryType.Air_Rotorcraft;
-                case "Ground+AntiAircraft": return CategoryType.Ground_AntiAircraft;
-                case "Ground+Heavy+Armor+Vehicle+Tank": return CategoryType.Ground_Heavy_Armor_Vehicle_Tank;
-                case "Ground+Static+Aerodrome": return CategoryType.Ground_Static_Aerodrome;
-                case "Ground+Static+Building": return CategoryType.Ground_Static_Building;
-                case "Ground+Vehicle": return CategoryType.Ground_Vehicle;
-                case "Misc+Container": return CategoryType.Misc_Container;
-                case "Misc+Decoy+Chaff": return CategoryType.Misc_Decoy_Chaff;
-                case "Misc+Decoy+Flare": return CategoryType.Misc_Decoy_Flare;
-                case "Misc+Shrapnel": return CategoryType.Misc_Shrapnel;
-                case "Navaid+Static+Bullseye": return CategoryType.Navaid_Static_Bullseye;
-                case "Projectile+Shell": return CategoryType.Projectile_Shell;
-                case "Sea+Watercraft": return CategoryType.Sea_Watercraft;
-                case "Sea+Watercraft+AircraftCarrier": return CategoryType.Sea_Watercraft_AircraftCarrier;
-                case "Sea+Watercraft+Warship": return CategoryType.Sea_Watercraft_Warship;
-                case "Weapon+Bomb": return CategoryType.Weapon_Bomb;
-                case "Weapon+Missile": return CategoryType.Weapon_Missile;
-                case "Weapon+Rocket": return CategoryType.Weapon_Rocket;
-
-                default:
-                    return CategoryType.Unknown;
-                    //throw new ArgumentException($"Unknown unit type string: {input}");
-            }
-
+            return CategoryType.Unknown;
         }
 
         public static CoalitionType ToCoalition(this string? value)
         {
-            if (string.IsNullOrWhiteSpace(value))
-                return CoalitionType.Unknown;
+            if (Enum.TryParse<CoalitionType>(value.ToNormalized(), true, out var result))
+                return result;
 
-            var normalized = value.Replace('+', ' ').Trim().ToLowerInvariant();
-
-            return normalized switch
-            {
-                // Allies variants
-                "allies" or "ally" or "allied" or "friendly" or "friendlies" => CoalitionType.Allies,
-
-                // Enemies variants
-                "enemies" or "enemy" or "hostile" or "hostiles" or "opposing" => CoalitionType.Enemies,
-
-                // Neutrals variants
-                "neutrals" or "neutral" or "none" => CoalitionType.Neutrals,
-
-                _ => CoalitionType.Unknown,
-            };
+            return CoalitionType.Unknown;
         }
 
         public static ColorType ToColor(this string? value)
         {
-            if (string.IsNullOrWhiteSpace(value))
-                return ColorType.Unknown;
-
-            if (Enum.TryParse<ColorType>(value, true, out var result))
+            if (Enum.TryParse<ColorType>(value.ToNormalized(), true, out var result))
                 return result;
 
             return ColorType.Unknown;
@@ -74,23 +31,30 @@ namespace JAFDTC.TacView.Extensions
 
         public static UnitType ToUnit(this string? value)
         {
-            if (string.IsNullOrWhiteSpace(value))
-                return UnitType.Unknown;
-
-            var normalized = value
-                .Replace(" ", "_")
-                .Replace("-", "_");
-
-            // If starts with digit, prefix with U_
-            if (char.IsDigit(normalized[0]))
-            {
-                normalized = "U_" + normalized;
-            }
-
-            if (Enum.TryParse<UnitType>(normalized, true, out var result))
+            if (Enum.TryParse<UnitType>(value.ToNormalized(), true, out var result))
                 return result;
 
             return UnitType.Unknown;
+        }
+
+        public static string ToNormalized(this string? value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                return string.Empty;
+
+            var normalized = value
+               .Trim()
+               .Replace(" ", "_")
+               .Replace("-", "_")
+               .Replace("+", "_")
+               .Replace("/", "_")
+               .ToUpper();
+
+            // If starts with digit, prefix with U_
+            if (char.IsDigit(normalized[0]))
+                normalized = "U_" + normalized;
+
+            return normalized;
         }
 
         public static string ToCleanValue(this string value)

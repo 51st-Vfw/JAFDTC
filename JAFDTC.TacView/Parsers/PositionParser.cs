@@ -19,6 +19,9 @@ namespace JAFDTC.TacView.Parsers
             if (string.IsNullOrWhiteSpace(parts[0]))
                 return default; //didnt move since the last time... throw it away...
 
+            if (parts.Length < 3) //cases where there is only 1 value?  T=4.7 ???
+                return default;
+
             var pos = new PositionItem
             {
                 Longitude = -118 + parts[0].ToCleaDouble(), //lon offset from -118 deg
