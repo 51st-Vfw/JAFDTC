@@ -45,7 +45,7 @@ https://www.gnu.org/licenses/.
 
         <CheckBox x:Name="uiSetCkbxAutoOpen" Grid.Row="0" Margin="0,8,0,0"
                   HorizontalAlignment="Left">
-            Automatically open a map window when possible
+            Automatically open a map window when available
         </CheckBox>
         <CheckBox x:Name="uiSetCkbxEnableCache" Grid.Row="1" Margin="0,0,0,0"
                   HorizontalAlignment="Left">
