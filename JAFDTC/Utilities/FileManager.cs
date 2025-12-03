@@ -219,12 +219,35 @@ namespace JAFDTC.Utilities
         /// </summary>
         private static long GetSizeOfFilesInFolder(string path, long size)
         {
-            foreach (string dir in Directory.GetDirectories(path))
-                if (Directory.Exists(dir))
-                    size += GetSizeOfFilesInFolder(dir, 0);
-            foreach (string file in Directory.GetFiles(path))
-                if (File.Exists(file))
-                    size += new FileInfo(file).Length;
+            try
+            {
+                foreach (string dir in Directory.GetDirectories(path))
+                    try
+                    {
+                        if (Directory.Exists(dir))
+                            size += GetSizeOfFilesInFolder(dir, 0);
+                    }
+                    catch
+                    {
+                        // on exceptions, just skip directory.
+                    }
+                foreach (string file in Directory.GetFiles(path))
+                {
+                    try
+                    {
+                        if (File.Exists(file))
+                            size += new FileInfo(file).Length;
+                    }
+                    catch
+                    {
+                        // on exceptions, just skip file.
+                    }
+                }
+            }
+            catch
+            {
+                // on exeptions, exit
+            }
             return size;
         }
 

@@ -418,7 +418,7 @@ https://www.gnu.org/licenses/.
             </Button>
 
             <!-- reset table -->
-            <StackPanel Grid.Row="9" Grid.Column="0" Grid.ColumnSpan="8" Margin="0,24,0,0"
+            <StackPanel Grid.Row="9" Grid.Column="0" Grid.ColumnSpan="8" Margin="0,16,0,0"
                         HorizontalAlignment="Center">
                 <Button Width ="190" x:Name="uiMANBtnResetTable"
                         HorizontalAlignment="Right" VerticalAlignment="Center"
