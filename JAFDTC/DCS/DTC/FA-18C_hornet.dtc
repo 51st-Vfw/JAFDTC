@@ -691,7 +691,7 @@
                                                                                                                                "label": "TRACK"
                                                                                                                            },
                                                                                                              "group_name": "F-14",
-                                                                                                                   "hint": "F-14A-135-GR\nF-14B",
+                                                                                                                   "hint": "F-14A-135-GR\nF-14A-135-GR-Early\nF-14A\nF-14B\nF-14D",
                                                                                                                 "program": 8,
                                                                                                                 "threats": [ {
                                                                                                                                "displayName": "",
@@ -699,8 +699,24 @@
                                                                                                                                     "wstype": [  ]
                                                                                                                            }, {
                                                                                                                                "displayName": "",
+                                                                                                                                 "unit_type": "F-14A-135-GR-Early",
+                                                                                                                                    "wstype": [  ]
+                                                                                                                           }, {
+                                                                                                                               "displayName": "",
                                                                                                                                  "unit_type": "",
                                                                                                                                     "wstype": [ 1, 1, 1, 5 ]
+                                                                                                                           }, {
+                                                                                                                               "displayName": "",
+                                                                                                                                 "unit_type": "F-14A",
+                                                                                                                                    "wstype": [  ]
+                                                                                                                           }, {
+                                                                                                                               "displayName": "",
+                                                                                                                                 "unit_type": "F-14B",
+                                                                                                                                    "wstype": [  ]
+                                                                                                                           }, {
+                                                                                                                               "displayName": "",
+                                                                                                                                 "unit_type": "F-14D",
+                                                                                                                                    "wstype": [  ]
                                                                                                                            } ],
                                                                                                              "thresholds": [ {
                                                                                                                                "index": 1,
@@ -958,6 +974,10 @@
                                                                                                                                "displayName": "",
                                                                                                                                  "unit_type": "",
                                                                                                                                     "wstype": [ 1, 1, 1, 50 ]
+                                                                                                                           }, {
+                                                                                                                               "displayName": "",
+                                                                                                                                 "unit_type": "MiG-29 Fulcrum",
+                                                                                                                                    "wstype": [  ]
                                                                                                                            }, {
                                                                                                                                "displayName": "",
                                                                                                                                  "unit_type": "",
@@ -6228,7 +6248,7 @@
                                                                                          "display": true,
                                                                                           "friend": false,
                                                                                       "group_name": "F-14",
-                                                                                            "hint": "F-14A-135-GR\nF-14B",
+                                                                                            "hint": "F-14A-135-GR\nF-14A-135-GR-Early\nF-14A\nF-14B\nF-14D",
                                                                                              "PRI": 25,
                                                                                          "threats": [ {
                                                                                                         "displayName": "",
@@ -6236,8 +6256,24 @@
                                                                                                              "wstype": [  ]
                                                                                                     }, {
                                                                                                         "displayName": "",
+                                                                                                          "unit_type": "F-14A-135-GR-Early",
+                                                                                                             "wstype": [  ]
+                                                                                                    }, {
+                                                                                                        "displayName": "",
                                                                                                           "unit_type": "",
                                                                                                              "wstype": [ 1, 1, 1, 5 ]
+                                                                                                    }, {
+                                                                                                        "displayName": "",
+                                                                                                          "unit_type": "F-14A",
+                                                                                                             "wstype": [  ]
+                                                                                                    }, {
+                                                                                                        "displayName": "",
+                                                                                                          "unit_type": "F-14B",
+                                                                                                             "wstype": [  ]
+                                                                                                    }, {
+                                                                                                        "displayName": "",
+                                                                                                          "unit_type": "F-14D",
+                                                                                                             "wstype": [  ]
                                                                                                     } ]
                                                                                   }, {
                                                                                        "aspj_xmit": true,
@@ -6274,6 +6310,10 @@
                                                                                                         "displayName": "",
                                                                                                           "unit_type": "",
                                                                                                              "wstype": [ 1, 1, 1, 50 ]
+                                                                                                    }, {
+                                                                                                        "displayName": "",
+                                                                                                          "unit_type": "MiG-29 Fulcrum",
+                                                                                                             "wstype": [  ]
                                                                                                     }, {
                                                                                                         "displayName": "",
                                                                                                           "unit_type": "",
@@ -7341,7 +7381,7 @@
                                                                                          "display": true,
                                                                                           "friend": false,
                                                                                       "group_name": "F-14",
-                                                                                            "hint": "F-14A-135-GR\nF-14B",
+                                                                                            "hint": "F-14A-135-GR\nF-14A-135-GR-Early\nF-14A\nF-14B\nF-14D",
                                                                                              "PRI": 7,
                                                                                          "threats": [ {
                                                                                                         "displayName": "",
@@ -7349,8 +7389,24 @@
                                                                                                              "wstype": [  ]
                                                                                                     }, {
                                                                                                         "displayName": "",
+                                                                                                          "unit_type": "F-14A-135-GR-Early",
+                                                                                                             "wstype": [  ]
+                                                                                                    }, {
+                                                                                                        "displayName": "",
                                                                                                           "unit_type": "",
                                                                                                              "wstype": [ 1, 1, 1, 5 ]
+                                                                                                    }, {
+                                                                                                        "displayName": "",
+                                                                                                          "unit_type": "F-14A",
+                                                                                                             "wstype": [  ]
+                                                                                                    }, {
+                                                                                                        "displayName": "",
+                                                                                                          "unit_type": "F-14B",
+                                                                                                             "wstype": [  ]
+                                                                                                    }, {
+                                                                                                        "displayName": "",
+                                                                                                          "unit_type": "F-14D",
+                                                                                                             "wstype": [  ]
                                                                                                     } ]
                                                                                   }, {
                                                                                        "aspj_xmit": true,
@@ -7387,6 +7443,10 @@
                                                                                                         "displayName": "",
                                                                                                           "unit_type": "",
                                                                                                              "wstype": [ 1, 1, 1, 50 ]
+                                                                                                    }, {
+                                                                                                        "displayName": "",
+                                                                                                          "unit_type": "MiG-29 Fulcrum",
+                                                                                                             "wstype": [  ]
                                                                                                     }, {
                                                                                                         "displayName": "",
                                                                                                           "unit_type": "",
@@ -8674,7 +8734,7 @@
                                                                                          "display": true,
                                                                                           "friend": false,
                                                                                       "group_name": "F-14",
-                                                                                            "hint": "F-14A-135-GR\nF-14B",
+                                                                                            "hint": "F-14A-135-GR\nF-14A-135-GR-Early\nF-14A\nF-14B\nF-14D",
                                                                                              "PRI": 7,
                                                                                          "threats": [ {
                                                                                                         "displayName": "",
@@ -8682,8 +8742,24 @@
                                                                                                              "wstype": [  ]
                                                                                                     }, {
                                                                                                         "displayName": "",
+                                                                                                          "unit_type": "F-14A-135-GR-Early",
+                                                                                                             "wstype": [  ]
+                                                                                                    }, {
+                                                                                                        "displayName": "",
                                                                                                           "unit_type": "",
                                                                                                              "wstype": [ 1, 1, 1, 5 ]
+                                                                                                    }, {
+                                                                                                        "displayName": "",
+                                                                                                          "unit_type": "F-14A",
+                                                                                                             "wstype": [  ]
+                                                                                                    }, {
+                                                                                                        "displayName": "",
+                                                                                                          "unit_type": "F-14B",
+                                                                                                             "wstype": [  ]
+                                                                                                    }, {
+                                                                                                        "displayName": "",
+                                                                                                          "unit_type": "F-14D",
+                                                                                                             "wstype": [  ]
                                                                                                     } ]
                                                                                   }, {
                                                                                        "aspj_xmit": true,
@@ -8824,6 +8900,10 @@
                                                                                                         "displayName": "",
                                                                                                           "unit_type": "",
                                                                                                              "wstype": [ 1, 1, 1, 50 ]
+                                                                                                    }, {
+                                                                                                        "displayName": "",
+                                                                                                          "unit_type": "MiG-29 Fulcrum",
+                                                                                                             "wstype": [  ]
                                                                                                     }, {
                                                                                                         "displayName": "",
                                                                                                           "unit_type": "",
@@ -10007,7 +10087,7 @@
                                                                                          "display": true,
                                                                                           "friend": false,
                                                                                       "group_name": "F-14",
-                                                                                            "hint": "F-14A-135-GR\nF-14B",
+                                                                                            "hint": "F-14A-135-GR\nF-14A-135-GR-Early\nF-14A\nF-14B\nF-14D",
                                                                                              "PRI": 7,
                                                                                          "threats": [ {
                                                                                                         "displayName": "",
@@ -10015,8 +10095,24 @@
                                                                                                              "wstype": [  ]
                                                                                                     }, {
                                                                                                         "displayName": "",
+                                                                                                          "unit_type": "F-14A-135-GR-Early",
+                                                                                                             "wstype": [  ]
+                                                                                                    }, {
+                                                                                                        "displayName": "",
                                                                                                           "unit_type": "",
                                                                                                              "wstype": [ 1, 1, 1, 5 ]
+                                                                                                    }, {
+                                                                                                        "displayName": "",
+                                                                                                          "unit_type": "F-14A",
+                                                                                                             "wstype": [  ]
+                                                                                                    }, {
+                                                                                                        "displayName": "",
+                                                                                                          "unit_type": "F-14B",
+                                                                                                             "wstype": [  ]
+                                                                                                    }, {
+                                                                                                        "displayName": "",
+                                                                                                          "unit_type": "F-14D",
+                                                                                                             "wstype": [  ]
                                                                                                     } ]
                                                                                   }, {
                                                                                        "aspj_xmit": true,
@@ -10157,6 +10253,10 @@
                                                                                                         "displayName": "",
                                                                                                           "unit_type": "",
                                                                                                              "wstype": [ 1, 1, 1, 50 ]
+                                                                                                    }, {
+                                                                                                        "displayName": "",
+                                                                                                          "unit_type": "MiG-29 Fulcrum",
+                                                                                                             "wstype": [  ]
                                                                                                     }, {
                                                                                                         "displayName": "",
                                                                                                           "unit_type": "",
@@ -11352,7 +11452,7 @@
                                                                                          "display": true,
                                                                                           "friend": false,
                                                                                       "group_name": "F-14",
-                                                                                            "hint": "F-14A-135-GR\nF-14B",
+                                                                                            "hint": "F-14A-135-GR\nF-14A-135-GR-Early\nF-14A\nF-14B\nF-14D",
                                                                                              "PRI": 8,
                                                                                          "threats": [ {
                                                                                                         "displayName": "",
@@ -11360,8 +11460,24 @@
                                                                                                              "wstype": [  ]
                                                                                                     }, {
                                                                                                         "displayName": "",
+                                                                                                          "unit_type": "F-14A-135-GR-Early",
+                                                                                                             "wstype": [  ]
+                                                                                                    }, {
+                                                                                                        "displayName": "",
                                                                                                           "unit_type": "",
                                                                                                              "wstype": [ 1, 1, 1, 5 ]
+                                                                                                    }, {
+                                                                                                        "displayName": "",
+                                                                                                          "unit_type": "F-14A",
+                                                                                                             "wstype": [  ]
+                                                                                                    }, {
+                                                                                                        "displayName": "",
+                                                                                                          "unit_type": "F-14B",
+                                                                                                             "wstype": [  ]
+                                                                                                    }, {
+                                                                                                        "displayName": "",
+                                                                                                          "unit_type": "F-14D",
+                                                                                                             "wstype": [  ]
                                                                                                     } ]
                                                                                   }, {
                                                                                        "aspj_xmit": true,
@@ -11502,6 +11618,10 @@
                                                                                                         "displayName": "",
                                                                                                           "unit_type": "",
                                                                                                              "wstype": [ 1, 1, 1, 50 ]
+                                                                                                    }, {
+                                                                                                        "displayName": "",
+                                                                                                          "unit_type": "MiG-29 Fulcrum",
+                                                                                                             "wstype": [  ]
                                                                                                     }, {
                                                                                                         "displayName": "",
                                                                                                           "unit_type": "",

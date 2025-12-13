@@ -31,8 +31,8 @@ namespace JAFDTC.Models.F16C.CMDS
         MAN2 = 1,
         MAN3 = 2,
         MAN4 = 3,
-        PANIC = 4,
-        BYPASS = 5
+        PANIC = 4,              // alias for MAN5
+        BYPASS = 5              // alias for MAN6
     }
 
     /// <summary>
@@ -177,7 +177,7 @@ namespace JAFDTC.Models.F16C.CMDS
         /// <summary>
         /// merge core program (bq/bi/sq/si) into dcs dtc dom.
         /// </summary>
-        private void MergeProgramIntoSimDTC(JsonNode progRoot, CMDSProgramCore prog, CMDSProgramCore dflt)
+        private static void MergeProgramIntoSimDTC(JsonNode progRoot, CMDSProgramCore prog, CMDSProgramCore dflt)
         {
             if (int.TryParse((string.IsNullOrEmpty(prog.BQ)) ? dflt.BQ : prog.BQ, out int bq))
                 progRoot["BurstQuantity"] = bq;
@@ -204,10 +204,12 @@ namespace JAFDTC.Models.F16C.CMDS
                 bingoRoot["FlaresNum"] = bingoFlare;
 
             JsonNode progRoot = cmdsRoot["CMDSProgramSettings"];
-            for (int i = (int)ProgramNumbers.MAN1; i < (int)ProgramNumbers.MAN2; i++)
+            for (int i = (int)ProgramNumbers.MAN1; i <= (int)ProgramNumbers.BYPASS; i++)
             {
+                // note that PANIC and BYPASS are identified by keys MAN5 and MAN6 in the .dtc.
+                //
                 MergeProgramIntoSimDTC(progRoot[$"MAN{i + 1}"]["Chaff"], Programs[i].Chaff, dflt.Programs[i].Chaff);
-                MergeProgramIntoSimDTC(progRoot[$"MAN{i + 1}"]["Flare"], Programs[i].Flare, dflt.Programs[i].Chaff);
+                MergeProgramIntoSimDTC(progRoot[$"MAN{i + 1}"]["Flare"], Programs[i].Flare, dflt.Programs[i].Flare);
             }
         }
 
