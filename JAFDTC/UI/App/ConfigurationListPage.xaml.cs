@@ -642,6 +642,14 @@ namespace JAFDTC.UI.App
         }
 
         /// <summary>
+        /// threat dbase command: navigate to the threat database editor page to edit threats.
+        /// </summary>
+        private void CmdThreat_Click(object sender, RoutedEventArgs args)
+        {
+// TODO: implement
+        }
+
+        /// <summary>
         /// settings command: manage the settings dialog, updating the actual settings or handling lua support
         /// as necessary.
         /// </summary>

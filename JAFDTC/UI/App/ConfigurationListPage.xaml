@@ -132,6 +132,9 @@ https://www.gnu.org/licenses/.
                     <AppBarButton Label="Points of Interest" Click="CmdPoI_Click">
                         <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xECAF;"/>
                     </AppBarButton>
+                    <AppBarButton Label="Threat Database" Click="CmdThreat_Click">
+                        <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE945;"/>
+                    </AppBarButton>
                     <AppBarSeparator/>
                     <AppBarButton Label="Settings" Icon="Setting" Click="CmdSettings_Click"/>
                     <AppBarSeparator/>
