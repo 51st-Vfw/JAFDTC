@@ -116,7 +116,7 @@ namespace JAFDTC.UI.Base
 
                     if (root != null)
                     {
-                        ImportBaseDialog importDialog = new(configList, config, importName)
+                        ImportParamsConfigDialog importDialog = new(configList, config, importName)
                         {
                             XamlRoot = root,
                             Title = $"Create a New Configuration From File",

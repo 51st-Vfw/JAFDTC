@@ -1,6 +1,6 @@
 // ********************************************************************************************************************
 //
-// ImportBaseDialog.xaml.cs -- ui c# for dialog to grab base import parameters
+// ImportParamsConfigDialog.xaml.cs -- ui c# for dialog to grab base import parameters
 //
 // Copyright(C) 2025 ilominar/raven
 //
@@ -26,7 +26,7 @@ namespace JAFDTC.UI.App
     /// <summary>
     /// TODO: document.
     /// </summary>
-    public sealed partial class ImportBaseDialog : ContentDialog
+    public sealed partial class ImportParamsConfigDialog : ContentDialog
     {
         // ------------------------------------------------------------------------------------------------------------
         //
@@ -51,7 +51,7 @@ namespace JAFDTC.UI.App
         //
         // ------------------------------------------------------------------------------------------------------------
 
-        public ImportBaseDialog(ConfigurationList configList, IConfiguration config, string name = null)
+        public ImportParamsConfigDialog(ConfigurationList configList, IConfiguration config, string name = null)
         {
             InitializeComponent();
 

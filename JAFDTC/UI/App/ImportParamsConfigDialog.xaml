@@ -2,7 +2,7 @@
 <!--
 **********************************************************************************************************************
     
-ImportBaseDialog.xaml : ui xaml for dialog to grab base import parameters
+ImportParamsConfigDialog.xaml : ui xaml for dialog to grab base import parameters
 
 Copyright(C) 2025 ilominar/raven
 
@@ -19,7 +19,7 @@ https://www.gnu.org/licenses/.
 **********************************************************************************************************************
 -->
 <ContentDialog
-    x:Class="JAFDTC.UI.App.ImportBaseDialog"
+    x:Class="JAFDTC.UI.App.ImportParamsConfigDialog"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:JAFDTC.UI.App"
@@ -32,7 +32,7 @@ https://www.gnu.org/licenses/.
     CloseButtonText="Cancel">
 
     <ContentDialog.Resources>
-        <Style TargetType="local:ImportBaseDialog" BasedOn="{StaticResource DefaultContentDialogStyle}"/>
+        <Style TargetType="local:ImportParamsConfigDialog" BasedOn="{StaticResource DefaultContentDialogStyle}"/>
     </ContentDialog.Resources>
 
     <Grid>

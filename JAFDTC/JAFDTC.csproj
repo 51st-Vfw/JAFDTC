@@ -80,8 +80,6 @@
     <None Remove="UI\A10C\A10CEditTGPPage.xaml" />
     <None Remove="UI\App\EditPointsOfInterestPage.xaml" />
     <None Remove="UI\App\GetPoITagDetails.xaml" />
-    <None Remove="UI\App\ImportBaseDialog.xaml" />
-    <None Remove="UI\App\ImportParamsDialog.xaml" />
     <None Remove="UI\App\ImportParamsNavptDialog.xaml" />
     <None Remove="UI\App\ImportParamsThreatDialog.xaml" />
     <None Remove="UI\App\MapSettingsDialog.xaml" />
@@ -274,7 +272,7 @@
     <Page Update="UI\App\GetPoITagDetails.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Update="UI\App\ImportBaseDialog.xaml">
+    <Page Update="UI\App\ImportParamsConfigDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Update="UI\App\MapWindow.xaml">
@@ -338,12 +336,6 @@
 
   <ItemGroup>
     <Page Update="UI\F15E\F15EEditMPDPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Page Update="UI\App\ImportParamsDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
