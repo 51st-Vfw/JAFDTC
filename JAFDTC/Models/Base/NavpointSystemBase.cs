@@ -21,7 +21,6 @@ using System.Collections.ObjectModel;
 using System.Text.Json.Serialization;
 using System.Text.Json;
 using System.Collections.Generic;
-using JAFDTC.Models.DCS;
 using System;
 
 namespace JAFDTC.Models.Base
@@ -117,30 +116,6 @@ namespace JAFDTC.Models.Base
         }
 
         /// <summary>
-        /// deserialize an array of POIs from .json and incorporate them into the navpoint list. the deserialized
-        /// navpoints can either replace the existing navpoints or be appended to the end of the navpoint list. returns
-        /// true on success, false on error (previous navpoints preserved on errors).
-        /// </summary>
-        public virtual bool ImportSerializedPOIs(string json, bool isReplace = true)
-        {
-            ObservableCollection<T> prevPoints = Points;
-            try
-            {
-                List<PointOfInterest> pois = JsonSerializer.Deserialize<List<PointOfInterest>>(json);
-                if (isReplace)
-                    Points.Clear();
-                foreach (PointOfInterest poi in pois)
-                    Add(ConvertPOIToNavPt(poi));
-                return true;
-            }
-            catch
-            {
-                Points = prevPoints;
-            }
-            return false;
-        }
-
-        /// <summary>
         /// incorporate a list of navpoints specified by navpoint info dictionaries (see navptInfoList) into the
         /// navpoint list. the new navpoints can either replace the existing navpoints or be appended to the end of
         /// the navpoing list. returns true on success, false on error (previous navpoints preserved on errors).
@@ -160,21 +135,6 @@ namespace JAFDTC.Models.Base
                 Points = prevPoints;
             }
             return false;
-        }
-
-        /// <summary>
-        /// Convert the provided PointOfInterest into a nav point.
-        /// 
-        /// Derived classes should override if their navpoints require specialized conversion from a PointOfInterest.
-        protected virtual T ConvertPOIToNavPt(PointOfInterest poi)
-        {
-            return new()
-            {
-                Name = poi.Name,
-                Lat = poi.Latitude,
-                Lon = poi.Longitude,
-                Alt = poi.Elevation
-            };
         }
 
         // ------------------------------------------------------------------------------------------------------------
