@@ -301,7 +301,7 @@ namespace JAFDTC.UI.F16C
                 if (NavArgs.IsUnlinked)
                     uiStptValueName.Focus(FocusState.Programmatic);
 
-                MapMarkerInfo info = new(MapMarkerInfo.MarkerType.NAVPT, STPTSystem.SystemInfo.RouteNames[0],
+                MapMarkerInfo info = new(MapMarkerInfo.MarkerType.NAV_PT, STPTSystem.SystemInfo.RouteNames[0],
                                          EditStptIndex + 1);
                 NavArgs.VerbMirror?.MirrorVerbMarkerSelected(NavArgs.ParentEditor as IMapControlVerbHandler, info);
             }

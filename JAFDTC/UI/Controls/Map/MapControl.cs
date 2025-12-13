@@ -1,6 +1,6 @@
 ﻿// ********************************************************************************************************************
 //
-// WorldMapControl.cs : map control
+// MapControl.cs : map control
 //
 // Copyright(C) 2025 ilominar/raven
 //
@@ -37,9 +37,9 @@ using static JAFDTC.UI.Controls.Map.MapMarkerControl;
 namespace JAFDTC.UI.Controls.Map
 {
     /// <summary>
-    /// world map control is a control that displays a map upon which routes and markers can be overlaid and edited.
-    /// the map only works with lat/lon, edits for other parameters, such as altitude, are assumed to be handled
-    /// elsewhere.
+    /// world map control is a control that displays a map upon which paths and markers can be overlaid and edited.
+    /// these can represent navigation routes, points of interest, units, threats, etc. the map only tracks and
+    /// handles lat/lon. edits for other parameters, such as name or altitude, are assumed to be handled elsewhere.
     /// </summary>
     public partial class MapControl : MapBase, IMapControlVerbHandler
     {
@@ -50,10 +50,10 @@ namespace JAFDTC.UI.Controls.Map
         // ------------------------------------------------------------------------------------------------------------
 
         /// <summary>
-        /// information on a route rendered by a path control such as a route path. includes the lat/lon of each
-        /// point on the path. used internally by the control to associate ui elements with data.
+        /// information on the locations present in a geometry for a map control representing a path (such as
+        /// MapRoutePath or MapThreatPath). includes a Location instance for each lat/lon that defines the geometry.
         /// </summary>
-        private sealed class MapControlPath(ObservableCollection<Location> locations)
+        private sealed class MapPathControlPath(ObservableCollection<Location> locations)
         {
             public ObservableCollection<Location> Locations { get; set; } = locations;
         }
@@ -61,56 +61,131 @@ namespace JAFDTC.UI.Controls.Map
         // ================================================================================================================
 
         /// <summary>
-        /// information on a route path including the foreground/background path the control renders. used internally
-        /// by the map control to associate ui elements with data.
+        /// information on a map path control that has both foreground and background layers that render the same path
+        /// geometry with different properties (stroke, width, etc.) to implement highlighting. includes separate controls
+        /// for foreground and background along with the points that define the path geometry.
         /// </summary>
-        private sealed class RoutePathControlInfo()
+        private sealed class MapPathControlLayered()
         {
+            // ControlFg and ControlBg are set to appropriate instances via the data template used during creation.
+            //
             public MapItemsControl ControlFg { get; set; } = null;
             public MapItemsControl ControlBg { get; set; } = null;
             //
-            // extra level of hierarchy here (Paths is a list of one element: a list of Locations) is due to the way
+            // extra level of hierarchy here (Paths is a list of *one* element: a list of Locations) is due to the way
             // xaml-map-control implements MapItemsControl as a ListBox. ListBox expects an ItemSource (Paths in our
             // case) which provides items that the ui elements can pull from via bindings to build screen content.
             //
-            // NOTE: both MapItemsControl (background and foreground) use this as their data source.
+            // NOTE: both MapItemsControl (ControlFg and ControlBg) use this as their data source.
             //
-            // TODO: does this need a MapItemsControl?
-            //
-            public List<MapControlPath> Paths { get; set; } = [ ];
+            public List<MapPathControlPath> Paths { get; set; } = [ ];              // always has 1 element
+
+            /// <summary>
+            /// set the visibility of the path control as indicated. note that the path is assumed to be unselected
+            /// on visibility changes so the background control is always collapsed.
+            /// </summary>
+            /// <param name="visibility"></param>
+            public void Visibility(Visibility visibility)
+            {
+                ControlBg.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
+                ControlFg.Visibility = visibility;
+            }
+
+            /// <summary>
+            /// remove the elements associated with the path control from a map control.
+            /// </summary>
+            public void Remove(MapControl map)
+            {
+                map.RemoveElement(ControlFg);
+                map.RemoveElement(ControlBg);
+            }
         }
 
         // ================================================================================================================
 
         /// <summary>
-        /// information on a theater bounds path including the path the control renders.
+        /// information on the controls that make up a path of straight lines connecting a sequence of locations (such as
+        /// a navigation route or boundary line displayed on avionics). this includes the foreground and background path
+        /// controls, the positive and negative edit handles, and the marker points for the locations on the path.
         /// </summary>
-        private sealed class TheaterBoundsControlInfo()
+        private sealed class PathInfo()
         {
-            public MapItemsControl Control { get; set; } = null;
-            //
-            // extra level of hierarchy here (Paths is a list of one element: a list of Locations) is due to the way
-            // xaml-map-control implements MapItemsControl as a ListBox. ListBox expects an ItemSource (Paths in our
-            // case) which provides items that the ui elements can pull from via bindings to build screen content.
-            //
-            // TODO: does this need a MapItemsControl?
-            //
-            public List<MapControlPath> Paths { get; set; } = [ ];
-        }
-
-        // ================================================================================================================
-
-        /// <summary>
-        /// information on the controls and points along a route. this includes the foreground and background route paths,
-        /// the positive and negative edit handles, and the marker points. used internally by the control to associate ui
-        /// elements with data.
-        /// </summary>
-        private sealed class RouteInfo
-        {
-            public RoutePathControlInfo Path { get; set; } = new();
-            public MapMarkerControl EditHandlePos { get; set; } = null;
-            public MapMarkerControl EditHandleNeg { get; set; } = null;
+            public MapPathControlLayered Path { get; set; } = new();
+            public MapMarkerControl EditHandlePos { get; set; } = null;             // null if r/o
+            public MapMarkerControl EditHandleNeg { get; set; } = null;             // null if r/o
             public List<MapMarkerControl> Points { get; set; } = [ ];
+
+            /// <summary>
+            /// set the visibility of the path control as indicated. note that the path is assumed to be unselected
+            /// on visibility changes so the background control and edit handles are always collapsed.
+            /// </summary>
+            /// <param name="visibility"></param>
+            public void Visibility(Visibility visibility)
+            {
+                Path.Visibility(visibility);
+                if (EditHandleNeg != null)
+                    EditHandleNeg.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
+                if (EditHandlePos != null)
+                    EditHandlePos.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
+                foreach (MapMarkerControl marker in Points)
+                    marker.Visibility = visibility;
+            }
+
+            /// <summary>
+            /// remove the elements associated with the path from a map control.
+            /// </summary>
+            public void Remove(MapControl map)
+            {
+                Path.Remove(map);
+                map.RemoveElement(EditHandlePos);
+                map.RemoveElement(EditHandleNeg);
+                foreach (MapMarkerControl marker in Points)
+                    map.RemoveElement(marker);
+            }
+        }
+
+        // ================================================================================================================
+
+        /// <summary>
+        /// information on the controls that make up a marker and optional threat ring. this includes the foreground and
+        /// background threat ring path controls, a threat ring edit handles, and the marker itself.
+        /// </summary>
+        private sealed class MarkerInfo()
+        {
+            public MapMarkerControl Marker { get; set; } = null;
+            public MapPathControlLayered ThreatRing { get; set; } = null;           // null if no ring
+            public MapMarkerControl EditHandle { get; set; } = null;                // null if nor ring or r/o
+            public double RadiusThreatRing { get; set; } = 0.0;                     // 0.0 if ThreatRing is null
+
+            /// <summary>
+            /// set the visibility of the marker control including any threat ring as indicated. note that the marker is
+            /// assumed to be unselected on visibility changes so the edit handles are always collapsed.
+            /// </summary>
+            public void Visibility(Visibility visibilityMark, Visibility visibilityRing)
+            {
+                Marker.Visibility = visibilityMark;
+                ThreatRing?.Visibility(visibilityRing);
+                if (EditHandle != null)
+                    EditHandle.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
+            }
+
+            /// <summary>
+            /// remove the elements associated with the marker from a map control if the type matches one of the
+            /// types listed (empty or null list implies remove all types). returns true if the marker was removed,
+            /// false otherwise.
+            /// </summary>
+            public bool Remove(MapControl map, List<MapMarkerInfo.MarkerType> removingTypes = null)
+            {
+                CrackMarkerTag(Marker, out MapMarkerInfo.MarkerType type, out string _, out int _);
+                if ((removingTypes == null) || (removingTypes.Count == 0) || removingTypes.Contains(type))
+                {
+                    map.RemoveElement(Marker);
+                    map.RemoveElement(EditHandle);
+                    ThreatRing?.Remove(map);
+                    return true;
+                }
+                return false;
+            }
         }
 
         // ================================================================================================================
@@ -191,41 +266,41 @@ namespace JAFDTC.UI.Controls.Map
         private DragStateEnum _dragState = DragStateEnum.IDLE;
         private bool _isNewMarker = false;
 
-        private TheaterBoundsControlInfo _theaterBounds;
+        private MapPathControlLayered _theaterBounds;
 
         // ---- read-only properties
 
-        private readonly Dictionary<string, RouteInfo> _routes = [ ];
-        private readonly Dictionary<string, MapMarkerControl> _marks = [ ];
+        private readonly Dictionary<string, PathInfo> _paths = [ ];
+        private readonly Dictionary<string, MarkerInfo> _marks = [ ];
 
-        private readonly Dictionary<string, string> _routeBrushMap = [ ];
+        private readonly Dictionary<string, string> _brushIndexMap = [ ];
 
         private readonly Dictionary<MapMarkerInfo.MarkerType, int> _mapMarkerZ = new()
         {
-            // z of 5 reserved for current selection, MAP_MARKER_Z_THEATER_BOX
+            // z of 4 reserved for theater bounds, MAP_MARKER_Z_THEATER_BOX
+            // z of 5 reserved for threat rings, MAP_MARKER_Z_PATH_RING
             //
-            [MapMarkerInfo.MarkerType.DCS_CORE] = 10,
+            [MapMarkerInfo.MarkerType.POI_DCS_CORE] = 10,
             [MapMarkerInfo.MarkerType.BULLSEYE] = 11,
-            [MapMarkerInfo.MarkerType.USER] = 12,
-            [MapMarkerInfo.MarkerType.CAMPAIGN] = 13,
-            [MapMarkerInfo.MarkerType.IMPORT_GEN] = 14,
-            [MapMarkerInfo.MarkerType.IMPORT_WEZ] = 15,
+            [MapMarkerInfo.MarkerType.POI_USER] = 12,
+            [MapMarkerInfo.MarkerType.POI_CAMPAIGN] = 13,
             //
-            // z of 20 reserved for route paths, MAP_MARKER_Z_ROUTE_PATH
+            // z of 20 reserved for route paths, MAP_MARKER_Z_PATH
             //
-            [MapMarkerInfo.MarkerType.NAVPT_HANDLE] = 21,
-            [MapMarkerInfo.MarkerType.NAVPT] = 22,
+            [MapMarkerInfo.MarkerType.PATH_EDIT_HANDLE] = 21,
+            [MapMarkerInfo.MarkerType.RING_EDIT_HANDLE] = 22,
+            [MapMarkerInfo.MarkerType.UNIT_FRIEND] = 23,
+            [MapMarkerInfo.MarkerType.UNIT_ENEMY] = 24,
+            [MapMarkerInfo.MarkerType.NAV_PT] = 25,
+            [MapMarkerInfo.MarkerType.USER_PT] = 26,
             //
-            // z of 23 reserved for current selection, MAP_MARKER_Z_SELECTION
+            // z of 30 reserved for current selection, MAP_MARKER_Z_SELECTION
         };
 
-        private const int MAP_MARKER_Z_THEATER_BOX = 5;
-        private const int MAP_MARKER_Z_ROUTE_PATH = 20;
-        private const int MAP_MARKER_Z_SELECTION = 23;
-
-#if TODO_IMPLEMENT
-        private readonly Dictionary<object, List<MapMarkerInfo>> _imports = [ ];
-#endif
+        private const int MAP_MARKER_Z_THEATER_BOX = 4;
+        private const int MAP_MARKER_Z_PATH_RING = 5;
+        private const int MAP_MARKER_Z_PATH = 20;
+        private const int MAP_MARKER_Z_SELECTION = 30;
 
         // ------------------------------------------------------------------------------------------------------------
         //
@@ -254,15 +329,87 @@ namespace JAFDTC.UI.Controls.Map
 
         // ------------------------------------------------------------------------------------------------------------
         //
+        // utility
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
+        /// <summary>
+        /// return Location instance initialized from string lat/lon.
+        /// </summary>
+        public static Location Location(string lat, string lon) => new(double.Parse(lat), double.Parse(lon));
+
+        public static Location Location(INavpointInfo navpt) => new(double.Parse(navpt.Lat), double.Parse(navpt.Lon));
+
+        /// <summary>
+        /// remove the element from our canvas if it is not null.
+        /// </summary>
+        private void RemoveElement(UIElement element)
+        {
+            if (element != null)
+                Children.Remove(element);
+        }
+
+        /// <summary>
+        /// programatically unselect the marker if there is a current selection. invokes a select verb to inform
+        /// others selection has cleared.
+        /// </summary>
+        private void DoUnselectMarker()
+        {
+            if (_selectedMarker != null)
+            {
+                UnselectMarker(_selectedMarker);
+                VerbMirror?.MirrorVerbMarkerSelected(this, new());
+                _selectedMarker = null;
+            }
+        }
+
+        // ------------------------------------------------------------------------------------------------------------
+        //
         // control setup
         //
         // ------------------------------------------------------------------------------------------------------------
 
         /// <summary>
+        /// return the resource name for the marker type.
+        /// </summary>
+        private string GetResourceName(MapMarkerInfo.MarkerType markerType, string what, string index)
+        {
+            string rdOnly = (!CanEdit(markerType)) ? "_RO" : "";
+            return markerType switch
+            {
+                MapMarkerInfo.MarkerType.POI_DCS_CORE
+                    => $"{what}_POI_Core_{index}{rdOnly}",
+                MapMarkerInfo.MarkerType.POI_USER
+                    => $"{what}_POI_User_{index}{rdOnly}",
+                MapMarkerInfo.MarkerType.POI_CAMPAIGN
+                    => $"{what}_POI_Campaign_{index}{rdOnly}",
+                MapMarkerInfo.MarkerType.NAV_PT
+                or MapMarkerInfo.MarkerType.USER_PT
+                or MapMarkerInfo.MarkerType.PATH_EDIT_HANDLE
+                    => $"{what}_Path_{index}{rdOnly}",
+                MapMarkerInfo.MarkerType.UNIT_ENEMY
+                    => $"{what}_Unit_0{rdOnly}",
+                MapMarkerInfo.MarkerType.UNIT_FRIEND
+                or MapMarkerInfo.MarkerType.RING_EDIT_HANDLE
+                    => $"{what}_Unit_1{rdOnly}",
+// TODO: fix this
+                MapMarkerInfo.MarkerType.BULLSEYE
+                    => null,
+                _ => $"{what}_Default",
+            };
+        }
+
+        /// <summary>
+        /// return the resource object associated with a marker type.
+        /// </summary>
+        private object GetResource(MapMarkerInfo.MarkerType markerType, string what, string index)
+            => (Resources.TryGetValue(GetResourceName(markerType, what, index), out object rsrc)) ? rsrc : null;
+
+        /// <summary>
         /// returns the latitude and longitude extents for all known markers.
         /// </summary>
-
-        public void GetMarkerExtents(out double minLat, out double maxLat, out double minLon, out double maxLon, double dP = 0.0)
+        public void GetMarkerExtents(double dP,
+                                     out double minLat, out double maxLat, out double minLon, out double maxLon)
         {
             minLat = 90.0;
             maxLat = -90.0;
@@ -274,7 +421,7 @@ namespace JAFDTC.UI.Controls.Map
                 if (marker != null)
                 {
                     CrackMarkerTag(marker, out MapMarkerInfo.MarkerType type, out string _, out int _);
-                    if (type != MapMarkerInfo.MarkerType.NAVPT_HANDLE)
+                    if (type != MapMarkerInfo.MarkerType.PATH_EDIT_HANDLE)
                     {
                         minLat = Math.Min(minLat, marker.Location.Latitude - dP);
                         maxLat = Math.Max(maxLat, marker.Location.Latitude + dP);
@@ -290,153 +437,191 @@ namespace JAFDTC.UI.Controls.Map
         /// </summary>
         public BoundingBox GetMarkerBoundingBox(double dP = 0.0)
         {
-            GetMarkerExtents(out double minLat, out double maxLat, out double minLon, out double maxLon, dP);
+            GetMarkerExtents(dP, out double minLat, out double maxLat, out double minLon, out double maxLon);
             return new(minLat, minLon, maxLat, maxLon);
         }
 
         /// <summary>
-        /// TODO: document
+        /// set the theater to focus on for the map control and add the theater bounding box to the map if the
+        /// theater is known. any previous theater bounds are removed.
         /// </summary>
         public void SetTheater(string theater)
         {
             if (_theaterBounds != null)
-            {
-                Children.Remove(_theaterBounds.Control);
-                _theaterBounds = null;
-            }
+                Children.Remove(_theaterBounds.ControlFg);
+            _theaterBounds = null;
 
             if (PointOfInterest.TheaterInfo.TryGetValue(theater, out TheaterInfo info))
             {
-                ObservableCollection<Location> path = [ ];
-                path.Add(new Location(info.LatMin, info.LonMin));
-                path.Add(new Location(info.LatMin, info.LonMax));
-                path.Add(new Location(info.LatMax, info.LonMax));
-                path.Add(new Location(info.LatMax, info.LonMin));
-                path.Add(new Location(info.LatMin, info.LonMin));
-                _theaterBounds = new();
-                _theaterBounds.Paths.Add(new MapControlPath(path));
-
-                MapItemsControl control = new()
+                ObservableCollection<Location> path = [
+                    new Location(info.LatMin, info.LonMin),
+                    new Location(info.LatMin, info.LonMax),
+                    new Location(info.LatMax, info.LonMax),
+                    new Location(info.LatMax, info.LonMin),
+                    new Location(info.LatMin, info.LonMin)
+                ];
+                _theaterBounds = new()
                 {
-                    Tag = "<TheaterBoundary>"
+                    ControlBg = null                            // theater bounds geometry has no bg layer
                 };
-                Canvas.SetZIndex(control, MAP_MARKER_Z_THEATER_BOX);
-                Children.Add(control);
-                //
-                // TODO: since the route paths use MapItemsControl (a ListBox), they need a data template. no way to
-                // TODO: build those programatically without basically parsing xaml here. this implies that colors
-                // TODO: are (for now) setup and specified in .xaml.
-                //
-                if (Resources.TryGetValue("BoundaryLineTemplate", out object template))
-                    control.ItemTemplate = template as DataTemplate;
-                control.ItemsSource = _theaterBounds.Paths;
+                _theaterBounds.Paths.Add(new MapPathControlPath(path));
+                _theaterBounds.ControlFg = BuildMapItemsControl("<TheaterBoundary>", false, MAP_MARKER_Z_THEATER_BOX,
+                                                                "Tmplt_Boundary_Path", _theaterBounds.Paths);
             }
         }
 
         /// <summary>
-        /// configure the control from the dictionaries for routes and marks. any selection is cleared and any
-        /// previous routes or marks are removed form the map.
+        /// clear all paths currently associated with the control along with the current selection. selection
+        /// verb is invoked for the selection clear. delete verb(s)) are not invoked for element(s) removed from
+        /// the map.
         /// </summary>
-        public void SetupMapContent(Dictionary<string, List<INavpointInfo>> routes,
-                                    Dictionary<string, PointOfInterest> marks)
+        public void ClearPaths()
         {
-            if (SelectedMarkerInfo != null)
-                VerbMirror?.MirrorVerbMarkerSelected(this, new());
+            DoUnselectMarker();
+            foreach (PathInfo pathInfo in _paths.Values)
+                pathInfo.Remove(this);
+            _paths.Clear();
+        }
 
-            foreach (MapMarkerControl marker in _marks.Values)
-                Children.Remove(marker);
-            _marks.Clear();
-            foreach (KeyValuePair<string, PointOfInterest> kvp in marks)
-                AddMark(kvp.Key, kvp.Value);
+        /// <summary>
+        /// set path visibility based on the visibility lambda and clear the selection. lambda takes a tag string
+        /// argument and returns true if the path should be visible, false if it should be collapsed. selection
+        /// verb is invoked for the selection clear.
+        /// </summary>
+        public void PathVisibility(Func<string, bool> fnIsVisible)
+        {
+            DoUnselectMarker();
+            foreach (KeyValuePair<string, PathInfo> kvp in _paths)
+                kvp.Value.Visibility(fnIsVisible(kvp.Key) ? Visibility.Visible : Visibility.Collapsed);
+        }
 
-            foreach (RouteInfo routeInfo in _routes.Values)
+        /// <summary>
+        /// clear all markers matching a removal type that are currently associated with the control along with the
+        /// current selection. selection verb is invoked for the selection clear. delete verb(s) are not invoked for
+        /// element(s) removed from the map.
+        /// </summary>
+        public void ClearMarkers(List<MapMarkerInfo.MarkerType> removingTypes)
+        {
+            DoUnselectMarker();
+            Dictionary<string, MarkerInfo> tmpMarks = new(_marks);
+            foreach (KeyValuePair<string, MarkerInfo> kvp in tmpMarks)
+                if (kvp.Value.Remove(this, removingTypes))
+                    _marks.Remove(kvp.Key);
+        }
+
+        /// <summary>
+        /// set marker visibility based on the visibility lambda and clear the selection. on isRingOnly, only those
+        /// markers with a ring are updated. lambda takes marker type, tag string, and boolean "has ring" argument
+        /// and returns a tuple of two booleans true if the marker, ring should be visible, false if marker, ring
+        /// should be collapsed. selection verb is invoked for the selection clear.
+        /// </summary>
+        public void MarkerVisibility(Func<MapMarkerInfo.MarkerType, string, bool, Tuple<bool, bool>> fnIsVisible)
+        {
+            DoUnselectMarker();
+            foreach (KeyValuePair<string, MarkerInfo> kvp in _marks)
             {
-                Children.Remove(routeInfo.EditHandlePos);
-                Children.Remove(routeInfo.EditHandleNeg);
-                Children.Remove(routeInfo.Path.ControlFg);
-                Children.Remove(routeInfo.Path.ControlBg);
-                foreach (MapMarkerControl marker in routeInfo.Points)
-                    Children.Remove(marker);
+                CrackMarkerTag(kvp.Value.Marker, out MapMarkerInfo.MarkerType type, out string tag, out _);
+                Tuple<bool, bool> isViz = fnIsVisible(type, tag, (kvp.Value.ThreatRing != null));
+                kvp.Value.Visibility(isViz.Item1 ? Visibility.Visible : Visibility.Collapsed,
+                                     isViz.Item2 ? Visibility.Visible : Visibility.Collapsed);
             }
-            _routes.Clear();
-            foreach (KeyValuePair<string, List<INavpointInfo>> kvp in routes)
-                AddRoute(kvp.Key, kvp.Value);
         }
 
         /// <summary>
-        /// add a mark to the control by creating a new maker at the lat/lon of a poi and adding it to the
-        /// list of known marks.
+        /// add a path to the control by creating markers for each navigation point along the route as well as
+        /// geometries for the lines that connect points on the route. add verbs are not invoked.
         /// </summary>
-        private void AddMark(string tagStr, PointOfInterest poi)
+        public void AddPath(MapMarkerInfo.MarkerType markerType, string tag, ObservableCollection<Location> npts)
         {
-            Location location = new(double.Parse(poi.Latitude), double.Parse(poi.Longitude));
-            AddMark((MapMarkerInfo.MarkerType)poi.Type, tagStr, location);
+            if (!_brushIndexMap.ContainsKey(tag))
+                _brushIndexMap[tag] = $"{_paths.Count % NUM_ROUTE_COLORS}";
+
+            PathInfo pathInfo = new();
+
+            pathInfo.Path.Paths.Add(new(npts));
+            pathInfo.Path.ControlBg = BuildPathControl(markerType, pathInfo.Path, tag, false);
+            pathInfo.Path.ControlFg = BuildPathControl(markerType, pathInfo.Path, tag, true);
+            pathInfo.Path.ControlBg.Visibility = Visibility.Collapsed;
+
+            pathInfo.EditHandleNeg = MarkerFactory(MapMarkerInfo.MarkerType.PATH_EDIT_HANDLE, tag, -1);
+            pathInfo.EditHandlePos = MarkerFactory(MapMarkerInfo.MarkerType.PATH_EDIT_HANDLE, tag, -1);
+
+            for (int i = 0; i < npts.Count; i++)
+                pathInfo.Points.Add(MarkerFactory(markerType, tag, i + 1, npts[i]));
+
+            _paths[tag] = pathInfo;
         }
 
         /// <summary>
         /// add a mark to the control by creating a new maker at a lat/lon and adding it to the list of known
-        /// marks.
+        /// marks. add verbs are not invoked.
         /// </summary>
-        private void AddMark(MapMarkerInfo.MarkerType type, string tagStr, Location location)
+        public void AddMarker(MapMarkerInfo.MarkerType type, string tag, Location location, double radiusRing = 0.0,
+                              bool isRingMarkerHidden = true)
         {
-            _marks[tagStr] = MarkerFactory(type, tagStr, -1, location);
+            MarkerInfo markerInfo = new()
+            {
+                Marker = MarkerFactory(type, tag, -1, location),
+                RadiusThreatRing = radiusRing
+            };
+
+            if (radiusRing > 0.0)
+            {
+                MapPathControlLayered ring = new();
+                ObservableCollection<Location> path = [.. MapThreatPath.MakeLocationsForThreat(location, radiusRing) ];
+                ring.Paths.Add(new MapPathControlPath(path));
+                ring.ControlBg = BuildMapItemsControl(tag, false, MAP_MARKER_Z_PATH_RING, $"Tmplt_Ring_Bg",
+                                                      ring.Paths);
+                ring.ControlFg = BuildMapItemsControl(tag, false, MAP_MARKER_Z_PATH_RING,
+                                                      GetResourceName(type, "Tmplt_Ring", "0"), ring.Paths);
+                ring.ControlBg.Visibility = Visibility.Collapsed;
+
+                markerInfo.ThreatRing = ring;
+
+                if (isRingMarkerHidden)
+                    markerInfo.Marker.Visibility = Visibility.Collapsed;
+            }
+            if (type == MapMarkerInfo.MarkerType.USER_PT)
+                markerInfo.EditHandle = MarkerFactory(MapMarkerInfo.MarkerType.RING_EDIT_HANDLE, tag, -1);
+
+            _marks[tag] = markerInfo;
         }
 
         /// <summary>
-        /// add a route to the control by creating markers for each navigation point along the route as well as
-        /// the lines that connect points on the route.
+        /// helper function to build a map items control from the given parameters and add it to the canvas at the
+        /// specified z depth. the control is built using a data template with the specified name that will set the
+        /// specific type of control created.
         /// </summary>
-        private void AddRoute(string tag, List<INavpointInfo> npts)
-        {
-            _routeBrushMap[tag] = $"{_routes.Count % NUM_ROUTE_COLORS}";
-
-            RouteInfo route = new();
-
-            ObservableCollection<Location> locations = [ ];
-            for (int i = 0; i < npts.Count; i++)
-                locations.Add(new Location(double.Parse(npts[i].Lat), double.Parse(npts[i].Lon)));
-
-            route.Path.Paths.Add(new(locations));
-            route.Path.ControlBg = BuildRoutePathControl(route.Path, tag, false);
-            route.Path.ControlFg = BuildRoutePathControl(route.Path, tag, true);
-            route.Path.ControlBg.Visibility = Visibility.Collapsed;
-
-            route.EditHandleNeg = MarkerFactory(MapMarkerInfo.MarkerType.NAVPT_HANDLE, tag, -1);
-            route.EditHandlePos = MarkerFactory(MapMarkerInfo.MarkerType.NAVPT_HANDLE, tag, -1);
-
-            for (int i = 0; i < locations.Count; i++)
-                route.Points.Add(MarkerFactory(MapMarkerInfo.MarkerType.NAVPT, tag, i + 1, locations[i]));
-
-            _routes[tag] = route;
-        }
-
-        /// <summary>
-        /// helper function to build out a route control. adds the locations to a new path managed by the controller,
-        /// creating/configuring the underlying ui control if necessary.
-        /// </summary>
-        private MapItemsControl BuildRoutePathControl(RoutePathControlInfo info, string tag, bool isForeground)
+        private MapItemsControl BuildMapItemsControl(string tag, bool isHittable, int zIndex, string templateName,
+                                                     object itemsSource)
         {
             MapItemsControl control = new()
             {
-                Tag = tag
+                Tag = tag,
+                IsHitTestVisible = isHittable,
             };
-            Canvas.SetZIndex(control, MAP_MARKER_Z_ROUTE_PATH);
+            Canvas.SetZIndex(control, zIndex);
             Children.Add(control);
             //
-            // TODO: since the route paths use MapItemsControl (a ListBox), they need a data template. no way to
-            // TODO: build those programatically without basically parsing xaml here. this implies that colors
-            // TODO: are (for now) setup and specified in .xaml.
+            // TODO: since paths use MapItemsControl (a ListBox), they need a data template. no way to build those
+            // TODO: programatically without basically parsing xaml here. this implies that colors are (for now)
+            // TODO: are setup and specified in .xaml.
             //
-            string rsrcName = "RouteLineBgTemplate";
-            if (isForeground)
-            {
-                string rdOnlyStr = (!CanEdit(MapMarkerInfo.MarkerType.NAVPT)) ? "_RO" : "";
-                rsrcName = $"RouteLineFg_{_routeBrushMap[tag]}{rdOnlyStr}_Template";
-            }
-            if (Resources.TryGetValue(rsrcName, out object template))
+            if (Resources.TryGetValue(templateName, out object template))
                 control.ItemTemplate = template as DataTemplate;
-            control.ItemsSource = info.Paths;
+            control.ItemsSource = itemsSource;
             return control;
+        }
+
+        /// <summary>
+        /// helper function to build out a path control.
+        /// </summary>
+        private MapItemsControl BuildPathControl(MapMarkerInfo.MarkerType markerType, MapPathControlLayered info,
+                                                 string tag, bool isFg)
+        {
+            string rsrcName = (isFg) ? GetResourceName(markerType, "Tmplt", _brushIndexMap.GetValueOrDefault(tag, "0"))
+                                     : "Tmplt_Path_Bg";
+            return BuildMapItemsControl(tag, true, MAP_MARKER_Z_PATH, rsrcName, info.Paths);
         }
 
         // ------------------------------------------------------------------------------------------------------------
@@ -464,41 +649,35 @@ namespace JAFDTC.UI.Controls.Map
         private MapMarkerControl MarkerFactory(MapMarkerInfo.MarkerType type, string tagStr, int tagInt,
                                                Location loc = null)
         {
-            loc ??= new Location(0.0, 0.0);
-
-            string indexStr = _routeBrushMap.GetValueOrDefault(tagStr, "");
-            string rdOnlyStr = (!CanEdit(type)) ? "_RO" : "";
-            string typeStr = (type != MapMarkerInfo.MarkerType.NAVPT_HANDLE) ? $"{type}"
-                                                                             : $"{MapMarkerInfo.MarkerType.NAVPT}";
-            Brush brush = new SolidColorBrush(Color.FromArgb(255, 0, 0, 0));
-            if (Resources.TryGetValue($"MapMarker_{typeStr}{indexStr}{rdOnlyStr}_Brush", out object value))
-                brush = value as Brush;
-
+            Brush brush = GetResource(type, "Brush_Marker", _brushIndexMap.GetValueOrDefault(tagStr, "0")) as Brush
+                          ?? new SolidColorBrush(Color.FromArgb(255, 0, 0, 0));
             MapMarkerControl marker = type switch
             {
-                MapMarkerInfo.MarkerType.NAVPT
+                MapMarkerInfo.MarkerType.POI_DCS_CORE
+                    => new MapMarkerSquareControl(brush, brush, new Size(20.0, 20.0)),
+                MapMarkerInfo.MarkerType.POI_USER
+                    => new MapMarkerCircleControl(brush, brush, new Size(22.0, 22.0)),
+                MapMarkerInfo.MarkerType.POI_CAMPAIGN
+                    => new MapMarkerCircleControl(brush, brush, new Size(22.0, 22.0)),
+                MapMarkerInfo.MarkerType.NAV_PT
                     => new MapMarkerDiamondControl(brush, brush, new Size(24.0, 24.0)),
-                MapMarkerInfo.MarkerType.NAVPT_HANDLE
+                MapMarkerInfo.MarkerType.UNIT_ENEMY
+                    => new MapMarkerTriangleControl(brush, brush, new Size(22.0, 22.0)),
+                MapMarkerInfo.MarkerType.UNIT_FRIEND
+                    => new MapMarkerTriangleControl(brush, brush, new Size(22.0, 22.0)),
+                MapMarkerInfo.MarkerType.BULLSEYE
+                    => new MapMarkerTriangleControl(brush, brush, new Size(22.0, 22.0)),
+                MapMarkerInfo.MarkerType.PATH_EDIT_HANDLE
+                or MapMarkerInfo.MarkerType.RING_EDIT_HANDLE
                     => new MapMarkerCircleControl(brush, brush, new Size(18.0, 18.0))
                     {
                         Visibility = Visibility.Collapsed
                     },
-                MapMarkerInfo.MarkerType.DCS_CORE
-                    => new MapMarkerSquareControl(brush, brush, new Size(20.0, 20.0)),
-                MapMarkerInfo.MarkerType.USER
-                    => new MapMarkerCircleControl(brush, brush, new Size(22.0, 22.0)),
-                MapMarkerInfo.MarkerType.CAMPAIGN
-                    => new MapMarkerCircleControl(brush, brush, new Size(22.0, 22.0)),
-                MapMarkerInfo.MarkerType.IMPORT_GEN
-                or MapMarkerInfo.MarkerType.IMPORT_WEZ
-                    => new MapMarkerTriangleControl(brush, brush, new Size(22.0, 22.0)),
-                MapMarkerInfo.MarkerType.BULLSEYE
-// TODO: use different shape?
-                    => new MapMarkerTriangleControl(brush, brush, new Size(22.0, 22.0)),
                 _ => new MapMarkerCircleControl(),
             };
-            marker.Location = loc;
+            marker.Location = loc ?? new Location(0.0, 0.0);
             marker.Tag = TagForMarkerOfKind(type, tagStr, tagInt);
+
             Canvas.SetZIndex(marker, _mapMarkerZ[type]);
             Children.Add(marker);
             return marker;
@@ -509,11 +688,11 @@ namespace JAFDTC.UI.Controls.Map
         /// and handles) are a tuple of the form: { [type], [integer], [string] }.
         ///
         /// navpoints        [type]      MapMarkerInfo.MarkerType.NAVPT
-        ///                  [string]    route tag for this._routes
+        ///                  [string]    path tag for this._paths
         ///                  [integer]   number of the navpoint in the path list (so, 1-based index)
         ///
         /// edit handles     [type]      MapMarkerInfo.MarkerType.NAVPT_HANDLE
-        ///                  [string]    route tag for this.Routes
+        ///                  [string]    path tag for this._paths the edit handle is associated with
         ///                  [integer]   position in the navpoint list where a new point should be inserted (0 implies
         ///                              before first point)
         ///
@@ -571,72 +750,73 @@ namespace JAFDTC.UI.Controls.Map
         // ------------------------------------------------------------------------------------------------------------
 
         /// <summary>
-        /// drag an editable map marker to a new location. this updates edit handles for navpoints as well.
+        /// drag an editable map marker to a new location. this updates edit handles as well.
         /// </summary>
         private void MoveMapMarker(MapMarkerControl marker, Location newLocation)
         {
             CrackMarkerTag(marker, out MapMarkerInfo.MarkerType type, out string str, out int number);
-            if (CanEdit(type) && (type == MapMarkerInfo.MarkerType.NAVPT))
+            if (CanEdit(type) && (type == MapMarkerInfo.MarkerType.NAV_PT))
             {
                 _isNewMarker = false;
 
-                RouteInfo routeInfo = _routes[str];
                 marker.Location = newLocation;
 
-                HideEditHandle(routeInfo.EditHandlePos);
-                HideEditHandle(routeInfo.EditHandleNeg);
+                PathInfo pathInfo = _paths[str];
 
-                routeInfo.Points[number - 1].Location = newLocation;
+                HideEditHandle(pathInfo.EditHandlePos);
+                HideEditHandle(pathInfo.EditHandleNeg);
 
-                Debug.Assert(routeInfo.Path.Paths.Count == 1);
+                pathInfo.Points[number - 1].Location = newLocation;
 
-                routeInfo.Path.Paths[0].Locations.RemoveAt(number - 1);
-                routeInfo.Path.Paths[0].Locations.Insert(number - 1, newLocation);
+                Debug.Assert(pathInfo.Path.Paths.Count == 1);
+
+                pathInfo.Path.Paths[0].Locations.RemoveAt(number - 1);
+                pathInfo.Path.Paths[0].Locations.Insert(number - 1, newLocation);
             }
-            else if (CanEdit(type) && (type == MapMarkerInfo.MarkerType.NAVPT_HANDLE))
+            else if (CanEdit(type) && (type == MapMarkerInfo.MarkerType.PATH_EDIT_HANDLE))
             {
                 _isNewMarker = true;
 
-                RouteInfo routeInfo = _routes[str];
-                HideEditHandle(routeInfo.EditHandlePos);
-                HideEditHandle(routeInfo.EditHandleNeg);
+                PathInfo pathInfo = _paths[str];
+                HideEditHandle(pathInfo.EditHandlePos);
+                HideEditHandle(pathInfo.EditHandleNeg);
 
-                _selectedMarker = AddMarkerToRoute(str, number, newLocation);
+                _selectedMarker = AddMarkerToPath(str, number, newLocation);
             }
             else if (CanEdit(type))
             {
-                _marks[str].Location = newLocation;
+// TODO: need to move threat ring too...
+                _marks[str].Marker.Location = newLocation;
             }
         }
 
         /// <summary>
-        /// add a new marker to a route at the given index in the route. creates the marker ui object and updates
-        /// the route to include the new point. returns the MapMarkerInfo for the new marker.
+        /// add a new marker to a path at the given index in the path. creates the marker ui object and updates the
+        /// path to include the new point. returns the MapMarkerInfo for the new marker.
         /// </summary>
-        private MapMarkerControl AddMarkerToRoute(string route, int number, Location newLocation)
+        private MapMarkerControl AddMarkerToPath(string pathTag, int number, Location newLocation)
         {
-            RouteInfo routeInfo = _routes[route];
+            PathInfo pathInfo = _paths[pathTag];
 
-            MapMarkerControl marker = MarkerFactory(MapMarkerInfo.MarkerType.NAVPT, route, 0, newLocation);
+            MapMarkerControl marker = MarkerFactory(MapMarkerInfo.MarkerType.NAV_PT, pathTag, 0, newLocation);
             marker.VisualState = VisualStateMask.SHOW_BG;
 
-            routeInfo.Points.Insert(number - 1, marker);
-            for (int i = 0; i < routeInfo.Points.Count; i++)
-                routeInfo.Points[i].Tag = TagForMarkerOfKind(MapMarkerInfo.MarkerType.NAVPT, route, i + 1);
+            pathInfo.Points.Insert(number - 1, marker);
+            for (int i = 0; i < pathInfo.Points.Count; i++)
+                pathInfo.Points[i].Tag = TagForMarkerOfKind(MapMarkerInfo.MarkerType.NAV_PT, pathTag, i + 1);
 
-            routeInfo.Path.Paths[0].Locations.Insert(number - 1, newLocation);
+            pathInfo.Path.Paths[0].Locations.Insert(number - 1, newLocation);
 
             return marker;
         }
 
         /// <summary>
-        /// return the location for the route edit handle between points p0 (the selected navpoint on the
-        /// route) and an adjacent point p1. there are three cases: (1) within a small distance left/right
-        /// of p0 if there is only one point, (2) midway between p0 and p1 if both points are in the point
-        /// list, and (3) a small distance beyond p0 along the line from the adjacent point if p0 is an
-        /// endpoint of the route.
+        /// return the location for the path edit handle between points p0 (the selected point on the path) and an
+        /// adjacent point p1. there are three cases: (1) within a small distance left/right of p0 if there is only
+        /// one point, (2) midway between p0 and p1 if both points are in the point list, and (3) a small distance
+        /// beyond p0 along the line from the adjacent point if p0 is an endpoint of the path.
         /// </summary>
-        private static Location LocateHandle(List<MapMarkerControl> points, int indexP0, int indexP1)
+        private static Location LocatePathHandle(List<MapMarkerControl> points, int indexP0, int indexP1)
         {
             double dLat = 0.0;
             double dLon = (indexP1 > indexP0) ? EDIT_HANDLE_DELTA : -EDIT_HANDLE_DELTA;
@@ -669,28 +849,28 @@ namespace JAFDTC.UI.Controls.Map
         private void SelectMarker(MapMarkerControl marker)
         {
             CrackMarkerTag(marker, out MapMarkerInfo.MarkerType type, out string tagStr, out int tagInt);
-            bool isRoute = (type == MapMarkerInfo.MarkerType.NAVPT);
-            bool isEditHandle = (type == MapMarkerInfo.MarkerType.NAVPT_HANDLE);
+            bool isPath = (type == MapMarkerInfo.MarkerType.NAV_PT);
+            bool isEditHandle = (type == MapMarkerInfo.MarkerType.PATH_EDIT_HANDLE);
             double dtHandle = (_dragState == DragStateEnum.IDLE) ? 0.10 : 0.30;
-            RouteInfo route = _routes.GetValueOrDefault(tagStr, null);
+            PathInfo pathInfo = _paths.GetValueOrDefault(tagStr, null);
 
             Canvas.SetZIndex(marker, MAP_MARKER_Z_SELECTION);
 
-            if (isRoute || isEditHandle)
+            if (isPath || isEditHandle)
             {
-                foreach (MapMarkerControl routeMarker in route.Points)
-                    routeMarker.VisualState = VisualStateMask.SHOW_BG | VisualStateMask.SHOW_FILL;
+                foreach (MapMarkerControl pathMarker in pathInfo.Points)
+                    pathMarker.VisualState = VisualStateMask.SHOW_BG | VisualStateMask.SHOW_FILL;
 
-                route.Path.ControlBg.Visibility = Visibility.Visible;
-                route.Path.ControlFg.Visibility = Visibility.Visible;
+                pathInfo.Path.ControlBg.Visibility = Visibility.Visible;
+                pathInfo.Path.ControlFg.Visibility = Visibility.Visible;
             }
 
-            if (isRoute && !isEditHandle)
+            if (isPath && !isEditHandle)
             {
                 marker.VisualState &= ~VisualStateMask.SHOW_FILL;
 
-                if (CanEdit(MapMarkerInfo.MarkerType.NAVPT) &&
-                    (route.Points.Count < MaxRouteLength) &&
+                if (CanEdit(MapMarkerInfo.MarkerType.NAV_PT) &&
+                    (pathInfo.Points.Count < MaxRouteLength) &&
                     (_dragState != DragStateEnum.ACTIVE_MARKER))
                 {
                     Utilities.DispatchAfterDelay(DispatcherQueue, dtHandle, false,
@@ -699,20 +879,30 @@ namespace JAFDTC.UI.Controls.Map
                             // NOTE: remember, intParam from navpoint and handle control tags is navpoint number, *not*
                             // NOTE: an array index...
 
-                            ShowEditHandleAtLocation(route.EditHandleNeg,
-                                                     TagForMarkerOfKind(MapMarkerInfo.MarkerType.NAVPT_HANDLE, tagStr, tagInt),
-                                                     LocateHandle(route.Points, tagInt - 1, tagInt - 2));
+                            ShowEditHandleAtLocation(pathInfo.EditHandleNeg,
+                                                     TagForMarkerOfKind(MapMarkerInfo.MarkerType.PATH_EDIT_HANDLE, tagStr, tagInt),
+                                                     LocatePathHandle(pathInfo.Points, tagInt - 1, tagInt - 2));
 
-                            ShowEditHandleAtLocation(route.EditHandlePos,
-                                                     TagForMarkerOfKind(MapMarkerInfo.MarkerType.NAVPT_HANDLE, tagStr, tagInt + 1),
-                                                     LocateHandle(route.Points, tagInt - 1, tagInt));
+                            ShowEditHandleAtLocation(pathInfo.EditHandlePos,
+                                                     TagForMarkerOfKind(MapMarkerInfo.MarkerType.PATH_EDIT_HANDLE, tagStr, tagInt + 1),
+                                                     LocatePathHandle(pathInfo  .Points, tagInt - 1, tagInt));
                         });
                 }
             }
             if (isEditHandle)
                 ShowEditHandleAtLocation(marker);
-            else if (!isRoute)
+            else if (!isPath)
+            {
                 marker.VisualState = VisualStateMask.SHOW_BG;
+                if (_marks.TryGetValue(tagStr, out MarkerInfo info) &&
+                    (info.ThreatRing != null) &&
+                    (info.ThreatRing.ControlBg != null))
+                {
+                    info.ThreatRing.ControlBg.Visibility = Visibility.Visible;
+                    Canvas.SetZIndex(info.ThreatRing.ControlBg, MAP_MARKER_Z_SELECTION);
+                    Canvas.SetZIndex(info.ThreatRing.ControlFg, MAP_MARKER_Z_SELECTION);
+                }
+            }
         }
 
         /// <summary>
@@ -721,25 +911,38 @@ namespace JAFDTC.UI.Controls.Map
         private void UnselectMarker(MapMarkerControl marker)
         {
             CrackMarkerTag(marker, out MapMarkerInfo.MarkerType type, out string tagStr, out int _);
-            bool isRoute = (type == MapMarkerInfo.MarkerType.NAVPT);
-            bool isEditHandle = (type == MapMarkerInfo.MarkerType.NAVPT_HANDLE);
-            RouteInfo route = _routes.GetValueOrDefault(tagStr, null);
+            bool isPath = (type == MapMarkerInfo.MarkerType.NAV_PT);
+            bool isEditHandle = (type == MapMarkerInfo.MarkerType.PATH_EDIT_HANDLE);
+            PathInfo pathInfo = _paths.GetValueOrDefault(tagStr, null);
 
             Canvas.SetZIndex(marker, _mapMarkerZ[type]);
 
-            if (isRoute || isEditHandle)
-                foreach (MapMarkerControl routeMarker in route.Points)
-                    routeMarker.VisualState = VisualStateMask.SHOW_FILL;
+            if (isPath || isEditHandle)
+                foreach (MapMarkerControl pathMarker in pathInfo.Points)
+                    pathMarker.VisualState = VisualStateMask.SHOW_FILL;
 
-            if (isRoute && !isEditHandle)
+            if (isPath && !isEditHandle)
             {
-                route.Path.ControlFg.Visibility = Visibility.Visible;
-                route.Path.ControlBg.Visibility = Visibility.Collapsed;
-                HideEditHandle(route.EditHandleNeg);
-                HideEditHandle(route.EditHandlePos);
+                pathInfo.Path.ControlFg.Visibility = Visibility.Visible;
+                pathInfo.Path.ControlBg.Visibility = Visibility.Collapsed;
+                HideEditHandle(pathInfo.EditHandleNeg);
+                HideEditHandle(pathInfo.EditHandlePos);
             }
             if (!isEditHandle)
                 marker.VisualState = VisualStateMask.SHOW_FILL;
+
+            if (!isPath)
+            {
+                marker.VisualState = VisualStateMask.SHOW_FILL;
+                if (_marks.TryGetValue(tagStr, out MarkerInfo info) &&
+                    (info.ThreatRing != null) &&
+                    (info.ThreatRing.ControlBg != null))
+                {
+                    info.ThreatRing.ControlBg.Visibility = Visibility.Collapsed;
+                    Canvas.SetZIndex(info.ThreatRing.ControlBg, MAP_MARKER_Z_PATH_RING);
+                    Canvas.SetZIndex(info.ThreatRing.ControlFg, MAP_MARKER_Z_PATH_RING);
+                }
+            }
         }
 
         /// <summary>
@@ -785,14 +988,14 @@ namespace JAFDTC.UI.Controls.Map
                 UnselectMarker(_selectedMarker);
             _selectedMarker = null;
 
-            if ((info.TagStr != null) && (_routes.TryGetValue(info.TagStr, out RouteInfo routeInfo)))
+            if ((info.TagStr != null) && (_paths.TryGetValue(info.TagStr, out PathInfo pathInfo)))
             {
-                _selectedMarker = routeInfo.Points[info.TagInt - 1];
+                _selectedMarker = pathInfo.Points[info.TagInt - 1];
                 SelectMarker(_selectedMarker);
             }
-            else if ((info.TagStr != null) && (_marks.TryGetValue(info.TagStr, out MapMarkerControl marker)))
+            else if ((info.TagStr != null) && (_marks.TryGetValue(info.TagStr, out MarkerInfo markerInfo)))
             {
-                _selectedMarker = marker;
+                _selectedMarker = markerInfo.Marker;
                 SelectMarker(_selectedMarker);
             }
         }
@@ -810,10 +1013,10 @@ namespace JAFDTC.UI.Controls.Map
             Debug.WriteLine($"MC:VerbMarkerMoved({param}) {info.Type}, {info.TagStr}, {info.TagInt}, {info.Lat}, {info.Lon}");
             if ((info.TagStr == null) || !CanEdit(info.Type))
                 return;
-            else if (_routes.TryGetValue(info.TagStr, out RouteInfo routeInfo))
-                MoveMapMarker(routeInfo.Points[info.TagInt - 1], new(double.Parse(info.Lat), double.Parse(info.Lon)));
-            else if (_marks.TryGetValue(info.TagStr, out MapMarkerControl marker))
-                MoveMapMarker(marker, new(double.Parse(info.Lat), double.Parse(info.Lon)));
+            else if (_paths.TryGetValue(info.TagStr, out PathInfo pathInfo))
+                MoveMapMarker(pathInfo.Points[info.TagInt - 1], Location(info.Lat, info.Lon));
+            else if (_marks.TryGetValue(info.TagStr, out MarkerInfo markerInfo))
+                MoveMapMarker(markerInfo.Marker, Location(info.Lat, info.Lon));
         }
 
         /// <summary>
@@ -824,15 +1027,15 @@ namespace JAFDTC.UI.Controls.Map
             Debug.WriteLine($"MC:VerbMarkerAdded({param}) {info.Type}, {info.TagStr}, {info.TagInt}, {info.Lat}, {info.Lon}");
             if ((info.TagStr == null) || !CanEdit(info.Type))
                 return;
-            else if (_routes.TryGetValue(info.TagStr, out RouteInfo routeInfo))
+            else if (_paths.TryGetValue(info.TagStr, out PathInfo pathInfo))
             {
-                HideEditHandle(routeInfo.EditHandlePos);
-                HideEditHandle(routeInfo.EditHandleNeg);
-                AddMarkerToRoute(info.TagStr, info.TagInt, new(double.Parse(info.Lat), double.Parse(info.Lon)));
+                HideEditHandle(pathInfo.EditHandlePos);
+                HideEditHandle(pathInfo.EditHandleNeg);
+                AddMarkerToPath(info.TagStr, info.TagInt, Location(info.Lat, info.Lon));
             }
             else
             {
-                AddMark(info.Type, info.TagStr, new(double.Parse(info.Lat), double.Parse(info.Lon)));
+                AddMarker(info.Type, info.TagStr, Location(info.Lat, info.Lon));
             }
         }
 
@@ -842,35 +1045,32 @@ namespace JAFDTC.UI.Controls.Map
         public void VerbMarkerDeleted(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
             Debug.WriteLine($"MC:VerbMarkerDeleted({param}) {info.Type}, {info.TagStr}, {info.TagInt}");
-            if ((info.TagStr == null) || !CanEdit(info.Type))
+            if (info.TagStr == null)
                 return;
-            else if (_routes.TryGetValue(info.TagStr, out RouteInfo routeInfo))
+
+            CrackMarkerTag(_selectedMarker, out MapMarkerInfo.MarkerType _, out string tagStr, out int _);
+            if (tagStr == info.TagStr)
             {
-                CrackMarkerTag(_selectedMarker, out MapMarkerInfo.MarkerType _, out string tagStr, out int _);
-                if (tagStr == info.TagStr)
-                {
-                    UnselectMarker(_selectedMarker);
-                    _selectedMarker = null;
-                }
-                MapMarkerControl marker = routeInfo.Points[info.TagInt - 1];
+                UnselectMarker(_selectedMarker);
+                _selectedMarker = null;
+            }
+
+            if (CanEdit(info.Type) && _paths.TryGetValue(info.TagStr, out PathInfo pathInfo))
+            {
+                MapMarkerControl marker = pathInfo.Points[info.TagInt - 1];
                 Children.Remove(marker);
 
-                routeInfo.Points.RemoveAt(info.TagInt - 1);
-                for (int i = 0; i < routeInfo.Points.Count; i++)
-                    routeInfo.Points[i].Tag = TagForMarkerOfKind(info.Type, info.TagStr, i + 1);
-                routeInfo.Path.Paths[0].Locations.RemoveAt(info.TagInt - 1);
+                pathInfo.Points.RemoveAt(info.TagInt - 1);
+                for (int i = 0; i < pathInfo.Points.Count; i++)
+                    pathInfo.Points[i].Tag = TagForMarkerOfKind(info.Type, info.TagStr, i + 1);
+                pathInfo.Path.Paths[0].Locations.RemoveAt(info.TagInt - 1);
             }
-            else if (_marks.TryGetValue(info.TagStr, out MapMarkerControl marker))
+            else if (CanEdit(info.Type) && _marks.TryGetValue(info.TagStr, out MarkerInfo markerInfo))
             {
-                CrackMarkerTag(_selectedMarker, out MapMarkerInfo.MarkerType _, out string tagStr, out int _);
-                if (tagStr == info.TagStr)
-                {
-                    UnselectMarker(_selectedMarker);
-                    _selectedMarker = null;
-                }
-                Children.Remove(marker);
+                markerInfo.Remove(this);
                 _marks.Remove(info.TagStr);
             }
+// TODO: handle delete of markers w/ threat rings?
         }
 
         // ------------------------------------------------------------------------------------------------------------
@@ -1041,7 +1241,7 @@ namespace JAFDTC.UI.Controls.Map
                 if ((dist2 > DIST2_MOVE_THRESHOLD) && CanEdit(type))
                 {
                     _dragState = DragStateEnum.ACTIVE_MARKER;
-                    if (type == MapMarkerInfo.MarkerType.NAVPT_HANDLE)
+                    if (type == MapMarkerInfo.MarkerType.PATH_EDIT_HANDLE)
                         _isNewMarker = true;
                     else
                         VerbMirror?.MirrorVerbMarkerMoved(this, new(_selectedMarker), -1);

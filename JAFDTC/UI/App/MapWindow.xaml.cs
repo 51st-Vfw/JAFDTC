@@ -22,7 +22,9 @@
 #define ENABLE_MAP_FILE_CACHE
 
 using JAFDTC.Models.Base;
+using JAFDTC.Models.CoreApp;
 using JAFDTC.Models.DCS;
+using JAFDTC.Models.Import;
 using JAFDTC.UI.Base;
 using JAFDTC.UI.Controls.Map;
 using JAFDTC.Utilities;
@@ -34,9 +36,12 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Input;
+using Microsoft.Windows.Storage.Pickers;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.IO;
 using System.Runtime.InteropServices;
 using Windows.Graphics;
 
@@ -115,9 +120,9 @@ namespace JAFDTC.UI.App
 
         // the following marker types are never editable.
         //
-        public const MapMarkerInfo.MarkerTypeMask RO_MARKER_TYPES = (MapMarkerInfo.MarkerTypeMask.DCS_CORE |
-                                                                     MapMarkerInfo.MarkerTypeMask.IMPORT_GEN |
-                                                                     MapMarkerInfo.MarkerTypeMask.IMPORT_WEZ);
+        public const MapMarkerInfo.MarkerTypeMask RO_MARKER_TYPES = (MapMarkerInfo.MarkerTypeMask.POI_DCS_CORE |
+                                                                     MapMarkerInfo.MarkerTypeMask.UNIT_FRIEND |
+                                                                     MapMarkerInfo.MarkerTypeMask.UNIT_ENEMY);
 
         // ------------------------------------------------------------------------------------------------------------
         //
@@ -158,11 +163,23 @@ namespace JAFDTC.UI.App
 
         public bool CanOpenMarker { get; set; }
 
+        public string ImportedMarkerPath { get; set; }
+
         // ---- private properties
 
-        private MapControl.Caching.ImageFileCache _mapTileCache;
+        private bool IsViewportChanging { get; set; }
 
-        private bool _isViewportChanging = false;
+        private bool IsThreatsEnabled { get; set; }
+
+        private bool IsFilterEnabled { get; set; }
+
+        private MapFilterSpec FilterMap { get; set; }
+
+        private readonly Dictionary<string, List<string>> _mappedCampaigns = [ ];
+
+        private readonly Dictionary<string, string> _mapImportedMarkerDict = [ ];
+
+        private readonly MapControl.Caching.ImageFileCache _mapTileCache;
 
         private readonly Dictionary<string, IMapControlVerbHandler> _mapObservers = [ ];
 
@@ -176,13 +193,17 @@ namespace JAFDTC.UI.App
         private static PointInt32 _windPosnCur = new() { X = 0, Y = 0 };
         private static SizeInt32 _windSizeCur = new() { Width = 0, Height = 0 };
 
+        // ---- constructed properties
+
+        private bool IsFiltered => ((FilterMap != null) && !FilterMap.IsDefault);
+
         // ------------------------------------------------------------------------------------------------------------
         //
         // construction
         //
         // ------------------------------------------------------------------------------------------------------------
 
-        public MapWindow()
+        public MapWindow(bool isThreatsEnabled = false, bool isFilterEnabled = false)
         {
             InitializeComponent();
 
@@ -192,6 +213,9 @@ namespace JAFDTC.UI.App
             AppWindow.TitleBar.PreferredHeightOption = Microsoft.UI.Windowing.TitleBarHeightOption.Standard;
 
             Theater = "Unknown";
+            IsThreatsEnabled = isThreatsEnabled;
+            IsFilterEnabled = isFilterEnabled;
+            IsViewportChanging = false;
             CoordFormat = LLFormat.DD;
             OpenMask = MapMarkerInfo.MarkerTypeMask.NONE;
             EditMask = MapMarkerInfo.MarkerTypeMask.NONE;
@@ -200,6 +224,11 @@ namespace JAFDTC.UI.App
 
             Closed += MapWindow_Closed;
             SizeChanged += MapWindow_SizeChanged;
+
+// TODO: restore filter from persisted state
+            FilterMap = new();
+
+            // ---- map control setup
 
             uiMap.VerbMirror = this;
             RegisterMapControlVerbObserver(uiMap);
@@ -328,17 +357,27 @@ namespace JAFDTC.UI.App
         // ------------------------------------------------------------------------------------------------------------
 
         /// <summary>
-        /// setup initial map content (markers, routes) and load it into the map control as well as various ui
-        /// elements in the window. set up the initial map view configuraiton to center on the bounding box of the
-        /// marker set.
+        /// set up initial map content (markers, routes, threats) and load it into the map control as well as various
+        /// ui elements in the window. set the initial map view configuraiton to center on bounding box of markers.
         /// 
-        /// this should be the final call in the setup process.
+        /// routes are specified by a dictionary keyed by route unique identifiers with navpoint list values.
+        ///
+        /// marks are specified by a dictionary keyed by mark unique identifiers with point of interest values. note
+        /// that the point of interest type may be a MapMarkerInfo.MarkerType, not just a PointOfInterestType.
+        /// 
+        /// threats are specified by a dictionary keyed by threat marker unique identifers with point of interest
+        /// values. wez size (in nm) is captured in the Elevation field of hte poi.
+        /// 
+        /// this should be the final call in the setup process and will not generate add/delete/etc. verb calls.
         /// </summary>
-        public void SetupMapContent(Dictionary<string, List<INavpointInfo>> routes,
-                                    Dictionary<string, PointOfInterest> marks)
+        public void SetupMapContent(Dictionary<string, List<INavpointInfo>> paths,
+                                    Dictionary<string, PointOfInterest> marks,
+                                    Dictionary<string, PointOfInterest> threats)
         {
+            // set up theater in status area at bottom of window and size the width of the current mouse lat/lon
+            // based on the coordinate format we are using.
+            //
             uiTxtTheater.Text = Theater;
-
             double width = CoordFormat switch
             {
                 LLFormat.DDM_P1ZF => (6.0 + (5.0 * 0.5)) * 8.0,             // M 00 00.0, M 000 00.0
@@ -351,15 +390,35 @@ namespace JAFDTC.UI.App
             uiTxtMouseLon.Width = width + 8.0;
 
             uiMap.SetTheater(Theater);
-            uiMap.SetupMapContent(routes, marks);
+
+            foreach (KeyValuePair<string, List<INavpointInfo>> kvp in paths)
+            {
+                ObservableCollection<Location> locations = [];
+                for (int i = 0; i < kvp.Value.Count; i++)
+                    locations.Add(new Location(double.Parse(kvp.Value[i].Lat), double.Parse(kvp.Value[i].Lon)));
+                uiMap.AddPath(MapMarkerInfo.MarkerType.NAV_PT, kvp.Key, locations);
+            }
+
+            foreach (KeyValuePair<string, PointOfInterest> kvp in marks)
+            {
+                if (kvp.Value.Type == PointOfInterestType.CAMPAIGN)
+                    if (_mappedCampaigns.TryGetValue(kvp.Value.Campaign, out List<string> value))
+                        value.Add(kvp.Value.UniqueID);
+                    else
+                        _mappedCampaigns[kvp.Value.Campaign] = [ kvp.Value.UniqueID ];
+                uiMap.AddMarker((MapMarkerInfo.MarkerType) kvp.Value.Type, kvp.Key,
+                                new Location(double.Parse(kvp.Value.Latitude), double.Parse(kvp.Value.Longitude)));
+            }
 
             BoundingBox bounds = uiMap.GetMarkerBoundingBox(2.0);
             uiMap.ZoomToBounds(bounds);                                     // ztb here avoids visual glitch
             DispatcherQueue.TryEnqueue(DispatcherQueuePriority.Low, () =>
             {
+// TODO: should this center on theater instead of marker bounds?
                 uiMap.ZoomToBounds(bounds);                                 // ztb here with non-0 window size
             });
 
+            RebuildElementsForFilter();
             RebuildInterfaceState();
         }
 
@@ -428,6 +487,115 @@ namespace JAFDTC.UI.App
         /// <summary>
         /// TODO: document
         /// </summary>
+        private void RebuildElementsForFilter()
+        {
+            List<string> campMarkTags = [];
+            if (!string.IsNullOrEmpty(FilterMap.ShowCampaign) &&
+                _mappedCampaigns.TryGetValue(FilterMap.ShowCampaign, out List<string> value))
+            {
+                campMarkTags = value;
+            }
+
+            uiMap.PathVisibility(( _ ) => FilterMap.ShowNavRoutes);
+
+            uiMap.MarkerVisibility((MapMarkerInfo.MarkerType type, string tag, bool hasRing) => {
+                if (type == MapMarkerInfo.MarkerType.POI_DCS_CORE)
+                    return new(FilterMap.ShowPOIDCS, FilterMap.ShowPOIDCS);
+                else if (type == MapMarkerInfo.MarkerType.POI_USER)
+                    return new(FilterMap.ShowPOIUsr, FilterMap.ShowPOIUsr);
+                else if ((type == MapMarkerInfo.MarkerType.POI_CAMPAIGN) && string.IsNullOrEmpty(FilterMap.ShowCampaign))
+                    return new(false, false);
+                else if ((type == MapMarkerInfo.MarkerType.POI_CAMPAIGN) && FilterMap.ShowCampaign.Equals("*"))
+                    return new(true, true);
+                else if (type == MapMarkerInfo.MarkerType.POI_CAMPAIGN)
+                    return new(campMarkTags.Contains(tag), campMarkTags.Contains(tag));
+                else if ((type != MapMarkerInfo.MarkerType.UNIT_FRIEND) && (type != MapMarkerInfo.MarkerType.UNIT_ENEMY))
+                    return new(true, true);
+
+                // NOTE: marker/ring visibilities assume that threat rings are separate from units. that is, a
+                // NOTE: unit with a threat ring would have a marker for the unit and a seperate marker for the
+                // NOTE: threat ring. this way a single marker can stand in for the collective threat ring of a
+                // NOTE: set of units. when no relevant units are visible, threat ring center markers are visible.
+                //
+                //                       mark = UNIT_FRIEND    mark = UNIT_ENEMY
+                // units     threats     no ring   has ring    no ring   has ring
+                // --------  --------    --------  --------    --------  --------
+                // ALL       ALL         t, -      f*, t       t, -      f*, t
+                // ALL       OPPOSING    t, -      f*, f*      t, -      f*, t
+                // ALL       NONE        t, -      f*, f*      t, -      f*, f*
+                //
+                // OPPOSING  ALL         f, -      t*, t*      t, -      f*, t
+                // OPPOSING  OPPOSING    f, -      f, f        t, -      f*, t
+                // OPPOSING  NONE        f, -      f, f        t, -      f*, f
+                // 
+                // NONE      ALL         f, -      t*, t*      f, -      t*, t*
+                // NONE      OPPOSING    f, -      f, f        f, -      t*, t*
+                // NONE      NONE        f, -      f, f        f, -      f, f
+                //
+                // * => change from "no ring" specifying both marker and ring visibility in ring cases.
+
+                bool isMarkVis = true;
+                if (type == MapMarkerInfo.MarkerType.UNIT_FRIEND)
+                    isMarkVis = (FilterMap.ShowUnits == MapFilterSpec.ImportFilter.ALL);
+                else if (type == MapMarkerInfo.MarkerType.UNIT_ENEMY)
+                    isMarkVis = (FilterMap.ShowUnits != MapFilterSpec.ImportFilter.NONE);
+                bool isRingVis = isMarkVis;
+
+                if (hasRing && (type == MapMarkerInfo.MarkerType.UNIT_FRIEND))
+                {
+                    if ((FilterMap.ShowUnits == MapFilterSpec.ImportFilter.ALL) &&
+                        (FilterMap.ShowThreatRings == MapFilterSpec.ImportFilter.ALL))
+                    {
+                        isMarkVis = false;
+                        isRingVis = true;
+                    }
+                    else if ((FilterMap.ShowUnits == MapFilterSpec.ImportFilter.ALL) &&
+                             (FilterMap.ShowThreatRings != MapFilterSpec.ImportFilter.ALL))
+                    {
+                        isMarkVis = false;
+                        isRingVis = false;
+                    }
+                    else if ((FilterMap.ShowUnits != MapFilterSpec.ImportFilter.ALL) &&
+                             (FilterMap.ShowThreatRings == MapFilterSpec.ImportFilter.ALL))
+                    {
+                        isMarkVis = true;
+                        isRingVis = true;
+                    }
+                }
+                else if (hasRing && (type == MapMarkerInfo.MarkerType.UNIT_ENEMY))
+                {
+                    if ((FilterMap.ShowUnits == MapFilterSpec.ImportFilter.ALL) &&
+                        (FilterMap.ShowThreatRings != MapFilterSpec.ImportFilter.NONE))
+                    {
+                        isMarkVis = false;
+                    }
+                    else if ((FilterMap.ShowUnits == MapFilterSpec.ImportFilter.ALL) &&
+                             (FilterMap.ShowThreatRings == MapFilterSpec.ImportFilter.NONE))
+                    {
+                        isMarkVis = false;
+                        isRingVis = false;
+                    }
+                    else if (FilterMap.ShowUnits == MapFilterSpec.ImportFilter.OPPOSING)
+                    {
+                        isMarkVis = false;
+                    }
+                    else if ((FilterMap.ShowUnits == MapFilterSpec.ImportFilter.NONE) &&
+                             (FilterMap.ShowThreatRings != MapFilterSpec.ImportFilter.NONE))
+                    {
+                        isMarkVis = true;
+                        isRingVis = true;
+                    }
+                }
+
+                return new(isMarkVis, isRingVis);
+            });
+
+            RebuildStatusNavpointInfo();
+        }
+
+        /// <summary>
+        /// TODO: document
+        /// </summary>
         private void RebuildStatusNavpointInfo()
         {
             bool isMarkerSelected = false;
@@ -443,8 +611,10 @@ namespace JAFDTC.UI.App
             }
             else
             {
-                if (mrkInfo.Type == MapMarkerInfo.MarkerType.NAVPT_HANDLE)
+                if (mrkInfo.Type == MapMarkerInfo.MarkerType.PATH_EDIT_HANDLE)
                     uiTxtSelName.Text = "Add Navpoint Handle";
+                else if (_mapImportedMarkerDict.TryGetValue(mrkInfo.TagStr, out string importedMarkerName))
+                    uiTxtSelName.Text = importedMarkerName;
                 else
                     uiTxtSelName.Text = MarkerExplainer?.MarkerDisplayName(mrkInfo) ?? "Unknown";
 
@@ -473,12 +643,13 @@ namespace JAFDTC.UI.App
                                (mkrInfo.Type != MapMarkerInfo.MarkerType.UNKNOWN) &&
                                OpenMask.HasFlag((MapMarkerInfo.MarkerTypeMask)(1 << (int)mkrInfo.Type)));
 
-// TODO: correctly set enable when implemented
+// TODO: correctly set enable when add implemented
             Utilities.SetEnableState(uiBarBtnAdd, false);
             Utilities.SetEnableState(uiBarBtnEdit, isOpenable && CanOpenMarker);
             Utilities.SetEnableState(uiBarBtnDelete, uiMap.CanEditSelectedMarker);
-// TODO: correctly set enable when implemented
-            Utilities.SetEnableState(uiBarBtnImport, false);
+            Utilities.SetEnableState(uiBarBtnImport, IsThreatsEnabled);
+            Utilities.SetEnableState(uiBarBtnClear, IsThreatsEnabled && (_mapImportedMarkerDict.Count > 0));
+            Utilities.SetEnableState(uiBarBtnFilter, IsFilterEnabled);
             Utilities.SetEnableState(uiBarBtnSettings, true);
         }
 
@@ -530,15 +701,194 @@ namespace JAFDTC.UI.App
         }
 
         /// <summary>
-        /// import command: manage import points.
+        /// import command: manage import threats. prompt for a file, then pull units to create threats to add to
+        /// the map. imported threats are added to the set of known threats.
         /// </summary>
-        public void CmdImport_Click(object sender, RoutedEventArgs args)
+        public async void CmdImportThreats_Click(object sender, RoutedEventArgs args)
         {
-// TODO: implement
+            // if there are already markers imported, ask if its ok to clear them out as we can only have one set
+            // imported at a time.
+            //
+            ContentDialogResult result;
+            if (_mapImportedMarkerDict.Count > 0)
+            {
+                result = await Utilities.Message2BDialog(Content.XamlRoot, "Are You Sure?",
+                            "Importing threat and unit markers will remove any previously imported markers. Are" +
+                            "you sure you want to proceed?",
+                            "Remove Markers");
+                if (result == ContentDialogResult.None)
+                    return;                                     // **** EXITS: cancel
+
+                uiMap.ClearMarkers([MapMarkerInfo.MarkerType.UNIT_ENEMY, MapMarkerInfo.MarkerType.UNIT_FRIEND]);
+                _mapImportedMarkerDict.Clear();
+            }
+
+            // select file to import threats from with FileOpenPicker.
+            //
+            FileOpenPicker picker = new(this.AppWindow.Id)
+            {
+                CommitButtonText = "Import Elements",
+                SuggestedStartLocation = PickerLocationId.Desktop,
+                ViewMode = PickerViewMode.List
+            };
+            picker.FileTypeFilter.Add(".acmi");
+            picker.FileTypeFilter.Add(".cf");
+            picker.FileTypeFilter.Add(".miz");
+
+            PickFileResult resultPick = await picker.PickSingleFileAsync();
+            if (resultPick == null)
+                return;                                         // **** EXITS: cancel
+
+            // set up parameters for the import with ImportParamsThreatDialog.
+            //
+            ImportParamsThreatDialog setupDialog = new()
+            {
+                XamlRoot = Content.XamlRoot
+            };
+            result = await setupDialog.ShowAsync(ContentDialogPlacement.Popup);
+            if (result != ContentDialogResult.Primary)
+                return;                                         // **** EXITS: cancel
+
+            // build extractor and import groups/units from the file.
+            //
+            ImportedMarkerPath = resultPick.Path;
+
+            IExtractor extractor = Path.GetExtension(resultPick.Path).ToLower() switch
+            {
+// TODO: add .acmi, .cf (?) support
+                ".acmi" => null,
+                ".cf" => null,
+                ".miz" => new ImportHelperMIZ(),
+                _ => null
+            };
+            if (extractor == null)
+            {
+                await Utilities.Message1BDialog(Content.XamlRoot,
+                                                "Import Failed",
+                                                $"File type “{Path.GetExtension(resultPick.Path)}” is not supported.");
+                return;                                         // **** EXITS: bogus file type
+            }
+
+            ExtractCriteria criteria = new()
+            {
+                FilePath = resultPick.Path,
+                Theater = Theater,
+                UnitCategories = [UnitCategoryType.GROUND, UnitCategoryType.NAVAL],
+                IsAlive = (setupDialog.IsAliveOnly) ? true : null
+            };
+            if (setupDialog.IsEnemyOnly && (setupDialog.FriendlyCoalition == CoalitionType.BLUE))
+                criteria.Coalitions = [CoalitionType.RED];
+            else if (setupDialog.IsEnemyOnly && (setupDialog.FriendlyCoalition == CoalitionType.RED))
+                criteria.Coalitions = [CoalitionType.BLUE];
+            IReadOnlyList<UnitGroupItem> groups = extractor.Extract(criteria);
+            if (groups == null)
+            {
+                await Utilities.Message1BDialog(Content.XamlRoot,
+                                                "Import Failed",
+                                                $"Encountered an error while importing from path\n\n{resultPick.Path}");
+                return;                                         // **** EXITS: import failure
+            }
+
+            // add the threats to the map control.
+            //
+            foreach (UnitGroupItem group in groups)
+            {
+// TODO: what to do on units outside of current theater? ignore? warn and create anyway?
+                MapMarkerInfo.MarkerType type = (group.Coalition == setupDialog.FriendlyCoalition)
+                                                ? MapMarkerInfo.MarkerType.UNIT_FRIEND
+                                                : MapMarkerInfo.MarkerType.UNIT_ENEMY;
+                string threatType = null;
+                double threatRadius = 0.0;
+                double avgLat = 0.0;
+                double avgLon = 0.0;
+                foreach (UnitItem unit in group.Units)
+                {
+                    Threat dbThreat = ThreatDbase.Instance.Find(unit.Type);
+                    if ((dbThreat != null) && (dbThreat.RadiusWEZ > threatRadius))
+                    {
+                        threatType = dbThreat.Name;
+                        threatRadius = dbThreat.RadiusWEZ;
+                    }
+                    avgLat += unit.Position.Latitude;
+                    avgLon += unit.Position.Longitude;
+
+                    // add marker for the unit to the map view if we are not importing summary information only.
+                    //
+                    if (!setupDialog.IsSummaryOnly)
+                    {
+                        uiMap.AddMarker(type, unit.UniqueID,
+                                        new Location(unit.Position.Latitude, unit.Position.Longitude));
+                        _mapImportedMarkerDict[unit.UniqueID] = (unit.IsAlive) ? unit.Name : (unit.Name + " [DEAD]");
+                    }
+                }
+                avgLat /= (double)group.Units.Count;
+                avgLon /= (double)group.Units.Count;
+
+                // add threat ring at the average location of the group. the ring has a visible center marker iff
+                // we are not showing summary only.
+                //
+                if (threatRadius > 0.0)
+                {
+                    uiMap.AddMarker(type, group.UniqueID, new Location(avgLat, avgLon), threatRadius,
+                                    !setupDialog.IsSummaryOnly);
+                    _mapImportedMarkerDict[group.UniqueID] = threatType + " WEZ";
+                }
+            }
+
+            RebuildInterfaceState();
         }
 
         /// <summary>
-        /// settings command: open the settings dialog to select settings and update persisted settings as needed.
+        /// clear command: clear any imported threat markers by removing them from the map. asks permission first.
+        /// </summary>
+        public async void CmdClearThreats_Click(object sender, RoutedEventArgs args)
+        {
+            ContentDialogResult result = await Utilities.Message2BDialog(Content.XamlRoot,
+                "Are You Sure?",
+                "Remove all imported threat and unit markers from the map? This action cannot be undone.",
+                "Remove Markers");
+            if (result == ContentDialogResult.Primary)
+            {
+                ImportedMarkerPath = null;
+                uiMap.ClearMarkers([MapMarkerInfo.MarkerType.UNIT_ENEMY, MapMarkerInfo.MarkerType.UNIT_FRIEND]);
+                _mapImportedMarkerDict.Clear();
+
+                RebuildInterfaceState();
+            }
+        }
+
+        /// <summary>
+        /// filter command: set the filter to apply to markers on the map.
+        /// </summary>
+        public async void CmdFilter_Click(object sender, RoutedEventArgs args)
+        {
+            AppBarToggleButton button = (AppBarToggleButton)sender;
+            if (button.IsChecked != IsFiltered)
+                button.IsChecked = IsFiltered;
+
+            List<string> campaigns = [.. _mappedCampaigns.Keys ];
+            campaigns.Sort();
+            MapFilterDialog filterDialog = new(FilterMap, campaigns)
+            {
+                XamlRoot = Content.XamlRoot,
+            };
+            ContentDialogResult result = await filterDialog.ShowAsync(ContentDialogPlacement.Popup);
+            if (result == ContentDialogResult.Primary)
+                FilterMap = filterDialog.Filter;
+            else if (result == ContentDialogResult.Secondary)
+                FilterMap = MapFilterSpec.Default;
+            else
+                return;                                         // EXIT: cancelled, no change...
+
+// TODO: persist map filter
+            RebuildElementsForFilter();
+
+            button.IsChecked = IsFiltered;
+        }
+
+        /// <summary>
+        /// settings command: open the settings dialog to select and change map settings. updates persisted settings
+        /// as necessary.
         /// </summary>
         public async void CmdSettings_Click(object sender, RoutedEventArgs args)
         {
@@ -562,7 +912,7 @@ namespace JAFDTC.UI.App
         /// </summary>
         public void ZoomSlider_ValueChanged(object sender, RoutedEventArgs args)
         {
-            if (!_isViewportChanging)
+            if (!IsViewportChanging)
             {
                 Slider slider = sender as Slider;
                 uiMap.ZoomLevel = ((slider.Value / 100.0) * (uiMap.MaxZoomLevel - uiMap.MinZoomLevel)) + uiMap.MinZoomLevel;
@@ -576,9 +926,9 @@ namespace JAFDTC.UI.App
         /// </summary>
         private void Map_ViewportChanged(object sender, ViewportChangedEventArgs e)
         {
-            _isViewportChanging = true;
+            IsViewportChanging = true;
             uiSliderZoom.Value = 100.0 * (uiMap.ZoomLevel / (uiMap.MaxZoomLevel - uiMap.MinZoomLevel));
-            _isViewportChanging = false;
+            IsViewportChanging = false;
         }
 
         /// <summary>

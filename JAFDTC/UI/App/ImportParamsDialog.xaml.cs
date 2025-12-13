@@ -54,7 +54,8 @@ namespace JAFDTC.UI.App
         //
         // ------------------------------------------------------------------------------------------------------------
 
-        public ImportParamsDialog(List<string> items = null, Dictionary<string, string> optTitles = null,
+        public ImportParamsDialog(string itemPrompt, List<string> items = null,
+                                  Dictionary<string, string> optTitles = null,
                                   Dictionary<string, object> optDefaults = null)
         {
             InitializeComponent();
@@ -62,20 +63,22 @@ namespace JAFDTC.UI.App
             uiCkbxValueA.Visibility = Visibility.Collapsed;
             uiCkbxValueB.Visibility = Visibility.Collapsed;
 
+            uiTextPrompt.Text = itemPrompt;
+
             Items = items;
-            if ((optTitles != null) && optTitles.ContainsKey("A") && (optTitles["A"] != null))
+            if ((optTitles != null) && optTitles.TryGetValue("A", out string optA) && (optA != null))
             {
                 uiCkbxValueA.Visibility = Visibility.Visible;
-                uiCkbxTitleA.Text = optTitles["A"];
+                uiCkbxTitleA.Text = optA;
                 uiCkbxValueA.IsChecked = (bool?)(((optDefaults != null) &&
-                                                 optDefaults.ContainsKey("A")) ? optDefaults["A"] : false);
+                                                 optDefaults.TryGetValue("A", out object value)) ? value : false);
             }
-            if ((optTitles != null) && optTitles.ContainsKey("B") && (optTitles["B"] != null))
+            if ((optTitles != null) && optTitles.TryGetValue("B", out string optB) && (optB != null))
             {
                 uiCkbxValueB.Visibility = Visibility.Visible;
-                uiCkbxTitleB.Text = optTitles["B"];
+                uiCkbxTitleB.Text = optB;
                 uiCkbxValueB.IsChecked = (bool?)(((optDefaults != null) &&
-                                                 optDefaults.ContainsKey("B")) ? optDefaults["B"] : false);
+                                                 optDefaults.TryGetValue("B", out object value)) ? value : false);
 
             }
             uiComboItems.SelectedIndex = (Items.Count > 0) ? 0 : -1;

@@ -1,4 +1,7 @@
-﻿// ********************************************************************************************************************
+﻿// TODO: DEPRECATE
+
+#if NOPE
+// ********************************************************************************************************************
 //
 // ImportHelper.cs -- abstract base class for helpers to import navpoints
 //
@@ -41,3 +44,4 @@ namespace JAFDTC.Models.Import
                                     Dictionary<string, object> options = null);
     }
 }
+#endif

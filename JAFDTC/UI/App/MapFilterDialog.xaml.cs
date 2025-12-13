@@ -17,7 +17,10 @@
 //
 // ********************************************************************************************************************
 
+using JAFDTC.Models.CoreApp;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using System.Collections.Generic;
 
 namespace JAFDTC.UI.App
 {
@@ -27,15 +30,81 @@ namespace JAFDTC.UI.App
     /// </summary>
     public sealed partial class MapFilterDialog : ContentDialog
     {
+
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // properties
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
+        public MapFilterSpec Filter => new((MapFilterSpec.ImportFilter)uiComboUnitImport.SelectedIndex,
+                                           (MapFilterSpec.ImportFilter)uiComboRingImport.SelectedIndex,
+                                           uiComboCampaign.SelectedIndex switch
+                                           {
+                                               0 => null,
+                                               1 => "*",
+                                               _ => uiComboCampaign.SelectedItem as string,
+                                           },
+                                           (bool)uiCkbxPoIDCS.IsChecked,
+                                           (bool)uiCkbxPoIUsr.IsChecked,
+                                           (bool)uiCkbxPoICamp.IsChecked,
+                                           (bool)uiCkbxNavRoutes.IsChecked);
+
         // ------------------------------------------------------------------------------------------------------------
         //
         // construction
         //
         // ------------------------------------------------------------------------------------------------------------
 
-        public MapFilterDialog()
+        public MapFilterDialog(MapFilterSpec filter, List<string> campaigns)
         {
             InitializeComponent();
+
+            uiComboUnitImport.SelectedIndex = (int)filter.ShowUnits;
+            uiComboRingImport.SelectedIndex = (int)filter.ShowThreatRings;
+
+            List<string> items = [ "No campaigns", "All campaigns" ];
+            items.AddRange(campaigns);
+            uiComboCampaign.ItemsSource = items;
+            int index = campaigns.IndexOf(filter.ShowCampaign);
+            if (index != -1)
+                uiComboCampaign.SelectedIndex = index + 2;
+            else if (filter.ShowCampaign == "*")
+                uiComboCampaign.SelectedIndex = 1;
+            else
+                uiComboCampaign.SelectedIndex = 0;
+
+            uiCkbxPoIDCS.IsChecked = filter.ShowPOIDCS;
+            uiCkbxPoIUsr.IsChecked = filter.ShowPOIUsr;
+            uiCkbxPoICamp.IsChecked = filter.ShowPOICamp;
+            uiCkbxNavRoutes.IsChecked = filter.ShowNavRoutes;
+
+            IsSecondaryButtonEnabled = !filter.IsDefault;
+        }
+
+        public void Combo_SelectionChanged(object sender, SelectionChangedEventArgs args)
+        {
+            if (uiComboCampaign.SelectedIndex == 0)
+            {
+                uiComboCampaign.IsEnabled = false;
+                uiCkbxPoICamp.IsChecked = false;
+            }
+            IsSecondaryButtonEnabled = !Filter.IsDefault;
+        }
+
+        public void CheckBox_Click(object sender, RoutedEventArgs args)
+        {
+            if (!(bool)uiCkbxPoICamp.IsChecked)
+            {
+                uiComboCampaign.SelectedIndex = 0;
+                uiComboCampaign.IsEnabled = false;
+            }
+            else
+            {
+                uiComboCampaign.SelectedIndex = 1;
+                uiComboCampaign.IsEnabled = true;
+            }
+            IsSecondaryButtonEnabled = !Filter.IsDefault;
         }
     }
 }

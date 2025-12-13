@@ -1,8 +1,10 @@
-﻿// ********************************************************************************************************************
+﻿// TODO: DEPRECATE
+
+// ********************************************************************************************************************
 //
 // IImportHelper.cs -- interface for helper to import navpoints
 //
-// Copyright(C) 2023-2024 ilominar/raven
+// Copyright(C) 2023-2025 ilominar/raven
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 // Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -18,10 +20,28 @@
 // ********************************************************************************************************************
 
 using JAFDTC.Models.Base;
+using System;
 using System.Collections.Generic;
 
 namespace JAFDTC.Models.Import
 {
+// TODO: parking this here for now, likely lives somewhere else.
+    public static class ValidationExtension
+    {
+        public static void Required(this string? value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                throw new ArgumentException("Parameter is required");
+        }
+
+        public static void Required(this object obj)
+        {
+            if (obj == null)
+                throw new ArgumentException("Parameter is required");
+        }
+    }
+
+#if NOPE
     /// <summary>
     /// interface for classes that help interface between jafdtc navpoint system Configurations an an import data
     /// source to allow import of navpoints.
@@ -58,4 +78,5 @@ namespace JAFDTC.Models.Import
         public bool Import(INavpointSystemImport navptSys, string flightName = "", bool isReplace = true,
                            Dictionary<string, object> options = null);
     }
+#endif
 }

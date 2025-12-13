@@ -155,9 +155,9 @@ namespace JAFDTC.UI.Base
         private void CoreOpenMap(bool isMapWindowActive)
         {
             bool isLinked = !string.IsNullOrEmpty(Config.SystemLinkedTo(SystemTag));
-            MapMarkerInfo.MarkerTypeMask editMask = ((isLinked) ? 0 : MapMarkerInfo.MarkerTypeMask.NAVPT) |
-                                                    ((isLinked) ? 0 : MapMarkerInfo.MarkerTypeMask.NAVPT_HANDLE);
-            MapMarkerInfo.MarkerTypeMask openMask = MapMarkerInfo.MarkerTypeMask.NAVPT;
+            MapMarkerInfo.MarkerTypeMask editMask = ((isLinked) ? 0 : MapMarkerInfo.MarkerTypeMask.NAV_PT) |
+                                                    ((isLinked) ? 0 : MapMarkerInfo.MarkerTypeMask.PATH_EDIT_HANDLE);
+            MapMarkerInfo.MarkerTypeMask openMask = MapMarkerInfo.MarkerTypeMask.NAV_PT;
 
             Dictionary<string, List<INavpointInfo>> routes = new()
             {
@@ -262,7 +262,7 @@ namespace JAFDTC.UI.Base
                 EditNavpt[index].Lon = ll.Item2;
                 SaveEditStateToConfig();
 
-                MapMarkerInfo info = new(MapMarkerInfo.MarkerType.NAVPT, PageHelper.SystemInfo.RouteNames[0],
+                MapMarkerInfo info = new(MapMarkerInfo.MarkerType.NAV_PT, PageHelper.SystemInfo.RouteNames[0],
                                          index + 1, ll.Item1, ll.Item2);
                 VerbMirror?.MirrorVerbMarkerAdded(this, info);
                 VerbMirror?.MirrorVerbMarkerSelected(this, info);
@@ -320,7 +320,7 @@ namespace JAFDTC.UI.Base
                 foreach (int index in selectedIndices)
                 {
                     EditNavpt.RemoveAt(index);
-                    VerbMirror?.MirrorVerbMarkerDeleted(this, new(MapMarkerInfo.MarkerType.NAVPT,
+                    VerbMirror?.MirrorVerbMarkerDeleted(this, new(MapMarkerInfo.MarkerType.NAV_PT,
                                                                   PageHelper.SystemInfo.RouteNames[0], index + 1));
                 }
                 VerbMirror?.MirrorVerbMarkerSelected(this, new());
@@ -498,8 +498,8 @@ namespace JAFDTC.UI.Base
         /// </summary>
         public string MarkerDisplayType(MapMarkerInfo info)
         {
-            return (info.Type == MapMarkerInfo.MarkerType.NAVPT) ? PageHelper.SystemInfo.NavptName
-                                                                 : NavpointUIHelper.MarkerDisplayType(info);
+            return (info.Type == MapMarkerInfo.MarkerType.NAV_PT) ? PageHelper.SystemInfo.NavptName
+                                                                  : NavpointUIHelper.MarkerDisplayType(info);
         }
 
         /// <summary>
@@ -507,7 +507,7 @@ namespace JAFDTC.UI.Base
         /// </summary>
         public string MarkerDisplayName(MapMarkerInfo info)
         {
-            if (info.Type == MapMarkerInfo.MarkerType.NAVPT)
+            if (info.Type == MapMarkerInfo.MarkerType.NAV_PT)
             {
                 if (EditNavptDetailPage != null)
                     CopyConfigToEditState();                            // just in case editor is FA, so it won't FO
@@ -527,7 +527,7 @@ namespace JAFDTC.UI.Base
         /// </summary>
         public string MarkerDisplayElevation(MapMarkerInfo info, string units = "")
         {
-            if (info.Type == MapMarkerInfo.MarkerType.NAVPT)
+            if (info.Type == MapMarkerInfo.MarkerType.NAV_PT)
             {
                 if (EditNavptDetailPage != null)
                     CopyConfigToEditState();                            // just in case editor is FA, so it won't FO
@@ -566,7 +566,7 @@ namespace JAFDTC.UI.Base
                 _isVerbEvent = false;
             }
             else if ((info.TagStr == PageHelper.SystemInfo.RouteNames[0]) &&
-                     (info.Type == MapMarkerInfo.MarkerType.NAVPT))
+                     (info.Type == MapMarkerInfo.MarkerType.NAV_PT))
             {
                 _isVerbEvent = true;
                 uiNavptListView.SelectedIndex = info.TagInt - 1;
@@ -683,14 +683,14 @@ namespace JAFDTC.UI.Base
             ObservableCollection<INavpointInfo> list = (ObservableCollection<INavpointInfo>)sender;
             if (!_isVerbEvent && !_isMarshalling && (args.Action == NotifyCollectionChangedAction.Add))
             {
-                MapMarkerInfo info = new(MapMarkerInfo.MarkerType.NAVPT, PageHelper.SystemInfo.RouteNames[0],
+                MapMarkerInfo info = new(MapMarkerInfo.MarkerType.NAV_PT, PageHelper.SystemInfo.RouteNames[0],
                                          args.NewStartingIndex + 1,
                                          (args.NewItems[0] as INavpointInfo).Lat, (args.NewItems[0] as INavpointInfo).Lon);
                 VerbMirror?.MirrorVerbMarkerAdded(this, info);
             }
             else if (!_isVerbEvent && !_isMarshalling && (args.Action == NotifyCollectionChangedAction.Remove))
             {
-                MapMarkerInfo info = new(MapMarkerInfo.MarkerType.NAVPT, PageHelper.SystemInfo.RouteNames[0],
+                MapMarkerInfo info = new(MapMarkerInfo.MarkerType.NAV_PT, PageHelper.SystemInfo.RouteNames[0],
                                          args.OldStartingIndex + 1);
                 VerbMirror?.MirrorVerbMarkerDeleted(this, info);
             }

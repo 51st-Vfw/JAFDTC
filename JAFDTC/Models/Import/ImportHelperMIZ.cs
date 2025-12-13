@@ -2,7 +2,7 @@
 //
 // ImportHelperMIZ.cs -- helper to import navpoints from a .miz file
 //
-// Copyright(C) 2023-2024 ilominar/raven
+// Copyright(C) 2023-2025 ilominar/raven
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 // Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -17,7 +17,7 @@
 //
 // ********************************************************************************************************************
 
-using JAFDTC.Models.Base;
+using JAFDTC.Models.CoreApp;
 using JAFDTC.Models.DCS;
 using JAFDTC.Utilities;
 using JAFDTC.Utilities.LsonLib;
@@ -26,35 +26,31 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
+// TODO: namespace and class names need to change here for consistency.
+
 namespace JAFDTC.Models.Import
 {
     /// <summary>
     /// import helper class to extract navpoints from a flight in a dcs .miz file. flights from the .miz are only
     /// considered if the airframe matches an airframe type provided at consturction.
     /// </summary>
-    public class ImportHelperMIZ : ImportHelper
+    public partial class ImportHelperMIZ : IExtractor
     {
         // ------------------------------------------------------------------------------------------------------------
         //
-        // properties
+        // constants
         //
         // ------------------------------------------------------------------------------------------------------------
 
-        private AirframeTypes Airframe { get; set; }
-
-        private string Path { get; set; }
-
-        private string Theater { get; set; }
-
-        private Dictionary<string, LsonValue> Parsed { get; set; }
-
-        private Dictionary<string, LsonDict> MizRouteNodes { get; set; }
-
-        private int StartTime { get; set; }
-
-        private bool IsImportTOS { get; set; }
-
         private const double M_TO_FT = 3.2808399;
+
+        private readonly Dictionary<string, UnitCategoryType> _mapKeyToCategory = new()
+        {
+            ["vehicle"] = UnitCategoryType.GROUND,
+            ["plane"] = UnitCategoryType.AIRCRAFT,
+            ["helicopter"] = UnitCategoryType.HELICOPTER,
+            ["ship"] = UnitCategoryType.NAVAL
+        };
 
         // ------------------------------------------------------------------------------------------------------------
         //
@@ -62,210 +58,169 @@ namespace JAFDTC.Models.Import
         //
         // ------------------------------------------------------------------------------------------------------------
 
-        public ImportHelperMIZ(AirframeTypes airframe, string path)
-        {
-            Airframe = airframe;
-            Path = path;
-            Theater = FileManager.ReadFileFromZip(Path, "theatre");
-            MizRouteNodes = new Dictionary<string, LsonDict>();
-            IsImportTOS = false;
-        }
+        public ImportHelperMIZ() { }
 
         // ------------------------------------------------------------------------------------------------------------
         //
-        // functions
+        // IExtractor
         //
         // ------------------------------------------------------------------------------------------------------------
 
-        private bool IsMatchingAirframe(string airframe)
+        public void Dispose()
         {
-            return Settings.IsNavPtImportIgnoreAirframe || Airframe switch
-            {
-                AirframeTypes.A10C => (airframe == "A-10C_2"),
-                AirframeTypes.AH64D => (airframe == "AH-64D_BLK_II"),
-                AirframeTypes.AV8B => (airframe == "AV8BNA"),
-                AirframeTypes.F14AB => (airframe == "F-14A-135-GR") || (airframe == "F-14B"),
-                AirframeTypes.F15E => (airframe == "F-15ESE"),
-                AirframeTypes.F16C => (airframe == "F-16C_50"),
-                AirframeTypes.FA18C => (airframe == "FA-18C_hornet"),
-                AirframeTypes.M2000C => (airframe == "M-2000C"),
-                _ => false,
-            };
+            GC.SuppressFinalize(this);
         }
 
         /// <summary>
-        /// return a list of navpoints from the import data source for the flight with the given name. for sources
-        /// where HasFlights is false, the flight name is ignored. for sources where HasFlights is true, the flight
-        /// name must match one of the flights from Flights(). navpoints are represented by a string/string
-        /// dictionary with the following key/value pairs:
-        /// 
-        ///   ["name"]      (string) name of navpoint
-        ///   ["lat"]       (string) latitude of navpoint, decimal degrees with no units
-        ///   ["lon"]       (string) longitude of navpoint, decimal degrees with no units
-        ///   ["alt"]       (string) elevation of navpoint, feet
-        ///   ["ton"]       (string) time on navpoint, hh:mm:ss local
+        /// returns a list of PositionItem for the route from the positions in groupInfo["route"]["points"]. throws
+        /// an exception if there are translation errors.
         /// </summary>
-        private List<Dictionary<string, string>> Navpoints(string flightName)
+        private static IReadOnlyList<UnitPositionItem> ParseRoute(string theater, LsonDict groupDict, int startTime)
         {
-            List<Dictionary<string, string>> navpoints = null;
-            if (MizRouteNodes.ContainsKey(flightName))
+            List<UnitPositionItem> route = [ ];
+            if (groupDict.ContainsKey("route") &&
+                groupDict["route"].GetDict().ContainsKey("points"))
             {
-                navpoints = new List<Dictionary<string, string>>();
-
-                // walk the points in the route dictionary, skipping the first point as it is the initial point of the
-                // unit on the ramp.
-                //
-                for (int i = 2; i <= MizRouteNodes[flightName].Count; i++)
+                LsonDict pointsArray = groupDict["route"].GetDict()["points"].GetDict();
+                foreach (LsonNumber pointIndex in pointsArray.Keys.Cast<LsonNumber>())
                 {
-                    LsonDict navpointInfo = MizRouteNodes[flightName][i].GetDict();
-
-                    double x = (double)navpointInfo["x"].GetDecimal();
-                    double z = (double)navpointInfo["y"].GetDecimal();
-                    CoordLL ll = CoordInterpolator.Instance.XZtoLL(Theater, x, z);
-                    if (ll == null)
-                        return null;
-
-                    double alt = (double)navpointInfo["alt"].GetDecimal() * M_TO_FT;
-                    double ton = (double)StartTime + (double)navpointInfo["ETA"].GetDecimal();
-                    Debug.WriteLine($"{ton}");
-
-                    Dictionary<string, string> navpoint = new()
+                    LsonDict point = pointsArray[pointIndex].GetDict();
+                    double x = (double)point["x"].GetDecimal();
+                    double z = (double)point["y"].GetDecimal();
+                    CoordLL ll = CoordInterpolator.Instance.XZtoLL(theater, x, z)
+                                 ?? throw new Exception("Group/Point coordiante translation fails");
+                    route.Add(new UnitPositionItem()
                     {
-                        ["name"] = (navpointInfo.ContainsKey("name")) ? navpointInfo["name"].GetString() : $"SP{i - 1}",
-                        ["lat"] = ll.Lat.ToString(),
-                        ["lon"] = ll.Lon.ToString(),
-                        ["alt"] = alt.ToString("0"),
-                    };
-
-                    if (IsImportTOS)
-                    {
-                        int h = (int)(ton / 60.0 / 60.0);
-                        int m = (int)((ton - (h * 60.0 * 60.0)) / 60.0);
-                        int s = (int)((ton - (h * 60.0 * 60.0) - (m * 60.0)));
-                        navpoint["ton"] = $"{h:D2}:{m:D2}:{s:D2}";
-                    }
-
-                    // TODO: put "ERROR" in dictionary if there were parse or conversion errors?
-                    navpoints.Add(navpoint);
+                        Latitude = ll.Lat,
+                        Longitude = ll.Lon,
+                        Altitude = (double)point["alt"].GetDecimal() * M_TO_FT,
+                        TimeOn = startTime + (double)point["ETA"].GetDecimal()
+                    });
                 }
             }
-            return navpoints;
+            else
+            {
+                throw new Exception("Group missing route array");
+            }
+            return route;
         }
 
-        // ------------------------------------------------------------------------------------------------------------
-        //
-        // IImportHelper functions
-        //
-        // ------------------------------------------------------------------------------------------------------------
-
-        public override bool HasFlights => true;
-
-        public override List<string> Flights()
+        /// <summary>
+        /// TODO: document
+        /// </summary>
+        private static IReadOnlyList<UnitItem> ParseUnitsArray(string theater, LsonDict unitsArray)
         {
-            MizRouteNodes.Clear();
+            List<UnitItem> units = [ ];
+            foreach (LsonNumber unitIndex in unitsArray.Keys.Cast<LsonNumber>())
+            {
+                LsonDict unitDict = unitsArray[unitIndex].GetDict();
+                double x = (double)unitDict["x"].GetDecimal();
+                double z = (double)unitDict["y"].GetDecimal();
+                CoordLL ll = CoordInterpolator.Instance.XZtoLL(theater, x, z)
+                             ?? throw new Exception("Unit/Point coordiante translation fails");
+                double alt = (unitDict.ContainsKey("alt")) ? (double)unitDict["alt"].GetDecimal() : 0.0;
+                units.Add(new UnitItem()
+                {
+                    UniqueID = "miz_uid_" + unitDict["unitId"].GetDecimal().ToString(),
+                    Type = unitDict["type"].GetString(),
+                    Name = unitDict["name"].GetString(),
+                    Position = new()
+                    {
+                        Name = (unitDict.ContainsKey("name")) ? unitDict["name"].GetString() : null,
+                        Latitude = ll.Lat,
+                        Longitude = ll.Lon,
+                        Altitude = alt * M_TO_FT,
+// TODO: TOS import?
+                        TimeOn = 0.0
+                    },
+                    IsAlive = true,
+                });
+            }
+            return units;
+        }
 
-            List<string> flights = new();
+        /// <summary>
+        /// parse a group container dictionary. group containers have a "group" key with an array of group
+        /// dictionaries value. returns a list of units in the group container (list is empty if no units found).
+        /// throws an exception on error.
+        /// </summary>
+        private static IReadOnlyList<UnitGroupItem> ParseGroupContainer(ExtractCriteria criteria, CoalitionType coa,
+                                                                        UnitCategoryType category, int startTime,
+                                                                        LsonDict containerDict)
+        {
+            List<UnitGroupItem> groups = [ ];
+            if (containerDict.ContainsKey("group"))
+            {
+                LsonDict groupArray = containerDict["group"].GetDict();
+                foreach (LsonNumber groupIndex in groupArray.Keys.Cast<LsonNumber>())
+                {
+                    LsonDict groupDict = groupArray[groupIndex].GetDict();
+                    groups.Add(new UnitGroupItem()
+                    {
+                        UniqueID = "miz_gid_" + groupDict["groupId"].GetDecimal().ToString(),
+                        Coalition = coa,
+                        Category = category,
+                        Name = groupDict["name"].GetString(),
+                        Units = [.. ParseUnitsArray(criteria.Theater,
+                                                    groupDict["units"].GetDict()).LimitUnitTypes(criteria.UnitTypes)
+                                                                                 .LimitAlive(criteria.IsAlive) ],
+                        Route = ParseRoute(criteria.Theater, groupDict, startTime)
+                    });
+                }
+            }
+            return groups;
+        }
+
+        /// <summary>
+        /// extract the list of groups from the .miz file identified in the extraction criteria. returns list of
+        /// groups matching the export criteria, null on failure.
+        /// </summary>
+        public IReadOnlyList<UnitGroupItem> Extract(ExtractCriteria criteria)
+        {
+            List<UnitGroupItem> groups = [ ];
+
             try
             {
-                string lua = FileManager.ReadFileFromZip(Path, "mission");
-                Parsed = LsonVars.Parse(lua);
-                LsonDict coalitionDict = Parsed["mission"].GetDict()["coalition"].GetDict();
+                criteria.Required();
+                criteria.FilePath.Required();
+                criteria.Theater ??= FileManager.ReadFileFromZip(criteria.FilePath, "theatre");
+                criteria.Theater.Required();
 
-                StartTime = Parsed["mission"].GetDict()["start_time"].GetInt();
+                string lua = FileManager.ReadFileFromZip(criteria.FilePath, "mission");
+                Dictionary<string, LsonValue> parsed = LsonVars.Parse(lua);
 
+                int startTime = parsed["mission"].GetDict()["start_time"].GetInt();
+
+                LsonDict coalitionDict = parsed["mission"].GetDict()["coalition"].GetDict();
                 foreach (string coalitionKey in coalitionDict.Keys.Select(v => (string)v))
                 {
-                    FileManager.Log("----");
-                    FileManager.Log($"  coalition = {coalitionKey}");
-
-                    LsonDict countryDict = coalitionDict[coalitionKey].GetDict()["country"].GetDict();
-                    foreach (LsonNumber countryKey in countryDict.Keys.Cast<LsonNumber>())
+                    CoalitionType coa = coalitionKey.ToLower() switch
                     {
-                        LsonDict countryInfoDict = countryDict[countryKey].GetDict();
+                        "blue" => CoalitionType.BLUE,
+                        "red" => CoalitionType.RED,
+                        _ => CoalitionType.NEUTRAL
+                    };
 
-                        FileManager.Log($"    country = {countryKey}");
-
-#if NOT_YET_SUPPORTED
-                        if (countryInfoDict.ContainsKey("helicopter") &&
-                            countryInfoDict["helicopter"].GetDict().ContainsKey("group"))
-                        {
-                            LsonDict heloGroupArray = countryInfoDict["helicopter"].GetDict()["group"].GetDict();
-                            foreach (LsonNumber heloGroupKey in heloGroupArray.Keys)
-                            {
-                                LsonDict heloGroupInfo = heloGroupArray[heloGroupKey].GetDict();
-                                string groupName = heloGroupInfo["name"].GetString();
-                                LsonDict routeInfo = heloGroupInfo["route"].GetDict()["points"].GetDict();
-                                if (routeInfo.Keys.Count > 1)
-                                {
-                                    LsonDict unitInfo = heloGroupInfo["units"].GetDict()[new LsonNumber(1)].GetDict();
-                                    if (unitInfo["callsign"].IsContainer)
-                                    {
-                                        string callsignName = unitInfo["callsign"].GetDict()["name"].GetString();
-
-                                        Debug.WriteLine("      helo/group = " + heloGroupKey.ToString() + ", " + routeInfo.Keys.Count.ToString() + " --> " + groupName + " / " + callsignName);
-                                    }
-                                }
-                            }
-                        }
-#endif
-
-                        if (countryInfoDict.ContainsKey("plane") &&
-                            countryInfoDict["plane"].GetDict().ContainsKey("group"))
-                        {
-                            LsonDict planeGroupArray = countryInfoDict["plane"].GetDict()["group"].GetDict();
-                            foreach (LsonNumber planeGroupKey in planeGroupArray.Keys.Cast<LsonNumber>())
-                            {
-                                LsonDict planeGroupInfo = planeGroupArray[planeGroupKey].GetDict();
-                                string groupName = planeGroupInfo["name"].GetString();
-                                LsonDict routeInfo = planeGroupInfo["route"].GetDict()["points"].GetDict();
-                                if (routeInfo.Keys.Count > 1)
-                                {
-                                    LsonDict unitInfo = planeGroupInfo["units"].GetDict()[new LsonNumber(1)].GetDict();
-                                    string airframeType = unitInfo["type"].GetString();
-                                    if (IsMatchingAirframe(airframeType))
-                                    {
-                                        flights.Add(groupName);
-                                        MizRouteNodes[groupName] = routeInfo;
-
-                                        FileManager.Log($"      plane/group = {planeGroupKey}, {routeInfo.Keys.Count} --> {groupName}");
-                                    }
-                                }
-                            }
-                        }
+                    LsonDict countryArray = coalitionDict[coalitionKey].GetDict()["country"].GetDict();
+                    foreach (LsonNumber countryIndex in countryArray.Keys.Cast<LsonNumber>())
+                    {
+                        LsonDict countryDict = countryArray[countryIndex].GetDict();
+                        foreach (KeyValuePair<string, UnitCategoryType> kvp in _mapKeyToCategory)
+                            if (countryDict.ContainsKey(kvp.Key))
+                                groups.AddRange(ParseGroupContainer(criteria, coa, kvp.Value, startTime,
+                                                                    countryDict[kvp.Key].GetDict()));
                     }
                 }
             }
             catch (Exception ex)
             {
-                FileManager.Log($"ImportHelperMIZ:Flights exception {ex}");
+                FileManager.Log($"MIZ:Extract fails with exception {ex}");
+                return null;
             }
 
-            return flights;
-        }
-
-        public override Dictionary<string, string> OptionTitles(string what = "Steerpoint")
-            => new()
-            {
-                ["A"] = $"Import Time on {what}"
-            };
-
-        public override Dictionary<string, object> OptionDefaults
-            => new()
-            {
-                ["A"] = false
-            };
-
-        public override bool Import(INavpointSystemImport navptSys, string flightName = "", bool isReplace = true,
-                                    Dictionary<string, object> options = null)
-        {
-            IsImportTOS = (bool)options["A"];
-
-            List<Dictionary<string, string>> navptInfoList = Navpoints(flightName);
-            if (navptInfoList != null)
-            {
-                return navptSys.ImportNavpointInfoList(navptInfoList, isReplace);
-            }
-            return false;
+            return [.. groups.LimitGroupsWithUnits()
+                             .LimitCoalitions(criteria.Coalitions)
+                             .LimitUnitCategories(criteria.UnitCategories) ];
         }
     }
 }

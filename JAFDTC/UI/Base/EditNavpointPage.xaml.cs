@@ -185,7 +185,7 @@ namespace JAFDTC.UI.Base
                 if (NavArgs.IsUnlinked)
                     uiNavptValueName.Focus(FocusState.Programmatic);
 
-                MapMarkerInfo info = new(MapMarkerInfo.MarkerType.NAVPT,
+                MapMarkerInfo info = new(MapMarkerInfo.MarkerType.NAV_PT,
                                          PageHelper.SystemInfo.RouteNames[0],
                                          EditNavptIndex + 1);
                 NavArgs.VerbMirror?.MirrorVerbMarkerSelected(NavArgs.ParentEditor as IMapControlVerbHandler, info);
@@ -550,7 +550,7 @@ namespace JAFDTC.UI.Base
                 if (NavArgs.IsUnlinked)
                     uiNavptValueName.Focus(FocusState.Programmatic);
 
-                MapMarkerInfo info = new(MapMarkerInfo.MarkerType.NAVPT, PageHelper.SystemInfo.RouteNames[0],
+                MapMarkerInfo info = new(MapMarkerInfo.MarkerType.NAV_PT, PageHelper.SystemInfo.RouteNames[0],
                                          EditNavptIndex + 1, ll.Item1, ll.Item2);
                 NavArgs.VerbMirror?.MirrorVerbMarkerAdded(NavArgs.ParentEditor as IMapControlVerbHandler, info);
                 NavArgs.VerbMirror?.MirrorVerbMarkerSelected(NavArgs.ParentEditor as IMapControlVerbHandler, info);
@@ -575,7 +575,7 @@ namespace JAFDTC.UI.Base
         {
             DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low, () =>
             {
-                MapMarkerInfo info = new(MapMarkerInfo.MarkerType.NAVPT, PageHelper.SystemInfo.RouteNames[0],
+                MapMarkerInfo info = new(MapMarkerInfo.MarkerType.NAV_PT, PageHelper.SystemInfo.RouteNames[0],
                                          EditNavptIndex + 1, EditNavpt.Lat, EditNavpt.Lon);
                 NavArgs.VerbMirror?.MirrorVerbMarkerMoved(NavArgs.ParentEditor as IMapControlVerbHandler, info);
             });

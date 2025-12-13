@@ -110,10 +110,29 @@ https://www.gnu.org/licenses/.
                               Click="CmdDelete_Click"
                               ToolTipService.ToolTip="Delete selected marker"/>
                 <AppBarSeparator/>
-                <AppBarButton x:Name="uiBarBtnImport" Icon="Download" Label="Import"
-                              Click="CmdImport_Click"
-                              ToolTipService.ToolTip="Manage imported markers">
+                <AppBarButton x:Name="uiBarBtnImport" Label="Import Threats"
+                              Click="CmdImportThreats_Click"
+                              ToolTipService.ToolTip="Import mission threat and unit markers">
+                    <AppBarButton.Icon>
+                        <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE945;"/>
+                    </AppBarButton.Icon>
                 </AppBarButton>
+                <AppBarButton x:Name="uiBarBtnClear" Label="Clear Threats"
+                              Click="CmdClearThreats_Click"
+                              ToolTipService.ToolTip="Clear mission threat and unit markers">
+                    <AppBarButton.Icon>
+                        <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE894;"/>
+                    </AppBarButton.Icon>
+                </AppBarButton>
+                <AppBarSeparator/>
+                <AppBarToggleButton x:Name="uiBarBtnFilter" Label="Filter Markers"
+                                    Click="CmdFilter_Click"
+                                    ToolTipService.ToolTip="Set filter to apply to markers">
+                    <AppBarToggleButton.Icon>
+                        <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE71C;"/>
+                    </AppBarToggleButton.Icon>
+                </AppBarToggleButton>
+                <AppBarSeparator/>
                 <AppBarButton x:Name="uiBarBtnSettings" Label="Settings"
                               Click="CmdSettings_Click"
                               ToolTipService.ToolTip="Change map window settings">
@@ -139,43 +158,56 @@ https://www.gnu.org/licenses/.
                      ManipulationMode="All">
                 <ctrl:MapControl.Resources>
                     <!--
+                    default brush.
+                    -->
+                    <SolidColorBrush x:Key="Brush_Default" Color="#FF303030"/>
+
+                    <!--
                     brushes for boundary lines.
                     -->
-                    <SolidColorBrush x:Key="BoundaryLine_Bkgnd_Brush" Color="#FFA0A0A0"/>
+                    <SolidColorBrush x:Key="Brush_Boundary_Bg" Color="#FFA0A0A0"/>
 
                     <!--
-                    brushes for base map markers in r/w state.
+                    brushes for base map markers in r/w state. note that THREAT covers both THREAT_FIXED
+                    and THREAT_USER.
                     -->
-                    <SolidColorBrush x:Key="MapMarker_Bkgnd_Brush" Color="#ffffffff"/>
+                    <SolidColorBrush x:Key="Brush_Marker_Bg" Color="#ffffffff"/>
 
-                    <SolidColorBrush x:Key="MapMarker_DCS_CORE_Brush" Color="#FF404040"/>
-                    <SolidColorBrush x:Key="MapMarker_USER_Brush" Color="#FF404040"/>
-                    <SolidColorBrush x:Key="MapMarker_CAMPAIGN_Brush" Color="#FFFF8D00"/>
-                    <SolidColorBrush x:Key="MapMarker_NAVPT0_Brush" Color="#FF2E1ED5"/>
-                    <SolidColorBrush x:Key="MapMarker_NAVPT1_Brush" Color="#FF3296B0"/>
-                    <SolidColorBrush x:Key="MapMarker_NAVPT2_Brush" Color="#FFB30ED4"/>
-                    <SolidColorBrush x:Key="MapMarker_NAVPT3_Brush" Color="#FF3B6B04"/>
-                    <SolidColorBrush x:Key="MapMarker_IMPORT_GEN_Brush" Color="#FFA00011"/>
-                    <SolidColorBrush x:Key="MapMarker_IMPORT_WEZ_Brush" Color="#FFA00011"/>
-
-                    <!--
-                    brushes for base map markers in r/o state.
-                    -->
-                    <SolidColorBrush x:Key="MapMarker_DCS_CORE_RO_Brush" Color="#FF808080"/>
-                    <SolidColorBrush x:Key="MapMarker_USER_RO_Brush" Color="#FF808080"/>
-                    <SolidColorBrush x:Key="MapMarker_CAMPAIGN_RO_Brush" Color="#FFFFB753"/>
-                    <SolidColorBrush x:Key="MapMarker_NAVPT0_RO_Brush" Color="#FF8078FF"/>
-                    <SolidColorBrush x:Key="MapMarker_NAVPT1_RO_Brush" Color="#FF8ACCBF"/>
-                    <SolidColorBrush x:Key="MapMarker_NAVPT2_RO_Brush" Color="#FFE77EEF"/>
-                    <SolidColorBrush x:Key="MapMarker_NAVPT3_RO_Brush" Color="#FF96B77B"/>
-                    <SolidColorBrush x:Key="MapMarker_IMPORT_GEN_RO_Brush" Color="#FFA04050"/>
-                    <SolidColorBrush x:Key="MapMarker_IMPORT_WEZ_RO_Brush" Color="#FFA04050"/>
+                    <SolidColorBrush x:Key="Brush_Marker_POI_Core_0" Color="#FF404040"/>
+                    <SolidColorBrush x:Key="Brush_Marker_POI_User_0" Color="#FF404040"/>
+                    <SolidColorBrush x:Key="Brush_Marker_POI_Campaign_0" Color="#FFFF8D00"/>
+                    <SolidColorBrush x:Key="Brush_Marker_Path_0" Color="#FF2E1ED5"/>
+                    <SolidColorBrush x:Key="Brush_Marker_Path_1" Color="#FF3296B0"/>
+                    <SolidColorBrush x:Key="Brush_Marker_Path_2" Color="#FFB30ED4"/>
+                    <SolidColorBrush x:Key="Brush_Marker_Path_3" Color="#FF3B6B04"/>
+                    <SolidColorBrush x:Key="Brush_Marker_Unit_0" Color="#FFA00011"/>
+                    <SolidColorBrush x:Key="Brush_Marker_Unit_1" Color="#FF1100D0"/>
 
                     <!--
-                    stroke setups for the boundary line data template.
+                    brushes for base map markers in r/o state. note that THREAT covers both THREAT_FIXED
+                    and THREAT_USER.
                     -->
-                    <DataTemplate x:Key="BoundaryLineTemplate">
-                        <ctrl:MapRoutePath Stroke="{StaticResource BoundaryLine_Bkgnd_Brush}"
+                    <SolidColorBrush x:Key="Brush_Marker_POI_Core_0_RO" Color="#FF808080"/>
+                    <SolidColorBrush x:Key="Brush_Marker_POI_User_0_RO" Color="#FF808080"/>
+                    <SolidColorBrush x:Key="Brush_Marker_POI_Campaign_0_RO" Color="#FFFFB753"/>
+                    <SolidColorBrush x:Key="Brush_Marker_Path_0_RO" Color="#FF8078FF"/>
+                    <SolidColorBrush x:Key="Brush_Marker_Path_1_RO" Color="#FF8ACCBF"/>
+                    <SolidColorBrush x:Key="Brush_Marker_Path_2_RO" Color="#FFE77EEF"/>
+                    <SolidColorBrush x:Key="Brush_Marker_Path_3_RO" Color="#FF96B77B"/>
+                    <SolidColorBrush x:Key="Brush_Marker_Unit_0_RO" Color="#FFA04050"/>
+                    <SolidColorBrush x:Key="Brush_Marker_Unit_1_RO" Color="#FF5040A0"/>
+
+                    <!--
+                    brushes for threat ring fills.
+                    -->
+                    <SolidColorBrush x:Key="Brush_Ring_Fill_0" Color="#10A00011"/>
+                    <SolidColorBrush x:Key="Brush_Ring_Fill_1" Color="#101100D0"/>
+
+                    <!--
+                    data template for boundary lines geometry.
+                    -->
+                    <DataTemplate x:Key="Tmplt_Boundary_Path">
+                        <ctrl:MapRoutePath Stroke="{StaticResource Brush_Boundary_Bg}"
                                            StrokeThickness="1.5"
                                            StrokeLineJoin="Round"
                                            StrokeDashCap="Round"
@@ -184,64 +216,107 @@ https://www.gnu.org/licenses/.
                     </DataTemplate>
 
                     <!--
-                    stroke setups for the RouteLine?FgTemplate data templates need to be kept in sync with the
-                    source code. this is a bit of a mess as i'm probably fighting aginst xaml here.
+                    data templates for the RouteLine?FgTemplate for MapRoutePath geometries. these need to be
+                    kept in sync with the source code. this is a mess as i'm probably fighting aginst xaml here.
                     -->
-                    <DataTemplate x:Key="RouteLineBgTemplate">
-                        <ctrl:MapRoutePath Stroke="{StaticResource MapMarker_Bkgnd_Brush}"
+                    <DataTemplate x:Key="Tmplt_Path_Bg">
+                        <ctrl:MapRoutePath Stroke="{StaticResource Brush_Marker_Bg}"
                                            StrokeThickness="8"
                                            StrokeLineJoin="Round"
                                            Locations="{Binding Locations}" />
                     </DataTemplate>
 
-                    <DataTemplate x:Key="RouteLineFg_0_Template">
-                        <ctrl:MapRoutePath Stroke="{StaticResource MapMarker_NAVPT0_Brush}"
+                    <DataTemplate x:Key="Tmplt_Path_0">
+                        <ctrl:MapRoutePath Stroke="{StaticResource Brush_Marker_Path_0}"
                                            StrokeThickness="4"
                                            StrokeLineJoin="Round"
                                            Locations="{Binding Locations}" />
                     </DataTemplate>
-                    <DataTemplate x:Key="RouteLineFg_1_Template">
-                        <ctrl:MapRoutePath Stroke="{StaticResource MapMarker_NAVPT1_Brush}"
+                    <DataTemplate x:Key="Tmplt_Path_1">
+                        <ctrl:MapRoutePath Stroke="{StaticResource Brush_Marker_Path_1}"
                                            StrokeThickness="4"
                                            StrokeLineJoin="Round"
                                            Locations="{Binding Locations}"/>
                     </DataTemplate>
-                    <DataTemplate x:Key="RouteLineFg_2_Template">
-                        <ctrl:MapRoutePath Stroke="{StaticResource MapMarker_NAVPT2_Brush}"
+                    <DataTemplate x:Key="Tmplt_Path_2">
+                        <ctrl:MapRoutePath Stroke="{StaticResource Brush_Marker_Path_2}"
                                            StrokeThickness="4"
                                            StrokeLineJoin="Round"
                                            Locations="{Binding Locations}" />
                     </DataTemplate>
-                    <DataTemplate x:Key="RouteLineFg_3_Template">
-                        <ctrl:MapRoutePath Stroke="{StaticResource MapMarker_NAVPT2_Brush}"
+                    <DataTemplate x:Key="Tmplt_Path_3">
+                        <ctrl:MapRoutePath Stroke="{StaticResource Brush_Marker_Path_3}"
                                            StrokeThickness="4"
                                            StrokeLineJoin="Round"
                                            Locations="{Binding Locations}"/>
                     </DataTemplate>
 
-                    <DataTemplate x:Key="RouteLineFg_0_RO_Template">
-                        <ctrl:MapRoutePath Stroke="{StaticResource MapMarker_NAVPT0_RO_Brush}"
+                    <DataTemplate x:Key="Tmplt_Path_0_RO">
+                        <ctrl:MapRoutePath Stroke="{StaticResource Brush_Marker_Path_0_RO}"
                                            StrokeThickness="4"
                                            StrokeLineJoin="Round"
                                            Locations="{Binding Locations}"/>
                     </DataTemplate>
-                    <DataTemplate x:Key="RouteLineFg_1_RO_Template">
-                        <ctrl:MapRoutePath Stroke="{StaticResource MapMarker_NAVPT1_RO_Brush}"
+                    <DataTemplate x:Key="Tmplt_Path_1_RO">
+                        <ctrl:MapRoutePath Stroke="{StaticResource Brush_Marker_Path_1_RO}"
                                            StrokeThickness="4"
                                            StrokeLineJoin="Round"
                                            Locations="{Binding Locations}"/>
                     </DataTemplate>
-                    <DataTemplate x:Key="RouteLineFg_2_RO_Template">
-                        <ctrl:MapRoutePath Stroke="{StaticResource MapMarker_NAVPT2_RO_Brush}"
+                    <DataTemplate x:Key="Tmplt_Path_2_RO">
+                        <ctrl:MapRoutePath Stroke="{StaticResource Brush_Marker_Path_2_RO}"
                                            StrokeThickness="4"
                                            StrokeLineJoin="Round"
                                            Locations="{Binding Locations}"/>
                     </DataTemplate>
-                    <DataTemplate x:Key="RouteLineFg_3_RO_Template">
-                        <ctrl:MapRoutePath Stroke="{StaticResource MapMarker_NAVPT3_RO_Brush}"
+                    <DataTemplate x:Key="Tmplt_Path_3_RO">
+                        <ctrl:MapRoutePath Stroke="{StaticResource Brush_Marker_Path_3_RO}"
                                            StrokeThickness="4"
                                            StrokeLineJoin="Round"
                                            Locations="{Binding Locations}"/>
+                    </DataTemplate>
+                    
+                    <!--
+                    data templates for the threat ring geometry. these need to be kept in sync with the source
+                    code. this is a mess as i'm probably fighting aginst xaml here.
+                    -->
+                    <DataTemplate x:Key="Tmplt_Ring_Bg">
+                        <ctrl:MapThreatPath Stroke="{StaticResource Brush_Marker_Bg}"
+                                            StrokeThickness="6"
+                                            StrokeLineJoin="Round"
+                                            Locations="{Binding Locations}" />
+                    </DataTemplate>
+
+                    <DataTemplate x:Key="Tmplt_Ring_Unit_0">
+                        <ctrl:MapThreatPath Stroke="{StaticResource Brush_Marker_Unit_0}"
+                                            StrokeThickness="2"
+                                            StrokeLineJoin="Round"
+                                            Fill="{StaticResource Brush_Ring_Fill_0}"
+                                            Locations="{Binding Locations}" />
+                    </DataTemplate>
+                    <DataTemplate x:Key="Tmplt_Ring_Unit_1">
+                        <ctrl:MapThreatPath Stroke="{StaticResource Brush_Marker_Unit_1}"
+                                            StrokeThickness="2"
+                                            StrokeLineJoin="Round"
+                                            Fill="{StaticResource Brush_Ring_Fill_1}"
+                                            Locations="{Binding Locations}" />
+                    </DataTemplate>
+
+                    <DataTemplate x:Key="Tmplt_Ring_Unit_0_RO">
+                        <ctrl:MapThreatPath Stroke="{StaticResource Brush_Marker_Unit_0_RO}"
+                                            StrokeThickness="2"
+                                            StrokeLineJoin="Round"
+                                            StrokeDashArray="3,1"
+                                            Fill="{StaticResource Brush_Ring_Fill_0}"
+                                            Locations="{Binding Locations}" />
+                    </DataTemplate>
+                    <DataTemplate x:Key="Tmplt_Ring_Unit_1_RO">
+                        <ctrl:MapThreatPath Stroke="{StaticResource Brush_Marker_Unit_1_RO}"
+                                            StrokeThickness="2"
+                                            StrokeLineJoin="Round"
+                                            StrokeDashArray="3,1"
+                                            Fill="{StaticResource Brush_Ring_Fill_1}"
+                                            Locations="{Binding Locations}" />
                     </DataTemplate>
                 </ctrl:MapControl.Resources>
 

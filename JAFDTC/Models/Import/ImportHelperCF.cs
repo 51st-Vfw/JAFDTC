@@ -2,7 +2,7 @@
 //
 // ImportHelperCF.cs -- helper to import navpoints from a .cf file
 //
-// Copyright(C) 2023-2024 ilominar/raven
+// Copyright(C) 2023-2025 ilominar/raven
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 // Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -17,13 +17,15 @@
 //
 // ********************************************************************************************************************
 
-using JAFDTC.Models.Base;
+using JAFDTC.Models.CoreApp;
 using JAFDTC.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Text.RegularExpressions;
+using System.Linq;
 using System.Xml;
+
+// TODO: namespace and class names need to change here for consistency.
 
 namespace JAFDTC.Models.Import
 {
@@ -31,8 +33,168 @@ namespace JAFDTC.Models.Import
     /// import helper class to extract navpoints from a flight in a combatflite .cf file. flights from the .cf are only
     /// considered if the airframe matches an airframe type provided at consturction.
     /// </summary>
-    public class ImportHelperCF : ImportHelper
+    public partial class ImportHelperCF : IExtractor
     {
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // construction
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
+        public ImportHelperCF() { }
+
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // IExtractor
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
+        public void Dispose()
+        {
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// walks the waypoints in a "waypoints" element from the xml creating a list of waypoints that make
+        /// up the route.
+        /// </summary>
+        private static List<UnitPositionItem> ParseRoutePath(XmlNode waypoints)
+        {
+            List<UnitPositionItem> navpts = [ ];
+
+            foreach (XmlNode waypoint in waypoints.ChildNodes)
+            {
+                UnitPositionItem navpt = new()
+                {
+                    Name = waypoint.SelectSingleNode("Name").InnerText,
+                    Latitude = double.Parse(waypoint.SelectSingleNode("Lat").InnerText),
+                    Longitude = double.Parse(waypoint.SelectSingleNode("Lon").InnerText),
+                };
+                if (!double.TryParse(waypoint.SelectSingleNode("Altitude").InnerText, out double alt))
+                    alt = 0.0;
+                navpt.Altitude = alt;
+
+                string ton = waypoint.SelectSingleNode("TOT").InnerText;
+                if (ton != null)
+                {
+                    string[] parts = ton.Split(' ');            // string format: "10/11/2023 11:50:59 AM"
+                    if (parts.Length == 3)
+                    {
+                        string[] hms = parts[1].Split(':');
+                        if ((hms.Length == 3) &&
+                            (double.TryParse(hms[0], out double h) && (h >= 1.0) && (h < 13.0)) &&
+                            (double.TryParse(hms[1], out double m) && (m >= 0.0) && (m < 60.0)) &&
+                            (double.TryParse(hms[2], out double s) && (s >= 0.0) && (s < 60.0)))
+                        {
+                            if ((parts[2].Equals("pm", StringComparison.CurrentCultureIgnoreCase)) && (h < 12))
+                                h += 12;
+                            navpt.TimeOn = (h * 60.0 * 60.0) + (m * 60.0) + s;
+                        }
+                    }
+                }
+
+                navpts.Add(navpt);
+            }
+
+            return navpts;
+        }
+
+        /// <summary>
+        /// TODO: document
+        /// </summary>
+        private static List<UnitItem> ParseRouteFlight(XmlNode flightMembers, string flightName,
+                                                       UnitPositionItem position)
+        {
+            List<UnitItem> units = [ ];
+
+            int index = 1;
+            foreach (XmlNode unit in flightMembers.ChildNodes)
+            {
+                XmlNode aircraft = unit.SelectSingleNode("Aircraft");
+                UnitItem unitItem = new()
+                {
+                    UniqueID = $"cf_extract:{flightName}-{index++}",
+                    Type = aircraft.SelectSingleNode("Type").InnerText,
+                    Name = $"{flightName}-{index++}",
+                    Position = position,
+                    IsAlive = true
+                };
+                units.Add(unitItem);
+            }
+
+            return units;
+        }
+
+        /// <summary>
+        /// extract the list of groups from the .miz file identified in the extraction criteria. returns list of
+        /// groups matching the export criteria, null on failure.
+        /// </summary>
+        public IReadOnlyList<UnitGroupItem> Extract(ExtractCriteria criteria)
+        {
+            List<UnitGroupItem> groups = [ ];
+            List<string> flights = [ ];
+
+            try
+            {
+                criteria.Required();
+                criteria.FilePath.Required();
+
+                string[] unitTypes = criteria.UnitTypes ?? [ ];
+
+                XmlDocument xmlDoc = new();
+                string xml = FileManager.ReadFileFromZip(criteria.FilePath, "mission.xml");
+                xmlDoc.LoadXml(xml);
+
+                // TODO: this parser is focused on extracting navpoints and does not currently handle ground units
+                // TODO: or other non-aircraft types. not clear it's worth the squeeze to generalize this out given
+                // TODO: combatflite is abandonware and is rarely used within the squadron these days.
+
+                XmlNode routes = xmlDoc.DocumentElement.SelectSingleNode("/Mission/Routes");
+                foreach (XmlNode route in routes.ChildNodes)
+                {
+                    string unitType = route.SelectSingleNode("Aircraft/Type").InnerText;
+                    if ((unitTypes.Length > 0) && !unitTypes.Contains(unitType))
+                        continue;
+
+                    string foo = route.SelectSingleNode("Side").InnerText;
+                    CoalitionType coalition = route.SelectSingleNode("Side").InnerText.ToLower() switch
+                    {
+                        "blue" => CoalitionType.BLUE,
+                        "red" => CoalitionType.RED,
+                        _ => CoalitionType.UNKNOWN
+                    };
+                    string flightName = route.SelectSingleNode("CallsignName").InnerText + " " +
+                                        route.SelectSingleNode("CallsignNumber").InnerText;
+                    if (flights.Contains(flightName))
+                        throw new InvalidOperationException($"Duplicate flight name “{flightName}” in file.");
+                    flights.Add(flightName);
+
+                    List<UnitPositionItem> navRoute = ParseRoutePath(route.SelectSingleNode("Waypoints"));
+                    groups.Add(new()
+                    {
+                        UniqueID = $"cf_extract:{flightName}",
+                        Coalition = coalition,
+                        Category = UnitCategoryType.AIRCRAFT,
+                        Name = flightName,
+                        Units = ParseRouteFlight(route.SelectSingleNode("FlightMembers"), flightName, navRoute[0]),
+                        Route = navRoute.Slice(1, navRoute.Count - 1)
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                FileManager.Log($"CF:Extract fails with exception {ex}");
+                return null;
+            }
+
+            return [.. groups.LimitGroupsWithUnits()
+                             .LimitCoalitions(criteria.Coalitions)
+                             .LimitUnitCategories(criteria.UnitCategories) ];
+        }
+
+// TODO: deprecate
+
+#if NOPE
         // ------------------------------------------------------------------------------------------------------------
         //
         // properties
@@ -64,7 +226,7 @@ namespace JAFDTC.Models.Import
             Airframe = airframe;
             Path = path;
             XmlDoc = new XmlDocument();
-            XmlNavpointNodes = new Dictionary<string, XmlNode>();
+            XmlNavpointNodes = [ ];
 
             IsImportTakeOff = false;
             IsImportTOS = false;
@@ -107,10 +269,10 @@ namespace JAFDTC.Models.Import
         private List<Dictionary<string, string>> Navpoints(string flightName)
         {
             List<Dictionary<string, string>> navpoints = null;
-            if (XmlNavpointNodes.ContainsKey(flightName))
+            if (XmlNavpointNodes.TryGetValue(flightName, out XmlNode value))
             {
-                navpoints = new List<Dictionary<string, string>>();
-                foreach (XmlNode node in XmlNavpointNodes[flightName])
+                navpoints = [ ];
+                foreach (XmlNode node in value)
                 {
                     string type = node.SelectSingleNode("Type").InnerText;
                     bool isTakeOffType = ((type != null) && Regex.Match(type.ToLower(), @"^take off").Success);
@@ -142,7 +304,7 @@ namespace JAFDTC.Models.Import
                                     (int.TryParse(hms[1], out int m) && (m >= 0) && (m < 60)) &&
                                     (int.TryParse(hms[2], out int s) && (s >= 0) && (s < 60)))
                                 {
-                                    if ((parts[2].ToLower() == "pm") && (h < 12))
+                                    if ((parts[2].Equals("pm", StringComparison.CurrentCultureIgnoreCase)) && (h < 12))
                                     {
                                         h += 12;
                                     }
@@ -171,7 +333,7 @@ namespace JAFDTC.Models.Import
         {
             XmlNavpointNodes.Clear();
 
-            List<string> flights = new();
+            List<string> flights = [ ];
             try
             {
                 string xml = FileManager.ReadFileFromZip(Path, "mission.xml");
@@ -204,14 +366,14 @@ namespace JAFDTC.Models.Import
             return flights;
         }
 
-        public override Dictionary<string, string> OptionTitles(string what = "Steerpoint")
+        public override Dictionary<string, string> NavptOptionTitles(string what = "Steerpoint")
             => new()
             {
                 ["A"] = $"Import Take Off {what}s",
                 ["B"] = $"Import Time on {what}",
             };
 
-        public override Dictionary<string, object> OptionDefaults
+        public override Dictionary<string, object> NavptOptionDefaults
             => new()
             {
                 ["A"] = false,
@@ -231,5 +393,6 @@ namespace JAFDTC.Models.Import
             }
             return false;
         }
+#endif
     }
 }

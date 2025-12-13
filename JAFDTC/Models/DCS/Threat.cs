@@ -17,6 +17,8 @@
 //
 // ********************************************************************************************************************
 
+using JAFDTC.Models.CoreApp;
+
 namespace JAFDTC.Models.DCS
 {
     /// <summary>
@@ -30,16 +32,6 @@ namespace JAFDTC.Models.DCS
     }
 
     /// <summary>
-    /// coalitions for threats.
-    /// </summary>
-    public enum ThreatCoalition
-    {
-        UNKNOWN = -1,
-        RED = 0,
-        BLUE = 1
-    }
-
-    /// <summary>
     /// defines the properties of a potential threat. these instances are managed by threat database (ThreatDbase).
     /// threats include a type, dcs type, coalition, name, and wez radius.
     /// </summary>
@@ -49,7 +41,7 @@ namespace JAFDTC.Models.DCS
 
         public string TypeDCS { get; set; }                     // dcs .miz unit "type" value for threat
 
-        public ThreatCoalition Coalition { get; set; }          // unit coalition (ThreatCoalition)
+        public CoalitionType Coalition { get; set; }            // unit coalition (ThreatCoalition)
 
         public string Name { get; set; }                        // display name for threat
         

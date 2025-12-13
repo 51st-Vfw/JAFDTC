@@ -26,10 +26,10 @@ https://www.gnu.org/licenses/.
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Title="Set a Filter for Map Elements"
+    Title="Map Element Filter"
     DefaultButton="Primary"
-    PrimaryButtonText="Set"
-    SecondaryButtonText = "Clear Filters"
+    PrimaryButtonText="Set Filter"
+    SecondaryButtonText = "Set to Defaults"
     CloseButtonText="Cancel">
 
     <ContentDialog.Resources>
@@ -37,9 +37,98 @@ https://www.gnu.org/licenses/.
     </ContentDialog.Resources>
 
     <Grid>
-        <CheckBox Grid.Row="0" Grid.Column="0" Margin="0,18,0,0" x:Name="uiCkbxDCSPoI"
-                  HorizontalAlignment="Left">
-            TODO filter control goes here
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- units, and threat ring combo boxen -->
+        <Grid Grid.Row="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="170"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Grid.Row="0" Grid.Column="0" Margin="0,8,0,0"
+                       x:Name="uiUnitTextPrompt"
+                       HorizontalAlignment="Right"
+                       VerticalAlignment="Center">
+                Show imported units
+            </TextBlock>
+            <ComboBox Grid.Row="0" Grid.Column="1" MinWidth="250" Margin="12,8,0,0"
+                      x:Name="uiComboUnitImport"
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Center"
+                      SelectionChanged="Combo_SelectionChanged">
+                <ComboBoxItem>None</ComboBoxItem>
+                <ComboBoxItem>Opposing coalitions only</ComboBoxItem>
+                <ComboBoxItem>All coalitions</ComboBoxItem>
+            </ComboBox>
+
+            <TextBlock Grid.Row="1" Grid.Column="0" Margin="0,8,0,0"
+                       x:Name="uiRingTextPrompt"
+                       HorizontalAlignment="Right"
+                       VerticalAlignment="Center">
+                Show imported threat rings
+            </TextBlock>
+            <ComboBox Grid.Row="1" Grid.Column="1" MinWidth="250" Margin="12,8,0,0"
+                      x:Name="uiComboRingImport"
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Center"
+                      SelectionChanged="Combo_SelectionChanged">
+                <ComboBoxItem>None</ComboBoxItem>
+                <ComboBoxItem>Opposing coalitions only</ComboBoxItem>
+                <ComboBoxItem>All coalitions</ComboBoxItem>
+            </ComboBox>
+        </Grid>
+
+        <!-- show poi -->
+        <CheckBox Grid.Row="2" Margin="0,18,0,0" x:Name="uiCkbxPoIDCS"
+                  HorizontalAlignment="Left"
+                  Click="CheckBox_Click">
+            Show DCS core points of interest
         </CheckBox>
+        <CheckBox Grid.Row="3" Margin="0,0,0,0" x:Name="uiCkbxPoIUsr"
+                  HorizontalAlignment="Left"
+                  Click="CheckBox_Click">
+            Show user points of interest
+        </CheckBox>
+        <StackPanel Grid.Row="4" Margin="0,0,0,0" Orientation="Horizontal">
+            <CheckBox x:Name="uiCkbxPoICamp"
+                      HorizontalAlignment="Left"
+                      VerticalAlignment="Center"
+                      Click="CheckBox_Click">
+                Show campaign points of interest for
+            </CheckBox>
+            <ComboBox MinWidth="232" Margin="8,0,0,0"
+                      x:Name="uiComboCampaign"
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Center"
+                      SelectionChanged="Combo_SelectionChanged">
+                <!-- items are built programaticaly -->
+                <ComboBoxItem>No campaigns</ComboBoxItem>
+                <ComboBoxItem>All campaigns</ComboBoxItem>
+                <ComboBoxItem>Foo bar</ComboBoxItem>
+                <ComboBoxItem>Foo bar</ComboBoxItem>
+                <ComboBoxItem>Foo bar</ComboBoxItem>
+            </ComboBox>
+        </StackPanel>
+
+        <!-- show nav routes -->
+        <CheckBox Grid.Row="6" Margin="0,12,0,0" x:Name="uiCkbxNavRoutes"
+                  HorizontalAlignment="Left"
+                  Click="CheckBox_Click">
+            Show navigation routes
+        </CheckBox>
+
     </Grid>
 </ContentDialog>

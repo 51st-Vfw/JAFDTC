@@ -25,7 +25,7 @@ namespace JAFDTC.UI.Controls.Map
     /// <summary>
     /// information for a map marker (route point, poi, etc.) edited by the WorldMapControl. this includes the
     /// type, string tag, and integer tag that uniquely identify the marker along with the current lat/lon position
-    /// of the marker on the map.
+    /// of the marker on the map. instances are read-only.
     /// </summary>
     public sealed partial class MapMarkerInfo
     {
@@ -42,14 +42,17 @@ namespace JAFDTC.UI.Controls.Map
         public enum MarkerType
         {
             UNKNOWN = PointOfInterestType.UNKNOWN,
-            DCS_CORE = PointOfInterestType.DCS_CORE,
-            USER = PointOfInterestType.USER,
-            CAMPAIGN = PointOfInterestType.CAMPAIGN,
-            NAVPT = 16,
-            NAVPT_HANDLE = 17,
-            IMPORT_GEN = 18,
-            IMPORT_WEZ = 19,
-            BULLSEYE = 20,
+            POI_DCS_CORE = PointOfInterestType.DCS_CORE,        // core poi
+            POI_USER = PointOfInterestType.USER,                // user poi
+            POI_CAMPAIGN = PointOfInterestType.CAMPAIGN,        // campaign poi
+
+            NAV_PT = 16,                                        // point on navigation path
+            USER_PT = 17,                                       // point on user annotation
+            UNIT_FRIEND = 18,                                   // point for unit (friendly)
+            UNIT_ENEMY = 19,                                    // point for unit (enemy)
+            BULLSEYE = 20,                                      // point for bullseye
+            PATH_EDIT_HANDLE = 28,                              // edit handle for path
+            RING_EDIT_HANDLE = 29,                              // edit handle for ring
             ANY = 31
         }
 
@@ -62,14 +65,18 @@ namespace JAFDTC.UI.Controls.Map
         {
             NONE = 0,
             ANY = -1,
-            DCS_CORE = 1 << MarkerType.DCS_CORE,
-            USER = 1 << MarkerType.USER,
-            CAMPAIGN = 1 << MarkerType.CAMPAIGN,
-            NAVPT = 1 << MarkerType.NAVPT,
-            NAVPT_HANDLE = 1 << MarkerType.NAVPT_HANDLE,
-            IMPORT_GEN = 1 << MarkerType.IMPORT_GEN,
-            IMPORT_WEZ = 1 << MarkerType.IMPORT_WEZ,
-            BULLSEYE = 1 << MarkerType.BULLSEYE
+
+            POI_DCS_CORE = 1 << MarkerType.POI_DCS_CORE,
+            POI_USER = 1 << MarkerType.POI_USER,
+            POI_CAMPAIGN = 1 << MarkerType.POI_CAMPAIGN,
+
+            NAV_PT = 1 << MarkerType.NAV_PT,
+            USER_PT = 1 << MarkerType.USER_PT,
+            UNIT_FRIEND = 1 << MarkerType.UNIT_FRIEND,
+            UNIT_ENEMY = 1 << MarkerType.UNIT_ENEMY,
+            BULLSEYE = 1 << MarkerType.BULLSEYE,
+            PATH_EDIT_HANDLE = 1 << MarkerType.PATH_EDIT_HANDLE,
+            RING_EDIT_HANDLE = 1 << MarkerType.RING_EDIT_HANDLE
         }
 
         // ------------------------------------------------------------------------------------------------------------
@@ -85,6 +92,7 @@ namespace JAFDTC.UI.Controls.Map
         public readonly int TagInt;
         public readonly string Lat;
         public readonly string Lon;
+        public readonly double Rad;
 
         // ------------------------------------------------------------------------------------------------------------
         //
@@ -93,11 +101,11 @@ namespace JAFDTC.UI.Controls.Map
         // ------------------------------------------------------------------------------------------------------------
 
         public MapMarkerInfo()
-            => (Type, TagStr, TagInt, Lat, Lon) = (MapMarkerInfo.MarkerType.UNKNOWN, null, -1, null, null);
+            => (Type, TagStr, TagInt, Lat, Lon, Rad) = (MapMarkerInfo.MarkerType.UNKNOWN, null, -1, null, null, 0.0);
 
         public MapMarkerInfo(MapMarkerInfo.MarkerType type, string tagStr = null, int tagInt = -1, string lat = null,
-                             string lon = null)
-            => (Type, TagStr, TagInt, Lat, Lon) = (type, tagStr, tagInt, lat, lon);
+                             string lon = null, double rad = 0.0)
+            => (Type, TagStr, TagInt, Lat, Lon, Rad) = (type, tagStr, tagInt, lat, lon, rad);
 
         internal MapMarkerInfo(MapMarkerControl marker)
         {
@@ -107,6 +115,7 @@ namespace JAFDTC.UI.Controls.Map
             TagInt = (Type != MapMarkerInfo.MarkerType.UNKNOWN) ? tuple.Item3 : -1;
             Lat = (Type != MapMarkerInfo.MarkerType.UNKNOWN) ? $"{marker.Location.Latitude:F8}" : null;
             Lon = (Type != MapMarkerInfo.MarkerType.UNKNOWN) ? $"{marker.Location.Longitude:F8}" : null;
+            Rad = 0.0;
         }
     }
 }

@@ -467,10 +467,10 @@ namespace JAFDTC.UI.App
             MapWindow = new()
             {
                 MarkerExplainer = this,
-                OpenMask = MapMarkerInfo.MarkerTypeMask.USER |
-                           MapMarkerInfo.MarkerTypeMask.CAMPAIGN |
-                           MapMarkerInfo.MarkerTypeMask.DCS_CORE,
-                EditMask = MapMarkerInfo.MarkerTypeMask.USER | MapMarkerInfo.MarkerTypeMask.CAMPAIGN,
+                OpenMask = MapMarkerInfo.MarkerTypeMask.POI_USER |
+                           MapMarkerInfo.MarkerTypeMask.POI_CAMPAIGN |
+                           MapMarkerInfo.MarkerTypeMask.POI_DCS_CORE,
+                EditMask = MapMarkerInfo.MarkerTypeMask.POI_USER | MapMarkerInfo.MarkerTypeMask.POI_CAMPAIGN,
                 CoordFormat = LLDisplayFmt,
                 MaxRouteLength = 0,
                 CanOpenMarker = false
@@ -720,7 +720,7 @@ namespace JAFDTC.UI.App
             if (MapWindow != null)
             {
                 MapWindow.Theater = (string.IsNullOrEmpty(FilterTheater)) ? "All Theaters" : FilterTheater;
-                MapWindow.SetupMapContent([ ], marks);
+                MapWindow.SetupMapContent([ ], marks, [ ]);
             }
         }
 

@@ -18,11 +18,13 @@
 // ********************************************************************************************************************
 
 using JAFDTC.Models.Base;
+using JAFDTC.Models.CoreApp;
 using JAFDTC.Models.DCS;
 using JAFDTC.Models.Import;
 using JAFDTC.UI.App;
 using JAFDTC.UI.Controls.Map;
 using JAFDTC.Utilities;
+using Microsoft.Extensions.Options;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -30,10 +32,10 @@ using Microsoft.Windows.Storage.Pickers;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Xml.Linq;
-using Windows.Storage;
+using Windows.Services.Maps;
 
 namespace JAFDTC.UI.Base
 {
@@ -369,26 +371,6 @@ namespace JAFDTC.UI.Base
         // ------------------------------------------------------------------------------------------------------------
 
         /// <summary>
-        /// present and handle a file open picker to select a .cf/.miz file to import from. returns the result
-        /// of FileOpenPicker.PickSingleFileAsync.
-        /// </summary>
-        private static async Task<StorageFile> ImportFileOpenPicker()
-        {
-            FileOpenPicker picker = new((Application.Current as JAFDTC.App).Window.AppWindow.Id)
-            {
-                // SettingsIdentifier = "JAFDTC_ImportNavpt",
-                CommitButtonText = "Import Navpoints",
-                SuggestedStartLocation = PickerLocationId.Desktop,
-                ViewMode = PickerViewMode.List
-            };
-            picker.FileTypeFilter.Add(".cf");
-            picker.FileTypeFilter.Add(".miz");
-
-            PickFileResult resultPick = await picker.PickSingleFileAsync();
-            return (resultPick != null) ? await StorageFile.GetFileFromPathAsync(resultPick.Path) : null;
-        }
-
-        /// <summary>
         /// present and handle an import fail dialog that indicates jafdtc was unable to read/import from the file.
         /// what parameter should be capitalized and singular (e.g., "Steerpoints").
         /// </summary>
@@ -400,29 +382,100 @@ namespace JAFDTC.UI.Base
         /// <summary>
         /// present and handle the ui to import from the contents of a .cf/.miz file. the navpoints either
         /// replace or are appended to the current list of navpoints. what parameter should be capitalized and
-        /// singular (e.g., "Steerpoints"). returns true on success, false on failure (user is notified on failures).
+        /// singular (e.g., "Steerpoint"). returns true on success, false on failure (user is notified on failures).
         /// </summary>
         public static async Task<bool> Import(XamlRoot root, AirframeTypes airframe, INavpointSystemImport navptSys,
                                               string what)
         {
+            // select file to import navpoints from with FileOpenPicker.
+            //
+            FileOpenPicker picker = new((Application.Current as JAFDTC.App).Window.AppWindow.Id)
+            {
+                CommitButtonText = $"Import {what}s",
+                SuggestedStartLocation = PickerLocationId.Desktop,
+                ViewMode = PickerViewMode.List
+            };
+            picker.FileTypeFilter.Add(".cf");
+            picker.FileTypeFilter.Add(".miz");
+            PickFileResult resultPick = await picker.PickSingleFileAsync();
+            if (resultPick == null)
+                return false;                                   // **** EXITS: cancel
+
             try
             {
-                StorageFile file = await ImportFileOpenPicker();
-                if (file == null)
+                // build extractor and import groups/units from the file.
+                //
+                IExtractor extractor = Path.GetExtension(resultPick.Path).ToLower() switch
                 {
-                    return false;                                           // exit, picker cancelled
-                }
-                IImportHelper importer = file.FileType.ToLower() switch
+                    ".cf" => new ImportHelperCF(),
+                    ".miz" => new ImportHelperMIZ(),
+                    _ => (IExtractor) null
+                } ?? throw new Exception($"File type “{Path.GetExtension(resultPick.Path)}” is not supported.");
+
+                ExtractCriteria criteria = new()
                 {
-                    ".miz" => new ImportHelperMIZ(airframe, file.Path),
-                    ".cf" => new ImportHelperCF(airframe, file.Path),
-                    _ => null
+                    FilePath = resultPick.Path,
+                    UnitCategories = [UnitCategoryType.AIRCRAFT, UnitCategoryType.HELICOPTER],
+                    UnitTypes = ((Settings.IsNavPtImportIgnoreAirframe) ? AirframeTypes.None : airframe) switch
+                    {
+                        AirframeTypes.A10C => ["A-10C_2"],
+                        AirframeTypes.AH64D => ["AH-64D_BLK_II"],
+                        AirframeTypes.AV8B => ["AV8BNA"],
+                        AirframeTypes.F14AB => ["F-14A-135-GR", "F-14B"],
+                        AirframeTypes.F15E => ["F-15ESE"],
+                        AirframeTypes.F16C => ["F-16C_50"],
+                        AirframeTypes.FA18C => ["FA-18C_hornet"],
+                        AirframeTypes.M2000C => ["M-2000C"],
+                        _ => [],
+                    }
                 };
-                if (importer == null)
+                IReadOnlyList<UnitGroupItem> groups = extractor.Extract(criteria)
+                    ?? throw new Exception($"Encountered an error while importing from path\n\n{resultPick.Path}");
+
+                // build a list of flights available in the extracted data, then prompt the user to select the
+                // flight and setup import parameters before performing the actual import.
+                //
+                List<string> flights = [ ];
+                foreach (UnitGroupItem group in groups)
+                    flights.Add(group.Name);
+                flights.Sort();
+                if (flights.Count == 0)
+                    throw new Exception($"There were no flights for the {Globals.AirframeNames[airframe]} airframe" +
+                                        $" found in the import file from path\n\n{resultPick.Path}");
+
+                ContentDialogResult result = ContentDialogResult.None;
+                string flightName;
+                ImportParamsNavptDialog flightList = new(what, flights)
                 {
-                    await Utilities.Message1BDialog(root, "Unable to Import", "File is of unkown type.");
-                    return false;                                           // exit, bogus file type
+                    XamlRoot = root,
+                    Title = $"Select a Flight to Import {what}s From",
+                    PrimaryButtonText = "Replace",
+                    SecondaryButtonText = "Append",
+                    CloseButtonText = "Cancel"
+                };
+                result = await flightList.ShowAsync(ContentDialogPlacement.Popup);
+                if (result != ContentDialogResult.None)
+                {
+                    flightName = flightList.SelectedFlight;
+                    //                    options = flightList.Options;
+                    // TODO: when appending steerpoints, need to check if theaters match
+
+                    //            if (!importer.Import(navptSys, flightName, (result == ContentDialogResult.Primary), options))
+                    //                throw new Exception();                                  // exit, import error
+
+                    return true;
                 }
+            }
+            catch (Exception ex)
+            {
+                await Utilities.Message1BDialog(root, "Import Failed", ex.Message);
+            }
+
+            return false;
+#if NOPE
+            try
+            {
+
 
                 ContentDialogResult result = ContentDialogResult.Primary;
                 string flightName = null;
@@ -437,7 +490,8 @@ namespace JAFDTC.UI.Base
                 }
                 else if (importer.HasFlights)
                 {
-                    ImportParamsDialog flightList = new(flights, importer.OptionTitles(what), importer.OptionDefaults)
+                    ImportParamsDialog flightList = new("Available Flights", flights,
+                                                        importer.NavptOptionTitles(what), importer.NavptOptionDefaults)
                     {
                         XamlRoot = root,
                         Title = $"Select a Flight to Import {what}s From",
@@ -468,7 +522,7 @@ namespace JAFDTC.UI.Base
                 ImportFailDialog(root, what);
                 return false;                                               // exit, import error
             }
-            return true;
+#endif
         }
 
         // ------------------------------------------------------------------------------------------------------------
@@ -495,7 +549,7 @@ namespace JAFDTC.UI.Base
             foreach (PointOfInterest poi in PointOfInterestDbase.Instance.Find(query))
                 marks[poi.UniqueID] = poi;
 
-            MapWindow mapWindow = new()
+            MapWindow mapWindow = new(true, true)
             {
                 Theater = theater,
                 OpenMask = openMask,
@@ -503,7 +557,8 @@ namespace JAFDTC.UI.Base
                 CoordFormat = coordFormat,
                 MaxRouteLength = maxRouteLen
             };
-            mapWindow.SetupMapContent(routes, marks);
+// TODO: include cached/persisted threats here?
+            mapWindow.SetupMapContent(routes, marks, [ ]);
             mapWindow.RegisterMapControlVerbObserver(observer);
 
             mapWindow.Activate();
@@ -518,9 +573,9 @@ namespace JAFDTC.UI.Base
         public static string MarkerDisplayType(MapMarkerInfo info)
             => info.Type switch
             {
-                MapMarkerInfo.MarkerType.DCS_CORE => $"Core POI",
-                MapMarkerInfo.MarkerType.USER => $"User POI",
-                MapMarkerInfo.MarkerType.CAMPAIGN => $"Campaign POI",
+                MapMarkerInfo.MarkerType.POI_DCS_CORE => $"Core POI",
+                MapMarkerInfo.MarkerType.POI_USER => $"User POI",
+                MapMarkerInfo.MarkerType.POI_CAMPAIGN => $"Campaign POI",
                 _ => null
             };
 
@@ -530,9 +585,9 @@ namespace JAFDTC.UI.Base
         public static string MarkerDisplayName(MapMarkerInfo info)
         {
             string name = null;
-            if ((info.Type == MapMarkerInfo.MarkerType.DCS_CORE) ||
-                (info.Type == MapMarkerInfo.MarkerType.USER) ||
-                (info.Type == MapMarkerInfo.MarkerType.CAMPAIGN))
+            if ((info.Type == MapMarkerInfo.MarkerType.POI_DCS_CORE) ||
+                (info.Type == MapMarkerInfo.MarkerType.POI_USER) ||
+                (info.Type == MapMarkerInfo.MarkerType.POI_CAMPAIGN))
             {
                 PointOfInterest poi = PointOfInterestDbase.Instance.Find(info.TagStr);
                 if (poi != null)
@@ -553,9 +608,9 @@ namespace JAFDTC.UI.Base
         public static string MarkerDisplayElevation(MapMarkerInfo info, string units = "")
         {
             string elev = null;
-            if ((info.Type == MapMarkerInfo.MarkerType.DCS_CORE) ||
-                (info.Type == MapMarkerInfo.MarkerType.USER) ||
-                (info.Type == MapMarkerInfo.MarkerType.CAMPAIGN))
+            if ((info.Type == MapMarkerInfo.MarkerType.POI_DCS_CORE) ||
+                (info.Type == MapMarkerInfo.MarkerType.POI_USER) ||
+                (info.Type == MapMarkerInfo.MarkerType.POI_CAMPAIGN))
             {
                 PointOfInterest poi = PointOfInterestDbase.Instance.Find(info.TagStr);
                 if (poi != null)
