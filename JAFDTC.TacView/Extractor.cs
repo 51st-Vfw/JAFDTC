@@ -16,14 +16,14 @@
 // <https://www.gnu.org/licenses/>.
 //
 // ********************************************************************************************************************
-using JAFDTC.TacView.Extensions;
-using JAFDTC.TacView.Parsers;
-using JAFDTC.TacView.Models;
+using JAFDTC.File.ACMI.Extensions;
+using JAFDTC.File.ACMI.Parsers;
+using JAFDTC.File.ACMI.Models;
 using System.Globalization;
 using System.IO.Compression;
 using System.Text;
 
-namespace JAFDTC.TacView
+namespace JAFDTC.File.ACMI
 {
     public class Extractor : IExtractor
     {
@@ -33,7 +33,7 @@ namespace JAFDTC.TacView
             extractCriteria.Required();
             extractCriteria.FilePath.Required();
 
-            if (!File.Exists(extractCriteria.FilePath))
+            if (!System.IO.File.Exists(extractCriteria.FilePath))
                 throw new FileNotFoundException("ACMI file not found", extractCriteria.FilePath);
 
             var rawData = ReadACMI(extractCriteria.FilePath);
@@ -69,7 +69,7 @@ namespace JAFDTC.TacView
                 return reader.ReadToEnd();
             }
 
-            return File.ReadAllText(filePath);
+            return System.IO.File.ReadAllText(filePath);
         }
 
         internal static List<string> GetRawLines(string rawData)

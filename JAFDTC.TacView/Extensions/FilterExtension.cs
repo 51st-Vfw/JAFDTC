@@ -16,10 +16,10 @@
 // <https://www.gnu.org/licenses/>.
 //
 // ********************************************************************************************************************
-using JAFDTC.TacView.Models;
+using JAFDTC.File.ACMI.Models;
 using System.Linq;
 
-namespace JAFDTC.TacView.Extensions
+namespace JAFDTC.File.ACMI.Extensions
 {
     public static class FilterExtension
     {

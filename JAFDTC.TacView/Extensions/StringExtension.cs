@@ -16,10 +16,10 @@
 // <https://www.gnu.org/licenses/>.
 //
 // ********************************************************************************************************************
-using JAFDTC.TacView.Models;
+using JAFDTC.File.ACMI.Models;
 using System.Globalization;
 
-namespace JAFDTC.TacView.Extensions
+namespace JAFDTC.File.ACMI.Extensions
 {
     public static class StringExtension
     {

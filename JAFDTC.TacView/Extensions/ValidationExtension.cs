@@ -16,7 +16,7 @@
 // <https://www.gnu.org/licenses/>.
 //
 // ********************************************************************************************************************
-namespace JAFDTC.TacView.Extensions
+namespace JAFDTC.File.ACMI.Extensions
 {
     public static class ValidationExtension
     {

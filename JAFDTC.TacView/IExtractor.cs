@@ -16,9 +16,9 @@
 // <https://www.gnu.org/licenses/>.
 //
 // ********************************************************************************************************************
-using JAFDTC.TacView.Models;
+using JAFDTC.File.ACMI.Models;
 
-namespace JAFDTC.TacView
+namespace JAFDTC.File.ACMI
 {
     public interface IExtractor : IDisposable
     {

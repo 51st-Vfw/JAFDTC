@@ -16,10 +16,10 @@
 // <https://www.gnu.org/licenses/>.
 //
 // ********************************************************************************************************************
-using JAFDTC.TacView.Extensions;
-using JAFDTC.TacView.Models;
+using JAFDTC.File.ACMI.Extensions;
+using JAFDTC.File.ACMI.Models;
 
-namespace JAFDTC.TacView.Parsers
+namespace JAFDTC.File.ACMI.Parsers
 {
     public static class UnitParser
     {

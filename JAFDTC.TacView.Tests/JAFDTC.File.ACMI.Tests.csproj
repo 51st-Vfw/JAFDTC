@@ -23,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\JAFDTC.TacView\JAFDTC.TacView.csproj" />
+    <ProjectReference Include="..\JAFDTC.TacView\JAFDTC.File.ACMI.csproj" />
   </ItemGroup>
 
   <ItemGroup>
