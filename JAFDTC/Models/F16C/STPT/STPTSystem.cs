@@ -19,6 +19,7 @@
 // ********************************************************************************************************************
 
 using JAFDTC.Models.Base;
+using JAFDTC.Models.CoreApp;
 using JAFDTC.Utilities;
 using System;
 using System.Collections.Generic;
@@ -156,20 +157,21 @@ namespace JAFDTC.Models.F16C.STPT
         // NavpointSystemBase overrides
         //
         // ------------------------------------------------------------------------------------------------------------
-        public override void AddNavpointsFromInfoList(List<Dictionary<string, string>> navptInfoList)
+
+        public override void AddNavpointsFromPositionList(IReadOnlyList<UnitPositionItem> posnList)
         {
             SteerpointInfo stptCur = null;
             SteerpointInfo stptVIP = null;
             SteerpointInfo stptVRP = null;
-            foreach (Dictionary<string, string> navptInfo in navptInfoList)
+            foreach (UnitPositionItem posn in posnList)
             {
                 SteerpointInfo stpt = new()
                 {
-                    Name = (navptInfo.TryGetValue("name", out string valName)) ? valName : "",
-                    Lat = (navptInfo.TryGetValue("lat", out string lat)) ? lat : "",
-                    Lon = (navptInfo.TryGetValue("lon", out string lon)) ? lon : "",
-                    Alt = (navptInfo.TryGetValue("alt", out string alt)) ? alt : "",
-                    TOS = (navptInfo.TryGetValue("ton", out string ton)) ? ton : ""
+                    Name = (!string.IsNullOrEmpty(posn.Name)) ? posn.Name : "",
+                    Lat = $"{posn.Latitude:F8}",
+                    Lon = $"{posn.Longitude:F8}",
+                    Alt = $"{(int)posn.Altitude}",
+                    TOS = (posn.TimeOn >= 0.0) ? posn.TimeOnAsHMS : ""
                 };
                 string name = stpt.Name.ToUpper();
 

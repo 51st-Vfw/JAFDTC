@@ -18,6 +18,7 @@
 // ********************************************************************************************************************
 
 using JAFDTC.Models.Base;
+using JAFDTC.Models.CoreApp;
 using JAFDTC.Utilities;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -81,16 +82,16 @@ namespace JAFDTC.Models.AV8B.WYPT
         //
         // ------------------------------------------------------------------------------------------------------------
 
-        public override void AddNavpointsFromInfoList(List<Dictionary<string, string>> navptInfoList)
+        public override void AddNavpointsFromPositionList(IReadOnlyList<UnitPositionItem> posnList)
         {
-            foreach (Dictionary<string, string> navptInfo in navptInfoList)
+            foreach (UnitPositionItem posn in posnList)
             {
                 WaypointInfo wypt = new()
                 {
-                    Name = (navptInfo.TryGetValue("name", out string name)) ? name : "",
-                    Lat = (navptInfo.TryGetValue("lat", out string lat)) ? lat : "",
-                    Lon = (navptInfo.TryGetValue("lon", out string lon)) ? lon : "",
-                    Alt = (navptInfo.TryGetValue("alt", out string alt)) ? alt : ""
+                    Name = (string.IsNullOrEmpty(posn.Name)) ? posn.Name : "",
+                    Lat = $"{posn.Latitude:F8}",
+                    Lon = $"{posn.Longitude:F8}",
+                    Alt = $"{(int)posn.Altitude}"
                 };
                 Add(wypt);
             }

@@ -17,11 +17,12 @@
 //
 // ********************************************************************************************************************
 
-using System.Collections.ObjectModel;
-using System.Text.Json.Serialization;
-using System.Text.Json;
-using System.Collections.Generic;
+using JAFDTC.Models.CoreApp;
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace JAFDTC.Models.Base
 {
@@ -77,6 +78,13 @@ namespace JAFDTC.Models.Base
         // ------------------------------------------------------------------------------------------------------------
 
         /// <summary>
+        /// return the identifer for the current route, null for systems that support only a single route.
+        /// 
+        /// derived classes must override this if they support routes.
+        /// </summary>
+        public virtual string NavptCurrentRoute() => null;
+
+        /// <summary>
         /// return the number of navpoints currently defined for the given route (null => all routes).
         /// 
         /// derived classes must override this if they support routes.
@@ -116,18 +124,18 @@ namespace JAFDTC.Models.Base
         }
 
         /// <summary>
-        /// incorporate a list of navpoints specified by navpoint info dictionaries (see navptInfoList) into the
-        /// navpoint list. the new navpoints can either replace the existing navpoints or be appended to the end of
-        /// the navpoing list. returns true on success, false on error (previous navpoints preserved on errors).
+        /// incorporate a list of navpoints specified by unit position instances into the navpoint list for the
+        /// current route. the new navpoints can either replace the existing navpoints or be appended to the end of
+        /// the navpoint list. returns true on success, false on error (previous navpoints preserved on errors).
         /// </summary>
-        public virtual bool ImportNavpointInfoList(List<Dictionary<string, string>> navptInfoList, bool isReplace = true)
+        public virtual bool ImportUnitPositionList(IReadOnlyList<UnitPositionItem> posnList, bool isReplace = true)
         {
             ObservableCollection<T> prevPoints = new(Points);
             try
             {
                 if (isReplace)
                     Points.Clear();
-                AddNavpointsFromInfoList(navptInfoList);
+                AddNavpointsFromPositionList(posnList);
                 return true;
             }
             catch
@@ -144,27 +152,10 @@ namespace JAFDTC.Models.Base
         // ------------------------------------------------------------------------------------------------------------
 
         /// <summary>
-        /// returns the .json serialized form of the navpoints currently in the system, null on error.
+        /// add navpoints to the system according to the list of position instances. note that not all fields in a
+        /// navpoint for a specific system may be able to be set with a position instance.
         /// </summary>
-        public virtual string SerializeNavpoints()
-        {
-            return JsonSerializer.Serialize(Points, Configuration.JsonOptions);
-        }
-
-        /// <summary>
-        /// add navpoints to the system according to the list of navpoint info dictionaries. the info dictionary
-        /// provides a generic navpoint specification and includes the following key/value pairs:
-        ///
-        ///   ["name"]      (string) name of navpoint
-        ///   ["lat"]       (string) latitude of navpoint, decimal degrees with no units
-        ///   ["lon"]       (string) longitude of navpoint, decimal degrees with no units
-        ///   ["alt"]       (string) elevation of navpoint, feet
-        ///   ["ton"]       (string) time over navpoint, hh:mm:ss
-        /// 
-        /// navpoint fields with missing keys are set to "". note that not all fields in a navpoint may be able to
-        /// be set with a navpoint info dictionary.
-        /// </summary>
-        public abstract void AddNavpointsFromInfoList(List<Dictionary<string, string>> navptInfoList);
+        public abstract void AddNavpointsFromPositionList(IReadOnlyList<UnitPositionItem> posnList);
 
         /// <summary>
         /// returns the number of navpoints in the system.

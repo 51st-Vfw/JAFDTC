@@ -18,6 +18,7 @@
 // ********************************************************************************************************************
 
 using JAFDTC.Models.Base;
+using JAFDTC.Models.CoreApp;
 using JAFDTC.Utilities;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -97,28 +98,26 @@ namespace JAFDTC.Models.F15E.STPT
         /// <summary>
         /// TODO
         /// </summary>
-        public override void AddNavpointsFromInfoList(List<Dictionary<string, string>> navptInfoList)
+        public override void AddNavpointsFromPositionList(IReadOnlyList<UnitPositionItem> posnList)
         {
-           // TODO: handle nav table ref points per razbam
+            // TODO: handle nav table ref points per razbam
             SteerpointInfo stptCur = null;
-            foreach (Dictionary<string, string> navptInfo in navptInfoList)
+            foreach (UnitPositionItem posn in posnList)
             {
                 SteerpointInfo stpt = new()
                 {
-                    Name = (navptInfo.TryGetValue("name", out string valName)) ? valName : "",
-                    Route = (navptInfo.TryGetValue("route", out string route)) ? route : "A",
-                    Lat = (navptInfo.TryGetValue("lat", out string lat)) ? lat : "",
-                    Lon = (navptInfo.TryGetValue("lon", out string lon)) ? lon : "",
-                    Alt = (navptInfo.TryGetValue("alt", out string alt)) ? alt : "",
-                    TOT = (navptInfo.TryGetValue("ton", out string ton)) ? ton : "",
+                    Name = (string.IsNullOrEmpty(posn.Name)) ? posn.Name : "",
+                    Route = (NavptCurrentRoute() != NavptCurrentRoute()) ? NavptCurrentRoute() : "A",
+                    Lat = $"{posn.Latitude:F8}",
+                    Lon = $"{posn.Longitude:F8}",
+                    Alt = $"{(int)posn.Altitude}",
+                    TOT = (posn.TimeOn >= 0.0) ? posn.TimeOnAsHMS : ""
                 };
                 string name = stpt.Name.ToUpper();
 
                 stpt.IsTarget = (name.Contains("#T"));
                 if (stpt.IsTarget)
-                {
                     stpt.Name = stpt.Name.Replace("#T", "").Replace("#t", "");
-                }
                 Match match = _hashRefPtRegex.Match(name);
                 if ((stptCur != null) && (match.Groups.Count >= 2))
                 {

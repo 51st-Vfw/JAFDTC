@@ -1,6 +1,6 @@
 ﻿// ********************************************************************************************************************
 //
-// INavpointSystemImport.cs -- interface for a navpoint system object that can perform imports
+// INavpointSystemImport.cs -- import interface for a navpoint system object
 //
 // Copyright(C) 2023-2025 ilominar/raven
 //
@@ -17,16 +17,22 @@
 //
 // ********************************************************************************************************************
 
+using JAFDTC.Models.CoreApp;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 namespace JAFDTC.Models.Base
 {
     /// <summary>
-    /// interface for an object that supports updates of navpoints in a navpoint system from an import.
+    /// interface for import-related functionality in a navpoint system.
     /// </summary>
     public interface INavpointSystemImport
     {
+        /// <summary>
+        /// return the identifer for the current route, null for systems that support only a single route.
+        /// </summary>
+        public string NavptCurrentRoute();
+
         /// <summary>
         /// return the number of navpoints currently defined for the given route (null => all routes).
         /// </summary>
@@ -39,21 +45,20 @@ namespace JAFDTC.Models.Base
         public int NavptAvailableCount(string route = null);
 
         /// <summary>
-        /// deserialize an array of navpoints from .json and incorporate them into the navpoint list. the deserialized
-        /// navpoints can either replace the existing navpoints or be appended to the end of the navpoint list. returns
-        /// true on success, false on error (previous navpoints preserved on errors).
+        /// deserialize an array of navpoints from .json and incorporate them into the navpoint list for the
+        /// current route. the deserialized navpoints can either replace the existing navpoints or be appended to
+        /// the end of the navpoint list. returns true on success, false on error (previous navpoints preserved on
+        /// errors).
         /// 
         /// imports from serialized navpoints support all navpoint properties.
         /// </summary>
         public bool ImportSerializedNavpoints(string json, bool isReplace = true);
 
         /// <summary>
-        /// incorporate a list of navpoints specified by navpoint info dictionaries (see navptInfoList) into the
-        /// navpoint list. the new navpoints can either replace the existing navpoints or be appended to the end of
-        /// the navpoing list. returns true on success, false on error (previous navpoints preserved on errors).
-        /// 
-        /// imports from navpoint info dictionaries may only support basic navpoint properties (like coordinates).
+        /// incorporate a list of navpoints specified by unit position instances into the navpoint list for the
+        /// current route. the new navpoints can either replace the existing navpoints or be appended to the end of
+        /// the navpoint list. returns true on success, false on error (previous navpoints preserved on errors).
         /// </summary>
-        public bool ImportNavpointInfoList(List<Dictionary<string, string>> navptInfoList, bool isReplace = true);
+        public bool ImportUnitPositionList(IReadOnlyList<UnitPositionItem> posnList, bool isReplace = true);
     }
 }
