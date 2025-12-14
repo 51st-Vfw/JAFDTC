@@ -22,6 +22,7 @@ using JAFDTC.Models.DCS;
 using MapControl;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using System;
@@ -251,6 +252,8 @@ namespace JAFDTC.UI.Controls.Map
             set => SetValue(MouseWheelZoomAnimatedProperty, value);
         }
 
+        public IMapControlMarkerPopupFactory MarkerPopupFactory { get; set; }
+
         // ---- computed properties
 
         public bool CanEditSelectedMarker => CanEditMarker(_selectedMarker);
@@ -259,7 +262,10 @@ namespace JAFDTC.UI.Controls.Map
 
         // ---- private properties
 
-        private MapMarkerControl _selectedMarker;
+        private MapMarkerControl _selectedMarker = null;
+        private MapMarkerControl _mouseOverMarker = null;
+        private Popup _mouseOverPopup = null;
+        private int _mouseOverSerial = 0;
 
         private VirtualKeyModifiers _lastPressKeyModifiers;
 
@@ -316,10 +322,6 @@ namespace JAFDTC.UI.Controls.Map
                              | ManipulationModes.TranslateInertia;
 
             PointerWheelChanged += OnPointerWheelChanged;
-#if TODO_IMPLEMENT
-            PointerEntered += OnPointerEntered;
-            PointerExited += OnPointerExited;
-#endif
             PointerMoved += OnPointerMoved;
             PointerPressed += OnPointerPressed;
             PointerReleased += OnPointerReleased;
@@ -677,6 +679,9 @@ namespace JAFDTC.UI.Controls.Map
             };
             marker.Location = loc ?? new Location(0.0, 0.0);
             marker.Tag = TagForMarkerOfKind(type, tagStr, tagInt);
+
+            marker.PointerEntered += Marker_PointerEntered;
+            marker.PointerExited += Marker_PointerExited;
 
             Canvas.SetZIndex(marker, _mapMarkerZ[type]);
             Children.Add(marker);
@@ -1254,20 +1259,46 @@ namespace JAFDTC.UI.Controls.Map
             }
         }
 
-#if TODO_IMPLEMENT
         /// <summary>
         /// TODO: document
         /// </summary>
-        private void OnPointerEntered(object sender, PointerRoutedEventArgs evt)
+        private void TriggerHover(object tag, int serial)
         {
+            if ((_mouseOverMarker != null) && (_mouseOverMarker.Tag == tag) && (_mouseOverSerial == serial))
+            {
+                _mouseOverPopup = MarkerPopupFactory.MarkerPopup(new(_mouseOverMarker));
+                (_mouseOverMarker.Content as Panel).Children.Add(_mouseOverPopup);
+                _mouseOverPopup.IsOpen = true;
+            }
         }
 
         /// <summary>
         /// TODO: document
         /// </summary>
-        private void OnPointerExited(object sender, PointerRoutedEventArgs evt)
+        private void Marker_PointerEntered(object sender, PointerRoutedEventArgs args)
         {
+            MapMarkerControl marker = sender as MapMarkerControl;
+            if ((marker != null) && (MarkerPopupFactory != null))
+            {
+                _mouseOverMarker = marker;
+                object tag = marker.Tag;
+                int enterSerial = ++_mouseOverSerial;
+                Utilities.DispatchAfterDelay(DispatcherQueue, 1.5, false, (s, e) => TriggerHover(tag, enterSerial));
+            }
         }
-#endif
+
+        /// <summary>
+        /// TODO: document
+        /// </summary>
+        private void Marker_PointerExited(object sender, PointerRoutedEventArgs args)
+        {
+            if (_mouseOverPopup != null)
+            {
+                _mouseOverPopup.IsOpen = false;
+                (_mouseOverMarker.Content as Panel).Children.Remove(_mouseOverPopup);
+                _mouseOverMarker = null;
+                _mouseOverPopup = null;
+            }
+        }
     }
 }

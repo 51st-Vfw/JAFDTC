@@ -17,8 +17,23 @@
 //
 // ********************************************************************************************************************
 
+using Microsoft.UI.Xaml.Controls.Primitives;
+
 namespace JAFDTC.UI.Controls.Map
+
 {
+    /// <summary>
+    /// defines the interface for an object that can provide a detail/explanatory popup for markers on mouse over.
+    /// </summary>
+    public interface IMapControlMarkerPopupFactory
+    {
+        /// <summary>
+        /// returns a popup element to be used to display information during mouse overs on the marker with the
+        /// specified information.
+        /// </summary>
+        public Popup MarkerPopup(MapMarkerInfo info);
+    }
+
     /// <summary>
     /// defines the interface for an object that can provide details on markers.
     /// </summary>

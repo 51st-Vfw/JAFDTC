@@ -31,11 +31,14 @@ using JAFDTC.Utilities;
 using MapControl;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Input;
+using Microsoft.UI.Text;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media;
 using Microsoft.Windows.Storage.Pickers;
 using System;
 using System.Collections.Generic;
@@ -44,13 +47,15 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using Windows.Graphics;
+using Windows.UI;
+using Windows.UI.Text;
 
 namespace JAFDTC.UI.App
 {
     /// <summary>
     /// TODO: document.
     /// </summary>
-    public sealed partial class MapWindow : Window, IMapControlVerbMirror
+    public sealed partial class MapWindow : Window, IMapControlMarkerPopupFactory, IMapControlVerbMirror
     {
         // ------------------------------------------------------------------------------------------------------------
         //
@@ -230,6 +235,7 @@ namespace JAFDTC.UI.App
 
             // ---- map control setup
 
+            uiMap.MarkerPopupFactory = this;
             uiMap.VerbMirror = this;
             RegisterMapControlVerbObserver(uiMap);
 
@@ -420,6 +426,71 @@ namespace JAFDTC.UI.App
 
             RebuildElementsForFilter();
             RebuildInterfaceState();
+        }
+
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // IMapControlMarkerPopupFactory
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
+        /// <summary>
+        /// TODO: document
+        /// </summary>
+        public Popup MarkerPopup(MapMarkerInfo mrkInfo)
+        {
+            Popup popup = new()
+            {
+                HorizontalOffset = 24,
+                VerticalOffset = -6
+            };
+
+            TextBlock pupTextTitle = new()
+            {
+                FontSize = 14,
+                FontWeight = FontWeights.Bold
+            };
+            TextBlock pupTextSubtitle = new()
+            {
+                FontSize = 11,
+                FontStyle = FontStyle.Italic
+            };
+
+            StackPanel pupStack = new()
+            {
+                Margin = new Thickness(8, 4, 8, 8),
+                Orientation = Orientation.Vertical,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            pupStack.Children.Add(pupTextTitle);
+            pupStack.Children.Add(pupTextSubtitle);
+
+            popup.Child = new Border ()
+            {
+                Padding = new Thickness(0, 0, 0, 0),
+                CornerRadius = new CornerRadius(6),
+                Background = new SolidColorBrush(Color.FromArgb(192, 0, 0, 0)),
+                Child = pupStack
+            };
+
+            if (_mapImportedMarkerDict.TryGetValue(mrkInfo.TagStr, out string importedMarkerName))
+                pupTextTitle.Text = importedMarkerName;
+            else
+                pupTextTitle.Text = MarkerExplainer?.MarkerDisplayName(mrkInfo) ?? "Unknown";
+            pupTextSubtitle.Text = mrkInfo.Type switch
+            {
+                MapMarkerInfo.MarkerType.POI_DCS_CORE => "DCS System POI",
+                MapMarkerInfo.MarkerType.POI_USER => "User POI",
+                MapMarkerInfo.MarkerType.POI_CAMPAIGN => "Campaign POI",
+                MapMarkerInfo.MarkerType.NAV_PT => "Navigation Route",
+                MapMarkerInfo.MarkerType.UNIT_FRIEND => "Friendly Element",
+                MapMarkerInfo.MarkerType.UNIT_ENEMY => "Enemy Element",
+                MapMarkerInfo.MarkerType.BULLSEYE => "Bullseye",
+                _ => "Map marker"
+            };
+
+            return popup;
         }
 
         // ------------------------------------------------------------------------------------------------------------
