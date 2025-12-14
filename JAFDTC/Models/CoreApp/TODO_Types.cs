@@ -3,6 +3,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace JAFDTC.Models.CoreApp
 {
@@ -80,30 +82,36 @@ namespace JAFDTC.Models.CoreApp
 
     public class UnitPositionItem
     {
-        public string Name { get; set; }                                        // position name (optional)
-        public required double Latitude { get; set; }                           // decimal degrees
-        public required double Longitude { get; set; }                          // decimal degrees
-        public double Altitude { get; set; }                                    // feet
-        public double TimeOn { get; set; }                                      // seconds since 00:00 local
+        public string Name { get; set; }                                    // position name (optional)
+        public required double Latitude { get; set; }                       // decimal degrees
+        public required double Longitude { get; set; }                      // decimal degrees
+        public double Altitude { get; set; }                                // feet
+        public double TimeOn { get; set; }                                  // s in day (local), < 0 => no time on
+
+        [JsonIgnore]
+        public string TimeOnAsHMS
+            => (TimeOn >= 0.0) ? string.Format("{0:00}:{1:00}:{2:00}",
+                                               ((int)TimeOn / 3600), ((int)TimeOn / 60) % 60, ((int)TimeOn % 60))
+                               : string.Empty;
     }
 
     public class UnitItem
     {
-        public required string UniqueID { get; set; }                           // unique identifier for unit
+        public required string UniqueID { get; set; }                       // unique identifier for unit
 // TODO: make this an enum? need some mapping from string to enum for ui, possibly
-        public required string Type { get; set; }                               // unit type
-        public required string Name { get; set; }                               // unit name
-        public required UnitPositionItem Position { get; set; }                 // unit position
-        public required bool IsAlive { get; set; }                              // t => alive
+        public required string Type { get; set; }                           // unit type
+        public required string Name { get; set; }                           // unit name
+        public required UnitPositionItem Position { get; set; }             // unit position
+        public required bool IsAlive { get; set; }                          // t => alive
     }
 
     public class UnitGroupItem
     {
-        public required string UniqueID { get; set; }                           // unique identifier for group
-        public required CoalitionType Coalition { get; set; }                   // coalition of group
-        public required UnitCategoryType Category { get; set; }                 // category of units in group
-        public required string Name { get; set; }                               // group name
-        public required IReadOnlyList<UnitItem> Units { get; set; }             // list of units in group
-        public required IReadOnlyList<UnitPositionItem> Route { get; set; }     // list of positions along route
+        public required string UniqueID { get; set; }                       // unique identifier for group
+        public required CoalitionType Coalition { get; set; }               // coalition of group
+        public required UnitCategoryType Category { get; set; }             // category of units in group
+        public required string Name { get; set; }                           // group name
+        public required IReadOnlyList<UnitItem> Units { get; set; }         // list of units in group
+        public required IReadOnlyList<UnitPositionItem> Route { get; set; } // list of positions along route
     }
 }

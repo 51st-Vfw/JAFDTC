@@ -25,6 +25,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Windows.Devices.PointOfService;
 
 // TODO: namespace and class names need to change here for consistency.
 
@@ -75,7 +76,7 @@ namespace JAFDTC.Models.Import
         /// returns a list of PositionItem for the route from the positions in groupInfo["route"]["points"]. throws
         /// an exception if there are translation errors.
         /// </summary>
-        private static IReadOnlyList<UnitPositionItem> ParseRoute(string theater, LsonDict groupDict, int startTime)
+        private static List<UnitPositionItem> ParseRoute(string theater, LsonDict groupDict, int startTime)
         {
             List<UnitPositionItem> route = [ ];
             if (groupDict.ContainsKey("route") &&
@@ -89,13 +90,18 @@ namespace JAFDTC.Models.Import
                     double z = (double)point["y"].GetDecimal();
                     CoordLL ll = CoordInterpolator.Instance.XZtoLL(theater, x, z)
                                  ?? throw new Exception("Group/Point coordiante translation fails");
-                    route.Add(new UnitPositionItem()
+
+                    UnitPositionItem posn = new()
                     {
                         Latitude = ll.Lat,
                         Longitude = ll.Lon,
                         Altitude = (double)point["alt"].GetDecimal() * M_TO_FT,
-                        TimeOn = startTime + (double)point["ETA"].GetDecimal()
-                    });
+                        TimeOn = -1.0
+                    };
+                    if (point.ContainsKey("ETA_locked") && point["ETA_locked"].GetBool())
+                        posn.TimeOn = startTime + (double)point["ETA"].GetDecimal();
+
+                    route.Add(posn);
                 }
             }
             else
@@ -131,7 +137,7 @@ namespace JAFDTC.Models.Import
                         Longitude = ll.Lon,
                         Altitude = alt * M_TO_FT,
 // TODO: TOS import?
-                        TimeOn = 0.0
+                        TimeOn = -1.0
                     },
                     IsAlive = true,
                 });

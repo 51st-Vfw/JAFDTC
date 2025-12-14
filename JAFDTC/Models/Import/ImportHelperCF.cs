@@ -23,7 +23,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Xml;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 // TODO: namespace and class names need to change here for consistency.
 
@@ -35,6 +37,15 @@ namespace JAFDTC.Models.Import
     /// </summary>
     public partial class ImportHelperCF : IExtractor
     {
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // constants
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
+        [GeneratedRegex(@"(?i)^.+\s+(\d\d|\d):(\d\d):(\d\d)\s+(am|pm)")]
+        private static partial Regex TimeRegex();
+
         // ------------------------------------------------------------------------------------------------------------
         //
         // construction
@@ -69,28 +80,20 @@ namespace JAFDTC.Models.Import
                     Name = waypoint.SelectSingleNode("Name").InnerText,
                     Latitude = double.Parse(waypoint.SelectSingleNode("Lat").InnerText),
                     Longitude = double.Parse(waypoint.SelectSingleNode("Lon").InnerText),
+                    TimeOn = -1.0
                 };
                 if (!double.TryParse(waypoint.SelectSingleNode("Altitude").InnerText, out double alt))
                     alt = 0.0;
                 navpt.Altitude = alt;
 
-                string ton = waypoint.SelectSingleNode("TOT").InnerText;
-                if (ton != null)
+                string tot = waypoint.SelectSingleNode("TOT").InnerText;
+                if (tot != null)
                 {
-                    string[] parts = ton.Split(' ');            // string format: "10/11/2023 11:50:59 AM"
-                    if (parts.Length == 3)
-                    {
-                        string[] hms = parts[1].Split(':');
-                        if ((hms.Length == 3) &&
-                            (double.TryParse(hms[0], out double h) && (h >= 1.0) && (h < 13.0)) &&
-                            (double.TryParse(hms[1], out double m) && (m >= 0.0) && (m < 60.0)) &&
-                            (double.TryParse(hms[2], out double s) && (s >= 0.0) && (s < 60.0)))
-                        {
-                            if ((parts[2].Equals("pm", StringComparison.CurrentCultureIgnoreCase)) && (h < 12))
-                                h += 12;
-                            navpt.TimeOn = (h * 60.0 * 60.0) + (m * 60.0) + s;
-                        }
-                    }
+                    Match match = TimeRegex().Match(tot);
+                    if (match.Success)
+                        navpt.TimeOn = (int.Parse(match.Groups[1].Value) * 3600) +
+                                       (int.Parse(match.Groups[2].Value) * 60) +
+                                       (int.Parse(match.Groups[3].Value) * 1);
                 }
 
                 navpts.Add(navpt);
