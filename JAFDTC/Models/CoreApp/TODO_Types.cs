@@ -91,7 +91,9 @@ namespace JAFDTC.Models.CoreApp
         [JsonIgnore]
         public string TimeOnAsHMS
             => (TimeOn >= 0.0) ? string.Format("{0:00}:{1:00}:{2:00}",
-                                               ((int)TimeOn / 3600), ((int)TimeOn / 60) % 60, ((int)TimeOn % 60))
+                                               (((int)TimeOn % 86400) / 3600),
+                                               (((int)TimeOn % 86400) / 60) % 60,
+                                               (((int)TimeOn % 86400) % 60))
                                : string.Empty;
     }
 
