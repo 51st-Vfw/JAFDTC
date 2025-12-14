@@ -409,4 +409,8 @@
   <ItemGroup>
     <PRIResource Remove="JAFDTC\**" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\JAFDTC.Models\JAFDTC.Models.csproj" />
+  </ItemGroup>
 </Project>
