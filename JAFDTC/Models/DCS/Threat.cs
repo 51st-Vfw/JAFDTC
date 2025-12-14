@@ -18,6 +18,8 @@
 // ********************************************************************************************************************
 
 using JAFDTC.Models.CoreApp;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace JAFDTC.Models.DCS
 {
@@ -31,6 +33,28 @@ namespace JAFDTC.Models.DCS
         USER = 1
     }
 
+    // ================================================================================================================
+
+    /// <summary>
+    /// filter extensions for processing lists of threats.
+    /// </summary>
+    public static class FilterExtension
+    {
+        public static IEnumerable<Threat> LimitThreatTypes(this IEnumerable<Threat> values, ThreatType[]? threatTypes)
+            => (threatTypes == null || threatTypes.Length == 0) ? values : values.Where(u => threatTypes.Contains(u.Type));
+
+        public static IEnumerable<Threat> LimitDCSTypes(this IEnumerable<Threat> values, string[]? dcsTypes)
+            => (dcsTypes == null || dcsTypes.Length == 0) ? values : values.Where(u => dcsTypes.Contains(u.TypeDCS));
+
+        public static IEnumerable<Threat> LimitCoalitions(this IEnumerable<Threat> values, CoalitionType[]? coalitions)
+            => (coalitions == null || coalitions.Length == 0) ? values : values.Where(u => coalitions.Contains(u.Coalition));
+
+        public static IEnumerable<Threat> LimitCategories(this IEnumerable<Threat> values, UnitCategoryType[]? categories)
+            => (categories == null || categories.Length == 0) ? values : values.Where(u => categories.Contains(u.Category));
+    }
+
+    // ================================================================================================================
+
     /// <summary>
     /// defines the properties of a potential threat. these instances are managed by threat database (ThreatDbase).
     /// threats include a type, dcs type, coalition, name, and wez radius.
@@ -41,7 +65,9 @@ namespace JAFDTC.Models.DCS
 
         public string TypeDCS { get; set; }                     // dcs .miz unit "type" value for threat
 
-        public CoalitionType Coalition { get; set; }            // unit coalition (ThreatCoalition)
+        public UnitCategoryType Category { get; set; }          // unit category
+
+        public CoalitionType Coalition { get; set; }            // primary unit coalition
 
         public string Name { get; set; }                        // display name for threat
         
