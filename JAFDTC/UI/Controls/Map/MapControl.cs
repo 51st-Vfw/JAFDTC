@@ -453,7 +453,7 @@ namespace JAFDTC.UI.Controls.Map
                 Children.Remove(_theaterBounds.ControlFg);
             _theaterBounds = null;
 
-            if (PointOfInterest.TheaterInfo.TryGetValue(theater, out TheaterInfo info))
+            if (Theater.TheaterInfo.TryGetValue(theater, out TheaterInfo info))
             {
                 ObservableCollection<Location> path = [
                     new Location(info.LatMin, info.LonMin),

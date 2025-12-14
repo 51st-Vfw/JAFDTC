@@ -115,7 +115,7 @@ namespace JAFDTC.UI.Base
         {
             Dictionary<string, int> theaterMap = [ ];
             foreach (INavpointInfo navpt in navpts)
-                foreach (string theater in PointOfInterest.TheatersForCoords(navpt.Lat, navpt.Lon))
+                foreach (string theater in Theater.TheatersForCoords(navpt.Lat, navpt.Lon))
                     theaterMap[theater] = theaterMap.GetValueOrDefault(theater, 0) + 1;
 
             Dictionary<int, List<string>> freqMap = [];
@@ -150,7 +150,7 @@ namespace JAFDTC.UI.Base
                 // no navpoints: prompt for a theater then locate the new navpoint in the center of the
                 // area for that theater.
                 //
-                GetListDialog theaterDialog = new(PointOfInterest.Theaters, "Theater", 0, 0)
+                GetListDialog theaterDialog = new(Theater.Theaters, "Theater", 0, 0)
                 {
                     XamlRoot = root,
                     Title = $"Select a Theater for the Navpoint",
@@ -160,7 +160,7 @@ namespace JAFDTC.UI.Base
                 ContentDialogResult result = await theaterDialog.ShowAsync(ContentDialogPlacement.Popup);
                 if (result == ContentDialogResult.Primary)
                 {
-                    TheaterInfo info = PointOfInterest.TheaterInfo[theaterDialog.SelectedItem];
+                    TheaterInfo info = Theater.TheaterInfo[theaterDialog.SelectedItem];
                     lat = info.LatMin + ((info.LatMax - info.LatMin) / 2.0);
                     lon = info.LonMin + ((info.LonMax - info.LonMin) / 2.0);
                 }

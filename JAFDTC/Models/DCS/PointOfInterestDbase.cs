@@ -133,7 +133,7 @@ namespace JAFDTC.Models.DCS
         /// 
         /// TODO: consider allowing user-defined theaters.
         /// </summary>
-        public static List<string> KnownTheaters => PointOfInterest.Theaters;
+        public static List<string> KnownTheaters => Theater.Theaters;
 
         // ------------------------------------------------------------------------------------------------------------
         //
@@ -304,7 +304,7 @@ namespace JAFDTC.Models.DCS
             Dictionary<string, int> mapTheater = [];
             foreach (PointOfInterest poi in pois)
                 if (string.IsNullOrEmpty(poi.Theater))
-                    foreach (string theater in PointOfInterest.TheatersForCoords(poi.Latitude, poi.Longitude))
+                    foreach (string theater in Theater.TheatersForCoords(poi.Latitude, poi.Longitude))
                         mapTheater[theater] = mapTheater.GetValueOrDefault(theater, 0) + 1;
                 else
                     mapTheater[poi.Theater] = mapTheater.GetValueOrDefault(poi.Theater, 0) + 1;

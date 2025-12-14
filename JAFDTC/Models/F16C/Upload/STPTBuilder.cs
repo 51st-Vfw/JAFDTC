@@ -70,7 +70,7 @@ namespace JAFDTC.Models.F16C.Upload
                 jetStpts.Add(stpts[i].Number.ToString(), stpts[i]);
 
             List<string> theaters = TheatersForNavpoints([.. stpts ]);
-            int zulu = (theaters.Count > 0) ? PointOfInterest.TheaterInfo[theaters[0]].Zulu : 0;
+            int zulu = (theaters.Count > 0) ? Theater.TheaterInfo[theaters[0]].Zulu : 0;
 
             BuildWaypoints(ufc, jetStpts, -zulu);     // negate zulu to get offset from local to zulu
             BuildVIP(ufc, jetStpts);
@@ -231,7 +231,7 @@ namespace JAFDTC.Models.F16C.Upload
         {
             Dictionary<string, int> theaterMap = [];
             foreach (INavpointInfo navpt in navpts)
-                foreach (string theater in PointOfInterest.TheatersForCoords(navpt.Lat, navpt.Lon))
+                foreach (string theater in Theater.TheatersForCoords(navpt.Lat, navpt.Lon))
                     theaterMap[theater] = theaterMap.GetValueOrDefault(theater, 0) + 1;
 
             Dictionary<int, List<string>> freqMap = [];

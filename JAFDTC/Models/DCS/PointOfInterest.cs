@@ -57,28 +57,6 @@ namespace JAFDTC.Models.DCS
     // ================================================================================================================
 
     /// <summary>
-    /// defines information on a theater including the boundary of a theater on the map in terms of a min/max latitude
-    /// and longitude along with time zone information.
-    /// </summary>
-    public sealed class TheaterInfo
-    {
-        public double LatMin { get; }
-        public double LatMax { get; }
-        public double LonMin { get; }
-        public double LonMax { get; }
-
-        public int Zulu { get;  }
-
-        public TheaterInfo(double latMin, double latMax, double lonMin, double lonMax, int zulu)
-            => (LatMin, LatMax, LonMin, LonMax, Zulu) = (latMin, latMax, lonMin, lonMax, zulu);
-
-        public bool Contains(double lat, double lon)
-            => ((LatMin <= lat) && (lat <= LatMax) && (LonMin <= lon) && (lon <= LonMax));
-    }
-
-    // ================================================================================================================
-
-    /// <summary>
     /// defines the properties of a point of interest (poi) known to jafdtc. these instances are managed by the poi
     /// database (PointOfInterestDbase). pois include a theater (set based on lat/lon), optional campaign name,
     /// semicolon-separated list of tags, and a lat/lon/elev. the tuple (type, theater, name) must be unique across
@@ -86,29 +64,6 @@ namespace JAFDTC.Models.DCS
     /// </summary>
     public sealed class PointOfInterest
     {
-        // ------------------------------------------------------------------------------------------------------------
-        //
-        // constants
-        //
-        // ------------------------------------------------------------------------------------------------------------
-
-        public static Dictionary<string, TheaterInfo> TheaterInfo => new()
-        {
-            //                         lat-    lat+     lon-     lon+    z
-            ["Afghanistan"]     = new( 23.00,  38.75,   60.25,   73.25,  5),    // UTC +5
-            ["Caucasus"]        = new( 40.00,  46.00,   33.00,   46.00,  4),    // UTC +4
-            ["Germany"]         = new( 49.50,  54.50,    6.50,   16.00,  2),    // UTC +2
-            ["Iraq"]            = new( 26.25,  37.00,   38.50,   52.00,  4),    // UTC +4
-            ["Kola"]            = new( 64.00,  71.25,   12.00,   39.00,  3),    // UTC +3
-            ["Marianas"]        = new( 11.75,  22.00,  141.00,  149.00, 10),    // UTC +10
-            ["Nevada"]          = new( 34.50,  38.75, -118.50, -113.00, -8),    // UTC -8
-            ["Persian Gulf"]    = new( 22.00,  30.75,   50.00,   59.00,  4),    // UTC +4
-            ["Sinai"]           = new( 26.50,  34.00,   29.50,   35.75,  3),    // UTC +3
-            ["South Atlantic"]  = new(-57.00, -48.00,  -77.00,  -55.00, -3),    // UTC -3
-            ["Syria"]           = new( 31.25,  37.75,   30.75,   41.00,  3)     // UTC +3
-        };
-        public static List<string> Theaters => [.. TheaterInfo.Keys];
-
         // ------------------------------------------------------------------------------------------------------------
         //
         // properties
@@ -202,7 +157,7 @@ namespace JAFDTC.Models.DCS
             {
                 string lat = cols[3].Trim();
                 string lon = cols[4].Trim();
-                List<string> theaters = TheatersForCoords(lat, lon);
+                List<string> theaters = JAFDTC.Models.DCS.Theater.TheatersForCoords(lat, lon);
                 if ((theaters != null) && (theaters.Count >= 1))
                 {
                     Theater = (theaters.Count == 1) ? theaters[0] : null;
@@ -231,32 +186,6 @@ namespace JAFDTC.Models.DCS
             return mask.HasFlag((PointOfInterestTypeMask)(1 << (int)Type));
         }
 
-        /// <summary>
-        /// returns a list of the names of the dcs theaters that contains the given coordinate, empty list if
-        /// no theater matches the coordinates. the match is based on approximate lat/lon bounds of the theaters.
-        /// note that a coordinate may appear in multiple theaters.
-        /// </summary>
-        public static List<string> TheatersForCoords(double lat, double lon)
-        {
-            List<string> theaters = [ ];
-            foreach (KeyValuePair<string, TheaterInfo> kvp in TheaterInfo)
-                if (kvp.Value.Contains(lat, lon))
-                    theaters.Add(kvp.Key);
-            return theaters;
-        }
-
-        /// <summary>
-        /// returns a list of the names of the dcs theaters that contains the given coordinate, empty list if
-        /// no theater matches the coordinates. the match is based on approximate lat/lon bounds of the theaters.
-        /// note that a coordinate may appear in multiple theaters. null is returned if unable to parse.
-        /// </summary>
-        public static List<string> TheatersForCoords(string lat, string lon)
-        {
-            if (double.TryParse(lat, out double latNum) && double.TryParse(lon, out double lonNum))
-                return TheatersForCoords(latNum, lonNum);
-            return null;
-        }
-        
         /// <summary>
         /// return sanitized tag string with empty tags removed, extra spaces removed, etc.
         /// </summary>

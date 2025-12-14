@@ -737,7 +737,7 @@ namespace JAFDTC.UI.App
             }
             else
             {
-                EditPoI.CurTheaters = PointOfInterest.TheatersForCoords(EditPoI.LL[index].Lat, EditPoI.LL[index].Lon);
+                EditPoI.CurTheaters = Theater.TheatersForCoords(EditPoI.LL[index].Lat, EditPoI.LL[index].Lon);
                 if ((EditPoI.CurTheaters == null) || (EditPoI.CurTheaters.Count == 0))
                     uiPoITextTheater.Text = "Unknown Theater";
                 else if (EditPoI.CurTheaters.Count == 1)
@@ -1241,7 +1241,7 @@ namespace JAFDTC.UI.App
                 PoIListItem item = uiPoIListView.SelectedItem as PoIListItem;
                 int index = _llFmtToIndexMap[LLDisplayFmt];
 
-                EditPoI.CurTheaters = PointOfInterest.TheatersForCoords(item.PoI.Latitude, item.PoI.Longitude);
+                EditPoI.CurTheaters = Theater.TheatersForCoords(item.PoI.Latitude, item.PoI.Longitude);
                 EditPoI.SourceUID = item.PoI.UniqueID;
                 EditPoI.Name = item.PoI.Name;
                 EditPoI.Tags = PointOfInterest.SanitizedTags(item.PoI.Tags);
@@ -1305,7 +1305,7 @@ namespace JAFDTC.UI.App
                 // update the poi from the edit poi, ensuring new poi has unique parameters.
 
                 PointOfInterest poi = PointOfInterestDbase.Instance.Find(EditPoI.SourceUID);
-                List<string> poiTheaters = PointOfInterest.TheatersForCoords(poi.Latitude, poi.Longitude);
+                List<string> poiTheaters = Theater.TheatersForCoords(poi.Latitude, poi.Longitude);
 
                 if (!poiTheaters.SequenceEqual(EditPoI.CurTheaters) || !poiTheaters.Contains(poi.Theater))
                 {
@@ -1506,7 +1506,7 @@ namespace JAFDTC.UI.App
                     LastLat = info.Lat;
                     LastLon = info.Lon;
                 }
-                else if ((param == 1) && PointOfInterest.TheatersForCoords(info.Lat, info.Lon).Contains(poi.Theater))
+                else if ((param == 1) && Theater.TheatersForCoords(info.Lat, info.Lon).Contains(poi.Theater))
                 {
                     PointOfInterestDbase.Instance.Save(poi.Campaign);
                 }
