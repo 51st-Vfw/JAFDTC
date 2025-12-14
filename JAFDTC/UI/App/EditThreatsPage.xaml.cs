@@ -17,17 +17,102 @@
 //
 // ********************************************************************************************************************
 
+using JAFDTC.Models.CoreApp;
+using JAFDTC.Models.DCS;
+using JAFDTC.Utilities;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Data;
+using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Navigation;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Threading;
 
 namespace JAFDTC.UI.App
 {
+    /// <summary>
+    /// item class for an item in the threat ListView. this provides ui-friendly views of properties suitable for
+    /// display in the ui via bindings.
+    /// </summary>
+    internal partial class ThreatListItem : BindableObject
+    {
+        public Threat Threat { get; set; }
+
+
+        public string TagsUI
+        {
+            get
+            {
+                return "tags";
+            }
+        }
+
+        public string _latUI;
+        public string LatUI
+        {
+            get => "Test";
+            set
+            {
+            }
+        }
+
+        public int CategoryIndex => Threat.Category switch
+        {
+            UnitCategoryType.GROUND => 0,
+            UnitCategoryType.NAVAL => 1,
+            _ => 0
+        };
+
+        public string CategoryLabel => Threat.Category switch
+        {
+            UnitCategoryType.GROUND => "Ground Unit",
+            UnitCategoryType.NAVAL => "Naval Unit",
+            _ => "Unknown"
+        };
+
+        public Visibility ComboVisibility => (Threat.Type == ThreatType.USER) ? Visibility.Visible : Visibility.Collapsed;
+
+        public Visibility LabelVisibility => (Threat.Type != ThreatType.USER) ? Visibility.Visible : Visibility.Collapsed;
+
+
+        private string _radiusWEZUI;
+        public string RadiusWEZUI
+        {
+            get => $"{Threat.RadiusWEZ:F2}";
+            set
+            {
+                Threat.RadiusWEZ = double.Parse(value);
+                SetProperty(ref _radiusWEZUI, value);
+            }
+        }
+
+        public string Glyph
+            => Threat.Type switch
+            {
+                ThreatType.USER => "\xE718",
+                _ => ""
+            };
+
+        public ThreatListItem(Threat threat) => (Threat) = (threat);
+    }
+
+    // ================================================================================================================
+
     /// <summary>
     /// TODO: document.
     /// </summary>
     public sealed partial class EditThreatsPage : Page
     {
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // properties
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
+        private ObservableCollection<ThreatListItem> CurThreatItems { get; set; }
+
         // ------------------------------------------------------------------------------------------------------------
         //
         // construction
@@ -37,6 +122,19 @@ namespace JAFDTC.UI.App
         public EditThreatsPage()
         {
             InitializeComponent();
+
+            CurThreatItems = [ ];
+            foreach (Threat threat in ThreatDbase.Instance.Find())
+                CurThreatItems.Add(new ThreatListItem(threat));
+
+            Threat tx = new();
+            tx.Coalition = CoalitionType.BLUE;
+            tx.Type = ThreatType.USER;
+            tx.TypeDCS = "foo";
+            tx.Name = "Test";
+            tx.RadiusWEZ = 67.0;
+            CurThreatItems.Add(new ThreatListItem(tx));
+
         }
 
         // ------------------------------------------------------------------------------------------------------------
@@ -53,6 +151,306 @@ namespace JAFDTC.UI.App
         private void HdrBtnBack_Click(object sender, RoutedEventArgs args)
         {
             Frame.GoBack();
+        }
+        // ---- name search box ---------------------------------------------------------------------------------------
+
+        /// <summary>
+        /// filter box text changed: update the items in the search box based on the value in the field.
+        /// </summary>
+        private void ThreatNameFilterBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+        {
+#if NOPE
+            if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
+            {
+                List<string> suitableItems = [];
+                List<PointOfInterest> pois = GetPoIsMatchingFilter(sender.Text);
+                if (pois.Count == 0)
+                    suitableItems.Add("No Matching Points of Interest Found");
+                else
+                    foreach (PointOfInterest poi in pois)
+                        suitableItems.Add(poi.Name);
+                sender.ItemsSource = suitableItems;
+            }
+#endif
+        }
+
+        /// <summary>
+        /// filter box query submitted: apply the query text filter to the threats listed in the threat list.
+        /// </summary>
+        private void ThreatNameFilterBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
+        {
+#if NOPE
+            RebuildPoIList(args.QueryText);
+            RebuildInterfaceState();
+#endif
+        }
+
+        // ---- command bar / commands --------------------------------------------------------------------------------
+
+        /// <summary>
+        /// filter command click: change the filter configuration via the filter specification dialog and update the
+        /// displayed threats appropriately.
+        /// </summary>
+        private async void CmdFilter_Click(object sender, RoutedEventArgs args)
+        {
+#if NOPE
+            AppBarToggleButton button = (AppBarToggleButton)sender;
+            if (button.IsChecked != IsFiltered)
+                button.IsChecked = IsFiltered;
+
+            GetPoIFilterDialog filterDialog = new(FilterTheater, FilterCampaign, FilterTags, FilterIncludeTypes)
+            {
+                XamlRoot = Content.XamlRoot,
+                Title = $"Set a Filter for Points of Interest",
+                PrimaryButtonText = "Set",
+                SecondaryButtonText = "Clear Filters",
+                CloseButtonText = "Cancel",
+            };
+            ContentDialogResult result = await filterDialog.ShowAsync(ContentDialogPlacement.Popup);
+            if (result == ContentDialogResult.Primary)
+            {
+                FilterTheater = filterDialog.Theater;
+                FilterCampaign = filterDialog.Campaign;
+                FilterTags = PointOfInterest.SanitizedTags(filterDialog.Tags);
+                FilterIncludeTypes = filterDialog.IncludeTypes;
+            }
+            else if (result == ContentDialogResult.Secondary)
+            {
+                FilterTheater = "";
+                FilterCampaign = "";
+                FilterTags = "";
+                FilterIncludeTypes = PointOfInterestTypeMask.ANY;
+            }
+            else
+            {
+                return;                                         // EXIT: cancelled, no change...
+            }
+
+            button.IsChecked = IsFiltered;
+
+            Settings.LastPoIFilterTheater = FilterTheater;
+            Settings.LastPoIFilterCampaign = FilterCampaign;
+            Settings.LastPoIFilterTags = FilterTags;
+            Settings.LastPoIFilterIncludeTypes = FilterIncludeTypes;
+
+            uiPoIListView.SelectedItems.Clear();
+            RebuildPoIList();
+            RebuildInterfaceState();
+#endif
+        }
+
+        /// <summary>
+        /// edit command click: copy the details of the currnetly selected threat into the threat editor fields and
+        /// rebuild the interface state to reflect the change. this should only be called on read-only system
+        /// threats.
+        /// </summary>
+        private void CmdCopyUser_Click(object sender, RoutedEventArgs args)
+        {
+#if NOPE
+            int index = _llFmtToIndexMap[LLDisplayFmt];
+            foreach (PoIListItem item in uiPoIListView.SelectedItems.Cast<PoIListItem>())
+            {
+                PoIDetails newPoI = new(item.PoI, LLDisplayFmt, index)
+                {
+                    Name = $"{item.PoI.Name} - User Copy",
+                    SourceUID = null                                        // null creates new poi
+                };
+                if (CoreCommitEditChanges(newPoI, item.PoI.Theater, null, true) == null)
+                {
+                    PromptForNameCollision(newPoI.Name, item.PoI.Theater, null, newPoI.Tags);
+                    break;
+                }
+            }
+            RebuildPoIList();
+            RebuildInterfaceState();
+#endif
+        }
+
+        /// <summary>
+        /// delete command click: remove the selected threats from the threat database. system threats are skipped.
+        /// </summary>
+        private async void CmdDelete_Click(object sender, RoutedEventArgs args)
+        {
+#if NOPE
+            if (uiPoIListView.SelectedItems.Count > 0)
+            {
+                string message = (uiPoIListView.SelectedItems.Count > 1) ? "delete these points of interest?"
+                                                                         : "delete this point of interest?";
+                ContentDialogResult result = await Utilities.Message2BDialog(
+                    Content.XamlRoot,
+                    "Delete Point" + ((uiPoIListView.SelectedItems.Count > 1) ? "s" : "") + " of Interest?",
+                    $"Are you sure you want to {message} This action cannot be undone.",
+                    "Delete"
+                );
+                if (result == ContentDialogResult.Primary)
+                {
+                    Dictionary<string, bool> campaignsModified = [];
+                    Dictionary<string, bool> campaignsDeleted = [];
+                    foreach (PoIListItem item in uiPoIListView.SelectedItems.Cast<PoIListItem>())
+                        if (item.PoI.Type != PointOfInterestType.DCS_CORE)
+                        {
+                            campaignsModified[(string.IsNullOrEmpty(item.PoI.Campaign)) ? "<u>" : item.PoI.Campaign] = true;
+                            if (PointOfInterestDbase.Instance.CountPoIInCampaign(item.PoI.Campaign) == 1)
+                            {
+                                campaignsDeleted[item.PoI.Campaign] = true;
+                                PointOfInterestDbase.Instance.DeleteCampaign(item.PoI.Campaign);
+                            }
+                            else
+                            {
+                                PointOfInterestDbase.Instance.RemovePointOfInterest(item.PoI, false);
+
+                                VerbMirror?.MirrorVerbMarkerDeleted(this, new((MapMarkerInfo.MarkerType)item.PoI.Type,
+                                                                              item.PoI.UniqueID));
+                            }
+                        }
+                    foreach (string campaign in campaignsModified.Keys)
+                        PointOfInterestDbase.Instance.Save((campaign != "<u>") ? campaign : null);
+
+                    RebuildPoIList();
+                    RebuildInterfaceState();
+
+                    if (campaignsDeleted.Count > 0)
+                    {
+                        string msg;
+                        List<string> campaigns = [.. campaignsDeleted.Keys];
+                        if (campaigns.Count == 1)
+                            msg = $"campaign {campaigns[0]}. This campaign has";
+                        else if (campaigns.Count == 2)
+                            msg = $"campaigns {campaigns[0]} and {campaigns[1]}. These campaigns have";
+                        else
+                            msg = $"campaigns " + string.Join(", ", campaigns.GetRange(0, campaigns.Count - 1)) +
+                                  $", and {campaigns[^1]}. These campaigns have";
+
+                        await Utilities.Message1BDialog(
+                            Content.XamlRoot,
+                            $"Deleted Empty Campaign" + ((campaignsDeleted.Count > 1) ? "s" : ""),
+                            $"The delete removed all points of interest from the {msg} been deleted as well.");
+                    }
+                }
+            }
+#endif
+        }
+
+        /// <summary>
+        /// import command click: prompt the user for a file to import threats from and deserialize the contents of
+        /// the file into the points of interest database. the database is saved following the import.
+        /// </summary>
+        private async void CmdImport_Click(object sender, RoutedEventArgs args)
+        {
+#if NOPE
+            // TODO: could probably handle this without closing map window...
+            MapWindow?.Close();
+
+            bool? isSuccess = await ExchangePOIUIHelper.ImportFile(Content.XamlRoot, PointOfInterestDbase.Instance);
+            if (isSuccess == true)
+            {
+                RebuildPoIList();
+                RebuildInterfaceState();
+            }
+#endif
+        }
+
+        /// <summary>
+        /// export command click: prompt the user for a file to export the selected threats to and serialize the
+        /// selected threats to a file.
+        /// 
+        /// we assume contorls triggering CmdExport_Click are disabled when exports are not allowed to ensure
+        /// that export files contain only user threats.
+        /// </summary>
+        private void CmdExport_Click(object sender, RoutedEventArgs args)
+        {
+#if NOPE
+            Dictionary<PointOfInterestType, List<PointOfInterest>> selectionByType = CrackSelectedPoIsByType();
+
+            if (selectionByType.TryGetValue(PointOfInterestType.USER, out List<PointOfInterest> userPoIs))
+                ExchangePOIUIHelper.ExportFileForUser(Content.XamlRoot, userPoIs);
+            else if (selectionByType.TryGetValue(PointOfInterestType.CAMPAIGN, out List<PointOfInterest> campaignPoIs))
+                ExchangePOIUIHelper.ExportFileForCampaign(Content.XamlRoot, campaignPoIs);
+#endif
+        }
+
+        // ---- poi list ----------------------------------------------------------------------------------------------
+
+        /// <summary>
+        /// threat list view right click: show context menu
+        /// </summary>
+        private void ThreatListView_RightTapped(object sender, RightTappedRoutedEventArgs args)
+        {
+            ListView listView = sender as ListView;
+            ThreatListItem threat = ((FrameworkElement)args.OriginalSource).DataContext as ThreatListItem;
+
+            // check if the tapped item is selected. if the right tap occurs outside of the selection, change
+            // up the selection to just be the tapped item.
+            //
+            int index = CurThreatItems.IndexOf(threat);
+            bool isTappedItemSelected = false;
+            foreach (ItemIndexRange range in listView.SelectedRanges)
+                if ((index >= range.FirstIndex) && (index <= range.LastIndex))
+                {
+                    isTappedItemSelected = true;
+                    break;
+                }
+            if (!isTappedItemSelected)
+            {
+                listView.SelectedIndex = CurThreatItems.IndexOf(threat);
+#if NOPE
+                RebuildInterfaceState();
+#endif
+            }
+
+            // set up enables based on items selected. rely on the command handlers to properly handle situations
+            // where there are a mix of types and behave correctly (e.g., not delete core items selected).
+            //
+#if NOPE
+            Dictionary<ThreatType, List<Threat>> selectionByType = CrackSelectedPoIsByType();
+            List<string> selectionByCampaign = CrackSelectedPoIsByCampaign(selectionByType);
+            bool isCoreInSel = selectionByType.ContainsKey(Threat.DCS_CORE);
+            bool isUserInSel = selectionByType.ContainsKey(Threat.USER);
+
+            bool isExportable = !isCoreInSel && isUserInSel;
+
+            bool isSelect = (uiThreatListView.SelectedItems.Count > 0);
+            uiThreatListCtxMenuFlyout.Items[0].IsEnabled = isSelect;                                // copy to user
+            uiThreatListCtxMenuFlyout.Items[2].IsEnabled = isExportable;                            // export
+            uiThreatListCtxMenuFlyout.Items[4].IsEnabled = !isCoreInSel;                            // delete
+#endif
+
+            uiThreatListCtxMenuFlyout.ShowAt((ListView)sender, args.GetPosition(listView));
+        }
+
+        /// <summary>
+        /// threat list view selection changed: rebuild the interface state to reflect newly selected threat(s).
+        /// </summary>
+        private void ThreatListView_SelectionChanged(object sender, SelectionChangedEventArgs args)
+        {
+#if NOPE
+            if (uiPoIListView.SelectedItems.Count != 1)
+            {
+                EditPoI.Reset();
+                // TODO: this will clear map window selection when we have multiple things selected in the poi list.
+                // TODO: this likely needs to change if multi-selection is ever supported in the map window.
+                if (!IsVerbEvent)
+                    VerbMirror?.MirrorVerbMarkerSelected(this, new());
+            }
+            else if (uiPoIListView.SelectedItems.Count == 1)
+            {
+                PoIListItem item = uiPoIListView.SelectedItem as PoIListItem;
+                int index = _llFmtToIndexMap[LLDisplayFmt];
+
+                EditPoI.CurTheaters = PointOfInterest.TheatersForCoords(item.PoI.Latitude, item.PoI.Longitude);
+                EditPoI.SourceUID = item.PoI.UniqueID;
+                EditPoI.Name = item.PoI.Name;
+                EditPoI.Tags = PointOfInterest.SanitizedTags(item.PoI.Tags);
+                EditPoI.LL[index].LatUI = Coord.ConvertFromLatDD(item.PoI.Latitude, LLDisplayFmt);
+                EditPoI.LL[index].LonUI = Coord.ConvertFromLonDD(item.PoI.Longitude, LLDisplayFmt);
+                EditPoI.Alt = item.PoI.Elevation;
+
+                if (!IsVerbEvent)
+                    VerbMirror?.MirrorVerbMarkerSelected(this, new((MapMarkerInfo.MarkerType)item.PoI.Type,
+                                                                   item.PoI.UniqueID, -1));
+            }
+            RebuildInterfaceState();
+#endif
         }
 
         // ------------------------------------------------------------------------------------------------------------

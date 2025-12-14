@@ -67,5 +67,166 @@ https://www.gnu.org/licenses/.
             </TextBlock>
         </StackPanel>
 
+        <!--
+        ===============================================================================================================
+        row 1 : controls
+        ===============================================================================================================
+        -->
+        <Grid Grid.Row="1"
+              HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- poi search box -->
+            <AutoSuggestBox Grid.Column="0" Width="325" x:Name="uiThreatNameFilterBox"
+                            VerticalAlignment="Center"
+                            PlaceholderText="Filter threats by name"
+                            QueryIcon="Find"
+                            TextChanged="ThreatNameFilterBox_TextChanged"
+                            QuerySubmitted="ThreatNameFilterBox_QuerySubmitted"/>
+
+            <!-- command bar -->
+            <CommandBar Grid.Column="1" Margin="6,0,0,0"
+                        HorizontalAlignment="Left" VerticalAlignment="Center">
+                <AppBarToggleButton x:Name="uiBarBtnFilter" Label="Filter Points"
+                                    Click="CmdFilter_Click"
+                                    ToolTipService.ToolTip="Set filter to apply to threats">
+                    <AppBarToggleButton.Icon>
+                        <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE71C;"/>
+                    </AppBarToggleButton.Icon>
+                </AppBarToggleButton>
+                <AppBarSeparator/>
+                <AppBarButton x:Name="uiBarBtnCopyUser" Label="Copy to User"
+                              Click="CmdCopyUser_Click"
+                              ToolTipService.ToolTip="Copy selected threats to user threats">
+                    <AppBarButton.Icon>
+                        <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE718;"/>
+                    </AppBarButton.Icon>
+                </AppBarButton>
+                <AppBarButton x:Name="uiBarBtnDelete" Icon="Delete" Label="Delete"
+                              Click="CmdDelete_Click"
+                              ToolTipService.ToolTip="Delete selected user threat"/>
+                <AppBarSeparator/>
+                <AppBarButton x:Name="uiBarBtnImport" Icon="Download" Label="Import"
+                              Click="CmdImport_Click"
+                              ToolTipService.ToolTip="Import user threats from file"/>
+                <AppBarButton x:Name="uiBarBtnExport" Icon="Upload" Label="Export"
+                              Click="CmdExport_Click"
+                              ToolTipService.ToolTip="Export user threats to file"/>
+            </CommandBar>
+        </Grid>
+
+        <!--
+        ===============================================================================================================
+        row 2 : list and header
+        ===============================================================================================================
+        -->
+        <Grid Grid.Row="2" Margin="0,6,0,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Grid Grid.Row="0" Margin="16,0,12,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="24"/>
+                    <ColumnDefinition Width="175"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="200"/>
+                    <ColumnDefinition Width="200"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="1" Margin="0,0,0,0"
+                           HorizontalTextAlignment="Center"
+                           Style="{StaticResource TableHeaderTextStyle}"
+                           Text="Category"/>
+                <TextBlock Grid.Column="2" Margin="6,0,0,0"
+                           HorizontalTextAlignment="Left"
+                           Style="{StaticResource TableHeaderTextStyle}"
+                           Text="Display Name"/>
+                <TextBlock Grid.Column="3" Margin="6,0,0,0"
+                           HorizontalTextAlignment="Center"
+                           Style="{StaticResource TableHeaderTextStyle}"
+                           Text="DCS Type"/>
+                <TextBlock Grid.Column="4" Margin="6,0,0,0"
+                           HorizontalTextAlignment="Center"
+                           Style="{StaticResource TableHeaderTextStyle}"
+                           Text="Threat WEZ (nm)"/>
+            </Grid>
+
+            <ListView Grid.Row="1" x:Name="uiThreatListView"
+                      SelectionMode="Extended"
+                      SelectionChanged="ThreatListView_SelectionChanged"
+                      RightTapped="ThreatListView_RightTapped"
+                      ItemsSource="{x:Bind CurThreatItems}">
+                <ListView.Resources>
+                    <MenuFlyout x:Name="uiThreatListCtxMenuFlyout">
+                        <MenuFlyout.Items>
+                            <MenuFlyoutItem Text="Copy to New User Threat..."
+                                            Click="CmdCopyUser_Click">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE718;"/>
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+                            <MenuFlyoutSeparator/>
+                            <MenuFlyoutItem Text="Export..." Icon="Upload" Click="CmdExport_Click"/>
+                            <MenuFlyoutSeparator/>
+                            <MenuFlyoutItem Text="Delete" Icon="Delete" Click="CmdDelete_Click"/>
+                        </MenuFlyout.Items>
+                    </MenuFlyout>
+                </ListView.Resources>
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="local:ThreatListItem">
+                        <Grid Margin="6">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="24"/>
+                                <ColumnDefinition Width="175"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="200"/>
+                                <ColumnDefinition Width="200"/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Grid.Column="0"
+                                       VerticalAlignment="Center"
+                                       HorizontalTextAlignment="Center"
+                                       FontFamily="Segoe Fluent Icons"
+                                       Text="{x:Bind Glyph}"/>
+
+                            <ComboBox Grid.Column="1" Margin="16,0,24,0"
+                                      VerticalAlignment="Center"
+                                      HorizontalAlignment="Stretch"
+                                      Visibility="{x:Bind ComboVisibility}"
+                                      SelectedIndex="{x:Bind CategoryIndex}">
+                                <ComboBoxItem>Ground Unit</ComboBoxItem>
+                                <ComboBoxItem>Naval Unit</ComboBoxItem>
+                            </ComboBox>
+                            <TextBlock Grid.Column="1" Margin="16,0,24,0"
+                                       VerticalAlignment="Center"
+                                       HorizontalTextAlignment="Center"
+                                       Visibility="{x:Bind LabelVisibility}"
+                                       Text="{x:Bind CategoryLabel}"/>
+
+                            <TextBlock Grid.Column="2" Margin="6,2,0,0"
+                                       HorizontalTextAlignment="Left"
+                                       FontSize="16"
+                                       FontWeight="Medium"
+                                       Text="{x:Bind Threat.Name, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
+                            <TextBlock Grid.Column="3" Margin="6,0,0,0"
+                                       VerticalAlignment="Center"
+                                       HorizontalTextAlignment="Center"
+                                       Text="{x:Bind Threat.TypeDCS, Mode=TwoWay}"/>
+                            <TextBlock Grid.Column="4" Margin="6,0,0,0"
+                                       VerticalAlignment="Center"
+                                       HorizontalTextAlignment="Center"
+                                       Text="{x:Bind RadiusWEZUI, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Grid>
     </Grid>
 </Page>
