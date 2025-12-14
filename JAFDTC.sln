@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JAFDTC.File.ACMI", "JAFDTC.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JAFDTC.File.ACMI.Tests", "JAFDTC.TacView.Tests\JAFDTC.File.ACMI.Tests.csproj", "{0069F713-40F2-4C17-BCFC-F01E5BD18855}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JAFDTC.Models", "JAFDTC.Models\JAFDTC.Models.csproj", "{E89564B7-825B-4B1A-B740-F9058419E9DD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -90,6 +92,22 @@ Global
 		{0069F713-40F2-4C17-BCFC-F01E5BD18855}.Release|x64.Build.0 = Release|Any CPU
 		{0069F713-40F2-4C17-BCFC-F01E5BD18855}.Release|x86.ActiveCfg = Release|Any CPU
 		{0069F713-40F2-4C17-BCFC-F01E5BD18855}.Release|x86.Build.0 = Release|Any CPU
+		{E89564B7-825B-4B1A-B740-F9058419E9DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E89564B7-825B-4B1A-B740-F9058419E9DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E89564B7-825B-4B1A-B740-F9058419E9DD}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{E89564B7-825B-4B1A-B740-F9058419E9DD}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{E89564B7-825B-4B1A-B740-F9058419E9DD}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{E89564B7-825B-4B1A-B740-F9058419E9DD}.Debug|x64.Build.0 = Debug|Any CPU
+		{E89564B7-825B-4B1A-B740-F9058419E9DD}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E89564B7-825B-4B1A-B740-F9058419E9DD}.Debug|x86.Build.0 = Debug|Any CPU
+		{E89564B7-825B-4B1A-B740-F9058419E9DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E89564B7-825B-4B1A-B740-F9058419E9DD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E89564B7-825B-4B1A-B740-F9058419E9DD}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{E89564B7-825B-4B1A-B740-F9058419E9DD}.Release|ARM64.Build.0 = Release|Any CPU
+		{E89564B7-825B-4B1A-B740-F9058419E9DD}.Release|x64.ActiveCfg = Release|Any CPU
+		{E89564B7-825B-4B1A-B740-F9058419E9DD}.Release|x64.Build.0 = Release|Any CPU
+		{E89564B7-825B-4B1A-B740-F9058419E9DD}.Release|x86.ActiveCfg = Release|Any CPU
+		{E89564B7-825B-4B1A-B740-F9058419E9DD}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
