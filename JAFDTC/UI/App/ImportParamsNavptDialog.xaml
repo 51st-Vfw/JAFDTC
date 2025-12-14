@@ -40,6 +40,7 @@ https://www.gnu.org/licenses/.
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
@@ -65,13 +66,18 @@ https://www.gnu.org/licenses/.
                       ItemsSource="{x:Bind Flights}"/>
         </Grid>
 
-        <CheckBox Grid.Row="1" Grid.Column="0" Margin="0,18,0,0" x:Name="uiCkbxTOS"
+        <CheckBox Grid.Row="1" Grid.Column="0" Margin="0,18,0,0" x:Name="uiCkbxInitialNavpt"
                   VerticalAlignment="Center"
-                  HorizontalAlignment="Center">
+                  HorizontalAlignment="Left">
+            <TextBlock x:Name="uiTxtCkbxInitialNavpt" VerticalAlignment="Center"/>
+        </CheckBox>
+        <CheckBox Grid.Row="2" Grid.Column="0" Margin="0,0,0,0" x:Name="uiCkbxTOS"
+                  VerticalAlignment="Center"
+                  HorizontalAlignment="Left">
             <TextBlock x:Name="uiTxtCkbxTOS" VerticalAlignment="Center"/>
         </CheckBox>
 
-        <TextBlock Grid.Row="2" Margin="0,18,0,0" x:Name="uiTxtPrompt"
+        <TextBlock Grid.Row="3" Margin="0,18,0,0" x:Name="uiTxtPrompt"
                    TextWrapping="WrapWholeWords"
                    Style="{StaticResource TableHeaderTextStyle}">
             FIXUP

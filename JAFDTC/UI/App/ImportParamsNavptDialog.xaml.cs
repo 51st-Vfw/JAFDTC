@@ -54,7 +54,9 @@ namespace JAFDTC.UI.App
 
         public string SelectedFlight { get => (Flights != null) ? (string)uiComboFlights.SelectedItem : null; }
 
-        public bool IsUsingTOS => (bool) uiCkbxTOS.IsChecked;
+        public bool IsUsingTOS => (bool)uiCkbxTOS.IsChecked;
+
+        public bool IsIncludingFirst => (bool)uiCkbxInitialNavpt.IsChecked;
 
         // ------------------------------------------------------------------------------------------------------------
         //
@@ -62,9 +64,7 @@ namespace JAFDTC.UI.App
         //
         // ------------------------------------------------------------------------------------------------------------
 
-        public ImportParamsNavptDialog(string what, List<string> flights = null,
-                                       Dictionary<string, string> optTitles = null,
-                                       Dictionary<string, object> optDefaults = null)
+        public ImportParamsNavptDialog(string what, List<string> flights = null)
         {
             InitializeComponent();
 
@@ -72,6 +72,7 @@ namespace JAFDTC.UI.App
 
             uiTxtPrompt.Text = $"Use the {what.ToLower()}s from the selected flight to replace current" +
                                $" {what.ToLower()}s or append to the end of the current {what.ToLower()} list.";
+            uiTxtCkbxInitialNavpt.Text = $"Include first {what.ToLower()} (initial flight position) in the imported route";
             uiTxtCkbxTOS.Text = $"Use time on {what.ToLower()} values from import file when available";
             uiComboFlights.SelectedIndex = (Flights.Count > 0) ? 0 : -1;
         }
