@@ -35,6 +35,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 using Windows.Services.Maps;
 
 namespace JAFDTC.UI.Base
@@ -435,16 +436,16 @@ namespace JAFDTC.UI.Base
                 // build a list of flights available in the extracted data, then prompt the user to select the
                 // flight and setup import parameters before performing the actual import.
                 //
-                List<string> flights = [ ];
+                Dictionary<string, UnitGroupItem> flightMap = [ ];
                 foreach (UnitGroupItem group in groups)
-                    flights.Add(group.Name);
-                flights.Sort();
-                if (flights.Count == 0)
+                    flightMap[group.Name] = group;
+                if (flightMap.Count == 0)
                     throw new Exception($"There were no flights for the {Globals.AirframeNames[airframe]} airframe" +
                                         $" found in the import file from path\n\n{resultPick.Path}");
 
                 ContentDialogResult result = ContentDialogResult.None;
-                string flightName;
+                List<string> flights = [.. flightMap.Keys ];
+                flights.Sort();
                 ImportParamsNavptDialog flightList = new(what, flights)
                 {
                     XamlRoot = root,
@@ -456,13 +457,17 @@ namespace JAFDTC.UI.Base
                 result = await flightList.ShowAsync(ContentDialogPlacement.Popup);
                 if (result != ContentDialogResult.None)
                 {
-                    flightName = flightList.SelectedFlight;
-                    //                    options = flightList.Options;
-                    // TODO: when appending steerpoints, need to check if theaters match
-
-                    //            if (!importer.Import(navptSys, flightName, (result == ContentDialogResult.Primary), options))
-                    //                throw new Exception();                                  // exit, import error
-
+                    List<UnitPositionItem> route = [.. flightMap[flightList.SelectedFlight].Route ];
+                    if (route.Count > 0)
+                    {
+                        if (!flightList.IsUsingTOS)
+                            foreach (UnitPositionItem posn in route)
+                                posn.TimeOn = -1.0;
+                        if (!flightList.IsIncludingFirst)
+                            route.RemoveAt(0);
+                        if (!navptSys.ImportUnitPositionList(route, (result == ContentDialogResult.Primary)))
+                            throw new Exception("The world is mysterious. Import fails for... Reasons.");
+                    }
                     return true;
                 }
             }
