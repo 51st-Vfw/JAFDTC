@@ -17,10 +17,10 @@
 //
 // ********************************************************************************************************************
 
-using JAFDTC.TacView.Extensions;
-using JAFDTC.TacView.Models;
+using JAFDTC.File.ACMI.Extensions;
+using JAFDTC.File.ACMI.Models;
 
-namespace JAFDTC.TacView.Tests
+namespace JAFDTC.File.ACMI.Tests
 {
     [TestClass]
     public sealed class ExtractorTest

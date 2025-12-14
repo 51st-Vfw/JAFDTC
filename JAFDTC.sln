@@ -1,15 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.7.34202.233
+# Visual Studio Version 18
+VisualStudioVersion = 18.0.11222.15
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JAFDTC", "JAFDTC\JAFDTC.csproj", "{627F214D-A5DB-4A71-8EAE-340B6B30DD37}"
 EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "JAFDTC Installer", "JAFDTC Installer\JAFDTC Installer.vdproj", "{1BB51507-3B1F-4A8F-A47D-D81637D1885B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JAFDTC.TacView", "JAFDTC.TacView\JAFDTC.TacView.csproj", "{FCD92CBD-A860-4F01-BC2D-3D4B811BC382}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JAFDTC.File.ACMI", "JAFDTC.TacView\JAFDTC.File.ACMI.csproj", "{FCD92CBD-A860-4F01-BC2D-3D4B811BC382}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JAFDTC.TacView.Tests", "JAFDTC.TacView.Tests\JAFDTC.TacView.Tests.csproj", "{0069F713-40F2-4C17-BCFC-F01E5BD18855}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JAFDTC.File.ACMI.Tests", "JAFDTC.TacView.Tests\JAFDTC.File.ACMI.Tests.csproj", "{0069F713-40F2-4C17-BCFC-F01E5BD18855}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

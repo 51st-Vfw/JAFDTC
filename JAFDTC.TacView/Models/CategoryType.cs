@@ -16,7 +16,7 @@
 // <https://www.gnu.org/licenses/>.
 //
 // ********************************************************************************************************************
-namespace JAFDTC.TacView.Models
+namespace JAFDTC.File.ACMI.Models
 {
     /// <summary>
     /// Known ACMI "Type=" values mapped to a strongly-typed enum.

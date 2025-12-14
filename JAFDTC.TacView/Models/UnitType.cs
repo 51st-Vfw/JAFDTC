@@ -16,7 +16,7 @@
 // <https://www.gnu.org/licenses/>.
 //
 // ********************************************************************************************************************
-namespace JAFDTC.TacView.Models
+namespace JAFDTC.File.ACMI.Models
 {
     /// <summary>
     /// Known unit names observed in the ACMI sample file, promoted to a strongly-typed enum.
