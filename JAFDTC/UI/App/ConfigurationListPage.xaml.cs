@@ -646,7 +646,13 @@ namespace JAFDTC.UI.App
         /// </summary>
         private void CmdThreat_Click(object sender, RoutedEventArgs args)
         {
-// TODO: implement
+            if (!IsNavPending)
+            {
+                IsNavPending = true;
+                MainWindow mainWindow = (MainWindow)(Application.Current as JAFDTC.App)?.Window;
+                mainWindow.SetConfigFilterBoxVisibility(Visibility.Collapsed);
+                Frame.Navigate(typeof(EditThreatsPage), null, new DrillInNavigationTransitionInfo());
+            }
         }
 
         /// <summary>

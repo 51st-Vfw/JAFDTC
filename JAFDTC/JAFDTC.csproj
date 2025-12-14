@@ -79,6 +79,7 @@
     <None Remove="UI\A10C\A10CEditTADPage.xaml" />
     <None Remove="UI\A10C\A10CEditTGPPage.xaml" />
     <None Remove="UI\App\EditPointsOfInterestPage.xaml" />
+    <None Remove="UI\App\EditThreatsPage.xaml" />
     <None Remove="UI\App\GetPoITagDetails.xaml" />
     <None Remove="UI\App\ImportParamsNavptDialog.xaml" />
     <None Remove="UI\App\ImportParamsThreatDialog.xaml" />
@@ -257,6 +258,9 @@
     <None Update="Images\mk-84hd.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Page Update="UI\App\EditThreatsPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="UI\App\ImportParamsNavptDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
