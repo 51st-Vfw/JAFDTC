@@ -785,7 +785,7 @@ namespace JAFDTC.UI.App
             {
                 result = await Utilities.Message2BDialog(Content.XamlRoot, "Are You Sure?",
                             "Importing threat and unit markers will remove any previously imported markers. Are" +
-                            "you sure you want to proceed?",
+                            " you sure you want to proceed?",
                             "Remove Markers");
                 if (result == ContentDialogResult.None)
                     return;                                     // **** EXITS: cancel
@@ -820,93 +820,85 @@ namespace JAFDTC.UI.App
             if (result != ContentDialogResult.Primary)
                 return;                                         // **** EXITS: cancel
 
-            // build extractor and import groups/units from the file.
-            //
-            ImportedMarkerPath = resultPick.Path;
-
-            IExtractor extractor = Path.GetExtension(resultPick.Path).ToLower() switch
+            try
             {
-// TODO: add .acmi, .cf (?) support
-                ".acmi" => null,
-                ".cf" => null,
-                ".miz" => new ImportHelperMIZ(),
-                _ => null
-            };
-            if (extractor == null)
-            {
-                await Utilities.Message1BDialog(Content.XamlRoot,
-                                                "Import Failed",
-                                                $"File type “{Path.GetExtension(resultPick.Path)}” is not supported.");
-                return;                                         // **** EXITS: bogus file type
-            }
-
-            ExtractCriteria criteria = new()
-            {
-                FilePath = resultPick.Path,
-                Theater = Theater,
-                UnitCategories = [UnitCategoryType.GROUND, UnitCategoryType.NAVAL],
-                IsAlive = (setupDialog.IsAliveOnly) ? true : null
-            };
-            if (setupDialog.IsEnemyOnly && (setupDialog.FriendlyCoalition == CoalitionType.BLUE))
-                criteria.Coalitions = [CoalitionType.RED];
-            else if (setupDialog.IsEnemyOnly && (setupDialog.FriendlyCoalition == CoalitionType.RED))
-                criteria.Coalitions = [CoalitionType.BLUE];
-            IReadOnlyList<UnitGroupItem> groups = extractor.Extract(criteria);
-            if (groups == null)
-            {
-                await Utilities.Message1BDialog(Content.XamlRoot,
-                                                "Import Failed",
-                                                $"Encountered an error while importing from path\n\n{resultPick.Path}");
-                return;                                         // **** EXITS: import failure
-            }
-
-            // add the threats to the map control.
-            //
-            foreach (UnitGroupItem group in groups)
-            {
-// TODO: what to do on units outside of current theater? ignore? warn and create anyway?
-                MapMarkerInfo.MarkerType type = (group.Coalition == setupDialog.FriendlyCoalition)
-                                                ? MapMarkerInfo.MarkerType.UNIT_FRIEND
-                                                : MapMarkerInfo.MarkerType.UNIT_ENEMY;
-                string threatType = null;
-                double threatRadius = 0.0;
-                double avgLat = 0.0;
-                double avgLon = 0.0;
-                foreach (UnitItem unit in group.Units)
-                {
-                    Threat dbThreat = ThreatDbase.Instance.Find(unit.Type);
-                    if ((dbThreat != null) && (dbThreat.RadiusWEZ > threatRadius))
-                    {
-                        threatType = dbThreat.Name;
-                        threatRadius = dbThreat.RadiusWEZ;
-                    }
-                    avgLat += unit.Position.Latitude;
-                    avgLon += unit.Position.Longitude;
-
-                    // add marker for the unit to the map view if we are not importing summary information only.
-                    //
-                    if (!setupDialog.IsSummaryOnly)
-                    {
-                        uiMap.AddMarker(type, unit.UniqueID,
-                                        new Location(unit.Position.Latitude, unit.Position.Longitude));
-                        _mapImportedMarkerDict[unit.UniqueID] = (unit.IsAlive) ? unit.Name : (unit.Name + " [DEAD]");
-                    }
-                }
-                avgLat /= (double)group.Units.Count;
-                avgLon /= (double)group.Units.Count;
-
-                // add threat ring at the average location of the group. the ring has a visible center marker iff
-                // we are not showing summary only.
+                // build extractor and import groups/units from the file.
                 //
-                if (threatRadius > 0.0)
-                {
-                    uiMap.AddMarker(type, group.UniqueID, new Location(avgLat, avgLon), threatRadius,
-                                    !setupDialog.IsSummaryOnly);
-                    _mapImportedMarkerDict[group.UniqueID] = threatType + " WEZ";
-                }
-            }
+                ImportedMarkerPath = resultPick.Path;
 
-            RebuildInterfaceState();
+                IExtractor extractor = Path.GetExtension(resultPick.Path).ToLower() switch
+                {
+                    // TODO: add .acmi, .cf (?) support
+                    ".acmi" => null,
+                    ".cf" => null,
+                    ".miz" => new ImportHelperMIZ(),
+                    _ => null
+                } ?? throw new Exception($"File type “{Path.GetExtension(resultPick.Path)}” is not supported.");
+
+                ExtractCriteria criteria = new()
+                {
+                    FilePath = resultPick.Path,
+                    Theater = Theater,
+                    UnitCategories = [UnitCategoryType.GROUND, UnitCategoryType.NAVAL],
+                    IsAlive = (setupDialog.IsAliveOnly) ? true : null
+                };
+                if (setupDialog.IsEnemyOnly && (setupDialog.FriendlyCoalition == CoalitionType.BLUE))
+                    criteria.Coalitions = [CoalitionType.RED];
+                else if (setupDialog.IsEnemyOnly && (setupDialog.FriendlyCoalition == CoalitionType.RED))
+                    criteria.Coalitions = [CoalitionType.BLUE];
+                IReadOnlyList<UnitGroupItem> groups = extractor.Extract(criteria)
+                    ?? throw new Exception($"Encountered an error while importing from path\n\n{resultPick.Path}");
+
+                // add the threats to the map control. this includes a marker for each unit if we are not importing
+                // only summary information and a marker with a threat ring at the average location of the group
+                // for the threat wez (this marker will only have a visible center when we're not showing
+                // individual units).
+                //
+                foreach (UnitGroupItem group in groups)
+                {
+// TODO: what to do on units outside of current theater? ignore? warn and create anyway?
+                    MapMarkerInfo.MarkerType type = (group.Coalition == setupDialog.FriendlyCoalition)
+                                                    ? MapMarkerInfo.MarkerType.UNIT_FRIEND
+                                                    : MapMarkerInfo.MarkerType.UNIT_ENEMY;
+                    string threatType = null;
+                    double threatRadius = 0.0;
+                    double avgLat = 0.0;
+                    double avgLon = 0.0;
+                    foreach (UnitItem unit in group.Units)
+                    {
+                        Threat dbThreat = ThreatDbase.Instance.Find(unit.Type);
+                        if ((dbThreat != null) && (dbThreat.RadiusWEZ > threatRadius))
+                        {
+                            threatType = dbThreat.Name;
+                            threatRadius = dbThreat.RadiusWEZ;
+                        }
+                        avgLat += unit.Position.Latitude;
+                        avgLon += unit.Position.Longitude;
+
+                        if (!setupDialog.IsSummaryOnly)
+                        {
+                            uiMap.AddMarker(type, unit.UniqueID,
+                                            new Location(unit.Position.Latitude, unit.Position.Longitude));
+                            _mapImportedMarkerDict[unit.UniqueID] = (unit.IsAlive) ? unit.Name : (unit.Name + " [DEAD]");
+                        }
+                    }
+                    avgLat /= (double)group.Units.Count;
+                    avgLon /= (double)group.Units.Count;
+
+                    if (threatRadius > 0.0)
+                    {
+                        uiMap.AddMarker(type, group.UniqueID, new Location(avgLat, avgLon), threatRadius,
+                                        !setupDialog.IsSummaryOnly);
+                        _mapImportedMarkerDict[group.UniqueID] = threatType + " WEZ";
+                    }
+                }
+
+                RebuildInterfaceState();
+            }
+            catch (Exception ex)
+            {
+                await Utilities.Message1BDialog(Content.XamlRoot, "Import Failed", ex.Message);
+            }
         }
 
         /// <summary>
