@@ -93,6 +93,7 @@ namespace JAFDTC.Models.Import
 
                     UnitPositionItem posn = new()
                     {
+                        Name = (point.ContainsKey("name")) ? point["name"].GetString() : null,
                         Latitude = ll.Lat,
                         Longitude = ll.Lon,
                         Altitude = (double)point["alt"].GetDecimal() * M_TO_FT,
