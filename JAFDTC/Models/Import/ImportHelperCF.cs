@@ -91,9 +91,18 @@ namespace JAFDTC.Models.Import
                 {
                     Match match = TimeRegex().Match(tot);
                     if (match.Success)
-                        navpt.TimeOn = (int.Parse(match.Groups[1].Value) * 3600) +
+                    {
+                        int h = int.Parse(match.Groups[1].Value);
+                        h = match.Groups[4].Value.ToLower() switch
+                        {
+                            "am" => (h < 12) ? h : 0,
+                            "pm" => (h < 12) ? h + 12 : h,
+                            _ => h
+                        };
+                        navpt.TimeOn = (h * 3600) +
                                        (int.Parse(match.Groups[2].Value) * 60) +
                                        (int.Parse(match.Groups[3].Value) * 1);
+                    }
                 }
 
                 navpts.Add(navpt);
