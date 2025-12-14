@@ -40,43 +40,4 @@ namespace JAFDTC.Models.Import
                 throw new ArgumentException("Parameter is required");
         }
     }
-
-#if NOPE
-    /// <summary>
-    /// interface for classes that help interface between jafdtc navpoint system Configurations an an import data
-    /// source to allow import of navpoints.
-    /// </summary>
-    public interface IImportHelper
-    {
-        /// <summary>
-        /// return true if the import data source has multiple flights, false otherwise
-        /// </summary>
-        public bool HasFlights { get; }
-
-        /// <summary>
-        /// return a list of flights with navpoints that are present in the import data source, null on error. data
-        /// sources that do not support multiple flights will return an empty list.
-        /// </summary>
-        public List<string> Flights();
-
-        /// <summary>
-        /// return a dictionary that maps option identifiers (see the ui) to titles suitable for use in the ui for
-        /// the options associated with the import helper, null if there are no options. the what parameter may be
-        /// used to customize titles.
-        /// </summary>
-        public Dictionary<string, string> OptionTitles(string what = "Steerpoint");
-
-        /// <summary>
-        /// return a dictionary that maps option identifiers (see the ui) to default values for the options
-        /// associated with the import helper, null if there are no options.
-        /// </summary>
-        public Dictionary<string, object> OptionDefaults { get; }
-
-        /// <summary>
-        /// TODO: document
-        /// </summary>
-        public bool Import(INavpointSystemImport navptSys, string flightName = "", bool isReplace = true,
-                           Dictionary<string, object> options = null);
-    }
-#endif
 }

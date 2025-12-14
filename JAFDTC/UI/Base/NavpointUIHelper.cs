@@ -477,57 +477,6 @@ namespace JAFDTC.UI.Base
             }
 
             return false;
-#if NOPE
-            try
-            {
-
-
-                ContentDialogResult result = ContentDialogResult.Primary;
-                string flightName = null;
-                Dictionary<string, object> options = null;
-                List<string> flights = importer.Flights();
-                if (importer.HasFlights && ((flights == null) || (flights.Count == 0)))
-                {
-                    await Utilities.Message1BDialog(root,
-                        $"No Flights Available",
-                        $"There are no flights for the {Globals.AirframeNames[airframe]} airframe in the file.");
-                    return false;                                           // exit, no matching flights
-                }
-                else if (importer.HasFlights)
-                {
-                    ImportParamsDialog flightList = new("Available Flights", flights,
-                                                        importer.NavptOptionTitles(what), importer.NavptOptionDefaults)
-                    {
-                        XamlRoot = root,
-                        Title = $"Select a Flight to Import {what}s From",
-                        PrimaryButtonText = "Replace",
-                        SecondaryButtonText = "Append",
-                        CloseButtonText = "Cancel"
-                    };
-                    result = await flightList.ShowAsync(ContentDialogPlacement.Popup);
-                    flightName = flightList.SelectedItem;
-                    options = flightList.Options;
-                }
-                else
-                {
-                    result = await Utilities.Message3BDialog(root,
-                        $"Import {what}s",
-                        $"Would you like to replace the existing {what.ToLower()}s or append to the current list?",
-                        "Replace",
-                        "Append");
-                }
-                if (result == ContentDialogResult.None)
-                    return false;                                           // exit, flight selection cancelled
-                if (!importer.Import(navptSys, flightName, (result == ContentDialogResult.Primary), options))
-                    throw new Exception();                                  // exit, import error
-            }
-            catch (Exception ex)
-            {
-                FileManager.Log($"NavpointUIHdlper:Import exception {ex}");
-                ImportFailDialog(root, what);
-                return false;                                               // exit, import error
-            }
-#endif
         }
 
         // ------------------------------------------------------------------------------------------------------------

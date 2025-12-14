@@ -25,7 +25,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using Windows.Devices.PointOfService;
 
 // TODO: namespace and class names need to change here for consistency.
 
