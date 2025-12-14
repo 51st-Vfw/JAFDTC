@@ -1296,9 +1296,10 @@ namespace JAFDTC.UI.Controls.Map
             {
                 _mouseOverPopup.IsOpen = false;
                 (_mouseOverMarker.Content as Panel).Children.Remove(_mouseOverPopup);
-                _mouseOverMarker = null;
                 _mouseOverPopup = null;
             }
+            if (_mouseOverMarker != null)
+                _mouseOverMarker = null;
         }
     }
 }
