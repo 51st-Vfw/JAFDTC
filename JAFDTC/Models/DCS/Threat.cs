@@ -51,6 +51,11 @@ namespace JAFDTC.Models.DCS
 
         public static IEnumerable<Threat> LimitCategories(this IEnumerable<Threat> values, UnitCategoryType[]? categories)
             => (categories == null || categories.Length == 0) ? values : values.Where(u => categories.Contains(u.Category));
+
+        public static IEnumerable<Threat> LimitNames(this IEnumerable<Threat> values, string? name)
+            => (string.IsNullOrEmpty(name))
+                    ? values
+                    : values.Where(u => u.Name.Contains(name, System.StringComparison.CurrentCultureIgnoreCase));
     }
 
     // ================================================================================================================
