@@ -134,24 +134,24 @@ namespace JAFDTC.File.ACMI.Tests
             Assert.ThrowsException<FileNotFoundException>(() => ectractor.Extract(new() { FilePath = "/MISSING/test1.txt.acmi" }));
         }
 
-        //[TestMethod]
-        //public void Test_Extract_File_TXT()
-        //{
-        //    using var ectractor = new Extractor();
-        //    var result = ectractor.Extract(new() { FilePath = Path.Combine(Directory.GetParent(Environment.ProcessPath).FullName, "..\\..\\..\\appdata\\test1.txt.acmi") });
+        [TestMethod]
+        public void Test_Extract_File_TXT()
+        {
+            using var ectractor = new Extractor();
+            var result = ectractor.Extract(new() { FilePath = Path.Combine(Directory.GetParent(Environment.ProcessPath).FullName, "..\\..\\..\\appdata\\test1.txt.acmi") });
 
-        //    Assert.IsTrue(result != null);
-        //}
+            Assert.IsTrue(result != null);
+        }
 
-        //[TestMethod]
-        //public void Test_Extract_File_ZIP()
-        //{
-        //    using var ectractor = new Extractor();
+        [TestMethod]
+        public void Test_Extract_File_ZIP()
+        {
+            using var ectractor = new Extractor();
 
-        //    var result = ectractor.Extract(new() { FilePath = Path.Combine(Directory.GetParent(Environment.ProcessPath).FullName, "..\\..\\..\\appdata\\test2.zip.acmi") });
+            var result = ectractor.Extract(new() { FilePath = Path.Combine(Directory.GetParent(Environment.ProcessPath).FullName, "..\\..\\..\\appdata\\test2.zip.acmi") });
 
-        //    Assert.IsTrue(result != null);
-        //}
+            Assert.IsTrue(result != null);
+        }
 
         //[TestMethod]
         //public void Test_Extract_TimeSet()

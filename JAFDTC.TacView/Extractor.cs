@@ -186,7 +186,9 @@ namespace JAFDTC.File.ACMI
         {
             var dict = new Dictionary<string, UnitGroupItem>(StringComparer.OrdinalIgnoreCase);
 
-            foreach(var unit in units)
+            var cats = units.Select(p=>p.Category.ToNormalized()).Distinct().ToList();
+
+            foreach (var unit in units)
             {
                 if (!dict.TryGetValue(unit.GroupName, out var group))
                     dict[unit.GroupName] = new()
@@ -223,20 +225,29 @@ namespace JAFDTC.File.ACMI
             {
                 case "AIRCRAFT":
                 case "FIXEDWING":
+                case "AIR_FIXEDWING":
                     return UnitCategoryType.AIRCRAFT;
+
                 case "HELICOPTER":
                 case "ROTARYWING":
                     return UnitCategoryType.HELICOPTER;
+
                 case "GROUND":
                 case "VEHICLE":
                 case "INFANTRY":
+                case "NAVAID_STATIC_BULLSEYE": //what do you want to do with these?
+                case "GROUND_ANTIAIRCRAFT":
+                case "GROUND_VEHICLE":
+                case "GROUND_LIGHT_HUMAN_INFANTRY":
+                case "GROUND_STATIC_BUILDING":
                     return UnitCategoryType.GROUND;
+
                 case "NAVAL":
                 case "SHIP":
                     return UnitCategoryType.NAVAL;
             }
 
-            throw new NotSupportedException($"Unsupported UnitCategoryType value: {value}");
+            throw new NotSupportedException($"Unsupported UnitCategoryType value: {value.ToNormalized()}");
         }
 
         private static CoalitionType ToCoalition(string? value)
@@ -248,10 +259,12 @@ namespace JAFDTC.File.ACMI
                 case "RED":
                     return CoalitionType.RED;
                 case "NEUTRAL":
+                case "GREY":
+                case "GREEN": //what do you want to do with these?
                     return CoalitionType.NEUTRAL;
-                default:
-                    return CoalitionType.UNKNOWN;
             }
+
+            throw new NotSupportedException($"Unsupported CoalitionType value: {value.ToNormalized()}");
         }
 
         public void Dispose()
