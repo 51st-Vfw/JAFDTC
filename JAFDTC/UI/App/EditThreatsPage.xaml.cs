@@ -20,6 +20,7 @@
 using JAFDTC.Models.CoreApp;
 using JAFDTC.Models.DCS;
 using JAFDTC.Utilities;
+using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Data;
@@ -40,42 +41,7 @@ namespace JAFDTC.UI.App
     {
         public Threat Threat { get; set; }
 
-
-        public string TagsUI
-        {
-            get
-            {
-                return "tags";
-            }
-        }
-
-        public string _latUI;
-        public string LatUI
-        {
-            get => "Test";
-            set
-            {
-            }
-        }
-
-        public int CategoryIndex => Threat.Category switch
-        {
-            UnitCategoryType.GROUND => 0,
-            UnitCategoryType.NAVAL => 1,
-            _ => 0
-        };
-
-        public string CategoryLabel => Threat.Category switch
-        {
-            UnitCategoryType.GROUND => "Ground Unit",
-            UnitCategoryType.NAVAL => "Naval Unit",
-            _ => "Unknown"
-        };
-
-        public Visibility ComboVisibility => (Threat.Type == ThreatType.USER) ? Visibility.Visible : Visibility.Collapsed;
-
-        public Visibility LabelVisibility => (Threat.Type != ThreatType.USER) ? Visibility.Visible : Visibility.Collapsed;
-
+        public bool IsOverride { get; set; }
 
         private string _radiusWEZUI;
         public string RadiusWEZUI
@@ -88,12 +54,29 @@ namespace JAFDTC.UI.App
             }
         }
 
-        public string Glyph
+        public string CoalitionLabel => Threat.Coalition switch
+        {
+            CoalitionType.BLUE => "Blue",
+            CoalitionType.RED => "Red",
+            CoalitionType.NEUTRAL => "Neutral",
+            _ => "Unknown"
+        };
+
+        public string CategoryLabel => Threat.Category switch
+        {
+            UnitCategoryType.GROUND => "Ground Unit",
+            UnitCategoryType.NAVAL => "Naval Unit",
+            _ => "Unknown"
+        };
+
+        public string TypeGlyph
             => Threat.Type switch
             {
                 ThreatType.USER => "\xE718",
                 _ => ""
             };
+
+        public string ReplaceGlyph => (IsOverride) ? "\xE710" : "";
 
         public ThreatListItem(Threat threat) => (Threat) = (threat);
     }
@@ -113,6 +96,10 @@ namespace JAFDTC.UI.App
 
         private ObservableCollection<ThreatListItem> CurThreatItems { get; set; }
 
+        private bool IsRebuildPending { get; set; }
+
+        private HashSet<string> SystemThreatDCSTypes { get; set; }
+
         // ------------------------------------------------------------------------------------------------------------
         //
         // construction
@@ -124,17 +111,149 @@ namespace JAFDTC.UI.App
             InitializeComponent();
 
             CurThreatItems = [ ];
-            foreach (Threat threat in ThreatDbase.Instance.Find())
-                CurThreatItems.Add(new ThreatListItem(threat));
+            SystemThreatDCSTypes = [ ];
+            foreach (Threat threat in ThreatDbase.Instance.Find(null, true))
+            {
+                ThreatListItem item = new(threat);
+                if (threat.Type == ThreatType.DCS_CORE)
+                    SystemThreatDCSTypes.Add(threat.TypeDCS);
+                else if ((threat.Type == ThreatType.USER) && SystemThreatDCSTypes.Contains(threat.TypeDCS))
+                    item.IsOverride = true;
+                CurThreatItems.Add(item);
+            }
 
             Threat tx = new();
             tx.Coalition = CoalitionType.BLUE;
+            tx.Category = UnitCategoryType.GROUND;
             tx.Type = ThreatType.USER;
             tx.TypeDCS = "foo";
             tx.Name = "Test";
             tx.RadiusWEZ = 67.0;
             CurThreatItems.Add(new ThreatListItem(tx));
 
+            Threat ty = new();
+            ty.Coalition = CoalitionType.BLUE;
+            ty.Category = UnitCategoryType.GROUND;
+            ty.Type = ThreatType.USER;
+            ty.TypeDCS = "Hawk ln";
+            ty.Name = "Test Hawk";
+            ty.RadiusWEZ = 67.0;
+            ThreatListItem tli = new(ty);
+            tli.IsOverride = true;
+            CurThreatItems.Add(tli);
+
+        }
+
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // ui utility
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
+        /// <summary>
+        /// return a list of threats matching the current filter configuration with a name that  containst the
+        /// provided name fragment.
+        /// </summary>
+        private IReadOnlyList<Threat> GetThreatssMatchingFilter(string name = null)
+        {
+// TODO: pick up other criteria...
+            ThreatDbaseQuery query = new(null, name);
+            return ThreatDbase.Instance.Find(query, true);
+        }
+
+        /// <summary>
+        /// rebuild the content of the threat list based on the current contents of the threat database along with
+        /// the currently included types from the filter specification. name specifies the partial name to match,
+        /// null if no match on name.
+        /// </summary>
+        private void RebuildThreatList(string name = null)
+        {
+// TODO: preserve selection, or nah?
+            CurThreatItems.Clear();
+            Dictionary<string, PointOfInterest> marks = [];
+            foreach (Threat threat in GetThreatssMatchingFilter(name))
+            {
+                ThreatListItem item = new(threat);
+                if ((threat.Type == ThreatType.USER) && SystemThreatDCSTypes.Contains(threat.TypeDCS))
+                    item.IsOverride = true;
+                CurThreatItems.Add(item);
+            }
+        }
+
+        /// <summary>
+        /// rebuild the title of the action button based on the current values in the point of interest editor.
+        /// if we have a source uid, we are updating; otherwise we are adding.
+        /// </summary>
+        private void RebuildActionButtonTitles()
+        {
+#if NOPE
+            uiPoITextBtnAdd.Text = (string.IsNullOrEmpty(EditPoI.SourceUID)) ? "Add" : "Update";
+            uiPoITextBtnClear.Text = (EditPoI.IsDirty) ? "Reset" : "Clear";
+#endif
+        }
+
+        /// <summary>
+        /// rebuild the enable state of controls on the page.
+        /// </summary>
+        private void RebuildEnableState()
+        {
+#if NOPE
+            JAFDTC.App curApp = Application.Current as JAFDTC.App;
+
+            Dictionary<PointOfInterestType, List<PointOfInterest>> selectionByType = CrackSelectedPoIsByType();
+            List<string> selectionByCampaign = CrackSelectedPoIsByCampaign(selectionByType);
+            bool isCoreInSel = selectionByType.ContainsKey(PointOfInterestType.DCS_CORE);
+            bool isUserInSel = selectionByType.ContainsKey(PointOfInterestType.USER);
+            bool isCampaignInSel = selectionByType.ContainsKey(PointOfInterestType.CAMPAIGN);
+            bool isMultCampaignSel = (selectionByCampaign.Count > 1);
+
+            bool isExportable = !isCoreInSel && ((isUserInSel && !isCampaignInSel) ||
+                                                 (!isUserInSel && isCampaignInSel && !isMultCampaignSel));
+
+            foreach (TextBox elem in _curPoIFieldValueMap.Values)
+                Utilities.SetEnableState(elem, (uiPoIListView.SelectedItems.Count <= 1) && !isCoreInSel);
+
+            bool isPoIValid = !string.IsNullOrEmpty(uiPoIValueName.Text) &&
+                              !string.IsNullOrEmpty(uiPoIValueAlt.Text) &&
+                              ((EditPoI.CurTheaters != null) && (EditPoI.CurTheaters.Count > 0)) &&
+                              !EditPoI.HasErrors;
+
+            Utilities.SetEnableState(uiPoIBtnAdd, EditPoI.IsDirty && isPoIValid);
+            Utilities.SetEnableState(uiPoIBtnClear, !EditPoI.IsEmpty);
+            Utilities.SetEnableState(uiPoIBtnCapture, curApp.IsDCSAvailable);
+
+            bool isCampaigns = (PointOfInterestDbase.Instance.KnownCampaigns.Count > 0);
+
+            Utilities.SetEnableState(uiBarBtnCopyUser, uiPoIListView.SelectedItems.Count == 1);
+            Utilities.SetEnableState(uiBarBtnCopyCampaign, isCampaigns && (uiPoIListView.SelectedItems.Count > 0));
+            Utilities.SetEnableState(uiBarBtnDelete, !isCoreInSel);
+            Utilities.SetEnableState(uiBarBtnExport, isExportable);
+
+            Utilities.SetEnableState(uiBarBtnDeleteCamp, isCampaigns);
+
+            List<string> errors = EditPoI.GetErrorsWithEmpty(EditPoI.IsEmpty);
+            ValidateAllFields(_curPoIFieldValueMap, errors);
+#endif
+        }
+
+        /// <summary>
+        /// rebuild user interface state such as the enable state of the command bars.
+        /// </summary>
+        private void RebuildInterfaceState()
+        {
+            if (!IsRebuildPending)
+            {
+                IsRebuildPending = true;
+                DispatcherQueue.TryEnqueue(DispatcherQueuePriority.Low, () =>
+                {
+#if NOPE
+                    RebuildActionButtonTitles();
+                    RebuildEditorTheater();
+#endif
+                    RebuildEnableState();
+                    IsRebuildPending = false;
+                });
+            }
         }
 
         // ------------------------------------------------------------------------------------------------------------
@@ -159,19 +278,17 @@ namespace JAFDTC.UI.App
         /// </summary>
         private void ThreatNameFilterBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
         {
-#if NOPE
             if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput)
             {
                 List<string> suitableItems = [];
-                List<PointOfInterest> pois = GetPoIsMatchingFilter(sender.Text);
-                if (pois.Count == 0)
-                    suitableItems.Add("No Matching Points of Interest Found");
+                IReadOnlyList<Threat> threats = GetThreatssMatchingFilter(sender.Text);
+                if (threats.Count == 0)
+                    suitableItems.Add("No Matching Threats Found");
                 else
-                    foreach (PointOfInterest poi in pois)
-                        suitableItems.Add(poi.Name);
+                    foreach (Threat threat in threats)
+                        suitableItems.Add(threat.Name);
                 sender.ItemsSource = suitableItems;
             }
-#endif
         }
 
         /// <summary>
@@ -179,10 +296,8 @@ namespace JAFDTC.UI.App
         /// </summary>
         private void ThreatNameFilterBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
         {
-#if NOPE
-            RebuildPoIList(args.QueryText);
+            RebuildThreatList(args.QueryText);
             RebuildInterfaceState();
-#endif
         }
 
         // ---- command bar / commands --------------------------------------------------------------------------------
