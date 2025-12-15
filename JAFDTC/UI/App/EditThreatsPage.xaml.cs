@@ -102,6 +102,10 @@ namespace JAFDTC.UI.App
 
         private HashSet<string> SystemThreatDCSTypes { get; set; }
 
+        // ---- constructed properties
+
+        private bool IsFiltered => false;
+
         // ------------------------------------------------------------------------------------------------------------
         //
         // construction
@@ -310,33 +314,32 @@ namespace JAFDTC.UI.App
         /// </summary>
         private async void CmdFilter_Click(object sender, RoutedEventArgs args)
         {
-#if NOPE
             AppBarToggleButton button = (AppBarToggleButton)sender;
             if (button.IsChecked != IsFiltered)
                 button.IsChecked = IsFiltered;
 
-            GetPoIFilterDialog filterDialog = new(FilterTheater, FilterCampaign, FilterTags, FilterIncludeTypes)
+            EditThreatsFilterDialog filterDialog = new()
             {
-                XamlRoot = Content.XamlRoot,
-                Title = $"Set a Filter for Points of Interest",
-                PrimaryButtonText = "Set",
-                SecondaryButtonText = "Clear Filters",
-                CloseButtonText = "Cancel",
+                XamlRoot = Content.XamlRoot
             };
             ContentDialogResult result = await filterDialog.ShowAsync(ContentDialogPlacement.Popup);
             if (result == ContentDialogResult.Primary)
             {
+#if NOPE
                 FilterTheater = filterDialog.Theater;
                 FilterCampaign = filterDialog.Campaign;
                 FilterTags = PointOfInterest.SanitizedTags(filterDialog.Tags);
                 FilterIncludeTypes = filterDialog.IncludeTypes;
+#endif
             }
             else if (result == ContentDialogResult.Secondary)
             {
+#if NOPE
                 FilterTheater = "";
                 FilterCampaign = "";
                 FilterTags = "";
                 FilterIncludeTypes = PointOfInterestTypeMask.ANY;
+#endif
             }
             else
             {
@@ -345,15 +348,16 @@ namespace JAFDTC.UI.App
 
             button.IsChecked = IsFiltered;
 
+#if NOPE
             Settings.LastPoIFilterTheater = FilterTheater;
             Settings.LastPoIFilterCampaign = FilterCampaign;
             Settings.LastPoIFilterTags = FilterTags;
             Settings.LastPoIFilterIncludeTypes = FilterIncludeTypes;
-
-            uiPoIListView.SelectedItems.Clear();
-            RebuildPoIList();
-            RebuildInterfaceState();
 #endif
+
+            uiThreatListView.SelectedItems.Clear();
+            RebuildThreatList();
+            RebuildInterfaceState();
         }
 
         /// <summary>
