@@ -32,11 +32,11 @@ namespace JAFDTC.File.Extensions
             if (unitTypes.IsEmpty())
                 return values;
 
-            //first have to filter the units in each group
-            foreach (var group in values)
-                group.Units = [.. group.Units.Where(p => unitTypes.Contains(p.Type))];
+            var temp = values.ToList();
+            foreach (var group in temp)
+                group.Units = group.Units.LimitUnitTypes(unitTypes).ToList();
 
-            return values.Where(u => u.Units.HasData());
+            return temp.Where(u => u.Units.HasData());
         }
 
         public static IEnumerable<UnitItem> LimitUnitTypes(this IEnumerable<UnitItem> values, string[] unitTypes)
@@ -52,11 +52,11 @@ namespace JAFDTC.File.Extensions
             if (!isAlive.HasValue)
                 return values;
 
-            //first have to filter the units in each group
-            foreach (var group in values)
-                group.Units = [.. group.Units.Where(p => p.IsAlive = isAlive.Value)];
+            var temp = values.ToList();
+            foreach (var group in temp)
+                group.Units = group.Units.LimitAlive(isAlive).ToList();
 
-            return values.Where(u => u.Units.HasData());
+            return temp.Where(u => u.Units.HasData());
         }
 
         public static IEnumerable<UnitItem> LimitAlive(this IEnumerable<UnitItem> values, bool? isAlive)

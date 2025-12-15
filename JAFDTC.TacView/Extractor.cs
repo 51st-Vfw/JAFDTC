@@ -186,7 +186,7 @@ namespace JAFDTC.File.ACMI
         {
             var dict = new Dictionary<string, UnitGroupItem>(StringComparer.OrdinalIgnoreCase);
 
-            var cats = units.Select(p=>p.Category.ToNormalized()).Distinct().ToList();
+            //var cats = units.Select(p=>p.Category.ToNormalized()).Distinct().ToList();
 
             foreach (var unit in units)
             {

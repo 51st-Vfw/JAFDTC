@@ -17,8 +17,10 @@
 //
 // ********************************************************************************************************************
 
+using JAFDTC.Core.Extensions;
 using JAFDTC.File.ACMI.Extensions;
 using JAFDTC.File.ACMI.Models;
+using JAFDTC.Models.Core;
 
 namespace JAFDTC.File.ACMI.Tests
 {
@@ -153,22 +155,22 @@ namespace JAFDTC.File.ACMI.Tests
             Assert.IsTrue(result != null);
         }
 
-        //[TestMethod]
-        //public void Test_Extract_TimeSet()
-        //{
-        //    using var ectractor = new Extractor();
-        //    var result = ectractor.Extract(new()
-        //    {
-        //        FilePath = Path.Combine(Directory.GetParent(Environment.ProcessPath).FullName, "..\\..\\..\\appdata\\test2.zip.acmi"),
-        //        TimeSnippet = DateTime.Parse("1/1/2000 11:24:35")
-        //    });
+        [TestMethod]
+        public void Test_Extract_TimeSet()
+        {
+            using var ectractor = new Extractor();
+            var result = ectractor.Extract(new()
+            {
+                FilePath = Path.Combine(Directory.GetParent(Environment.ProcessPath).FullName, "..\\..\\..\\appdata\\test2.zip.acmi"),
+                TimeSnippet = DateTime.Parse("1/1/2000 11:24:35")
+            });
 
-        //    Assert.IsTrue(result != null);
-        //    Assert.IsTrue(result.Count() > 0);
+            Assert.IsTrue(result != null);
+            Assert.IsTrue(result.Count() > 0);
 
-        //    var full = ectractor.Extract(new() { FilePath = Path.Combine(Directory.GetParent(Environment.ProcessPath).FullName, "..\\..\\..\\appdata\\test2.zip.acmi") });
-        //    Assert.IsTrue(result.Count() < full.Count());
-        //}
+            var full = ectractor.Extract(new() { FilePath = Path.Combine(Directory.GetParent(Environment.ProcessPath).FullName, "..\\..\\..\\appdata\\test2.zip.acmi") });
+            Assert.IsTrue(result.Count() < full.Count());
+        }
 
         //[TestMethod]
         //public void Test_Extract_Filter_Categories()
@@ -199,46 +201,46 @@ namespace JAFDTC.File.ACMI.Tests
         //    Assert.IsTrue(result.Count() < full.Count());
         //}
 
-        //[TestMethod]
-        //public void Test_Extract_Filter_Coalition()
-        //{
-        //    using var ectractor = new Extractor();
-        //    var result = ectractor.Extract(new()
-        //    {
-        //        FilePath = Path.Combine(Directory.GetParent(Environment.ProcessPath).FullName, "..\\..\\..\\appdata\\test2.zip.acmi"),
-        //        Coalitions =
-        //        [
-        //            CoalitionType.Enemies
-        //        ]
-        //    });
+        [TestMethod]
+        public void Test_Extract_Filter_Coalition()
+        {
+            using var ectractor = new Extractor();
+            var result = ectractor.Extract(new()
+            {
+                FilePath = Path.Combine(Directory.GetParent(Environment.ProcessPath).FullName, "..\\..\\..\\appdata\\test2.zip.acmi"),
+                Coalitions =
+                [
+                    CoalitionType.RED
+                ]
+            });
 
-        //    Assert.IsTrue(result != null);
-        //    Assert.IsTrue(result.Count() > 0);
-        //    Assert.IsTrue(result.Count(p => p.Coalition == CoalitionType.Allies) == 0);
-        //    Assert.IsTrue(result.Count(p => p.Coalition == CoalitionType.Unknown) == 0);
-        //    Assert.IsTrue(result.Count(p => p.Coalition == CoalitionType.Neutrals) == 0);
+            Assert.IsTrue(result != null);
+            Assert.IsTrue(result.Count() > 0);
+            Assert.IsTrue(result.Count(p => p.Coalition == CoalitionType.BLUE) == 0);
+            Assert.IsTrue(result.Count(p => p.Coalition == CoalitionType.RED) > 0);
+            Assert.IsTrue(result.Count(p => p.Coalition == CoalitionType.NEUTRAL) == 0);
 
-        //    var full = ectractor.Extract(new() { FilePath = Path.Combine(Directory.GetParent(Environment.ProcessPath).FullName, "..\\..\\..\\appdata\\test2.zip.acmi") });
-        //    Assert.IsTrue(result.Count() < full.Count());
-        //}
+            var full = ectractor.Extract(new() { FilePath = Path.Combine(Directory.GetParent(Environment.ProcessPath).FullName, "..\\..\\..\\appdata\\test2.zip.acmi") });
+            Assert.IsTrue(result.Count() < full.Count());
+        }
 
-        //[TestMethod]
-        //public void Test_Extract_Filter_Dead()
-        //{
-        //    using var ectractor = new Extractor();
-        //    var result = ectractor.Extract(new()
-        //    {
-        //        FilePath = Path.Combine(Directory.GetParent(Environment.ProcessPath).FullName, "..\\..\\..\\appdata\\test2.zip.acmi"),
-        //        IsAlive = false
-        //    });
+        [TestMethod]
+        public void Test_Extract_Filter_Dead()
+        {
+            using var ectractor = new Extractor();
+            var result = ectractor.Extract(new()
+            {
+                FilePath = Path.Combine(Directory.GetParent(Environment.ProcessPath).FullName, "..\\..\\..\\appdata\\test2.zip.acmi"),
+                IsAlive = false
+            });
 
-        //    Assert.IsTrue(result != null);
-        //    Assert.IsTrue(result.Count() > 0);
-        //    Assert.IsTrue(result.Count(p => p.IsAlive) == 0);
+            Assert.IsTrue(result != null);
+            Assert.IsTrue(result.Count() > 0);
+            Assert.IsTrue(result.Count(p => p.Units.HasData() && p.Units.Any(x => x.IsAlive)) == 0);
 
-        //    var full = ectractor.Extract(new() { FilePath = Path.Combine(Directory.GetParent(Environment.ProcessPath).FullName, "..\\..\\..\\appdata\\test2.zip.acmi") });
-        //    Assert.IsTrue(result.Count() < full.Count());
-        //}
+            var full = ectractor.Extract(new() { FilePath = Path.Combine(Directory.GetParent(Environment.ProcessPath).FullName, "..\\..\\..\\appdata\\test2.zip.acmi") });
+            Assert.IsTrue(result.Count() < full.Count());
+        }
 
     }
 }
