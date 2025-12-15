@@ -21,10 +21,14 @@
 //
 #define ENABLE_MAP_FILE_CACHE
 
+using JAFDTC.File;
+using JAFDTC.File.Models;
 using JAFDTC.Models.Base;
+using JAFDTC.Models.Core;
 using JAFDTC.Models.CoreApp;
 using JAFDTC.Models.DCS;
 using JAFDTC.Models.Import;
+using JAFDTC.Models.Units;
 using JAFDTC.UI.Base;
 using JAFDTC.UI.Controls.Map;
 using JAFDTC.Utilities;

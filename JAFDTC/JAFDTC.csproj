@@ -411,6 +411,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\JAFDTC.File\JAFDTC.File.csproj" />
     <ProjectReference Include="..\JAFDTC.Models\JAFDTC.Models.csproj" />
   </ItemGroup>
 </Project>

@@ -17,8 +17,10 @@
 //
 // ********************************************************************************************************************
 
+using JAFDTC.Models.Core;
 using JAFDTC.Models.CoreApp;
 using JAFDTC.Models.DCS;
+using JAFDTC.Models.Units;
 using JAFDTC.Utilities;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;

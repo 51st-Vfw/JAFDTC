@@ -181,7 +181,7 @@ namespace JAFDTC.Utilities
         /// </summary>
         public static string ReadFile(string path)
         {
-            return File.ReadAllText(path);
+            return System.IO.File.ReadAllText(path);
         }
 
         /// <summary>
@@ -200,7 +200,7 @@ namespace JAFDTC.Utilities
         /// </summary>
         public static void WriteFile(string path, string content)
         {
-            File.WriteAllText(path, content);
+            System.IO.File.WriteAllText(path, content);
         }
 
         // ------------------------------------------------------------------------------------------------------------
@@ -235,7 +235,7 @@ namespace JAFDTC.Utilities
                 {
                     try
                     {
-                        if (File.Exists(file))
+                        if (System.IO.File.Exists(file))
                             size += new FileInfo(file).Length;
                     }
                     catch
@@ -381,7 +381,7 @@ namespace JAFDTC.Utilities
             string cleanFilename = cleanFilenameBase + ".json";
 
             int index = 1;
-            while (File.Exists(Path.Combine(path, cleanFilename)))
+            while (System.IO.File.Exists(Path.Combine(path, cleanFilename)))
             {
                 cleanFilename = string.Format("{0} {1:X4}.json", cleanFilenameBase, index);
                 index++;
@@ -402,7 +402,7 @@ namespace JAFDTC.Utilities
                 var files = Directory.EnumerateFiles(path, "*.json");
                 foreach (var file in files)
                 {
-                    var json = File.ReadAllText(file);
+                    var json = System.IO.File.ReadAllText(file);
                     IConfiguration config = Configuration.FactoryJSON(airframe, json);
                     if (config != null)
                     {
@@ -426,9 +426,9 @@ namespace JAFDTC.Utilities
         /// </summary>
         public static IConfiguration ReadUnmanagedConfigurationFile(string path)
         {
-            if (File.Exists(path))
+            if (System.IO.File.Exists(path))
             {
-                var json = File.ReadAllText(path);
+                var json = System.IO.File.ReadAllText(path);
                 JsonNode dom = JsonNode.Parse(json);
                 int? airframe = (int?)dom["Airframe"];
                 if (airframe != null)
@@ -450,7 +450,7 @@ namespace JAFDTC.Utilities
             string path = AirframeConfigDirPath(config.Airframe);
             Directory.CreateDirectory(path);
             config.Filename ??= ConfigFileame(config.Airframe, config.Name);
-            File.WriteAllText(Path.Combine(path, config.Filename), config.Serialize());
+            System.IO.File.WriteAllText(Path.Combine(path, config.Filename), config.Serialize());
         }
 
         /// <summary>
@@ -459,8 +459,8 @@ namespace JAFDTC.Utilities
         public static void DeleteConfigurationFile(IConfiguration config)
         {
             string path = Path.Combine(AirframeConfigDirPath(config.Airframe), config.Filename);
-            if (File.Exists(path))
-                File.Delete(path);
+            if (System.IO.File.Exists(path))
+                System.IO.File.Delete(path);
         }
 
         /// <summary>
@@ -473,7 +473,7 @@ namespace JAFDTC.Utilities
             if (Directory.Exists(path))
             {
                 config.Filename = ConfigFileame(config.Airframe, config.Name);
-                File.Move(Path.Combine(path, oldFilename), Path.Combine(path, config.Filename));
+                System.IO.File.Move(Path.Combine(path, oldFilename), Path.Combine(path, config.Filename));
                 SaveConfigurationFile(config);
             }
             else
@@ -499,7 +499,7 @@ namespace JAFDTC.Utilities
         /// </summary>
         public static bool IsValidDTCTemplate(AirframeTypes airframe, string name)
             => (string.IsNullOrEmpty(name) ||
-                File.Exists(Path.Combine(AirframeDTCTemplateDirPath(airframe), $"{name}.dtc")));
+                System.IO.File.Exists(Path.Combine(AirframeDTCTemplateDirPath(airframe), $"{name}.dtc")));
 
         /// <summary>
         /// returns a list of the dtc template names for an airframe (excluding the default template).
@@ -568,8 +568,8 @@ namespace JAFDTC.Utilities
             if (!string.IsNullOrEmpty(name))
             {
                 string path = Path.Combine(AirframeDTCTemplateDirPath(airframe), $"{name}.dtc");
-                if (File.Exists(path))
-                    File.Delete(path);
+                if (System.IO.File.Exists(path))
+                    System.IO.File.Delete(path);
             }
         }
 
@@ -666,7 +666,7 @@ namespace JAFDTC.Utilities
         public static List<T> LoadSystemDbase<T>(string name)
         {
             string path = Path.Combine(_appDirPath, "Data", name);
-            return (File.Exists(path)) ? CoreLoadDbase<T>(path) : [ ];
+            return (System.IO.File.Exists(path)) ? CoreLoadDbase<T>(path) : [ ];
         }
 
         /// <summary>
@@ -714,8 +714,8 @@ namespace JAFDTC.Utilities
         public static void DeleteUserDatabase(string name)
         {
             string path = Path.Combine(Path.Combine(_settingsDirPath, "Dbase"), name);
-            if (File.Exists(path))
-                File.Delete(path);
+            if (System.IO.File.Exists(path))
+                System.IO.File.Delete(path);
         }
 
         // ------------------------------------------------------------------------------------------------------------

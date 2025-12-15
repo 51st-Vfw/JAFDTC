@@ -23,7 +23,7 @@ namespace JAFDTC.File.ACMI.Parsers
 {
     public static class PositionParser
     {
-        public static PositionItem Parse(string value)
+        public static ParsedPosition Parse(string value)
         {
             //T=4.4070743|5.3344556|1839.87|-1.8|1.1|xxx|111826.99|-383591.38|318.9
             /*
@@ -40,7 +40,7 @@ namespace JAFDTC.File.ACMI.Parsers
             if (parts.Length < 3) //cases where there is only 1 value?  T=4.7 ???
                 return default;
 
-            var pos = new PositionItem
+            var pos = new ParsedPosition
             {
                 Longitude = -118 + parts[0].ToCleaDouble(), //lon offset from -118 deg
                 Latitude = 31 + parts[1].ToCleaDouble(), //lat offset from 31 deg

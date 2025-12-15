@@ -148,7 +148,7 @@ namespace JAFDTC.UI.Base
                 EditDTC.OutputPath = newPath;
                 SaveEditStateToConfig();
             }
-            if ((oldPath.Length > 0) && (newPath != oldPath) && File.Exists(oldPath))
+            if ((oldPath.Length > 0) && (newPath != oldPath) && System.IO.File.Exists(oldPath))
             {
                 ContentDialogResult result = await Utilities.Message2BDialog(Content.XamlRoot,
                     "Save Location Changing",
@@ -159,7 +159,7 @@ namespace JAFDTC.UI.Base
                 try
                 {
                     if (result == ContentDialogResult.None)
-                        File.Delete(oldPath);
+                        System.IO.File.Delete(oldPath);
                 }
                 catch (Exception ex)
                 {

@@ -204,17 +204,17 @@ namespace JAFDTC.Utilities
                 }
 
                 string exportLuaPath = Path.Combine(scriptsFolder, "Export.lua");
-                if (!File.Exists(exportLuaPath))
+                if (!System.IO.File.Exists(exportLuaPath))
                 {
                     FileManager.Log($"DCSLuaManager: Creates Export.lua");
-                    File.WriteAllText(exportLuaPath, "");
+                    System.IO.File.WriteAllText(exportLuaPath, "");
                 }
-                string exportLuaContent = File.ReadAllText(exportLuaPath);
+                string exportLuaContent = System.IO.File.ReadAllText(exportLuaPath);
                 if (!exportLuaContent.Contains(_dcsExportMagic))
                 {
                     FileManager.Log($"DCSLuaManager: Updates Export.lua");
                     exportLuaContent += $"\n\n{_dcsExportMagic}\n\n";
-                    File.WriteAllText(exportLuaPath, exportLuaContent);
+                    System.IO.File.WriteAllText(exportLuaPath, exportLuaContent);
                 }
 
                 Settings.SetVersionDCSLua(path, DCSLuaVersion.CURRENT);
@@ -255,13 +255,13 @@ namespace JAFDTC.Utilities
             string scriptsFolder = Path.Combine(path, "Scripts");
             string jafdtcFolder = Path.Combine(scriptsFolder, "JAFDTC");
             string exportLuaPath = Path.Combine(scriptsFolder, "Export.lua");
-            if (!Directory.Exists(scriptsFolder) || !Directory.Exists(jafdtcFolder) || !File.Exists(exportLuaPath))
+            if (!Directory.Exists(scriptsFolder) || !Directory.Exists(jafdtcFolder) || !System.IO.File.Exists(exportLuaPath))
             {
                 isInstalled = false;
             }
             else
             {
-                string exportLuaContent = File.ReadAllText(exportLuaPath);
+                string exportLuaContent = System.IO.File.ReadAllText(exportLuaPath);
                 isInstalled = exportLuaContent.Contains(_dcsExportMagic);
             }
             if (!isInstalled && Settings.VersionDCSLua.ContainsKey(path))
@@ -279,10 +279,10 @@ namespace JAFDTC.Utilities
             foreach (string file in files)
             {
                 string path = Path.Combine(scriptsFolder, file);
-                if (File.Exists(path))
+                if (System.IO.File.Exists(path))
                 {
                     FileManager.Log($"DCSLuaManager: Removes deprecated file: {path}");
-                    File.Delete(path);
+                    System.IO.File.Delete(path);
                 }
             }
         }
@@ -293,15 +293,15 @@ namespace JAFDTC.Utilities
         /// </summary>
         private static bool UpdateOrCreateFile(string srcPath, string dstPath)
         {
-            if (!File.Exists(dstPath))
+            if (!System.IO.File.Exists(dstPath))
             {
                 FileManager.Log($"DCSLuaManager: Creates file: {dstPath}");
-                File.Copy(srcPath, dstPath);
+                System.IO.File.Copy(srcPath, dstPath);
             }
-            else if ((File.ReadAllText(srcPath) != File.ReadAllText(dstPath)))
+            else if ((System.IO.File.ReadAllText(srcPath) != System.IO.File.ReadAllText(dstPath)))
             {
                 FileManager.Log($"DCSLuaManager: Updates file: {dstPath}");
-                File.Copy(srcPath, dstPath, true);
+                System.IO.File.Copy(srcPath, dstPath, true);
                 return true;
             }
             return false;
