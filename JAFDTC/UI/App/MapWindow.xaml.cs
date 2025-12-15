@@ -866,7 +866,7 @@ namespace JAFDTC.UI.App
                     double avgLon = 0.0;
                     foreach (UnitItem unit in group.Units)
                     {
-                        ThreatDbaseQuery query = new([unit.Type], null, null, null, true);
+                        ThreatDbaseQuery query = new([unit.Type], null, null, null, null, true);
                         IReadOnlyList<Threat> dbThreats = ThreatDbase.Instance.Find(query);
                         Threat dbThreat = ((dbThreats != null) && (dbThreats.Count > 0)) ? dbThreats[0] : null;
                         if ((dbThreat != null) && (dbThreat.RadiusWEZ > threatRadius))

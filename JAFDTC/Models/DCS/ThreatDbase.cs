@@ -21,6 +21,7 @@ using JAFDTC.Models.CoreApp;
 using JAFDTC.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace JAFDTC.Models.DCS
 {
@@ -33,14 +34,15 @@ namespace JAFDTC.Models.DCS
         public ThreatType[]? ThreatTypes;
         public UnitCategoryType[]? Categories;
         public CoalitionType[]? Coalitions;
+        public string Name;
 
         public bool IsSingleMatch;
 
-        public ThreatDbaseQuery(string[]? typesDCS = null, ThreatType[]? threatTypes = null,
+        public ThreatDbaseQuery(string[]? typesDCS = null, string name = null, ThreatType[]? threatTypes = null,
                                 UnitCategoryType[]? categories = null, CoalitionType[]? coalitions = null,
                                 bool isSingleMatch = false)
-            => (TypesDCS, ThreatTypes, Categories, Coalitions, IsSingleMatch)
-                = (typesDCS, threatTypes, categories, coalitions, isSingleMatch);
+            => (TypesDCS, Name, ThreatTypes, Categories, Coalitions, IsSingleMatch)
+                = (typesDCS, name, threatTypes, categories, coalitions, isSingleMatch);
     }
 
     // ================================================================================================================
@@ -104,11 +106,20 @@ namespace JAFDTC.Models.DCS
         {
             query ??= new();
             List<Threat> matches = [.. _dbase.LimitThreatTypes(query.ThreatTypes)
+                                             .LimitNames(query.Name)
                                              .LimitCategories(query.Categories)
                                              .LimitDCSTypes(query.TypesDCS)
                                              .LimitCoalitions(query.Coalitions) ];
-// TODO: handle sort
+            if (query.IsSingleMatch)
+            {
 // TODO: handle isSingleMatch
+            }
+            if (isSort)
+                matches = [.. matches.OrderBy(x => x.Type)
+                                     .ThenBy(x => x.Coalition)
+                                     .ThenBy(x => x.Category)
+                                     .ThenBy(x => x.Name) ];
+
             return matches;
         }
 
@@ -118,7 +129,7 @@ namespace JAFDTC.Models.DCS
         /// </summary>
         public bool AddThreat(Threat threat, bool isPersist = true)
         {
-            IReadOnlyList<Threat> matches = Find(new([ threat.TypeDCS ], [ threat.Type ]));
+            IReadOnlyList<Threat> matches = Find(new([ threat.TypeDCS ], null, [ threat.Type ]));
             if ((matches.Count == 0) && isPersist)
                 Save();
 
@@ -132,7 +143,7 @@ namespace JAFDTC.Models.DCS
         {
             if (threat.Type == ThreatType.USER)
             {
-                IReadOnlyList<Threat> matches = Find(new([ threat.TypeDCS ], [ threat.Type ]));
+                IReadOnlyList<Threat> matches = Find(new([ threat.TypeDCS ], null, [ threat.Type ]));
                 if (matches.Count > 0)
                 {
                     _dbase.Remove(threat);
@@ -148,7 +159,7 @@ namespace JAFDTC.Models.DCS
         /// </summary>
         public bool Save()
         {
-            IReadOnlyList<Threat> matches = Find(new(null, [ ThreatType.USER ]));
+            IReadOnlyList<Threat> matches = Find(new(null, null, [ ThreatType.USER ]));
             return (matches.Count == 0) || FileManager.SaveUserThreats([.. matches ]);
         }
     }
