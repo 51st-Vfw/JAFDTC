@@ -21,6 +21,7 @@ using JAFDTC.Core.Extensions;
 using JAFDTC.File.ACMI.Extensions;
 using JAFDTC.File.ACMI.Models;
 using JAFDTC.Models.Core;
+using JAFDTC.Models.Units;
 
 namespace JAFDTC.File.ACMI.Tests
 {
@@ -87,38 +88,25 @@ namespace JAFDTC.File.ACMI.Tests
         //    Assert.IsTrue(result != null);
         //}
 
-        //[TestMethod]
-        //public void Test_Extract_Filter_TYPICAL()
-        //{
-        //    using var ectractor = new Extractor();
-        //    var result = ectractor.Extract(new()
-        //    {
-        //        FilePath = Path.Combine(Directory.GetParent(Environment.ProcessPath).FullName, "..\\..\\..\\appdata\\test2.zip.acmi"),
-        //        IsAlive = true, //just whats alive
-        //        Coalitions = null, //we want all for now.. just use colors to limit..
-        //        Colors = [
-        //            ColorType.Red
-        //        ],
-        //        Categories = //non air / wpn...
-        //        [
-        //            CategoryType.Navaid_Static_Bullseye,
+        [TestMethod]
+        public void Test_Extract_Filter_TYPICAL()
+        {
+            using var ectractor = new Extractor();
+            var result = ectractor.Extract(new()
+            {
+                FilePath = Path.Combine(Directory.GetParent(Environment.ProcessPath).FullName, "..\\..\\..\\appdata\\test2.zip.acmi"),
+                IsAlive = true, //just whats alive
+                Coalitions = [ CoalitionType.RED], //only blue/red
+                UnitCategories =
+                [
+                    UnitCategoryType.GROUND
+                ],
+                TimeSnippet = null //usually last frame will suffice
+            });
 
-        //            CategoryType.Ground_AntiAircraft,
-        //            CategoryType.Ground_Heavy_Armor_Vehicle_Tank,
-        //            CategoryType.Ground_Static_Aerodrome,
-        //            CategoryType.Ground_Static_Building,
-        //            CategoryType.Ground_Vehicle,
-
-        //            CategoryType.Sea_Watercraft,
-        //            CategoryType.Sea_Watercraft_AircraftCarrier,
-        //            CategoryType.Sea_Watercraft_Warship,
-        //        ],
-        //        TimeSnippet = null //usually last frame will suffice
-        //    });
-
-        //    Assert.IsTrue(result != null);
-        //    Assert.IsTrue(result.Count() > 0);
-        //}
+            Assert.IsTrue(result != null);
+            Assert.IsTrue(result.Count() > 0);
+        }
 
         [TestMethod]
         public void Test_Extract_Null()
@@ -172,34 +160,28 @@ namespace JAFDTC.File.ACMI.Tests
             Assert.IsTrue(result.Count() < full.Count());
         }
 
-        //[TestMethod]
-        //public void Test_Extract_Filter_Categories()
-        //{
-        //    using var ectractor = new Extractor();
-        //    var result = ectractor.Extract(new()
-        //    {
-        //        FilePath = Path.Combine(Directory.GetParent(Environment.ProcessPath).FullName, "..\\..\\..\\appdata\\test2.zip.acmi"),
-        //        Categories = 
-        //        [
-        //            CategoryType.Ground_AntiAircraft,
-        //            CategoryType.Ground_Heavy_Armor_Vehicle_Tank,
-        //            CategoryType.Ground_Static_Aerodrome,
-        //            CategoryType.Ground_Static_Building,
-        //            CategoryType.Ground_Vehicle,
-        //        ] 
-        //    });
+        [TestMethod]
+        public void Test_Extract_Filter_Categories()
+        {
+            using var ectractor = new Extractor();
+            var result = ectractor.Extract(new()
+            {
+                FilePath = Path.Combine(Directory.GetParent(Environment.ProcessPath).FullName, "..\\..\\..\\appdata\\test2.zip.acmi"),
+                UnitCategories =
+                [
+                    UnitCategoryType.GROUND
+                ]
+            });
 
-        //    Assert.IsTrue(result != null);
-        //    Assert.IsTrue(result.Count() > 0);
-        //    Assert.IsTrue(result.Count(p=>p.Category == CategoryType.Sea_Watercraft) == 0);
-        //    Assert.IsTrue(result.Count(p=>p.Category == CategoryType.Air_FixedWing) == 0);
-        //    Assert.IsTrue(result.Count(p=>p.Category == CategoryType.Unknown) == 0);
-        //    Assert.IsTrue(result.Count(p=>p.Category == CategoryType.Weapon_Bomb) == 0);
-        //    Assert.IsTrue(result.Count(p=>p.Category == CategoryType.Navaid_Static_Bullseye) == 0);
+            Assert.IsTrue(result != null);
+            Assert.IsTrue(result.Count() > 0);
+            Assert.IsTrue(result.Count(p => p.Category == UnitCategoryType.NAVAL) == 0);
+            Assert.IsTrue(result.Count(p => p.Category == UnitCategoryType.AIRCRAFT) == 0);
+            Assert.IsTrue(result.Count(p => p.Category == UnitCategoryType.HELICOPTER) == 0);
 
-        //    var full = ectractor.Extract(new() { FilePath = Path.Combine(Directory.GetParent(Environment.ProcessPath).FullName, "..\\..\\..\\appdata\\test2.zip.acmi") });
-        //    Assert.IsTrue(result.Count() < full.Count());
-        //}
+            var full = ectractor.Extract(new() { FilePath = Path.Combine(Directory.GetParent(Environment.ProcessPath).FullName, "..\\..\\..\\appdata\\test2.zip.acmi") });
+            Assert.IsTrue(result.Count() < full.Count());
+        }
 
         [TestMethod]
         public void Test_Extract_Filter_Coalition()
