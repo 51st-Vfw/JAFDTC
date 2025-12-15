@@ -119,6 +119,14 @@
     "Name": "SA-8",
     "RadiusWEZ": 5.5
   },
+  {
+    "Type": 0,
+    "TypeDCS": "HQ-7_LN_SP",
+    "Category": 2,
+    "Coalition": 1,
+    "Name": "HQ-7B",
+    "RadiusWEZ": 8.0
+  },
 
   {
     "Type": 0,
@@ -128,14 +136,311 @@
     "Name": "Corvette 1124.4 Grisha",
     "RadiusWEZ": 9.0
   },
+  {
+    "Type": 0,
+    "TypeDCS": "MOLNIYA",
+    "Category": 3,
+    "Coalition": 1,
+    "Name": "Corvette 1141.1 Molniya",
+    "RadiusWEZ": 1.1
+  },
+  {
+    "Type": 0,
+    "TypeDCS": "MOSCOW",
+    "Category": 3,
+    "Coalition": 1,
+    "Name": "Crusiser 1164 Moskva",
+    "RadiusWEZ": 40.5
+  },
+  {
+    "Type": 0,
+    "TypeDCS": "KUZNECOW",
+    "Category": 3,
+    "Coalition": 1,
+    "Name": "CV 1143.5 Admiral Kuznetsov",
+    "RadiusWEZ": 6.5
+  },
+  {
+    "Type": 0,
+    "TypeDCS": "CV_1143_5",
+    "Category": 3,
+    "Coalition": 1,
+    "Name": "CV 1143.5 Admiral Kuznetsov (2017)",
+    "RadiusWEZ": 8.7
+  },
+  {
+    "Type": 0,
+    "TypeDCS": "NEUSTRASH",
+    "Category": 3,
+    "Coalition": 1,
+    "Name": "Frigate 11540 Neustrashimy",
+    "RadiusWEZ": 6.7
+  },
+  {
+    "Type": 0,
+    "TypeDCS": "REZKY",
+    "Category": 3,
+    "Coalition": 1,
+    "Name": "Frigate 1135M Rezky",
+    "RadiusWEZ": 8.7
+  },
+  {
+    "Type": 0,
+    "TypeDCS": "BDK-775",
+    "Category": 3,
+    "Coalition": 1,
+    "Name": "LS Ropucha",
+    "RadiusWEZ": 3.1
+  },
+  {
+    "Type": 0,
+    "TypeDCS": "CHAP_Project22160",
+    "Category": 3,
+    "Coalition": 1,
+    "Name": "Patrol Ship 22160",
+    "RadiusWEZ": 3.7
+  },
+  {
+    "Type": 0,
+    "TypeDCS": "CHAP_Project22160_TorM2KM",
+    "Category": 3,
+    "Coalition": 1,
+    "Name": "Patrol Ship 22160, Tor M2KM",
+    "RadiusWEZ": 13.7
+  },
+  {
+    "Type": 0,
+    "TypeDCS": "Type_052B",
+    "Category": 3,
+    "Coalition": 1,
+    "Name": "Destroyer Type 052B",
+    "RadiusWEZ": 16.0
+  },
+  {
+    "Type": 0,
+    "TypeDCS": "Type_052C",
+    "Category": 3,
+    "Coalition": 1,
+    "Name": "Destroyer Type 052C",
+    "RadiusWEZ": 81.7
+  },
+  {
+    "Type": 0,
+    "TypeDCS": "Type_054A",
+    "Category": 3,
+    "Coalition": 1,
+    "Name": "Frigate Type 054A",
+    "RadiusWEZ": 24.3
+  },
+  {
+    "Type": 0,
+    "TypeDCS": "Type_093",
+    "Category": 3,
+    "Coalition": 1,
+    "Name": "Attack Sub Type 093",
+    "RadiusWEZ": 23.3
+  },
 
   {
     "Type": 0,
     "TypeDCS": "Hawk ln",
-    "Category" : 2,
+    "Category": 2,
     "Coalition": 0,
     "Name": "Hawk",
     "RadiusWEZ": 24.2
+  },
+  {
+    "Type": 0,
+    "TypeDCS": "M1097 Avenger",
+    "Category": 2,
+    "Coalition": 0,
+    "Name": "Avenger",
+    "RadiusWEZ": 2.5
+  },
+  {
+    "Type": 0,
+    "TypeDCS": "M48 Chaparral",
+    "Category": 2,
+    "Coalition": 0,
+    "Name": "Chaparral",
+    "RadiusWEZ": 4.6
+  },
+  {
+    "Type": 0,
+    "TypeDCS": "M6 Linebacker",
+    "Category": 2,
+    "Coalition": 0,
+    "Name": "Linebacker",
+    "RadiusWEZ": 2.4
+  },
+  {
+    "Type": 0,
+    "TypeDCS": "rapier_fsa_launcher",
+    "Category": 2,
+    "Coalition": 0,
+    "Name": "Rapier",
+    "RadiusWEZ": 3.7
+  },
+  {
+    "Type": 0,
+    "TypeDCS": "Roland ADS",
+    "Category": 2,
+    "Coalition": 0,
+    "Name": "Roland",
+    "RadiusWEZ": 4.3
+  },
+  {
+    "Type": 0,
+    "TypeDCS": "NASAMS_LN_C",
+    "Category": 2,
+    "Coalition": 0,
+    "Name": "NASAMS",
+    "RadiusWEZ": 8.0
+  },
+  {
+    "Type": 0,
+    "TypeDCS": "Patriot ln",
+    "Category": 2,
+    "Coalition": 0,
+    "Name": "Patriot",
+    "RadiusWEZ": 53.7
+  },
+  {
+    "Type": 0,
+    "TypeDCS": "CHAP_IRISTSLM_STR",
+    "Category": 2,
+    "Coalition": 0,
+    "Name": "IRIS-T",
+    "RadiusWEZ": 21.7
+  },
+
+  {
+    "Type": 0,
+    "TypeDCS": "USS_Samuel_Chase",
+    "Category": 3,
+    "Coalition": 0,
+    "Name": "LS Samuel Chase",
+    "RadiusWEZ": 8.0
+  },
+  {
+    "Type": 0,
+    "TypeDCS": "LHA_Tarawa",
+    "Category": 3,
+    "Coalition": 0,
+    "Name": "LHA-1 Tarawa",
+    "RadiusWEZ": 11.0
+  },
+  {
+    "Type": 0,
+    "TypeDCS": "TICONDEROG",
+    "Category": 3,
+    "Coalition": 0,
+    "Name": "Ticonderoga Class GC",
+    "RadiusWEZ": 53.7
+  },
+  {
+    "Type": 0,
+    "TypeDCS": "USS_Arleigh_Burke_IIa",
+    "Category": 3,
+    "Coalition": 0,
+    "Name": "Arleigh Burke IIa Class DDG",
+    "RadiusWEZ": 53.7
+  },
+  {
+    "Type": 0,
+    "TypeDCS": "PERRY",
+    "Category": 3,
+    "Coalition": 0,
+    "Name": "Oliver Hazard Perry Class FFG",
+    "RadiusWEZ": 53.7
+  },
+  {
+    "Type": 0,
+    "TypeDCS": "CVN_71",
+    "Category": 3,
+    "Coalition": 0,
+    "Name": "CVN-71 Theodore Roosevelt",
+    "RadiusWEZ": 13.5
+  },
+  {
+    "Type": 0,
+    "TypeDCS": "CVN_72",
+    "Category": 3,
+    "Coalition": 0,
+    "Name": "CVN-72 Abraham Lincoln",
+    "RadiusWEZ": 13.5
+  },
+  {
+    "Type": 0,
+    "TypeDCS": "CVN_73",
+    "Category": 3,
+    "Coalition": 0,
+    "Name": "CVN-73 George Washington",
+    "RadiusWEZ": 13.5
+  },
+  {
+    "Type": 0,
+    "TypeDCS": "CVN_74",
+    "Category": 3,
+    "Coalition": 0,
+    "Name": "CVN-74 John C. Stennis",
+    "RadiusWEZ": 13.5
+  },
+  {
+    "Type": 0,
+    "TypeDCS": "CVN_75",
+    "Category": 3,
+    "Coalition": 0,
+    "Name": "CVN-75 Harry S. Truman",
+    "RadiusWEZ": 13.5
+  },
+  {
+    "Type": 0,
+    "TypeDCS": "leander-gun-condell",
+    "Category": 3,
+    "Coalition": 0,
+    "Name": "CNS Almirante Condell (PFG-06)",
+    "RadiusWEZ": 54.0
+  },
+  {
+    "Type": 0,
+    "TypeDCS": "leander-gun-achilles",
+    "Category": 3,
+    "Coalition": 0,
+    "Name": "HMS Achilles (F12)",
+    "RadiusWEZ": 4.0
+  },
+  {
+    "Type": 0,
+    "TypeDCS": "leander-gun-andromeda",
+    "Category": 3,
+    "Coalition": 0,
+    "Name": "HMS Andromeda (F57)",
+    "RadiusWEZ": 75.5
+  },
+  {
+    "Type": 0,
+    "TypeDCS": "leander-gun-ariadne",
+    "Category": 3,
+    "Coalition": 0,
+    "Name": "HMS Ariadne (F72)",
+    "RadiusWEZ": 53.7
+  },
+  {
+    "Type": 0,
+    "TypeDCS": "hms_invincible",
+    "Category": 3,
+    "Coalition": 0,
+    "Name": "HMS Invincible (R05)",
+    "RadiusWEZ": 40.0
+  },
+  {
+    "Type": 0,
+    "TypeDCS": "La_Combattante_II",
+    "Category": 3,
+    "Coalition": 0,
+    "Name": "FAC La Combattante IIa",
+    "RadiusWEZ": 2.0
   }
 
 ]
