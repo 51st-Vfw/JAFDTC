@@ -221,33 +221,26 @@ namespace JAFDTC.File.ACMI
 
         private static UnitCategoryType ToCategory(string? value)
         {
-            switch(value.ToNormalized())
-            {
-                case "AIRCRAFT":
-                case "FIXEDWING":
-                case "AIR_FIXEDWING":
-                    return UnitCategoryType.AIRCRAFT;
 
-                case "HELICOPTER":
-                case "ROTARYWING":
+            //this is a PITA...
+            var norm  = value.ToNormalized();
+
+            if (norm.StartsWith("SEA"))
+                return UnitCategoryType.NAVAL;
+
+            if (norm.StartsWith("GROUND"))
+                return UnitCategoryType.GROUND;
+
+            if (norm.StartsWith("AIR"))
+            {
+                if (norm.StartsWith("AIR_ROTORCRAFT"))
                     return UnitCategoryType.HELICOPTER;
 
-                case "GROUND":
-                case "VEHICLE":
-                case "INFANTRY":
-                case "NAVAID_STATIC_BULLSEYE": //what do you want to do with these?
-                case "GROUND_ANTIAIRCRAFT":
-                case "GROUND_VEHICLE":
-                case "GROUND_LIGHT_HUMAN_INFANTRY":
-                case "GROUND_STATIC_BUILDING":
-                    return UnitCategoryType.GROUND;
-
-                case "NAVAL":
-                case "SHIP":
-                    return UnitCategoryType.NAVAL;
+                return UnitCategoryType.AIRCRAFT;
             }
 
-            throw new NotSupportedException($"Unsupported UnitCategoryType value: {value.ToNormalized()}");
+            return UnitCategoryType.UNKNOWN; //shrapnel, bullseye... others?
+            //throw new NotSupportedException($"Unsupported UnitCategoryType value: {value.ToNormalized()}");
         }
 
         private static CoalitionType ToCoalition(string? value)
@@ -260,7 +253,7 @@ namespace JAFDTC.File.ACMI
                     return CoalitionType.RED;
                 case "NEUTRAL":
                 case "GREY":
-                case "GREEN": //what do you want to do with these?
+                case "GREEN": //what do you want to do with this???
                     return CoalitionType.NEUTRAL;
             }
 
