@@ -16,44 +16,43 @@
 // <https://www.gnu.org/licenses/>.
 //
 // ********************************************************************************************************************
-using JAFDTC.File.ACMI.Models;
 using System.Globalization;
 
 namespace JAFDTC.File.ACMI.Extensions
 {
     public static class StringExtension
     {
-        public static CategoryType ToCategory(this string? value)
-        {
-            if (Enum.TryParse<CategoryType>(value.ToNormalized(), true, out var result))
-                return result;
+        //public static CategoryType ToCategory(this string? value)
+        //{
+        //    if (Enum.TryParse<CategoryType>(value.ToNormalized(), true, out var result))
+        //        return result;
 
-            return CategoryType.Unknown;
-        }
+        //    return CategoryType.Unknown;
+        //}
 
-        public static CoalitionType ToCoalition(this string? value)
-        {
-            if (Enum.TryParse<CoalitionType>(value.ToNormalized(), true, out var result))
-                return result;
+        //public static CoalitionType ToCoalition(this string? value)
+        //{
+        //    if (Enum.TryParse<CoalitionType>(value.ToNormalized(), true, out var result))
+        //        return result;
 
-            return CoalitionType.Unknown;
-        }
+        //    return CoalitionType.Unknown;
+        //}
 
-        public static ColorType ToColor(this string? value)
-        {
-            if (Enum.TryParse<ColorType>(value.ToNormalized(), true, out var result))
-                return result;
+        //public static ColorType ToColor(this string? value)
+        //{
+        //    if (Enum.TryParse<ColorType>(value.ToNormalized(), true, out var result))
+        //        return result;
 
-            return ColorType.Unknown;
-        }
+        //    return ColorType.Unknown;
+        //}
 
-        public static UnitType ToUnit(this string? value)
-        {
-            if (Enum.TryParse<UnitType>(value.ToNormalized(), true, out var result))
-                return result;
+        //public static UnitType ToUnit(this string? value)
+        //{
+        //    if (Enum.TryParse<UnitType>(value.ToNormalized(), true, out var result))
+        //        return result;
 
-            return UnitType.Unknown;
-        }
+        //    return UnitType.Unknown;
+        //}
 
         public static string ToNormalized(this string? value)
         {

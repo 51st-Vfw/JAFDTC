@@ -17,6 +17,7 @@
 //
 // ********************************************************************************************************************
 
+using JAFDTC.Models.Core;
 using JAFDTC.Models.CoreApp;
 using Microsoft.UI.Xaml.Controls;
 using System.Diagnostics;

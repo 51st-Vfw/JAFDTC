@@ -1,6 +1,6 @@
 ﻿// ********************************************************************************************************************
 //
-// PositionItem.cs -- <one_line_descripti8on>
+// ValidationExtension.cs -- <one_line_descripti8on>
 //
 // Copyright(C) 2025 rage
 //
@@ -16,16 +16,20 @@
 // <https://www.gnu.org/licenses/>.
 //
 // ********************************************************************************************************************
-namespace JAFDTC.File.ACMI.Models
+namespace JAFDTC.Core.Extensions
 {
-    public class PositionItem
+    public static class ValidationExtension
     {
-        public double Latitude { get; set; }
-        public double Longitude { get; set; }
-        public double Altitude { get; set; }
-        //public int Heading { get; set; }
-        //public double X { get; set; }
-        //public double Y { get; set; }
-        //public double Knots { get; set; }
+        public static void Required(this string? value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                throw new ArgumentException("Parameter is required");
+        }
+
+        public static void Required(this object obj)
+        {
+            if (obj == null)
+                throw new ArgumentException("Parameter is required");
+        }
     }
 }

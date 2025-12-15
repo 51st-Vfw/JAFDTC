@@ -551,7 +551,7 @@ namespace JAFDTC.UI.App
                 FileManager.Log($"Pull package local : {path}");
 
                 ContentDialogResult actionReplace = ContentDialogResult.Primary;
-                if (File.Exists(path))
+                if (System.IO.File.Exists(path))
                 {
                     FileManager.Log($"Pull package {path} exists, asking permission...");
 

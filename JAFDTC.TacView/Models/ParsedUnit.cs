@@ -1,6 +1,6 @@
 ﻿// ********************************************************************************************************************
 //
-// ValidationExtension.cs -- <one_line_descripti8on>
+// UnitItem.cs -- <one_line_descripti8on>
 //
 // Copyright(C) 2025 rage
 //
@@ -16,20 +16,19 @@
 // <https://www.gnu.org/licenses/>.
 //
 // ********************************************************************************************************************
-namespace JAFDTC.File.ACMI.Extensions
+namespace JAFDTC.File.ACMI.Models
 {
-    public static class ValidationExtension
+    public class ParsedUnit
     {
-        public static void Required(this string? value)
-        {
-            if (string.IsNullOrWhiteSpace(value))
-                throw new ArgumentException("Parameter is required");
-        }
-
-        public static void Required(this object obj)
-        {
-            if (obj == null)
-                throw new ArgumentException("Parameter is required");
-        }
+        public required string Id { get; set; } 
+        public required ParsedPosition Position { get; set; }
+        public required string Coalition { get; set; }
+        public required string Category { get; set; }
+        public required string Color { get; set; }
+        public required string Unit { get; set; }
+        public required string GroupName { get; set; }
+        public required string UnitName { get; set; }
+        public required bool IsAlive { get; set; }
+        public Dictionary<string, string>? DebugInfo { get; set; }
     }
 }

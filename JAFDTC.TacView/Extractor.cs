@@ -22,13 +22,17 @@ using JAFDTC.File.ACMI.Models;
 using System.Globalization;
 using System.IO.Compression;
 using System.Text;
+using JAFDTC.Models.Units;
+using JAFDTC.Core.Extensions;
+using JAFDTC.File.Models;
+using JAFDTC.File.Extensions;
+using JAFDTC.Models.Core;
 
 namespace JAFDTC.File.ACMI
 {
     public class Extractor : IExtractor
     {
-
-        public IReadOnlyList<UnitItem> Extract(ExtractCriteria extractCriteria)
+        public IReadOnlyList<UnitGroupItem> Extract(ExtractCriteria extractCriteria)
         {
             extractCriteria.Required();
             extractCriteria.FilePath.Required();
@@ -44,14 +48,25 @@ namespace JAFDTC.File.ACMI
 
             var timeMarker = GetTimeMarker(allLines, extractCriteria.TimeSnippet);
 
-            var result = GetUnits(allLines, timeMarker)
-                .LimitColors(extractCriteria.Colors)
-                .LimitCoalitions(extractCriteria.Coalitions)
-                .LimitCategories(extractCriteria.Categories) //todo: parent categories such as Air Def... SAM, SHORAD, etc etc misc groupings...
-                .LimitAlive(extractCriteria.IsAlive)
-                .ToList();
+            var parsedUnits = GetUnits(allLines, timeMarker);
+            if (parsedUnits.IsEmpty())
+                throw new InvalidDataException("ACMI file contains no units");
 
             allLines.Clear();
+
+            var groupedUnits = ConvertToGroup(parsedUnits);
+            if (groupedUnits.IsEmpty())
+                throw new InvalidDataException("ParsedUnits contains no groups");
+
+            parsedUnits = null;
+
+            var result = groupedUnits
+                .LimitGroupsWithUnits()
+                .LimitCoalitions(extractCriteria.Coalitions)
+                .LimitUnitCategories(extractCriteria.UnitCategories)
+                .LimitUnitTypes(extractCriteria.UnitTypes)
+                .LimitAlive(extractCriteria.IsAlive)
+                .ToList();
 
             return result;
         }
@@ -127,9 +142,9 @@ namespace JAFDTC.File.ACMI
             return markers.Max();
         }
 
-        internal static IEnumerable<UnitItem> GetUnits(List<string> lines, double timeMarker)
+        internal static IEnumerable<ParsedUnit> GetUnits(List<string> lines, double timeMarker)
         {
-            var result = new Dictionary<string, UnitItem>(StringComparer.OrdinalIgnoreCase);
+            var result = new Dictionary<string, ParsedUnit>(StringComparer.OrdinalIgnoreCase);
 
             foreach (var line in lines) //i HATE event streams...
             {
@@ -165,6 +180,84 @@ namespace JAFDTC.File.ACMI
             }
 
             return result.Values;
+        }
+
+        internal static IEnumerable<UnitGroupItem> ConvertToGroup(IEnumerable<ParsedUnit> units)
+        {
+            var dict = new Dictionary<string, UnitGroupItem>(StringComparer.OrdinalIgnoreCase);
+
+            //var cats = units.Select(p=>p.Category.ToNormalized()).Distinct().ToList();
+
+            foreach (var unit in units)
+            {
+                if (!dict.TryGetValue(unit.GroupName, out var group))
+                    dict[unit.GroupName] = new()
+                    {
+                        Category = ToCategory(unit.Category),
+                        Coalition = ToCoalition(unit.Color),
+                        Name = unit.GroupName,
+                        UniqueID = unit.Id,
+                        Units = [],
+                        Route = [] //no routes from ACMI files
+                    };
+
+                dict[unit.GroupName].Units.Add(new()
+                {
+                    IsAlive = unit.IsAlive,
+                    Name = unit.UnitName,
+                    UniqueID = unit.Id,
+                    Position = new()
+                    {
+                        Altitude = unit.Position.Altitude,
+                        Latitude = unit.Position.Latitude,
+                        Longitude = unit.Position.Longitude
+                    },
+                    Type = unit.Unit
+                });
+            }
+
+            return dict.Values;
+        }
+
+        private static UnitCategoryType ToCategory(string? value)
+        {
+
+            //this is a PITA...
+            var norm  = value.ToNormalized();
+
+            if (norm.StartsWith("SEA"))
+                return UnitCategoryType.NAVAL;
+
+            if (norm.StartsWith("GROUND"))
+                return UnitCategoryType.GROUND;
+
+            if (norm.StartsWith("AIR"))
+            {
+                if (norm.StartsWith("AIR_ROTORCRAFT"))
+                    return UnitCategoryType.HELICOPTER;
+
+                return UnitCategoryType.AIRCRAFT;
+            }
+
+            return UnitCategoryType.UNKNOWN; //shrapnel, bullseye... others?
+            //throw new NotSupportedException($"Unsupported UnitCategoryType value: {value.ToNormalized()}");
+        }
+
+        private static CoalitionType ToCoalition(string? value)
+        {
+            switch (value.ToNormalized())
+            {
+                case "BLUE":
+                    return CoalitionType.BLUE;
+                case "RED":
+                    return CoalitionType.RED;
+                case "NEUTRAL":
+                case "GREY":
+                case "GREEN": //what do you want to do with this???
+                    return CoalitionType.NEUTRAL;
+            }
+
+            throw new NotSupportedException($"Unsupported CoalitionType value: {value.ToNormalized()}");
         }
 
         public void Dispose()
