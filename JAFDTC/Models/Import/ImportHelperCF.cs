@@ -130,7 +130,7 @@ namespace JAFDTC.Models.Import
                 XmlNode aircraft = unit.SelectSingleNode("Aircraft");
                 UnitItem unitItem = new()
                 {
-                    UniqueID = $"cf_extract:{flightName}-{index++}",
+                    UniqueID = $"cf_u:{flightName}-{index++}",
                     Type = aircraft.SelectSingleNode("Type").InnerText,
                     Name = $"{flightName}-{index++}",
                     Position = position,
@@ -189,7 +189,7 @@ namespace JAFDTC.Models.Import
                     List<UnitPositionItem> navRoute = ParseRoutePath(route.SelectSingleNode("Waypoints"));
                     groups.Add(new()
                     {
-                        UniqueID = $"cf_extract:{flightName}",
+                        UniqueID = $"cf_g:{flightName}",
                         Coalition = coalition,
                         Category = UnitCategoryType.AIRCRAFT,
                         Name = flightName,

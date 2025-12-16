@@ -196,7 +196,7 @@ namespace JAFDTC.File.ACMI
                         Category = ToCategory(unit.Category),
                         Coalition = ToCoalition(unit.Color),
                         Name = unit.GroupName,
-                        UniqueID = unit.Id,
+                        UniqueID = $"acmi_u:{unit.Id}",
                         Units = [],
                         Route = [] //no routes from ACMI files
                     };
@@ -205,7 +205,7 @@ namespace JAFDTC.File.ACMI
                 {
                     IsAlive = unit.IsAlive,
                     Name = unit.UnitName,
-                    UniqueID = unit.Id,
+                    UniqueID = $"acmi_g:{unit.Id}",
                     Position = new()
                     {
                         Altitude = unit.Position.Altitude,

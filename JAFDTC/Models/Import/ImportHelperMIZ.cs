@@ -133,7 +133,7 @@ namespace JAFDTC.Models.Import
                 double alt = (unitDict.ContainsKey("alt")) ? (double)unitDict["alt"].GetDecimal() : 0.0;
                 units.Add(new UnitItem()
                 {
-                    UniqueID = "miz_uid_" + unitDict["unitId"].GetDecimal().ToString(),
+                    UniqueID = "miz_u:" + unitDict["unitId"].GetDecimal().ToString(),
                     Type = unitDict["type"].GetString(),
                     Name = unitDict["name"].GetString(),
                     Position = new()
@@ -169,7 +169,7 @@ namespace JAFDTC.Models.Import
                     LsonDict groupDict = groupArray[groupIndex].GetDict();
                     groups.Add(new UnitGroupItem()
                     {
-                        UniqueID = "miz_gid_" + groupDict["groupId"].GetDecimal().ToString(),
+                        UniqueID = "miz_g:" + groupDict["groupId"].GetDecimal().ToString(),
                         Coalition = coa,
                         Category = category,
                         Name = groupDict["name"].GetString(),
