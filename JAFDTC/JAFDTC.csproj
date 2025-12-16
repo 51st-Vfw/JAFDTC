@@ -415,7 +415,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\JAFDTC.Core\JAFDTC.Core.csproj" />
     <ProjectReference Include="..\JAFDTC.File\JAFDTC.File.csproj" />
     <ProjectReference Include="..\JAFDTC.Models\JAFDTC.Models.csproj" />
+    <ProjectReference Include="..\JAFDTC.TacView\JAFDTC.File.ACMI.csproj" />
   </ItemGroup>
 </Project>

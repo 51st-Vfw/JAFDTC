@@ -832,11 +832,10 @@ namespace JAFDTC.UI.App
 
                 IExtractor extractor = Path.GetExtension(resultPick.Path).ToLower() switch
                 {
-                    // TODO: add .acmi, .cf (?) support
-                    ".acmi" => null,
-                    ".cf" => null,
+                    ".acmi" => new JAFDTC.File.ACMI.Extractor(),
+                    ".cf" => new ImportHelperCF(),
                     ".miz" => new ImportHelperMIZ(),
-                    _ => null
+                    _ => (IExtractor)null
                 } ?? throw new Exception($"File type “{Path.GetExtension(resultPick.Path)}” is not supported.");
 
                 ExtractCriteria criteria = new()
