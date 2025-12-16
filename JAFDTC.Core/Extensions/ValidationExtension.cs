@@ -1,6 +1,6 @@
 ﻿// ********************************************************************************************************************
 //
-// ValidationExtension.cs -- <one_line_descripti8on>
+// ValidationExtension.cs -- core object validation extensions
 //
 // Copyright(C) 2025 rage
 //
@@ -16,6 +16,7 @@
 // <https://www.gnu.org/licenses/>.
 //
 // ********************************************************************************************************************
+
 namespace JAFDTC.Core.Extensions
 {
     public static class ValidationExtension
