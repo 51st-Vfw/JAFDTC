@@ -411,6 +411,7 @@ namespace JAFDTC.UI.Base
                 //
                 IExtractor extractor = Path.GetExtension(resultPick.Path).ToLower() switch
                 {
+                    ".acmi" => new JAFDTC.File.ACMI.Extractor(),
                     ".cf" => new ImportHelperCF(),
                     ".miz" => new ImportHelperMIZ(),
                     _ => (IExtractor) null
