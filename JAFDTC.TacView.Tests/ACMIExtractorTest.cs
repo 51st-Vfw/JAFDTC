@@ -18,15 +18,16 @@
 // ********************************************************************************************************************
 
 using JAFDTC.Core.Extensions;
+using JAFDTC.File.ACMI;
 using JAFDTC.File.ACMI.Extensions;
 using JAFDTC.File.ACMI.Models;
 using JAFDTC.Models.Core;
 using JAFDTC.Models.Units;
 
-namespace JAFDTC.File.ACMI.Tests
+namespace JAFDTC.File.Tests
 {
     [TestClass]
-    public sealed class ExtractorTest
+    public sealed class ACMIExtractorTest
     {
         [TestMethod]
         [Ignore] //when you need more extensive test data...
