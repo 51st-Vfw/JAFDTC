@@ -27,7 +27,6 @@ using JAFDTC.Models.Base;
 using JAFDTC.Models.Core;
 using JAFDTC.Models.CoreApp;
 using JAFDTC.Models.DCS;
-using JAFDTC.Models.Import;
 using JAFDTC.Models.Units;
 using JAFDTC.UI.Base;
 using JAFDTC.UI.Controls.Map;
@@ -834,7 +833,7 @@ namespace JAFDTC.UI.App
                 {
                     ".acmi" => new JAFDTC.File.ACMI.Extractor(),
                     ".cf" => new JAFDTC.File.CF.Extractor(),
-                    ".miz" => new ImportHelperMIZ(),
+                    ".miz" => new JAFDTC.File.MIZ.Extractor(),
                     _ => (IExtractor)null
                 } ?? throw new Exception($"File type “{Path.GetExtension(resultPick.Path)}” is not supported.");
 
