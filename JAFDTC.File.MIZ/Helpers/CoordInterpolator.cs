@@ -18,30 +18,10 @@
 //
 // ********************************************************************************************************************
 
-using System;
-using System.Collections.Generic;
+using JAFDTC.File.MIZ.Models;
 
-namespace JAFDTC.Models.DCS
+namespace JAFDTC.File.MIZ.Helpers
 {
-    /// <summary>
-    /// dcs planar 2d surface coordinate (does not contain altitude/elevation information).
-    /// </summary>
-    public class CoordXZ
-    {
-        public double X;            // northing
-        public double Z;            // easting
-    }
-
-    /// <summary>
-    /// latitude/longitude surface coordinate (does not contain altitude/elevation information). coordiantes
-    /// are in decimal degrees or radians depending on api.
-    /// </summary>
-    public class CoordLL
-    {
-        public double Lat;          // northing
-        public double Lon;          // easting
-    }
-
     /// <summary>
     /// singleton coordinate interpolator to move between x/z and lat/lon coordinates in dcs.
     /// 
@@ -56,29 +36,10 @@ namespace JAFDTC.Models.DCS
     /// mapping between the x/z and lat/lon coordiante systems. precomputed offsets are fit to dcs off-line
     /// to be included here as constants.
     /// </summary>
-    public sealed class CoordInterpolator
+    internal sealed class CoordInterpolator
     {
         private static readonly Lazy<CoordInterpolator> lazy = new(() => new CoordInterpolator());
         public static CoordInterpolator Instance { get => lazy.Value; }
-
-        /// <summary>
-        /// theater information including computed offsets to transform between X/Z and Lat/Lon coordinates. 
-        /// </summary>
-        private class TheaterInfo
-        {
-            public double Dx;           // northing delta for dcs x to utm northing
-            public double Dz;           // easting delta for dcs z to utm easting
-            public int Zone;
-            public bool IsSouthHemi;
-
-            public TheaterInfo(double dx, double dz, int zone, bool isSouthHemi)
-            {
-                Dx = dx;
-                Dz = dz;
-                Zone = zone;
-                IsSouthHemi = isSouthHemi;
-            }
-        }
 
         // ------------------------------------------------------------------------------------------------------------
         //
@@ -96,25 +57,6 @@ namespace JAFDTC.Models.DCS
         // NOTE: original sm values: 6378245, 6356863
         const double SM_A_DEFAULT = 6375585.50700497;
         const double SM_B_DEFAULT = 6354209.24672509;
-
-        // internal theater inforamtion dictionary mapping a DCS theater (from the theater file embedded in the .miz)
-        // onto a corresponding TheaterInfo instance. x/z values in the terrain info are pre-computed based on grid
-        // inforamtion generated from dcs.
-        //
-        private readonly Dictionary<string, TheaterInfo> _theaterInfo = new()
-        {
-            ["Afghanistan"] = new TheaterInfo(3759656.73273285, 300149.98159237, 41, false),
-            ["Caucasus"] = new TheaterInfo(4998114.6775109, 99517.01067793, 36, false),
-            ["Falklands"] = new TheaterInfo(4184583.3670, -147639.8755, 21, true),
-            ["Germany"] = new TheaterInfo(6061632.75443205, -35427.57613432, 34, false),
-            ["Iraq"] = new TheaterInfo(3680056.7536012, -72289.97515422, 38, false),
-            ["Kola"] = new TheaterInfo(7543624.54780873, 62701.93823161, 34, false),
-            ["MarianaIslands"] = new TheaterInfo(1491839.88704271, -238417.99059562, 55, false),
-            ["Nevada"] = new TheaterInfo(4410027.78012357, 193996.80821451, 11, false),
-            ["PersianGulf"] = new TheaterInfo(2894932.78443276, -75755.99875273, 40, false),
-            ["SinaiMap"] = new TheaterInfo(3325312.76592359, -169221.99957107, 36, false),
-            ["Syria"] = new TheaterInfo(3879865.72585971, -282800.99275397, 37, false),
-        };
 
         // ------------------------------------------------------------------------------------------------------------
         //
@@ -136,12 +78,12 @@ namespace JAFDTC.Models.DCS
         // ------------------------------------------------------------------------------------------------------------
 
         // TODO: implement for completeness, though jafdtc doesn't do any ll to xz conversions...
-        public CoordXZ LLtoXZ(string theater, double lat, double lon)
+        internal CoordXZ LLtoXZ(string theater, double lat, double lon)
         {
-            if (_theaterInfo.ContainsKey(theater))
+            var info = TheaterHelper.GetTheaterInfo(theater);
+            if (info != null)
             {
 #if NOPE
-                TheaterInfo info = _theaterInfo[theater];
                 CoordXZ xz = LatLonToUTMXY(lat, lon, info.Zone);
                 xz.X -= info.Dx;
                 xz.Z -= info.Dz;
@@ -161,11 +103,11 @@ namespace JAFDTC.Models.DCS
         // convert x/z planar dcs map coordinates in a particular theater to lat/lon coordiantes (in decimal
         // degrees). returns null if the theater is unknown.
         //
-        public CoordLL XZtoLL(string theater, double x, double z)
+        internal CoordLL XZtoLL(string theater, double x, double z)
         {
-            if (_theaterInfo.ContainsKey(theater))
+            var info = TheaterHelper.GetTheaterInfo(theater);
+            if (info != null)
             {
-                TheaterInfo info = _theaterInfo[theater];
                 //
                 // NOTE: mind the coordinate flip here: x/y in UTM are z/x in DCS
                 //

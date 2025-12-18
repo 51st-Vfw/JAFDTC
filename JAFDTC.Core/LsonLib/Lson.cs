@@ -2,16 +2,12 @@
 // and conditions of the GPL v3 license, available in 'license.txt'.
 // Largely based on RT.Util.JsonValue, by Roman Starkov and Timwi.
 
-using System;
-using System.Collections.Generic;
 using System.Dynamic;
 using System.Globalization;
-using System.Linq;
 using System.Text;
 
-namespace JAFDTC.Utilities.LsonLib
+namespace JAFDTC.Core.LsonLib
 {
-    using Private;
 
     /// <summary>
     ///     Provides methods for handling data in the "LSON" format, consisting of variable assignments in the Lua syntax.

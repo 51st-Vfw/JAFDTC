@@ -2,10 +2,9 @@
 // and conditions of the GPL v3 license, available in 'license.txt'.
 // Imported from the RT.Util project.
 
-using System;
 using System.Diagnostics;
 
-namespace JAFDTC.Utilities.LsonLib.Private
+namespace JAFDTC.Core.LsonLib
 {
     static class Ut
     {
