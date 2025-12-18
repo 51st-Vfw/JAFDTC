@@ -30,6 +30,14 @@ https://www.gnu.org/licenses/.
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
+    <Page.Resources>
+
+        <!-- brush for error fields. -->
+        <SolidColorBrush x:Key="ErrorFieldBorderBrush" Color="DarkRed"/>
+        <SolidColorBrush x:Key="ErrorFieldBackgroundBrush" Color="PaleVioletRed"/>
+
+    </Page.Resources>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -260,7 +268,8 @@ https://www.gnu.org/licenses/.
                        Text="Coalition"/>
             <ComboBox Grid.Row="0" Grid.Column="1" Margin="12,12,0,0" x:Name="uiComboCoalition"
                       VerticalAlignment="Center"
-                      HorizontalAlignment="Stretch">
+                      HorizontalAlignment="Stretch"
+                      SelectedIndex="{x:Bind EditThreat.Coalition}">
                 <ComboBoxItem>Blue</ComboBoxItem>
                 <ComboBoxItem>Red</ComboBoxItem>
                 <ComboBoxItem>Neutral</ComboBoxItem>
@@ -278,24 +287,25 @@ https://www.gnu.org/licenses/.
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <TextBox Grid.Column="0" Margin="0,0,0,0" x:Name="uiTextType"
-                       VerticalAlignment="Center"
-                       HorizontalAlignment="Stretch"
-                       Text="DCS Type"/>
+                         VerticalAlignment="Center"
+                         HorizontalAlignment="Stretch"
+                         Text="{x:Bind EditThreat.TypeDCS, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
                 <TextBlock Grid.Column="1" Margin="24,0,0,0"
-                       VerticalAlignment="Center"
-                       HorizontalAlignment="Right"
-                       Text="WEZ Radius"/>
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Right"/>
                 <TextBox Grid.Column="2" Margin="12,0,0,0" x:Name="uiTextRadius"
-                       VerticalAlignment="Center"
-                       HorizontalAlignment="Stretch"
-                       Text="1000.00"/>
+                         VerticalAlignment="Center"
+                         HorizontalAlignment="Stretch"
+                         Text="{x:Bind EditThreat.RadiusWEZ, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
                 <TextBlock Grid.Column="3" Margin="8,0,0,0"
                            VerticalAlignment="Center"
                            HorizontalAlignment="Right"
                            Text="nm"/>
             </Grid>
             <Button Grid.Row="0" Grid.Column="5" Margin="36,12,0,0" x:Name="uiThreatBtnAdd"
-                    HorizontalAlignment="Stretch" VerticalAlignment="Center">
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Stretch"
+                    Click="ThreatBtnAdd_Click">
                 <TextBlock x:Name="uiThreatTextBtnAdd">
                     Update
                 </TextBlock>
@@ -308,7 +318,8 @@ https://www.gnu.org/licenses/.
                        Text="Category"/>
             <ComboBox Grid.Row="1" Grid.Column="1" Margin="12,12,0,0" x:Name="uiComboCategory"
                       VerticalAlignment="Center"
-                      HorizontalAlignment="Stretch">
+                      HorizontalAlignment="Stretch"
+                      SelectedIndex="{x:Bind EditThreat.Category}">
                 <ComboBoxItem>Ground Unit</ComboBoxItem>
                 <ComboBoxItem>Naval Unit</ComboBoxItem>
             </ComboBox>
@@ -316,17 +327,18 @@ https://www.gnu.org/licenses/.
                        VerticalAlignment="Center"
                        HorizontalAlignment="Right"
                        Text="Display Name"/>
-            <TextBox Grid.Row="1" Grid.Column="3" Margin="12,12,0,0"
-                       VerticalAlignment="Center"
-                       HorizontalAlignment="Stretch"
-                       Text="Display Name"/>
+            <TextBox Grid.Row="1" Grid.Column="3" Margin="12,12,0,0" x:Name="uiTextName"
+                     VerticalAlignment="Center"
+                     HorizontalAlignment="Stretch"
+                     Text="{x:Bind EditThreat.Name, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
             <Button Grid.Row="1" Grid.Column="5" Margin="36,12,0,0" x:Name="uiThreatBtnClear"
-                    HorizontalAlignment="Stretch" VerticalAlignment="Center">
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Stretch"
+                    Click="ThreatBtnClear_Click">
                 <TextBlock x:Name="uiThreatTextBtnClear">
                     Clear
                 </TextBlock>
             </Button>
-
 
             <!-- name / tags fields
               -->

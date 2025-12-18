@@ -17,6 +17,10 @@
 //
 // ********************************************************************************************************************
 
+using JAFDTC.Models.Core;
+using JAFDTC.Models.CoreApp;
+using JAFDTC.Models.Units;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 
 namespace JAFDTC.UI.App
@@ -26,9 +30,70 @@ namespace JAFDTC.UI.App
     /// </summary>
     public sealed partial class EditThreatsFilterDialog : ContentDialog
     {
-        public EditThreatsFilterDialog()
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // properties
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
+        public ThreatFilterSpec Filter => new(uiComboCoalition.SelectedIndex switch
+                                              {
+                                                  0 => CoalitionType.BLUE,
+                                                  1 => CoalitionType.RED,
+                                                  _ => CoalitionType.UNKNOWN,
+                                              },
+                                              uiComboCategory.SelectedIndex switch
+                                              {
+                                                  0 => UnitCategoryType.GROUND,
+                                                  1 => UnitCategoryType.NAVAL,
+                                                  _ => UnitCategoryType.UNKNOWN,
+                                              },
+                                              (bool)uiCkbxThreatsDCS.IsChecked,
+                                              (bool)uiCkbxThreatsUsr.IsChecked);
+
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // construction
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
+        public EditThreatsFilterDialog(ThreatFilterSpec filter)
         {
             InitializeComponent();
+
+            uiComboCoalition.SelectedIndex = filter.Coalition switch
+            {
+                CoalitionType.BLUE => 0,
+                CoalitionType.RED => 1,
+                _ => 2
+            };
+            uiComboCategory.SelectedIndex = filter.Category switch
+            {
+                UnitCategoryType.GROUND  => 0,
+                UnitCategoryType.NAVAL => 1,
+                _ => 2
+            };
+            
+            uiCkbxThreatsDCS.IsChecked = filter.ShowThreatsDCS;
+            uiCkbxThreatsUsr.IsChecked = filter.ShowThreatsUser;
+
+            IsSecondaryButtonEnabled = !filter.IsDefault;
+        }
+
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // ui interactions
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
+        public void Combo_SelectionChanged(object sender, SelectionChangedEventArgs args)
+        {
+            IsSecondaryButtonEnabled = !Filter.IsDefault;
+        }
+
+        private void CheckBox_Click(object sender, RoutedEventArgs args)
+        {
+            IsSecondaryButtonEnabled = !Filter.IsDefault;
         }
     }
 }

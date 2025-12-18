@@ -37,6 +37,64 @@ https://www.gnu.org/licenses/.
     </ContentDialog.Resources>
 
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="72"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Grid.Row="0" Grid.Column="0" Margin="0,8,0,0"
+                       HorizontalAlignment="Right"
+                       VerticalAlignment="Center">
+                Coalition
+            </TextBlock>
+            <ComboBox Grid.Row="0" Grid.Column="1" MinWidth="250" Margin="12,8,0,0"
+                      x:Name="uiComboCoalition"
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Center"
+                      SelectionChanged="Combo_SelectionChanged">
+                <ComboBoxItem>Blue</ComboBoxItem>
+                <ComboBoxItem>Red</ComboBoxItem>
+                <ComboBoxItem>All coalitions</ComboBoxItem>
+            </ComboBox>
+
+            <TextBlock Grid.Row="1" Grid.Column="0" Margin="0,8,0,0"
+                       x:Name="uiUnitTextPrompt"
+                       HorizontalAlignment="Right"
+                       VerticalAlignment="Center">
+                Category
+            </TextBlock>
+            <ComboBox Grid.Row="1" Grid.Column="1" MinWidth="250" Margin="12,8,0,0"
+                      x:Name="uiComboCategory"
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Center"
+                      SelectionChanged="Combo_SelectionChanged">
+                <ComboBoxItem>Ground units</ComboBoxItem>
+                <ComboBoxItem>Naval units</ComboBoxItem>
+                <ComboBoxItem>All categories</ComboBoxItem>
+            </ComboBox>
+        </Grid>
+
+        <CheckBox Grid.Row="1" Margin="0,18,0,0" x:Name="uiCkbxThreatsDCS"
+                  HorizontalAlignment="Left"
+                  Click="CheckBox_Click">
+            Show DCS system threats
+        </CheckBox>
+        <CheckBox Grid.Row="2" Margin="0,0,0,0" x:Name="uiCkbxThreatsUsr"
+                  HorizontalAlignment="Left"
+                  Click="CheckBox_Click">
+            Show user threats
+        </CheckBox>
 
     </Grid>
 </ContentDialog>
