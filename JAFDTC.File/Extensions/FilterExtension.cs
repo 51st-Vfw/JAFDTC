@@ -25,17 +25,17 @@ namespace JAFDTC.File.Extensions
 {
     public static class FilterExtension
     {
-        public static IEnumerable<UnitGroupItem> LimitCoalitions(this IEnumerable<UnitGroupItem> values, CoalitionType[] coalitions)
+        public static IEnumerable<UnitGroupItem> LimitCoalitions(this IEnumerable<UnitGroupItem> values, CoalitionType[]? coalitions)
         {
-            if (coalitions.IsEmpty())
+            if ((coalitions == null) || coalitions.IsEmpty())
                 return values;
 
             return values.Where(u => coalitions.Contains(u.Coalition));
         }
 
-        public static IEnumerable<UnitGroupItem> LimitUnitCategories(this IEnumerable<UnitGroupItem> values, UnitCategoryType[] unitCategories)
+        public static IEnumerable<UnitGroupItem> LimitUnitCategories(this IEnumerable<UnitGroupItem> values, UnitCategoryType[]? unitCategories)
         {
-            if (unitCategories.IsEmpty())
+            if ((unitCategories == null) || unitCategories.IsEmpty())
                 return values;
 
             return values.Where(u => unitCategories.Contains(u.Category));
@@ -46,9 +46,9 @@ namespace JAFDTC.File.Extensions
             return values.Where(u => u.Units.HasData());
         }
 
-        public static IEnumerable<UnitGroupItem> LimitUnitTypes(this IEnumerable<UnitGroupItem> values, string[] unitTypes)
+        public static IEnumerable<UnitGroupItem> LimitUnitTypes(this IEnumerable<UnitGroupItem> values, string[]? unitTypes)
         {
-            if (unitTypes.IsEmpty())
+            if ((unitTypes == null) || unitTypes.IsEmpty())
                 return values;
 
             var temp = values.ToList();
@@ -58,9 +58,9 @@ namespace JAFDTC.File.Extensions
             return temp.Where(u => u.Units.HasData());
         }
 
-        public static IEnumerable<UnitItem> LimitUnitTypes(this IEnumerable<UnitItem> values, string[] unitTypes)
+        public static IEnumerable<UnitItem> LimitUnitTypes(this IEnumerable<UnitItem> values, string[]? unitTypes)
         {
-            if (unitTypes.IsEmpty())
+            if ((unitTypes == null) || unitTypes.IsEmpty())
                 return values;
 
             return values.Where(u => unitTypes.Contains(u.Type));
@@ -85,6 +85,5 @@ namespace JAFDTC.File.Extensions
 
             return values.Where(u => u.IsAlive == isAlive.Value);
         }
-
     }
 }
