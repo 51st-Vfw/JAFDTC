@@ -82,6 +82,12 @@ namespace JAFDTC.UI.App
             IsSecondaryButtonEnabled = !filter.IsDefault;
         }
 
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // ui interactions
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
         public void Combo_SelectionChanged(object sender, SelectionChangedEventArgs args)
         {
             if (uiComboCampaign.SelectedIndex == 0)
