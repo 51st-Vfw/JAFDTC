@@ -412,7 +412,7 @@ namespace JAFDTC.UI.Base
                 IExtractor extractor = Path.GetExtension(resultPick.Path).ToLower() switch
                 {
                     ".acmi" => new JAFDTC.File.ACMI.Extractor(),
-                    ".cf" => new ImportHelperCF(),
+                    ".cf" => new JAFDTC.File.CF.Extractor(),
                     ".miz" => new ImportHelperMIZ(),
                     _ => (IExtractor) null
                 } ?? throw new Exception($"File type “{Path.GetExtension(resultPick.Path)}” is not supported.");

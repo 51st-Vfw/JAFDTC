@@ -20,8 +20,6 @@ using JAFDTC.File.ACMI.Extensions;
 using JAFDTC.File.ACMI.Parsers;
 using JAFDTC.File.ACMI.Models;
 using System.Globalization;
-using System.IO.Compression;
-using System.Text;
 using JAFDTC.Models.Units;
 using JAFDTC.Core.Extensions;
 using JAFDTC.File.Models;
@@ -74,17 +72,9 @@ namespace JAFDTC.File.ACMI
         internal static string ReadACMI(string filePath)
         {
             if (filePath.EndsWith(".zip.acmi", StringComparison.OrdinalIgnoreCase))
-            {
-                using var archive = ZipFile.Open(filePath, ZipArchiveMode.Read); //only 1 file
-                using var entry = archive.Entries.First().Open();
-                using var memoryStream = new MemoryStream();
-                entry.CopyTo(memoryStream);
-                memoryStream.Position = 0;
-                using var reader = new StreamReader(memoryStream, Encoding.UTF8);
-                return reader.ReadToEnd();
-            }
+                return Core.IO.FileHelper.ReadAllText(filePath, 0);
 
-            return System.IO.File.ReadAllText(filePath);
+            return Core.IO.FileHelper.ReadAllText(filePath);
         }
 
         internal static List<string> GetRawLines(string rawData)
