@@ -48,7 +48,7 @@ namespace JAFDTC.UI.App
         public string Tags => uiTextBoxTags.Text;
 
         public PointOfInterestTypeMask IncludeTypes
-            => ((((bool)uiCkbxDCSPoI.IsChecked) ? PointOfInterestTypeMask.DCS_CORE : PointOfInterestTypeMask.NONE) |
+            => ((((bool)uiCkbxDCSPoI.IsChecked) ? PointOfInterestTypeMask.SYSTEM : PointOfInterestTypeMask.NONE) |
                 (((bool)uiCkbxUserPoI.IsChecked) ? PointOfInterestTypeMask.USER : PointOfInterestTypeMask.NONE) |
                 (((bool)uiCkbxCampaignPoI.IsChecked) ? PointOfInterestTypeMask.CAMPAIGN : PointOfInterestTypeMask.NONE));
 
@@ -103,7 +103,7 @@ namespace JAFDTC.UI.App
             }
             else
             {
-                uiCkbxDCSPoI.IsChecked = ((includeTypes & PointOfInterestTypeMask.DCS_CORE) != 0);
+                uiCkbxDCSPoI.IsChecked = ((includeTypes & PointOfInterestTypeMask.SYSTEM) != 0);
                 uiCkbxUserPoI.IsChecked = ((includeTypes & PointOfInterestTypeMask.USER) != 0);
                 uiCkbxCampaignPoI.IsChecked = ((includeTypes & PointOfInterestTypeMask.CAMPAIGN) != 0);
             }

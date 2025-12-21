@@ -86,7 +86,7 @@ namespace JAFDTC.UI.Base
         public bool IsFiltered => !(string.IsNullOrEmpty(Theater) &&
                                     string.IsNullOrEmpty(Campaign) &&
                                     string.IsNullOrEmpty(Tags) &&
-                                    IncludeTypes.HasFlag(PointOfInterestTypeMask.DCS_CORE) &&
+                                    IncludeTypes.HasFlag(PointOfInterestTypeMask.SYSTEM) &&
                                     IncludeTypes.HasFlag(PointOfInterestTypeMask.USER) &&
                                     IncludeTypes.HasFlag(PointOfInterestTypeMask.CAMPAIGN));
 
@@ -530,7 +530,7 @@ namespace JAFDTC.UI.Base
         public static string MarkerDisplayType(MapMarkerInfo info)
             => info.Type switch
             {
-                MapMarkerInfo.MarkerType.POI_DCS_CORE => $"Core POI",
+                MapMarkerInfo.MarkerType.POI_SYSTEM => $"Core POI",
                 MapMarkerInfo.MarkerType.POI_USER => $"User POI",
                 MapMarkerInfo.MarkerType.POI_CAMPAIGN => $"Campaign POI",
                 _ => null
@@ -542,7 +542,7 @@ namespace JAFDTC.UI.Base
         public static string MarkerDisplayName(MapMarkerInfo info)
         {
             string name = null;
-            if ((info.Type == MapMarkerInfo.MarkerType.POI_DCS_CORE) ||
+            if ((info.Type == MapMarkerInfo.MarkerType.POI_SYSTEM) ||
                 (info.Type == MapMarkerInfo.MarkerType.POI_USER) ||
                 (info.Type == MapMarkerInfo.MarkerType.POI_CAMPAIGN))
             {
@@ -550,7 +550,7 @@ namespace JAFDTC.UI.Base
                 if (poi != null)
                     name = poi.Type switch
                     {
-                        PointOfInterestType.DCS_CORE => $"POI: {poi.Name}",
+                        PointOfInterestType.SYSTEM => $"POI: {poi.Name}",
                         PointOfInterestType.USER => $"User: {poi.Name}",
                         PointOfInterestType.CAMPAIGN => $"{poi.Campaign}: {poi.Name}",
                         _ => throw new NotImplementedException(),
@@ -565,7 +565,7 @@ namespace JAFDTC.UI.Base
         public static string MarkerDisplayElevation(MapMarkerInfo info, string units = "")
         {
             string elev = null;
-            if ((info.Type == MapMarkerInfo.MarkerType.POI_DCS_CORE) ||
+            if ((info.Type == MapMarkerInfo.MarkerType.POI_SYSTEM) ||
                 (info.Type == MapMarkerInfo.MarkerType.POI_USER) ||
                 (info.Type == MapMarkerInfo.MarkerType.POI_CAMPAIGN))
             {

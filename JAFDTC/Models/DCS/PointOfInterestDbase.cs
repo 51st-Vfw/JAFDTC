@@ -278,7 +278,7 @@ namespace JAFDTC.Models.DCS
                 {
                     if (a.Type == PointOfInterestType.USER)
                         return -1;
-                    else if (a.Type == PointOfInterestType.DCS_CORE)
+                    else if (a.Type == PointOfInterestType.SYSTEM)
                         return 1;
                     else if (b.Type == PointOfInterestType.USER)
                         return 1;

@@ -42,7 +42,7 @@ namespace JAFDTC.UI.Controls.Map
         public enum MarkerType
         {
             UNKNOWN = PointOfInterestType.UNKNOWN,
-            POI_DCS_CORE = PointOfInterestType.DCS_CORE,        // core poi
+            POI_SYSTEM = PointOfInterestType.SYSTEM,            // core poi
             POI_USER = PointOfInterestType.USER,                // user poi
             POI_CAMPAIGN = PointOfInterestType.CAMPAIGN,        // campaign poi
 
@@ -66,7 +66,7 @@ namespace JAFDTC.UI.Controls.Map
             NONE = 0,
             ANY = -1,
 
-            POI_DCS_CORE = 1 << MarkerType.POI_DCS_CORE,
+            POI_SYSTEM = 1 << MarkerType.POI_SYSTEM,
             POI_USER = 1 << MarkerType.POI_USER,
             POI_CAMPAIGN = 1 << MarkerType.POI_CAMPAIGN,
 

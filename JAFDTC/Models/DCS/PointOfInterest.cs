@@ -36,7 +36,7 @@ namespace JAFDTC.Models.DCS
     public enum PointOfInterestType
     {
         UNKNOWN = -1,
-        DCS_CORE = 0,
+        SYSTEM = 0,
         USER = 1,
         CAMPAIGN = 2
     }
@@ -49,7 +49,7 @@ namespace JAFDTC.Models.DCS
     {
         NONE = 0,
         ANY = -1,
-        DCS_CORE = 1 << PointOfInterestType.DCS_CORE,
+        SYSTEM = 1 << PointOfInterestType.SYSTEM,
         USER = 1 << PointOfInterestType.USER,
         CAMPAIGN = 1 << PointOfInterestType.CAMPAIGN
     }

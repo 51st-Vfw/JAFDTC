@@ -73,7 +73,7 @@ namespace JAFDTC.UI.Base
         private bool IsFiltered => !(string.IsNullOrEmpty(FilterTheater) &&
                                      string.IsNullOrEmpty(FilterCampaign) && 
                                      string.IsNullOrEmpty(FilterTags) &&
-                                     FilterIncludeTypes.HasFlag(PointOfInterestTypeMask.DCS_CORE) &&
+                                     FilterIncludeTypes.HasFlag(PointOfInterestTypeMask.SYSTEM) &&
                                      FilterIncludeTypes.HasFlag(PointOfInterestTypeMask.USER) &&
                                      FilterIncludeTypes.HasFlag(PointOfInterestTypeMask.CAMPAIGN));
 

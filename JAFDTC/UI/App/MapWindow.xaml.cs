@@ -128,7 +128,7 @@ namespace JAFDTC.UI.App
 
         // the following marker types are never editable.
         //
-        public const MapMarkerInfo.MarkerTypeMask RO_MARKER_TYPES = (MapMarkerInfo.MarkerTypeMask.POI_DCS_CORE |
+        public const MapMarkerInfo.MarkerTypeMask RO_MARKER_TYPES = (MapMarkerInfo.MarkerTypeMask.POI_SYSTEM |
                                                                      MapMarkerInfo.MarkerTypeMask.UNIT_FRIEND |
                                                                      MapMarkerInfo.MarkerTypeMask.UNIT_ENEMY);
 
@@ -483,7 +483,7 @@ namespace JAFDTC.UI.App
                 pupTextTitle.Text = MarkerExplainer?.MarkerDisplayName(mrkInfo) ?? "Unknown";
             pupTextSubtitle.Text = mrkInfo.Type switch
             {
-                MapMarkerInfo.MarkerType.POI_DCS_CORE => "DCS System POI",
+                MapMarkerInfo.MarkerType.POI_SYSTEM => "DCS System POI",
                 MapMarkerInfo.MarkerType.POI_USER => "User POI",
                 MapMarkerInfo.MarkerType.POI_CAMPAIGN => "Campaign POI",
                 MapMarkerInfo.MarkerType.NAV_PT => "Navigation Route",
@@ -573,7 +573,7 @@ namespace JAFDTC.UI.App
             uiMap.PathVisibility(( _ ) => FilterMap.ShowNavRoutes);
 
             uiMap.MarkerVisibility((MapMarkerInfo.MarkerType type, string tag, bool hasRing) => {
-                if (type == MapMarkerInfo.MarkerType.POI_DCS_CORE)
+                if (type == MapMarkerInfo.MarkerType.POI_SYSTEM)
                     return new(FilterMap.ShowPOIDCS, FilterMap.ShowPOIDCS);
                 else if (type == MapMarkerInfo.MarkerType.POI_USER)
                     return new(FilterMap.ShowPOIUsr, FilterMap.ShowPOIUsr);

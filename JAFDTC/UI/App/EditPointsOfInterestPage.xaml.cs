@@ -346,7 +346,7 @@ namespace JAFDTC.UI.App
         private bool IsFiltered => !(string.IsNullOrEmpty(FilterTheater) &&
                                      string.IsNullOrEmpty(FilterCampaign) &&
                                      string.IsNullOrEmpty(FilterTags) &&
-                                     FilterIncludeTypes.HasFlag(PointOfInterestTypeMask.DCS_CORE) &&
+                                     FilterIncludeTypes.HasFlag(PointOfInterestTypeMask.SYSTEM) &&
                                      FilterIncludeTypes.HasFlag(PointOfInterestTypeMask.USER) &&
                                      FilterIncludeTypes.HasFlag(PointOfInterestTypeMask.CAMPAIGN));
 
@@ -469,7 +469,7 @@ namespace JAFDTC.UI.App
                 MarkerExplainer = this,
                 OpenMask = MapMarkerInfo.MarkerTypeMask.POI_USER |
                            MapMarkerInfo.MarkerTypeMask.POI_CAMPAIGN |
-                           MapMarkerInfo.MarkerTypeMask.POI_DCS_CORE,
+                           MapMarkerInfo.MarkerTypeMask.POI_SYSTEM,
                 EditMask = MapMarkerInfo.MarkerTypeMask.POI_USER | MapMarkerInfo.MarkerTypeMask.POI_CAMPAIGN,
                 CoordFormat = LLDisplayFmt,
                 MaxRouteLength = 0,
@@ -766,7 +766,7 @@ namespace JAFDTC.UI.App
 
             Dictionary<PointOfInterestType, List<PointOfInterest>> selectionByType = CrackSelectedPoIsByType();
             List<string> selectionByCampaign = CrackSelectedPoIsByCampaign(selectionByType);
-            bool isCoreInSel = selectionByType.ContainsKey(PointOfInterestType.DCS_CORE);
+            bool isCoreInSel = selectionByType.ContainsKey(PointOfInterestType.SYSTEM);
             bool isUserInSel = selectionByType.ContainsKey(PointOfInterestType.USER);
             bool isCampaignInSel = selectionByType.ContainsKey(PointOfInterestType.CAMPAIGN);
             bool isMultCampaignSel = (selectionByCampaign.Count > 1);
@@ -989,7 +989,7 @@ namespace JAFDTC.UI.App
                     Dictionary<string, bool> campaignsModified = [];
                     Dictionary<string, bool> campaignsDeleted = [];
                     foreach (PoIListItem item in uiPoIListView.SelectedItems.Cast<PoIListItem>())
-                        if (item.PoI.Type != PointOfInterestType.DCS_CORE)
+                        if (item.PoI.Type != PointOfInterestType.SYSTEM)
                         {
                             campaignsModified[(string.IsNullOrEmpty(item.PoI.Campaign)) ? "<u>" :  item.PoI.Campaign] = true;
                             if (PointOfInterestDbase.Instance.CountPoIInCampaign(item.PoI.Campaign) == 1)
@@ -1206,7 +1206,7 @@ namespace JAFDTC.UI.App
             //
             Dictionary<PointOfInterestType, List<PointOfInterest>> selectionByType = CrackSelectedPoIsByType();
             List<string> selectionByCampaign = CrackSelectedPoIsByCampaign(selectionByType);
-            bool isCoreInSel = selectionByType.ContainsKey(PointOfInterestType.DCS_CORE);
+            bool isCoreInSel = selectionByType.ContainsKey(PointOfInterestType.SYSTEM);
             bool isUserInSel = selectionByType.ContainsKey(PointOfInterestType.USER);
             bool isCampaignInSel = selectionByType.ContainsKey(PointOfInterestType.CAMPAIGN);
             bool isMultCampaignSel = (selectionByCampaign.Count > 1);

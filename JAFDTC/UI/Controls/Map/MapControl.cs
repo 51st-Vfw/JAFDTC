@@ -286,7 +286,7 @@ namespace JAFDTC.UI.Controls.Map
             // z of 4 reserved for theater bounds, MAP_MARKER_Z_THEATER_BOX
             // z of 5 reserved for threat rings, MAP_MARKER_Z_PATH_RING
             //
-            [MapMarkerInfo.MarkerType.POI_DCS_CORE] = 10,
+            [MapMarkerInfo.MarkerType.POI_SYSTEM] = 10,
             [MapMarkerInfo.MarkerType.BULLSEYE] = 11,
             [MapMarkerInfo.MarkerType.POI_USER] = 12,
             [MapMarkerInfo.MarkerType.POI_CAMPAIGN] = 13,
@@ -379,7 +379,7 @@ namespace JAFDTC.UI.Controls.Map
             string rdOnly = (!CanEdit(markerType)) ? "_RO" : "";
             return markerType switch
             {
-                MapMarkerInfo.MarkerType.POI_DCS_CORE
+                MapMarkerInfo.MarkerType.POI_SYSTEM
                     => $"{what}_POI_Core_{index}{rdOnly}",
                 MapMarkerInfo.MarkerType.POI_USER
                     => $"{what}_POI_User_{index}{rdOnly}",
@@ -655,7 +655,7 @@ namespace JAFDTC.UI.Controls.Map
                           ?? new SolidColorBrush(Color.FromArgb(255, 0, 0, 0));
             MapMarkerControl marker = type switch
             {
-                MapMarkerInfo.MarkerType.POI_DCS_CORE
+                MapMarkerInfo.MarkerType.POI_SYSTEM
                     => new MapMarkerSquareControl(brush, brush, new Size(20.0, 20.0)),
                 MapMarkerInfo.MarkerType.POI_USER
                     => new MapMarkerCircleControl(brush, brush, new Size(22.0, 22.0)),
