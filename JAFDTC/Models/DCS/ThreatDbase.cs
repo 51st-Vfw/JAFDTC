@@ -18,27 +18,28 @@
 // ********************************************************************************************************************
 
 using JAFDTC.Models.Core;
-using JAFDTC.Models.CoreApp;
 using JAFDTC.Models.Units;
 using JAFDTC.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml;
 
 namespace JAFDTC.Models.DCS
 {
     /// <summary>
-    /// TODO: document
+    /// specification of a query in the threat database. the query will not select on fields that are null or empty
+    /// in the specification.
     /// </summary>
     public class ThreatDbaseQuery
     {
-        public string[]? TypesDCS;
-        public ThreatType[]? ThreatTypes;
-        public UnitCategoryType[]? Categories;
-        public CoalitionType[]? Coalitions;
-        public string Name;
+        public string[]? TypesDCS;                              // match iff type in array
+        public ThreatType[]? ThreatTypes;                       // match iff threat in array
+        public UnitCategoryType[]? Categories;                  // match iff categories in array
+        public CoalitionType[]? Coalitions;                     // match iff coalition in array
+        public string Name;                                     // match iff name contains value (case-insensitive)
 
-        public bool IsSingleMatch;
+        public bool IsSingleMatch;                              // return USER ThreatType when multiple types match
 
         public ThreatDbaseQuery(string[]? typesDCS = null, string name = null, ThreatType[]? threatTypes = null,
                                 UnitCategoryType[]? categories = null, CoalitionType[]? coalitions = null,
@@ -52,7 +53,8 @@ namespace JAFDTC.Models.DCS
     /// <summary>
     /// threat database holds information (Threat instances) known to jafdtc. the database class is a singleton
     /// that supports find operations to query the known threats. the database is built from fixed dcs threats as
-    /// well as user-defined threats.
+    /// well as user-defined threats. there are at most two threats for a given dcs type (one for fixed dcs threats
+    /// and one for user-defined threats).
     /// </summary>
     public class ThreatDbase
     {
@@ -72,7 +74,7 @@ namespace JAFDTC.Models.DCS
         //
         // ------------------------------------------------------------------------------------------------------------
 
-        private readonly List<Threat> _dbase;
+        private readonly Dictionary<string, Threat> _dbase;
 
         // ------------------------------------------------------------------------------------------------------------
         //
@@ -98,20 +100,29 @@ namespace JAFDTC.Models.DCS
         public void Reset()
         {
             _dbase.Clear();
-            _dbase.AddRange(FileManager.LoadThreats());
+            foreach (Threat threat in FileManager.LoadThreats())
+                _dbase[threat.UniqueID] = threat;
         }
 
         /// <summary>
-        /// return the threats in the database that matches the specified criteria.
+        /// return the single threat with the matching unique id, null if not found.
         /// </summary>
-        public IReadOnlyList<Threat> Find(ThreatDbaseQuery query = null, bool isSort = false)
+        public Threat Find(string uid)
+            => (string.IsNullOrEmpty(uid)) ? null : _dbase.GetValueOrDefault(uid, null);
+
+        /// <summary>
+        /// return the threats in the database that matches the specified criteria. the list may be sorted by type,
+        /// coalition, category, then name.
+        /// </summary>
+        public IReadOnlyList<Threat> Find(ThreatDbaseQuery query, bool isSort = false)
         {
             query ??= new();
-            List<Threat> matches = [.. _dbase.LimitThreatTypes(query.ThreatTypes)
-                                             .LimitNames(query.Name)
-                                             .LimitCategories(query.Categories)
-                                             .LimitDCSTypes(query.TypesDCS)
-                                             .LimitCoalitions(query.Coalitions) ];
+            List<Threat> threats = [.. _dbase.Values ];
+            List<Threat> matches = [.. threats.LimitThreatTypes(query.ThreatTypes)
+                                              .LimitNames(query.Name)
+                                              .LimitCategories(query.Categories)
+                                              .LimitDCSTypes(query.TypesDCS)
+                                              .LimitCoalitions(query.Coalitions) ];
             if (query.IsSingleMatch)
             {
 // TODO: handle isSingleMatch
@@ -131,10 +142,13 @@ namespace JAFDTC.Models.DCS
         /// </summary>
         public bool AddThreat(Threat threat, bool isPersist = true)
         {
-            IReadOnlyList<Threat> matches = Find(new([ threat.TypeDCS ], null, [ threat.Type ]));
-            if ((matches.Count == 0) && isPersist)
-                Save();
-
+            IReadOnlyList<Threat> matches = Find(new ThreatDbaseQuery([ threat.TypeDCS ], null, [ threat.Type ]));
+            if (matches.Count == 0)
+            {
+                _dbase[threat.UniqueID] = threat;
+                if (isPersist)
+                    Save();
+            }
             return (matches.Count > 0);
         }
 
@@ -145,10 +159,10 @@ namespace JAFDTC.Models.DCS
         {
             if (threat.Type == ThreatType.USER)
             {
-                IReadOnlyList<Threat> matches = Find(new([ threat.TypeDCS ], null, [ threat.Type ]));
+                IReadOnlyList<Threat> matches = Find(new ThreatDbaseQuery([ threat.TypeDCS ], null, [ threat.Type ]));
                 if (matches.Count > 0)
                 {
-                    _dbase.Remove(threat);
+                    _dbase.Remove(threat.UniqueID);
                     if (isPersist)
                         Save();
                 }
@@ -161,8 +175,8 @@ namespace JAFDTC.Models.DCS
         /// </summary>
         public bool Save()
         {
-            IReadOnlyList<Threat> matches = Find(new(null, null, [ ThreatType.USER ]));
-            return (matches.Count == 0) || FileManager.SaveUserThreats([.. matches ]);
+            IReadOnlyList<Threat> userThreats = Find(new ThreatDbaseQuery(null, null, [ ThreatType.USER ]));
+            return (userThreats.Count == 0) || FileManager.SaveUserThreats([.. userThreats ]);
         }
     }
 }
