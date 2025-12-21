@@ -140,33 +140,33 @@ https://www.gnu.org/licenses/.
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <Grid Grid.Row="0" Margin="16,0,12,4">
+            <Grid Grid.Row="0" Margin="16,0,12,6">
                 <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="24"/>
                     <ColumnDefinition Width="24"/>
                     <ColumnDefinition Width="96"/>
                     <ColumnDefinition Width="140"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="200"/>
                     <ColumnDefinition Width="200"/>
-                    <ColumnDefinition Width="24"/>
                 </Grid.ColumnDefinitions>
-                <TextBlock Grid.Column="1"
-                           HorizontalTextAlignment="Center"
-                           Style="{StaticResource TableHeaderTextStyle}"
-                           Text="Coalition"/>
                 <TextBlock Grid.Column="2"
                            HorizontalTextAlignment="Center"
                            Style="{StaticResource TableHeaderTextStyle}"
-                           Text="Category"/>
+                           Text="Coalition"/>
                 <TextBlock Grid.Column="3"
+                           HorizontalTextAlignment="Center"
+                           Style="{StaticResource TableHeaderTextStyle}"
+                           Text="Category"/>
+                <TextBlock Grid.Column="4"
                            HorizontalTextAlignment="Left"
                            Style="{StaticResource TableHeaderTextStyle}"
-                           Text="Threat Ring Display Name"/>
-                <TextBlock Grid.Column="4"
+                           Text="Display Name for Threat Ring"/>
+                <TextBlock Grid.Column="5"
                            HorizontalTextAlignment="Center"
                            Style="{StaticResource TableHeaderTextStyle}"
                            Text="DCS Type"/>
-                <TextBlock Grid.Column="5"
+                <TextBlock Grid.Column="6"
                            HorizontalTextAlignment="Center"
                            Style="{StaticResource TableHeaderTextStyle}"
                            Text="Threat WEZ (nm)"/>
@@ -198,12 +198,12 @@ https://www.gnu.org/licenses/.
                         <Grid Margin="4">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="24"/>
+                                <ColumnDefinition Width="24"/>
                                 <ColumnDefinition Width="96"/>
                                 <ColumnDefinition Width="140"/>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="200"/>
                                 <ColumnDefinition Width="200"/>
-                                <ColumnDefinition Width="24"/>
                             </Grid.ColumnDefinitions>
 
                             <TextBlock Grid.Column="0"
@@ -211,32 +211,32 @@ https://www.gnu.org/licenses/.
                                        HorizontalTextAlignment="Center"
                                        FontFamily="Segoe Fluent Icons"
                                        Text="{x:Bind TypeGlyph}"/>
-                            <TextBlock Grid.Column="1" Margin="16,0,24,0"
-                                       VerticalAlignment="Center"
-                                       HorizontalTextAlignment="Center"
-                                       Text="{x:Bind CoalitionLabel}"/>
-                            <TextBlock Grid.Column="2" Margin="16,0,24,0"
-                                       VerticalAlignment="Center"
-                                       HorizontalTextAlignment="Center"
-                                       Text="{x:Bind CategoryLabel}"/>
-                            <TextBlock Grid.Column="3" Margin="6,2,0,0"
-                                       HorizontalTextAlignment="Left"
-                                       FontSize="16"
-                                       FontWeight="Medium"
-                                       Text="{x:Bind Threat.Name, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
-                            <TextBlock Grid.Column="4" Margin="6,0,0,0"
-                                       VerticalAlignment="Center"
-                                       HorizontalTextAlignment="Center"
-                                       Text="{x:Bind Threat.TypeDCS, Mode=TwoWay}"/>
-                            <TextBlock Grid.Column="5" Margin="6,0,0,0"
-                                       VerticalAlignment="Center"
-                                       HorizontalTextAlignment="Center"
-                                       Text="{x:Bind RadiusWEZUI, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
-                            <TextBlock Grid.Column="6" Margin="0,0,8,0"
+                            <TextBlock Grid.Column="1" Margin="0,0,8,0"
                                        VerticalAlignment="Center"
                                        HorizontalTextAlignment="Center"
                                        FontFamily="Segoe Fluent Icons"
                                        Text="{x:Bind ReplaceGlyph}"/>
+                            <TextBlock Grid.Column="2" Margin="16,0,24,0"
+                                       VerticalAlignment="Center"
+                                       HorizontalTextAlignment="Center"
+                                       Text="{x:Bind CoalitionUI}"/>
+                            <TextBlock Grid.Column="3" Margin="16,0,24,0"
+                                       VerticalAlignment="Center"
+                                       HorizontalTextAlignment="Center"
+                                       Text="{x:Bind CategoryUI}"/>
+                            <TextBlock Grid.Column="4" Margin="6,2,0,0"
+                                       HorizontalTextAlignment="Left"
+                                       FontSize="16"
+                                       FontWeight="Medium"
+                                       Text="{x:Bind Threat.Name}"/>
+                            <TextBlock Grid.Column="5" Margin="6,0,0,0"
+                                       VerticalAlignment="Center"
+                                       HorizontalTextAlignment="Center"
+                                       Text="{x:Bind Threat.TypeDCS}"/>
+                            <TextBlock Grid.Column="6" Margin="6,0,0,0"
+                                       VerticalAlignment="Center"
+                                       HorizontalTextAlignment="Center"
+                                       Text="{x:Bind RadiusWEZUI}"/>
                         </Grid>
                     </DataTemplate>
                 </ListView.ItemTemplate>
@@ -266,42 +266,25 @@ https://www.gnu.org/licenses/.
             <TextBlock Grid.Row="0" Grid.Column="0" Margin="16,12,0,0"
                        VerticalAlignment="Center"
                        Text="Coalition"/>
-            <ComboBox Grid.Row="0" Grid.Column="1" Margin="12,12,0,0" x:Name="uiComboCoalition"
+            <ComboBox Grid.Row="0" Grid.Column="1" Margin="12,12,0,0" x:Name="uiComboThreatCoalition"
                       VerticalAlignment="Center"
                       HorizontalAlignment="Stretch"
-                      SelectedIndex="{x:Bind EditThreat.Coalition}">
+                      SelectionChanged="Combo_SelectionChanged"
+                      SelectedIndex="{x:Bind EditThreat.CoalitionUI}">
                 <ComboBoxItem>Blue</ComboBoxItem>
                 <ComboBoxItem>Red</ComboBoxItem>
                 <ComboBoxItem>Neutral</ComboBoxItem>
             </ComboBox>
-            <TextBlock Grid.Row="0" Grid.Column="2" Margin="24,12,0,0"
+            <TextBlock Grid.Row="0" Grid.Column="2" Margin="16,12,0,0"
                        VerticalAlignment="Center"
                        HorizontalAlignment="Right"
-                       Text="DCS Type"/>
-            <Grid Grid.Row="0" Grid.Column="3" Margin="12,12,0,0"
-                  HorizontalAlignment="Stretch">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="120"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                <TextBox Grid.Column="0" Margin="0,0,0,0" x:Name="uiTextType"
-                         VerticalAlignment="Center"
-                         HorizontalAlignment="Stretch"
-                         Text="{x:Bind EditThreat.TypeDCS, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
-                <TextBlock Grid.Column="1" Margin="24,0,0,0"
-                           VerticalAlignment="Center"
-                           HorizontalAlignment="Right"/>
-                <TextBox Grid.Column="2" Margin="12,0,0,0" x:Name="uiTextRadius"
-                         VerticalAlignment="Center"
-                         HorizontalAlignment="Stretch"
-                         Text="{x:Bind EditThreat.RadiusWEZ, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
-                <TextBlock Grid.Column="3" Margin="8,0,0,0"
-                           VerticalAlignment="Center"
-                           HorizontalAlignment="Right"
-                           Text="nm"/>
-            </Grid>
+                       Text="Display Name"/>
+            <TextBox Grid.Row="0" Grid.Column="3" Margin="12,12,0,0" x:Name="uiTextThreatName"
+                     VerticalAlignment="Center"
+                     HorizontalAlignment="Stretch"
+                     TextChanged="ThreatTextBox_TextChanged"
+                     LostFocus="ThreatTextBox_LostFocus"
+                     Text="{x:Bind EditThreat.Name, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
             <Button Grid.Row="0" Grid.Column="5" Margin="36,12,0,0" x:Name="uiThreatBtnAdd"
                     VerticalAlignment="Center"
                     HorizontalAlignment="Stretch"
@@ -316,21 +299,50 @@ https://www.gnu.org/licenses/.
             <TextBlock Grid.Row="1" Grid.Column="0" Margin="16,12,0,0"
                        VerticalAlignment="Center"
                        Text="Category"/>
-            <ComboBox Grid.Row="1" Grid.Column="1" Margin="12,12,0,0" x:Name="uiComboCategory"
+            <ComboBox Grid.Row="1" Grid.Column="1" Margin="12,12,0,0" x:Name="uiComboThreatCategory"
                       VerticalAlignment="Center"
                       HorizontalAlignment="Stretch"
-                      SelectedIndex="{x:Bind EditThreat.Category}">
+                      SelectionChanged="Combo_SelectionChanged"
+                      SelectedIndex="{x:Bind EditThreat.CategoryUI}">
                 <ComboBoxItem>Ground Unit</ComboBoxItem>
                 <ComboBoxItem>Naval Unit</ComboBoxItem>
             </ComboBox>
-            <TextBlock Grid.Row="1" Grid.Column="2" Margin="16,12,0,0"
+            <TextBlock Grid.Row="1" Grid.Column="2" Margin="24,12,0,0"
                        VerticalAlignment="Center"
                        HorizontalAlignment="Right"
-                       Text="Display Name"/>
-            <TextBox Grid.Row="1" Grid.Column="3" Margin="12,12,0,0" x:Name="uiTextName"
-                     VerticalAlignment="Center"
-                     HorizontalAlignment="Stretch"
-                     Text="{x:Bind EditThreat.Name, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
+                       Text="DCS Type"/>
+            <Grid Grid.Row="1" Grid.Column="3" Margin="12,12,0,0"
+                  HorizontalAlignment="Stretch">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="108"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBox Grid.Column="0" Margin="0,0,0,0" x:Name="uiTextThreatType"
+                         VerticalAlignment="Center"
+                         HorizontalAlignment="Stretch"
+                         TextChanged="ThreatTextBox_TextChanged"
+                         LostFocus="ThreatTextBox_LostFocus"
+                         Text="{x:Bind EditThreat.TypeDCS, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
+                <TextBlock Grid.Column="1" Margin="24,0,0,0"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Right"
+                           Text="WEZ"/>
+                <TextBox Grid.Column="3" Margin="12,0,0,0" x:Name="uiTextThreatRadius"
+                         VerticalAlignment="Center"
+                         HorizontalAlignment="Stretch"
+                         PlaceholderText = "0.00"
+                         MaxLength="6"
+                         TextChanged="ThreatTextBox_TextChanged"
+                         LostFocus="ThreatTextBox_LostFocus"
+                         Text="{x:Bind EditThreat.RadiusWEZ, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
+                <TextBlock Grid.Column="4" Margin="8,0,0,0"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Right"
+                           Text="nm"/>
+            </Grid>
             <Button Grid.Row="1" Grid.Column="5" Margin="36,12,0,0" x:Name="uiThreatBtnClear"
                     VerticalAlignment="Center"
                     HorizontalAlignment="Stretch"
@@ -339,103 +351,6 @@ https://www.gnu.org/licenses/.
                     Clear
                 </TextBlock>
             </Button>
-
-            <!-- name / tags fields
-              -->
-            <!--
-            <TextBlock Grid.Row="0" Grid.Column="0" Margin="12,12,0,0"
-                       VerticalAlignment="Center"
-                       HorizontalTextAlignment="Right"
-                       Style="{StaticResource EditorParamStaticTextBlockStyle}">
-                Name / Tags
-            </TextBlock>
-            <Grid Grid.Row="0" Grid.Column="1" Margin="12,12,0,0">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="3*"/>
-                    <ColumnDefinition Width="2*"/>
-                </Grid.ColumnDefinitions>
-                <TextBox Grid.Row="0" Grid.Column="0" x:Name="uiPoIValueName"
-                     HorizontalAlignment="Stretch" VerticalAlignment="Center"
-                     Style="{StaticResource EditorParamEditTextBoxStyle}"
-                     Text="{x:Bind EditPoI.Name, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
-                     MaxLength="48"
-                     TextChanged="PoITextBox_TextChanged"
-                     LostFocus="PoITextBox_LostFocus"
-                     ToolTipService.ToolTip="Name of point of interest"/>
-                <TextBox Grid.Row="0" Grid.Column="1" Margin="12,0,0,0" x:Name="uiPoIValueTags"
-                     HorizontalAlignment="Stretch" VerticalAlignment="Center"
-                     Style="{StaticResource EditorParamEditTextBoxStyle}"
-                     Text="{x:Bind EditPoI.Tags, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
-                     TextChanged="PoITextBox_TextChanged"
-                     LostFocus="PoITextBox_LostFocus"
-                     ToolTipService.ToolTip="Tags for point of interest (“,” separated)"/>
-            </Grid>
-            <Button Grid.Row="0" Grid.Column="2" Margin="24,12,0,0" x:Name="uiPoIBtnAdd"
-                    HorizontalAlignment="Stretch" VerticalAlignment="Center"
-                    Click="PoIBtnAdd_Click">
-                <TextBlock x:Name="uiPoITextBtnAdd">
-                    Update
-                </TextBlock>
-            </Button>
-         
-
-            <TextBlock Grid.Row="1" Grid.Column="0" Margin="12,12,0,0"
-                       HorizontalTextAlignment="Right"
-                       Style="{StaticResource EditorParamStaticTextBlockStyle}">
-                LAT / LON / ELEV
-            </TextBlock>
-            <Grid Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Margin="12,12,0,0"
-                  VerticalAlignment="Center">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="4*"/>
-                    <ColumnDefinition Width="4*"/>
-                    <ColumnDefinition Width="3*"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="125"/>
-                    <ColumnDefinition Width="125"/>
-                    <ColumnDefinition Width="100"/>
-                </Grid.ColumnDefinitions>
-
-
-                <TextBox Grid.Row="0" Grid.Column="2" Margin="12,0,0,0" x:Name="uiPoIValueAlt"
-                         Style="{StaticResource EditorParamEditTextBoxStyle}"
-                         Text="{x:Bind EditPoI.Alt, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
-                         LostFocus="PoITextBox_LostFocus"
-                         ToolTipService.ToolTip="Elevation of point of interest (feet)"/>
-
-                <TextBlock Grid.Row="0" Grid.Column="3" Margin="6,0,0,0" x:Name="uiPoITextAltUnits"
-                           Style="{StaticResource EditorParamStaticTextBlockStyle}">
-                    ft
-                </TextBlock>
-
-                <TextBlock Grid.Row="0" Grid.Column="4" Margin="16,0,0,0" x:Name="uiPoITextTheater"
-                           HorizontalAlignment="Left" VerticalAlignment="Center">
-                    Unknown Theater
-                </TextBlock>
-                <Button Grid.Column="5" Height="34" Margin="12,0,24,0" x:Name="uiPoIBtnCapture"
-                        HorizontalAlignment="Right" VerticalAlignment="Center"
-                        Click="PoIBtnCapture_Click"
-                        ToolTipService.ToolTip="Capture point of interest LAT, LON, ALT from DCS">
-                    <StackPanel Orientation="Horizontal">
-                        <FontIcon Margin="0,0,6,0"
-                                  FontFamily="Segoe Fluent Icons" FontSize="14" Glyph="&#xE7B7;"/>
-                        <TextBlock VerticalAlignment="Center">
-                            DCS
-                        </TextBlock>
-                    </StackPanel>
-                </Button>
-            </Grid>
-            <Button Grid.Row="1" Grid.Column="2" Margin="24,12,0,0" x:Name="uiPoIBtnClear"
-                    HorizontalAlignment="Stretch" VerticalAlignment="Center"
-                    Click="PoIBtnClear_Click">
-                <TextBlock x:Name="uiPoITextBtnClear">
-                    Clear
-                </TextBlock>
-            </Button>
-            -->
         </Grid>
     </Grid>
 </Page>
