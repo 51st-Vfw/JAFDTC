@@ -18,6 +18,7 @@
 //
 // ********************************************************************************************************************
 
+using JAFDTC.Models.CoreApp;
 using JAFDTC.Models.DCS;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -233,6 +234,19 @@ namespace JAFDTC.Utilities
                 if (_currentSettings.LastConfigFilenameSelection != value)
                 {
                     _currentSettings.LastConfigFilenameSelection = value;
+                    FileManager.WriteSettings(_currentSettings);
+                }
+            }
+        }
+
+        public static ThreatFilterSpec LastThreatFilter
+        {
+            get => _currentSettings.LastThreatFilter;
+            set
+            {
+                if (_currentSettings.LastThreatFilter != value)
+                {
+                    _currentSettings.LastThreatFilter = value;
                     FileManager.WriteSettings(_currentSettings);
                 }
             }

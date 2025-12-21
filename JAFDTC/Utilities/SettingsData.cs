@@ -18,9 +18,9 @@
 //
 // ********************************************************************************************************************
 
+using JAFDTC.Models.CoreApp;
 using JAFDTC.Models.DCS;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace JAFDTC.Utilities
 {
@@ -59,6 +59,8 @@ namespace JAFDTC.Utilities
         public int LastAirframeSelection { get; set; }
 
         public string LastConfigFilenameSelection { get; set; }
+
+        public ThreatFilterSpec LastThreatFilter { get; set; }
 
         public string LastStptFilterTheater { get; set; }
 
@@ -122,8 +124,13 @@ namespace JAFDTC.Utilities
             IsSkipDCSLuaInstall = false;
             VersionDCSLua = [];
 
+            LastWindowSetupMain = "";
+            LastWindowSetupMap = "";
+
             LastAirframeSelection = 0;
             LastConfigFilenameSelection = "";
+
+            LastThreatFilter = new();
             LastStptFilterTheater = "";
             LastStptFilterCampaign = "";
             LastStptFilterTags = "";
@@ -133,8 +140,8 @@ namespace JAFDTC.Utilities
             LastPoIFilterTags = "";
             LastPoIFilterIncludeTypes = PointOfInterestTypeMask.ANY;
             LastPoICoordFmtSelection = LLFormat.DDM_P3ZF;
-            LastWindowSetupMain = "";
-            LastWindowSetupMap = "";
+
+            // main application settings
 
             WingName = "";
             Callsign = "";
@@ -142,6 +149,9 @@ namespace JAFDTC.Utilities
             IsNavPtImportIgnoreAirframe = false;
             IsAlwaysOnTop = false;
             IsNewVersCheckDisabled = false;
+
+            // map window settings
+
             IsMapWindowAutoOpen = false;
             IsMapTileCacheDisabled = false;
 
