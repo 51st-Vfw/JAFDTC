@@ -18,7 +18,6 @@
 // ********************************************************************************************************************
 
 using JAFDTC.Models.Core;
-using JAFDTC.Models.CoreApp;
 using JAFDTC.Models.Units;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,19 +25,19 @@ using System.Linq;
 namespace JAFDTC.Models.DCS
 {
     /// <summary>
-    /// types for threats.
+    /// types for threats tracked through the threat database.
     /// </summary>
     public enum ThreatType
     {
         UNKNOWN = -1,
-        DCS_CORE = 0,
+        SYSTEM = 0,
         USER = 1
     }
 
     // ================================================================================================================
 
     /// <summary>
-    /// filter extensions for processing lists of threats.
+    /// filter extensions for processing lists of Threat instances.
     /// </summary>
     public static class FilterExtension
     {
@@ -73,11 +72,11 @@ namespace JAFDTC.Models.DCS
 
         public ThreatType Type { get; set; }                    // general threat type (ThreatType)
 
-        public string TypeDCS { get; set; }                     // dcs .miz unit "type" value for threat
-
         public UnitCategoryType Category { get; set; }          // unit category
 
         public CoalitionType Coalition { get; set; }            // primary unit coalition
+
+        public string TypeDCS { get; set; }                     // dcs .miz unit "type" value for threat
 
         public string Name { get; set; }                        // display name for threat
         

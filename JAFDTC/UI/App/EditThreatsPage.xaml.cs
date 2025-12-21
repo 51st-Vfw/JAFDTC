@@ -239,7 +239,7 @@ namespace JAFDTC.UI.App
             CurThreatItems = [ ];
             SystemThreatDCSTypes = [ ];
             foreach (Threat threat in ThreatDbase.Instance.Find(null, true))
-                if (threat.Type == ThreatType.DCS_CORE)
+                if (threat.Type == ThreatType.SYSTEM)
                     SystemThreatDCSTypes.Add(threat.TypeDCS);
 
             EditThreat = new ThreatDetails();
@@ -367,7 +367,7 @@ namespace JAFDTC.UI.App
 
             ThreatType[] threatTypes = [ ];
             if (FilterThreat.ShowThreatsDCS)
-                threatTypes = [.. threatTypes, ThreatType.DCS_CORE ];
+                threatTypes = [.. threatTypes, ThreatType.SYSTEM ];
             if (FilterThreat.ShowThreatsUser)
                 threatTypes = [.. threatTypes, ThreatType.USER ];
 
@@ -437,7 +437,7 @@ namespace JAFDTC.UI.App
             foreach (Threat threat in GetThreatsMatchingFilter(name))
             {
                 ThreatListItem item = new(threat);
-                if (threat.Type == ThreatType.DCS_CORE)
+                if (threat.Type == ThreatType.SYSTEM)
                     sysItems[threat.TypeDCS] = item;
                 if ((threat.Type == ThreatType.USER) && SystemThreatDCSTypes.Contains(threat.TypeDCS))
                 {
@@ -467,7 +467,7 @@ namespace JAFDTC.UI.App
             bool isUserInSel = false;
             foreach (ThreatListItem item in uiThreatListView.SelectedItems.Cast<ThreatListItem>())
             {
-                isCoreInSel = (isCoreInSel || (item.Threat.Type == ThreatType.DCS_CORE));
+                isCoreInSel = (isCoreInSel || (item.Threat.Type == ThreatType.SYSTEM));
                 isUserInSel = (isUserInSel || (item.Threat.Type == ThreatType.USER));
             }
 
@@ -480,7 +480,7 @@ namespace JAFDTC.UI.App
             ThreatDbaseQuery query = new([uiTextThreatType.Text], null, [ThreatType.USER]);
             IReadOnlyList<Threat> matches = ThreatDbase.Instance.Find(query);
             bool isTypeFieldValid = ((matches.Count == 0) ||
-                                     (threat == null) || (threat.Type == ThreatType.DCS_CORE) ||
+                                     (threat == null) || (threat.Type == ThreatType.SYSTEM) ||
                                      (EditThreat.SourceUID == matches[0].UniqueID));
             bool isDirty = ((threat != null) &&
                             ((threat.Category != CategoryUIToType(uiComboThreatCategory.SelectedIndex)) ||
@@ -634,7 +634,7 @@ namespace JAFDTC.UI.App
                 if (result == ContentDialogResult.Primary)
                 {
                     foreach (ThreatListItem item in uiThreatListView.SelectedItems.Cast<ThreatListItem>())
-                        if (item.Threat.Type != ThreatType.DCS_CORE)
+                        if (item.Threat.Type != ThreatType.SYSTEM)
                             ThreatDbase.Instance.RemoveThreat(item.Threat, false);
                     ThreatDbase.Instance.Save();
 
@@ -714,7 +714,7 @@ namespace JAFDTC.UI.App
             bool isUserInSel = false;
             foreach (ThreatListItem item in uiThreatListView.SelectedItems.Cast<ThreatListItem>())
             {
-                isCoreInSel = (isCoreInSel || (item.Threat.Type == ThreatType.DCS_CORE));
+                isCoreInSel = (isCoreInSel || (item.Threat.Type == ThreatType.SYSTEM));
                 isUserInSel = (isUserInSel || (item.Threat.Type == ThreatType.USER));
             }
 
