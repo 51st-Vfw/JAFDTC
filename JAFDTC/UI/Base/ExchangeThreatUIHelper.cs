@@ -91,11 +91,11 @@ namespace JAFDTC.UI.Base
                 HashSet<string> knownTypes = [ ];
                 ThreatDbaseQuery query = new(null, null, [ ThreatType.USER ]);
                 foreach (Threat threat in ThreatDbase.Instance.Find(query))
-                    knownTypes.Add(threat.TypeDCS);
+                    knownTypes.Add(threat.UnitTypeDCS);
 
                 int matches = 0;
                 foreach (Threat threat in importThreats)
-                    if (knownTypes.Contains(threat.TypeDCS))
+                    if (knownTypes.Contains(threat.UnitTypeDCS))
                         matches++;
 
                 if (matches > 0)
@@ -113,7 +113,7 @@ namespace JAFDTC.UI.Base
 
                 foreach (Threat threat in importThreats)
                 {
-                    if (knownTypes.Contains(threat.TypeDCS))
+                    if (knownTypes.Contains(threat.UnitTypeDCS))
                         ThreatDbase.Instance.RemoveThreat(threat, false);
                     ThreatDbase.Instance.AddThreat(threat, false);
                 }

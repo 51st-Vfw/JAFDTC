@@ -232,7 +232,7 @@ https://www.gnu.org/licenses/.
                             <TextBlock Grid.Column="5" Margin="6,0,0,0"
                                        VerticalAlignment="Center"
                                        HorizontalTextAlignment="Center"
-                                       Text="{x:Bind Threat.TypeDCS}"/>
+                                       Text="{x:Bind Threat.UnitTypeDCS}"/>
                             <TextBlock Grid.Column="6" Margin="6,0,0,0"
                                        VerticalAlignment="Center"
                                        HorizontalTextAlignment="Center"

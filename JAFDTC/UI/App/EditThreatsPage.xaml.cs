@@ -214,7 +214,7 @@ namespace JAFDTC.UI.App
                 return ((threat == null) ||
                         ((threat.Category == CategoryUIToType(uiComboThreatCategory.SelectedIndex)) &&
                          (threat.Coalition == CoalitionUIToType(uiComboThreatCoalition.SelectedIndex)) &&
-                         (threat.TypeDCS == uiTextThreatType.Text) &&
+                         (threat.UnitTypeDCS == uiTextThreatType.Text) &&
                          (threat.Name == uiTextThreatName.Text) &&
                          (threat.RadiusWEZ == double.Parse(uiTextThreatRadius.Text))));
             }
@@ -240,7 +240,7 @@ namespace JAFDTC.UI.App
             SystemThreatDCSTypes = [ ];
             foreach (Threat threat in ThreatDbase.Instance.Find(null, true))
                 if (threat.Type == ThreatType.SYSTEM)
-                    SystemThreatDCSTypes.Add(threat.TypeDCS);
+                    SystemThreatDCSTypes.Add(threat.UnitTypeDCS);
 
             EditThreat = new ThreatDetails();
             EditThreat.ErrorsChanged += ThreatField_DataValidationError;
@@ -381,12 +381,12 @@ namespace JAFDTC.UI.App
         private async Task<Threat> CopyThreatToUser(Threat threat, bool isPromptOnExisting = true)
         {
             ContentDialogResult result = ContentDialogResult.Primary;
-            ThreatDbaseQuery query = new([threat.TypeDCS], null, [ThreatType.USER]);
+            ThreatDbaseQuery query = new([threat.UnitTypeDCS], null, [ThreatType.USER]);
             if (isPromptOnExisting && (ThreatDbase.Instance.Find(query).Count > 0))
             {
                 result = await Utilities.Message2BDialog(Content.XamlRoot,
                     "Replace User Threat",
-                    $"A user threat for DCS type “{threat.TypeDCS}” already exists in the database." +
+                    $"A user threat for DCS type “{threat.UnitTypeDCS}” already exists in the database." +
                     $" Would you like to replace it?",
                     "Replace", "Cancel");
                 if (result == ContentDialogResult.Primary)
@@ -397,7 +397,7 @@ namespace JAFDTC.UI.App
                 Threat newThreat = new()
                 {
                     Type = ThreatType.USER,
-                    TypeDCS = threat.TypeDCS,
+                    UnitTypeDCS = threat.UnitTypeDCS,
                     Category = threat.Category,
                     Coalition = threat.Coalition,
                     Name = threat.Name,
@@ -438,11 +438,11 @@ namespace JAFDTC.UI.App
             {
                 ThreatListItem item = new(threat);
                 if (threat.Type == ThreatType.SYSTEM)
-                    sysItems[threat.TypeDCS] = item;
-                if ((threat.Type == ThreatType.USER) && SystemThreatDCSTypes.Contains(threat.TypeDCS))
+                    sysItems[threat.UnitTypeDCS] = item;
+                if ((threat.Type == ThreatType.USER) && SystemThreatDCSTypes.Contains(threat.UnitTypeDCS))
                 {
                     item.IsOverride = true;
-                    sysItems[threat.TypeDCS].IsOverride = true;
+                    sysItems[threat.UnitTypeDCS].IsOverride = true;
                 }
                 CurThreatItems.Add(item);
             }
@@ -485,7 +485,7 @@ namespace JAFDTC.UI.App
             bool isDirty = ((threat != null) &&
                             ((threat.Category != CategoryUIToType(uiComboThreatCategory.SelectedIndex)) ||
                              (threat.Coalition != CoalitionUIToType(uiComboThreatCoalition.SelectedIndex)) ||
-                             (threat.TypeDCS != uiTextThreatType.Text) ||
+                             (threat.UnitTypeDCS != uiTextThreatType.Text) ||
                              (threat.Name != uiTextThreatName.Text) ||
                              (threat.RadiusWEZ != double.Parse(uiTextThreatRadius.Text))));
             bool isThreatValid = !string.IsNullOrEmpty(EditThreat.TypeDCS) &&
@@ -745,7 +745,7 @@ namespace JAFDTC.UI.App
                 EditThreat.CoalitionUI = CoalitionTypeToUI(item.Threat.Coalition);
                 EditThreat.CategoryUI = CategoryTypeToUI(item.Threat.Category);
                 EditThreat.Name = item.Threat.Name;
-                EditThreat.TypeDCS = item.Threat.TypeDCS;
+                EditThreat.TypeDCS = item.Threat.UnitTypeDCS;
                 EditThreat.RadiusWEZ = $"{item.Threat.RadiusWEZ:F2}";
 
                 uiComboThreatCoalition.SelectedIndex = EditThreat.CoalitionUI;
@@ -763,7 +763,7 @@ namespace JAFDTC.UI.App
             Threat newThreat = new()
             {
                 Type = ThreatType.USER,
-                TypeDCS = EditThreat.TypeDCS,
+                UnitTypeDCS = EditThreat.TypeDCS,
                 Category = CategoryUIToType(uiComboThreatCategory.SelectedIndex),
                 Coalition = CoalitionUIToType(uiComboThreatCoalition.SelectedIndex),
                 Name = EditThreat.Name,
@@ -789,7 +789,7 @@ namespace JAFDTC.UI.App
                 EditThreat.CoalitionUI = CoalitionTypeToUI(item.Threat.Coalition);
                 EditThreat.CategoryUI = CategoryTypeToUI(item.Threat.Category);
                 EditThreat.Name = item.Threat.Name;
-                EditThreat.TypeDCS = item.Threat.TypeDCS;
+                EditThreat.TypeDCS = item.Threat.UnitTypeDCS;
                 EditThreat.RadiusWEZ = $"{item.Threat.RadiusWEZ:F2}";
             }
             else

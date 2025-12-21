@@ -142,7 +142,7 @@ namespace JAFDTC.Models.DCS
         /// </summary>
         public bool AddThreat(Threat threat, bool isPersist = true)
         {
-            IReadOnlyList<Threat> matches = Find(new ThreatDbaseQuery([ threat.TypeDCS ], null, [ threat.Type ]));
+            IReadOnlyList<Threat> matches = Find(new ThreatDbaseQuery([ threat.UnitTypeDCS ], null, [ threat.Type ]));
             if (matches.Count == 0)
             {
                 _dbase[threat.UniqueID] = threat;
@@ -159,7 +159,7 @@ namespace JAFDTC.Models.DCS
         {
             if (threat.Type == ThreatType.USER)
             {
-                IReadOnlyList<Threat> matches = Find(new ThreatDbaseQuery([ threat.TypeDCS ], null, [ threat.Type ]));
+                IReadOnlyList<Threat> matches = Find(new ThreatDbaseQuery([ threat.UnitTypeDCS ], null, [ threat.Type ]));
                 if (matches.Count > 0)
                 {
                     _dbase.Remove(threat.UniqueID);

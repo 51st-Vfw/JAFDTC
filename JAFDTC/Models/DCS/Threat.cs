@@ -45,7 +45,7 @@ namespace JAFDTC.Models.DCS
             => (threatTypes == null || threatTypes.Length == 0) ? values : values.Where(u => threatTypes.Contains(u.Type));
 
         public static IEnumerable<Threat> LimitDCSTypes(this IEnumerable<Threat> values, string[]? dcsTypes)
-            => (dcsTypes == null || dcsTypes.Length == 0) ? values : values.Where(u => dcsTypes.Contains(u.TypeDCS));
+            => (dcsTypes == null || dcsTypes.Length == 0) ? values : values.Where(u => dcsTypes.Contains(u.UnitTypeDCS));
 
         public static IEnumerable<Threat> LimitCoalitions(this IEnumerable<Threat> values, CoalitionType[]? coalitions)
             => (coalitions == null || coalitions.Length == 0) ? values : values.Where(u => coalitions.Contains(u.Coalition));
@@ -76,7 +76,7 @@ namespace JAFDTC.Models.DCS
 
         public CoalitionType Coalition { get; set; }            // primary unit coalition
 
-        public string TypeDCS { get; set; }                     // dcs .miz unit "type" value for threat
+        public string UnitTypeDCS { get; set; }                 // dcs .miz unit "type" value for threat
 
         public string Name { get; set; }                        // display name for threat
         
@@ -84,6 +84,6 @@ namespace JAFDTC.Models.DCS
 
         // ---- computed properties
 
-        public string UniqueID => $"{Type}:{Coalition}:{TypeDCS.Replace(' ', '_').Replace('-', '_')}";
+        public string UniqueID => $"{Type}:{Coalition}:{UnitTypeDCS.Replace(' ', '_').Replace('-', '_')}";
     }
 }
