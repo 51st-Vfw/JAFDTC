@@ -64,10 +64,13 @@ namespace JAFDTC.Models.DCS
 
     /// <summary>
     /// defines the properties of a potential threat. these instances are managed by threat database (ThreatDbase).
-    /// threats include a type, dcs type, coalition, name, and wez radius.
+    /// threats include a type, dcs type, coalition, name, and wez radius. the ( Type, Coalition, TypeDCS ) tuple
+    /// always uniquely identifies a threat.
     /// </summary>
     public sealed class Threat
     {
+        // ---- properties
+
         public ThreatType Type { get; set; }                    // general threat type (ThreatType)
 
         public string TypeDCS { get; set; }                     // dcs .miz unit "type" value for threat
@@ -79,5 +82,9 @@ namespace JAFDTC.Models.DCS
         public string Name { get; set; }                        // display name for threat
         
         public double RadiusWEZ { get; set; }                   // radius of wez (nm, 0 => "point" threat)
+
+        // ---- computed properties
+
+        public string UniqueID => $"{Type}:{Coalition}:{TypeDCS.Replace(' ', '_').Replace('-', '_')}";
     }
 }
