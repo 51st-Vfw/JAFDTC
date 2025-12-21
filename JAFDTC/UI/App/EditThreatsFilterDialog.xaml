@@ -49,14 +49,14 @@ https://www.gnu.org/licenses/.
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="72"/>
+                <ColumnDefinition Width="98"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
             <TextBlock Grid.Row="0" Grid.Column="0" Margin="0,8,0,0"
                        HorizontalAlignment="Right"
                        VerticalAlignment="Center">
-                Coalition
+                Shows coalition
             </TextBlock>
             <ComboBox Grid.Row="0" Grid.Column="1" MinWidth="250" Margin="12,8,0,0"
                       x:Name="uiComboCoalition"
@@ -72,7 +72,7 @@ https://www.gnu.org/licenses/.
                        x:Name="uiUnitTextPrompt"
                        HorizontalAlignment="Right"
                        VerticalAlignment="Center">
-                Category
+                Shows category
             </TextBlock>
             <ComboBox Grid.Row="1" Grid.Column="1" MinWidth="250" Margin="12,8,0,0"
                       x:Name="uiComboCategory"
