@@ -805,7 +805,7 @@ namespace JAFDTC.Utilities
             foreach (string srcFile in Directory.GetFiles(path))
             {
                 string fileName = Path.GetFileName(srcFile);
-                if (fileName.ToLower().Equals("jafdtc-threats.json", StringComparison.CurrentCultureIgnoreCase))
+                if (fileName.ToLower().Equals("jafdtc-threats-user.json", StringComparison.CurrentCultureIgnoreCase))
                 {
                     dbase.AddRange(LoadUserDbase<Threat>(fileName));
                     break;
@@ -820,7 +820,7 @@ namespace JAFDTC.Utilities
         /// </summary>
         public static bool SaveUserThreats(List<Threat> userThreats)
         {
-            return SaveUserDbase<Threat>("jafdtc-pois-user.json", userThreats);
+            return SaveUserDbase<Threat>("jafdtc-threats-user.json", userThreats);
         }
 
         // ------------------------------------------------------------------------------------------------------------
