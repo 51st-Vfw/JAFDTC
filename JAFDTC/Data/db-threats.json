@@ -1,7 +1,7 @@
 ﻿[
   {
     "Type": 0,
-    "TypeDCS": "S_75M_Volhov",
+    "UnitTypeDCS": "S_75M_Volhov",
     "Category": 2,
     "Coalition": 1,
     "Name": "SA-2",
@@ -9,7 +9,7 @@
   },
   {
     "Type": 0,
-    "TypeDCS": "5p73 s-125 ln",
+    "UnitTypeDCS": "5p73 s-125 ln",
     "Category": 2,
     "Coalition": 1,
     "Name": "SA-3",
@@ -17,7 +17,7 @@
   },
   {
     "Type": 0,
-    "TypeDCS": "S-200_Launcher",
+    "UnitTypeDCS": "S-200_Launcher",
     "Category": 2,
     "Coalition": 1,
     "Name": "SA-5",
@@ -25,7 +25,7 @@
   },
   {
     "Type": 0,
-    "TypeDCS": "Kub 2P25 ln",
+    "UnitTypeDCS": "Kub 2P25 ln",
     "Category": 2,
     "Coalition": 1,
     "Name": "SA-6",
@@ -33,7 +33,7 @@
   },
   {
     "Type": 0,
-    "TypeDCS": "S-300PS 5P85C ln",
+    "UnitTypeDCS": "S-300PS 5P85C ln",
     "Category": 2,
     "Coalition": 1,
     "Name": "SA-10",
@@ -41,7 +41,7 @@
   },
   {
     "Type": 0,
-    "TypeDCS": "S-300PS 5P85D ln",
+    "UnitTypeDCS": "S-300PS 5P85D ln",
     "Category": 2,
     "Coalition": 1,
     "Name": "SA-10",
@@ -49,7 +49,7 @@
   },
   {
     "Type": 0,
-    "TypeDCS": "SA-11 Buk LN 9A310M1",
+    "UnitTypeDCS": "SA-11 Buk LN 9A310M1",
     "Category": 2,
     "Coalition": 1,
     "Name": "SA-11",
@@ -57,7 +57,7 @@
   },
   {
     "Type": 0,
-    "TypeDCS": "CHAP_PantsirS1",
+    "UnitTypeDCS": "CHAP_PantsirS1",
     "Category": 2,
     "Coalition": 1,
     "Name": "SA-22",
@@ -65,7 +65,7 @@
   },
   {
     "Type": 0,
-    "TypeDCS": "2S6 Tunguska",
+    "UnitTypeDCS": "2S6 Tunguska",
     "Category": 2,
     "Coalition": 1,
     "Name": "SA-19",
@@ -73,7 +73,7 @@
   },
   {
     "Type": 0,
-    "TypeDCS": "Tor 9A331",
+    "UnitTypeDCS": "Tor 9A331",
     "Category": 2,
     "Coalition": 1,
     "Name": "SA-15",
@@ -81,7 +81,7 @@
   },
   {
     "Type": 0,
-    "TypeDCS": "CHAP_TorM2",
+    "UnitTypeDCS": "CHAP_TorM2",
     "Category": 2,
     "Coalition": 1,
     "Name": "SA-15.M2",
@@ -89,7 +89,7 @@
   },
   {
     "Type": 0,
-    "TypeDCS": "Strela-10M3",
+    "UnitTypeDCS": "Strela-10M3",
     "Category": 2,
     "Coalition": 1,
     "Name": "SA-13",
@@ -97,7 +97,7 @@
   },
   {
     "Type": 0,
-    "TypeDCS": "Strela-1 9P31",
+    "UnitTypeDCS": "Strela-1 9P31",
     "Category": 2,
     "Coalition": 1,
     "Name": "SA-9",
@@ -105,7 +105,7 @@
   },
   {
     "Type": 0,
-    "TypeDCS": "Osa 9A33 ln",
+    "UnitTypeDCS": "Osa 9A33 ln",
     "Category": 2,
     "Coalition": 1,
     "Name": "SA-8",
@@ -113,7 +113,7 @@
   },
   {
     "Type": 0,
-    "TypeDCS": "Osa 9A33 ln",
+    "UnitTypeDCS": "Osa 9A33 ln",
     "Category": 2,
     "Coalition": 1,
     "Name": "SA-8",
@@ -121,7 +121,7 @@
   },
   {
     "Type": 0,
-    "TypeDCS": "HQ-7_LN_SP",
+    "UnitTypeDCS": "HQ-7_LN_SP",
     "Category": 2,
     "Coalition": 1,
     "Name": "HQ-7B",
@@ -130,7 +130,7 @@
 
   {
     "Type": 0,
-    "TypeDCS": "ALBATROS",
+    "UnitTypeDCS": "ALBATROS",
     "Category": 3,
     "Coalition": 1,
     "Name": "Corvette 1124.4 Grisha",
@@ -138,7 +138,7 @@
   },
   {
     "Type": 0,
-    "TypeDCS": "MOLNIYA",
+    "UnitTypeDCS": "MOLNIYA",
     "Category": 3,
     "Coalition": 1,
     "Name": "Corvette 1141.1 Molniya",
@@ -146,7 +146,7 @@
   },
   {
     "Type": 0,
-    "TypeDCS": "MOSCOW",
+    "UnitTypeDCS": "MOSCOW",
     "Category": 3,
     "Coalition": 1,
     "Name": "Crusiser 1164 Moskva",
@@ -154,7 +154,7 @@
   },
   {
     "Type": 0,
-    "TypeDCS": "KUZNECOW",
+    "UnitTypeDCS": "KUZNECOW",
     "Category": 3,
     "Coalition": 1,
     "Name": "CV 1143.5 Admiral Kuznetsov",
@@ -162,7 +162,7 @@
   },
   {
     "Type": 0,
-    "TypeDCS": "CV_1143_5",
+    "UnitTypeDCS": "CV_1143_5",
     "Category": 3,
     "Coalition": 1,
     "Name": "CV 1143.5 Admiral Kuznetsov (2017)",
@@ -170,7 +170,7 @@
   },
   {
     "Type": 0,
-    "TypeDCS": "NEUSTRASH",
+    "UnitTypeDCS": "NEUSTRASH",
     "Category": 3,
     "Coalition": 1,
     "Name": "Frigate 11540 Neustrashimy",
@@ -178,7 +178,7 @@
   },
   {
     "Type": 0,
-    "TypeDCS": "REZKY",
+    "UnitTypeDCS": "REZKY",
     "Category": 3,
     "Coalition": 1,
     "Name": "Frigate 1135M Rezky",
@@ -186,7 +186,7 @@
   },
   {
     "Type": 0,
-    "TypeDCS": "BDK-775",
+    "UnitTypeDCS": "BDK-775",
     "Category": 3,
     "Coalition": 1,
     "Name": "LS Ropucha",
@@ -194,7 +194,7 @@
   },
   {
     "Type": 0,
-    "TypeDCS": "CHAP_Project22160",
+    "UnitTypeDCS": "CHAP_Project22160",
     "Category": 3,
     "Coalition": 1,
     "Name": "Patrol Ship 22160",
@@ -202,7 +202,7 @@
   },
   {
     "Type": 0,
-    "TypeDCS": "CHAP_Project22160_TorM2KM",
+    "UnitTypeDCS": "CHAP_Project22160_TorM2KM",
     "Category": 3,
     "Coalition": 1,
     "Name": "Patrol Ship 22160, Tor M2KM",
@@ -210,7 +210,7 @@
   },
   {
     "Type": 0,
-    "TypeDCS": "Type_052B",
+    "UnitTypeDCS": "Type_052B",
     "Category": 3,
     "Coalition": 1,
     "Name": "Destroyer Type 052B",
@@ -218,7 +218,7 @@
   },
   {
     "Type": 0,
-    "TypeDCS": "Type_052C",
+    "UnitTypeDCS": "Type_052C",
     "Category": 3,
     "Coalition": 1,
     "Name": "Destroyer Type 052C",
@@ -226,7 +226,7 @@
   },
   {
     "Type": 0,
-    "TypeDCS": "Type_054A",
+    "UnitTypeDCS": "Type_054A",
     "Category": 3,
     "Coalition": 1,
     "Name": "Frigate Type 054A",
@@ -234,7 +234,7 @@
   },
   {
     "Type": 0,
-    "TypeDCS": "Type_093",
+    "UnitTypeDCS": "Type_093",
     "Category": 3,
     "Coalition": 1,
     "Name": "Attack Sub Type 093",
@@ -243,7 +243,7 @@
 
   {
     "Type": 0,
-    "TypeDCS": "Hawk ln",
+    "UnitTypeDCS": "Hawk ln",
     "Category": 2,
     "Coalition": 0,
     "Name": "Hawk",
@@ -251,7 +251,7 @@
   },
   {
     "Type": 0,
-    "TypeDCS": "M1097 Avenger",
+    "UnitTypeDCS": "M1097 Avenger",
     "Category": 2,
     "Coalition": 0,
     "Name": "Avenger",
@@ -259,7 +259,7 @@
   },
   {
     "Type": 0,
-    "TypeDCS": "M48 Chaparral",
+    "UnitTypeDCS": "M48 Chaparral",
     "Category": 2,
     "Coalition": 0,
     "Name": "Chaparral",
@@ -267,7 +267,7 @@
   },
   {
     "Type": 0,
-    "TypeDCS": "M6 Linebacker",
+    "UnitTypeDCS": "M6 Linebacker",
     "Category": 2,
     "Coalition": 0,
     "Name": "Linebacker",
@@ -275,7 +275,7 @@
   },
   {
     "Type": 0,
-    "TypeDCS": "rapier_fsa_launcher",
+    "UnitTypeDCS": "rapier_fsa_launcher",
     "Category": 2,
     "Coalition": 0,
     "Name": "Rapier",
@@ -283,7 +283,7 @@
   },
   {
     "Type": 0,
-    "TypeDCS": "Roland ADS",
+    "UnitTypeDCS": "Roland ADS",
     "Category": 2,
     "Coalition": 0,
     "Name": "Roland",
@@ -291,7 +291,7 @@
   },
   {
     "Type": 0,
-    "TypeDCS": "NASAMS_LN_C",
+    "UnitTypeDCS": "NASAMS_LN_C",
     "Category": 2,
     "Coalition": 0,
     "Name": "NASAMS",
@@ -299,7 +299,7 @@
   },
   {
     "Type": 0,
-    "TypeDCS": "Patriot ln",
+    "UnitTypeDCS": "Patriot ln",
     "Category": 2,
     "Coalition": 0,
     "Name": "Patriot",
@@ -307,7 +307,7 @@
   },
   {
     "Type": 0,
-    "TypeDCS": "CHAP_IRISTSLM_STR",
+    "UnitTypeDCS": "CHAP_IRISTSLM_STR",
     "Category": 2,
     "Coalition": 0,
     "Name": "IRIS-T",
@@ -316,7 +316,7 @@
 
   {
     "Type": 0,
-    "TypeDCS": "USS_Samuel_Chase",
+    "UnitTypeDCS": "USS_Samuel_Chase",
     "Category": 3,
     "Coalition": 0,
     "Name": "LS Samuel Chase",
@@ -324,7 +324,7 @@
   },
   {
     "Type": 0,
-    "TypeDCS": "LHA_Tarawa",
+    "UnitTypeDCS": "LHA_Tarawa",
     "Category": 3,
     "Coalition": 0,
     "Name": "LHA-1 Tarawa",
@@ -332,7 +332,7 @@
   },
   {
     "Type": 0,
-    "TypeDCS": "TICONDEROG",
+    "UnitTypeDCS": "TICONDEROG",
     "Category": 3,
     "Coalition": 0,
     "Name": "Ticonderoga Class GC",
@@ -340,7 +340,7 @@
   },
   {
     "Type": 0,
-    "TypeDCS": "USS_Arleigh_Burke_IIa",
+    "UnitTypeDCS": "USS_Arleigh_Burke_IIa",
     "Category": 3,
     "Coalition": 0,
     "Name": "Arleigh Burke IIa Class DDG",
@@ -348,7 +348,7 @@
   },
   {
     "Type": 0,
-    "TypeDCS": "PERRY",
+    "UnitTypeDCS": "PERRY",
     "Category": 3,
     "Coalition": 0,
     "Name": "Oliver Hazard Perry Class FFG",
@@ -356,7 +356,7 @@
   },
   {
     "Type": 0,
-    "TypeDCS": "CVN_71",
+    "UnitTypeDCS": "CVN_71",
     "Category": 3,
     "Coalition": 0,
     "Name": "CVN-71 Theodore Roosevelt",
@@ -364,7 +364,7 @@
   },
   {
     "Type": 0,
-    "TypeDCS": "CVN_72",
+    "UnitTypeDCS": "CVN_72",
     "Category": 3,
     "Coalition": 0,
     "Name": "CVN-72 Abraham Lincoln",
@@ -372,7 +372,7 @@
   },
   {
     "Type": 0,
-    "TypeDCS": "CVN_73",
+    "UnitTypeDCS": "CVN_73",
     "Category": 3,
     "Coalition": 0,
     "Name": "CVN-73 George Washington",
@@ -380,7 +380,7 @@
   },
   {
     "Type": 0,
-    "TypeDCS": "CVN_74",
+    "UnitTypeDCS": "CVN_74",
     "Category": 3,
     "Coalition": 0,
     "Name": "CVN-74 John C. Stennis",
@@ -388,7 +388,7 @@
   },
   {
     "Type": 0,
-    "TypeDCS": "CVN_75",
+    "UnitTypeDCS": "CVN_75",
     "Category": 3,
     "Coalition": 0,
     "Name": "CVN-75 Harry S. Truman",
@@ -396,7 +396,7 @@
   },
   {
     "Type": 0,
-    "TypeDCS": "leander-gun-condell",
+    "UnitTypeDCS": "leander-gun-condell",
     "Category": 3,
     "Coalition": 0,
     "Name": "CNS Almirante Condell (PFG-06)",
@@ -404,7 +404,7 @@
   },
   {
     "Type": 0,
-    "TypeDCS": "leander-gun-achilles",
+    "UnitTypeDCS": "leander-gun-achilles",
     "Category": 3,
     "Coalition": 0,
     "Name": "HMS Achilles (F12)",
@@ -412,7 +412,7 @@
   },
   {
     "Type": 0,
-    "TypeDCS": "leander-gun-andromeda",
+    "UnitTypeDCS": "leander-gun-andromeda",
     "Category": 3,
     "Coalition": 0,
     "Name": "HMS Andromeda (F57)",
@@ -420,7 +420,7 @@
   },
   {
     "Type": 0,
-    "TypeDCS": "leander-gun-ariadne",
+    "UnitTypeDCS": "leander-gun-ariadne",
     "Category": 3,
     "Coalition": 0,
     "Name": "HMS Ariadne (F72)",
@@ -428,7 +428,7 @@
   },
   {
     "Type": 0,
-    "TypeDCS": "hms_invincible",
+    "UnitTypeDCS": "hms_invincible",
     "Category": 3,
     "Coalition": 0,
     "Name": "HMS Invincible (R05)",
@@ -436,7 +436,7 @@
   },
   {
     "Type": 0,
-    "TypeDCS": "La_Combattante_II",
+    "UnitTypeDCS": "La_Combattante_II",
     "Category": 3,
     "Coalition": 0,
     "Name": "FAC La Combattante IIa",
