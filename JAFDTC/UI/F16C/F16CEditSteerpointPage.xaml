@@ -155,10 +155,14 @@ https://www.gnu.org/licenses/.
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="6*"/>
+                <ColumnDefinition Width="6*"/>
+                <ColumnDefinition Width="9*"/>
             </Grid.ColumnDefinitions>
 
-            <Grid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,12,0,0">
+            <!-- steerpoint information header + control buttons
+              -->
+            <Grid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="4" Margin="0,12,0,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
@@ -218,7 +222,7 @@ https://www.gnu.org/licenses/.
                        Style="{StaticResource EditorParamStaticTextBlockStyle}">
                 Name
             </TextBlock>
-            <TextBox Grid.Row="1" Grid.Column="1" Margin="12,12,0,0" x:Name="uiStptValueName"
+            <TextBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" Margin="12,12,0,0" x:Name="uiStptValueName"
                      Tag="Name"
                      Style="{StaticResource EditorParamEditTextBoxStyle}"
                      Text="{x:Bind EditStpt.Name, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
@@ -231,53 +235,83 @@ https://www.gnu.org/licenses/.
                  TODO: right now. for now, we'll just do it for name.
               -->
 
-            <!-- lat/lon/alt name field
+            <!-- lat/lon/mgrs fields
               -->
             <TextBlock Grid.Row="2" Grid.Column="0" Margin="12,12,0,0"
                        HorizontalTextAlignment="Right"
                        Style="{StaticResource EditorParamStaticTextBlockStyle}">
-                LAT / LON / ELEV / TOS
+                LAT / LON / MGRS
             </TextBlock>
-            <Grid Grid.Row="2" Grid.Column="1" Margin="12,12,0,0"
+            <TextBox Grid.Row="2" Grid.Column="1" Margin="12,12,0,0" x:Name="uiStptValueLat"
+                     Tag="LatUI"
+                     Style="{StaticResource EditorParamEditTextBoxStyle}"
+                     Text="{x:Bind EditStpt.LatUI, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                     ui_ctk:TextBoxExtensions.MaskPlaceholder="–"
+                     ui_ctk:TextBoxExtensions.Regex="^([NSns] [0-8][0-9]° [0-5][0-9]\.[0-9]{3}’)|([NSns] 90° 00\.000’)$"
+                     ui_ctk:TextBoxExtensions.CustomMask="N:[nNsS]"
+                     ui_ctk:TextBoxExtensions.Mask="N 99° 99.999’"
+                     TextChanged="StptTextBox_TextChanged"
+                     LostFocus="StptTextBoxCoord_LostFocus"
+                     ToolTipService.ToolTip="Latitude of steerpoint in DDM format: [N|S] 00° 00.000’"/>
+            <TextBox Grid.Row="2" Grid.Column="2" Margin="12,12,0,0" x:Name="uiStptValueLon"
+                     Tag="LonUI"
+                     Style="{StaticResource EditorParamEditTextBoxStyle}"
+                     Text="{x:Bind EditStpt.LonUI, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                     ui_ctk:TextBoxExtensions.MaskPlaceholder="–"
+                     ui_ctk:TextBoxExtensions.Regex="^([EWew] 0[0-9]{2}° [0-5][0-9]\.[0-9]{3}’)|([EWew] 1[0-7][0-9]° [0-5][0-9]\.[0-9]{3}’)|([EWew] 180° 00\.000’)$"
+                     ui_ctk:TextBoxExtensions.CustomMask="E:[eEwW]"
+                     ui_ctk:TextBoxExtensions.Mask="E 999° 99.999’"
+                     TextChanged="StptTextBox_TextChanged"
+                     LostFocus="StptTextBoxCoord_LostFocus"
+                     ToolTipService.ToolTip="Longitude of steerpoint in DDM format: [E|W] 000° 00.000’"/>
+            <Grid Grid.Row="2" Grid.Column="3" Margin="12,12,0,0"
+                  VerticalAlignment="Center">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                
+                <FontIcon Grid.Column="0" Margin="0,0,12,0"
+                          Foreground="{StaticResource TextFillColorDisabled}"
+                          FontFamily="Segoe Fluent Icons" Glyph="&#xE8AB;"/>
+                <TextBox  Grid.Column="1" x:Name="uiStptValueMGRS"
+                          Tag="MGRS"
+                          Style="{StaticResource EditorParamEditTextBoxStyle}"
+                          TextChanged="StptTextBoxMGRS_LostFocus"
+                          ToolTipService.ToolTip="Location of steerpoint in MGRS format"/>
+                <TextBlock Grid.Column="2" Margin="6,0,6,0" x:Name="uiStptMGRSRezText"
+                           Style="{StaticResource EditorParamStaticTextBlockStyle}">
+                    1m
+                </TextBlock>
+            </Grid>
+
+            <!-- alt/tos fields
+              -->
+            <TextBlock Grid.Row="3" Grid.Column="0" Margin="12,8,0,0"
+                       HorizontalTextAlignment="Right"
+                       Style="{StaticResource EditorParamStaticTextBlockStyle}">
+                ELEV / TOS
+            </TextBlock>
+            <Grid Grid.Row="3" Grid.Column="1" Margin="12,8,0,0"
                   VerticalAlignment="Center">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="125"/>
                     <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="125"/>
                 </Grid.ColumnDefinitions>
-                <TextBox Grid.Row="0" Grid.Column="0" Margin="0,0,0,0" x:Name="uiStptValueLat"
-                         Tag="LatUI"
-                         Style="{StaticResource EditorParamEditTextBoxStyle}"
-                         Text="{x:Bind EditStpt.LatUI, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
-                         ui_ctk:TextBoxExtensions.MaskPlaceholder="–"
-                         ui_ctk:TextBoxExtensions.Regex="^([NSns] [0-8][0-9]° [0-5][0-9]\.[0-9]{3}’)|([NSns] 90° 00\.000’)$"
-                         ui_ctk:TextBoxExtensions.CustomMask="N:[nNsS]"
-                         ui_ctk:TextBoxExtensions.Mask="N 99° 99.999’"
-                         TextChanged="StptTextBox_TextChanged"
-                         ToolTipService.ToolTip="Latitude of steerpoint in DDM format: [N|S] 00° 00.000’"/>
-                <TextBox Grid.Row="0" Grid.Column="1" Margin="12,0,0,0" x:Name="uiStptValueLon"
-                         Tag="LonUI"
-                         Style="{StaticResource EditorParamEditTextBoxStyle}"
-                         Text="{x:Bind EditStpt.LonUI, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
-                         ui_ctk:TextBoxExtensions.MaskPlaceholder="–"
-                         ui_ctk:TextBoxExtensions.Regex="^([EWew] 0[0-9]{2}° [0-5][0-9]\.[0-9]{3}’)|([EWew] 1[0-7][0-9]° [0-5][0-9]\.[0-9]{3}’)|([EWew] 180° 00\.000’)$"
-                         ui_ctk:TextBoxExtensions.CustomMask="E:[eEwW]"
-                         ui_ctk:TextBoxExtensions.Mask="E 999° 99.999’"
-                         TextChanged="StptTextBox_TextChanged"
-                         ToolTipService.ToolTip="Longitude of steerpoint in DDM format: [E|W] 000° 00.000’"/>
-                <TextBox Grid.Row="0" Grid.Column="2" Margin="24,0,0,0" x:Name="uiStptValueAlt"
+
+                <TextBox Grid.Column="0" Margin="0,0,0,0" x:Name="uiStptValueAlt"
                          Tag="Alt"
                          Style="{StaticResource EditorParamEditTextBoxStyle}"
                          PlaceholderText="Ground"
                          Text="{x:Bind EditStpt.Alt, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                          ToolTipService.ToolTip="Elevation of steerpoint in feet"/>
-                <TextBlock Grid.Row="0" Grid.Column="3" Margin="6,0,4,0" x:Name="uiStptAltitudeUnitsText"
+                <TextBlock Grid.Column="3" Margin="6,0,16,0" x:Name="uiStptAltitudeUnitsText"
                            Style="{StaticResource EditorParamStaticTextBlockStyle}">
                     ft
                 </TextBlock>
-                <TextBox Grid.Row="0" Grid.Column="4" Margin="24,0,0,0" x:Name="uiStptValueTOS"
+            </Grid>
+            <TextBox Grid.Row="3" Grid.Column="2" Margin="12,8,0,0" x:Name="uiStptValueTOS"
                          Tag="TOS"
                          Style="{StaticResource EditorParamEditTextBoxStyle}"
                          Text="{x:Bind EditStpt.TOSUI, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
@@ -286,7 +320,6 @@ https://www.gnu.org/licenses/.
                          ui_ctk:TextBoxExtensions.Mask="99:99:99"
                          TextChanged="StptTextBox_TextChanged"
                          ToolTipService.ToolTip="Time Over Steerpoint (TOS) of steerpoint in format: HH:MM:SS, local time"/>
-            </Grid>
         </Grid>
 
         <!--
@@ -394,7 +427,7 @@ https://www.gnu.org/licenses/.
 
                     <!-- oap 2 parameters
                       -->
-                    <ComboBox Grid.Row="2" Grid.Column="0" Margin="0,12,0,0" x:Name="uiStptOAP1Combo"
+                    <ComboBox Grid.Row="2" Grid.Column="0" Margin="0,8,0,0" x:Name="uiStptOAP1Combo"
                               VerticalAlignment="Center"
                               HorizontalAlignment="Stretch"
                               SelectionChanged="OAPCombo_SelectionChanged"
@@ -409,24 +442,24 @@ https://www.gnu.org/licenses/.
                             <TextBlock VerticalAlignment="Center" Margin="12,0,0,0">OAP 2</TextBlock>
                         </StackPanel>
                     </ComboBox>
-                    <TextBlock Grid.Row="2" Grid.Column="1" Margin="12,12,0,0" x:Name="uiStptOAP1TextTitle"
+                    <TextBlock Grid.Row="2" Grid.Column="1" Margin="12,8,0,0" x:Name="uiStptOAP1TextTitle"
                                HorizontalTextAlignment="Right"
                                Style="{StaticResource EditorParamStaticTextBlockStyle}">
                         OAP 2
                     </TextBlock>
-                    <TextBox Grid.Row="2" Grid.Column="2" Margin="12,12,0,0" x:Name="uiStptOAPValueRange1"
+                    <TextBox Grid.Row="2" Grid.Column="2" Margin="12,8,0,0" x:Name="uiStptOAPValueRange1"
                              Style="{StaticResource EditorParamEditTextBoxStyle}"
                              Text="{x:Bind EditStpt.OAP[1].Range, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                              PlaceholderText = "0"
                              MaxLength="8"
                              ToolTipService.ToolTip="Range from steerpoint to OAP"/>
-                    <TextBox Grid.Row="2" Grid.Column="3" Margin="12,12,0,0" x:Name="uiStptOAPValueBrng1"
+                    <TextBox Grid.Row="2" Grid.Column="3" Margin="12,8,0,0" x:Name="uiStptOAPValueBrng1"
                              Style="{StaticResource EditorParamEditTextBoxStyle}"
                              Text="{x:Bind EditStpt.OAP[1].Brng, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                              PlaceholderText = "0.0"
                              MaxLength="5"
                              ToolTipService.ToolTip="Bearing from steerpoint to OAP"/>
-                    <TextBox Grid.Row="2" Grid.Column="4" Margin="12,12,0,0" x:Name="uiStptOAPValueElev1"
+                    <TextBox Grid.Row="2" Grid.Column="4" Margin="12,8,0,0" x:Name="uiStptOAPValueElev1"
                              Style="{StaticResource EditorParamEditTextBoxStyle}"
                              Text="{x:Bind EditStpt.OAP[1].Elev, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                              PlaceholderText = "0"
@@ -494,24 +527,24 @@ https://www.gnu.org/licenses/.
 
                     <!-- vip/vrp 2 parameters
                       -->
-                    <TextBlock Grid.Row="5" Grid.Column="1" Margin="12,12,0,0" x:Name="uiStptVxP1TextTitle"
+                    <TextBlock Grid.Row="5" Grid.Column="1" Margin="12,8,0,0" x:Name="uiStptVxP1TextTitle"
                                HorizontalTextAlignment="Right"
                                Style="{StaticResource EditorParamStaticTextBlockStyle}">
                         Target to PUP
                     </TextBlock>
-                    <TextBox Grid.Row="5" Grid.Column="2" Margin="12,12,0,0" x:Name="uiStptVxPValueRange1"
+                    <TextBox Grid.Row="5" Grid.Column="2" Margin="12,8,0,0" x:Name="uiStptVxPValueRange1"
                              Style="{StaticResource EditorParamEditTextBoxStyle}"
                              Text="{x:Bind EditStpt.VxP[1].Range, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                              PlaceholderText="0"
                              MaxLength="8"
                              ToolTipService.ToolTip="Range from steerpoint to VIP/VRP"/>
-                    <TextBox Grid.Row="5" Grid.Column="3" Margin="12,12,0,0" x:Name="uiStptVxPValueBrng1"
+                    <TextBox Grid.Row="5" Grid.Column="3" Margin="12,8,0,0" x:Name="uiStptVxPValueBrng1"
                              Style="{StaticResource EditorParamEditTextBoxStyle}"
                              Text="{x:Bind EditStpt.VxP[1].Brng, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                              PlaceholderText="0.0"
                              MaxLength="5"
                              ToolTipService.ToolTip="Bearing from steerpoint to VIP/VRP"/>
-                    <TextBox Grid.Row="5" Grid.Column="4" Margin="12,12,0,0" x:Name="uiStptVxPValueElev1"
+                    <TextBox Grid.Row="5" Grid.Column="4" Margin="12,8,0,0" x:Name="uiStptVxPValueElev1"
                              Style="{StaticResource EditorParamEditTextBoxStyle}"
                              Text="{x:Bind EditStpt.VxP[1].Elev, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                              PlaceholderText="0"

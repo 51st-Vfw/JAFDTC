@@ -117,6 +117,8 @@ namespace JAFDTC.UI.F16C
 
         private bool IsRebuildPending { get; set; }
 
+        private bool IsRebuildMGRS { get; set; }
+
         private PointOfInterest CurSelectedPoI { get; set; }
 
         private PoIFilterSpec FilterSpec { get; set; }
@@ -159,6 +161,7 @@ namespace JAFDTC.UI.F16C
             EditStpt.VxP[1].ErrorsChanged += VxP1_DataValidationError;
 
             IsRebuildPending = false;
+            IsRebuildMGRS = false;
 
             CurSelectedPoI = null;
 
@@ -409,8 +412,19 @@ namespace JAFDTC.UI.F16C
         /// <summary>
         /// property changed: rebuild interface state to account for configuration changes.
         /// </summary>
-        private void EditField_PropertyChanged(object sender, EventArgs args)
+        private void EditField_PropertyChanged(object sender, PropertyChangedEventArgs args)
         {
+            if (!IsRebuildMGRS && (args.PropertyName == "LocationUI") && !EditStpt.HasErrors)
+            {
+                SetFieldValidState(uiStptValueMGRS, true);
+                uiStptValueMGRS.Text = CoordMGRS.LLtoMGRS(EditStpt.Lat, EditStpt.Lon, 5);
+                uiStptMGRSRezText.Text = "1m";
+            }
+            else if (!IsRebuildMGRS && (args.PropertyName == "LocationUI"))
+            {
+                uiStptValueMGRS.Text = "";
+                uiStptMGRSRezText.Text = "";
+            }
             RebuildInterfaceState();
         }
 
@@ -663,6 +677,13 @@ namespace JAFDTC.UI.F16C
             EditStpt.TOS = "";
             EditStpt.ClearErrors();
             RebuildInterfaceState();
+
+            DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low, () =>
+            {
+                MapMarkerInfo info = new(MapMarkerInfo.MarkerType.NAV_PT, STPTSystem.SystemInfo.RouteNames[0],
+                                         EditStptIndex + 1, EditStpt.Lat, EditStpt.Lon);
+                NavArgs.VerbMirror?.MirrorVerbMarkerMoved(NavArgs.ParentEditor as IMapControlVerbHandler, info);
+            });
         }
 
         /// <summary>
@@ -827,6 +848,72 @@ namespace JAFDTC.UI.F16C
         private void StptTextBox_TextChanged(object sender, TextChangedEventArgs args)
         {
             RebuildInterfaceState();
+        }
+
+        /// <summary>
+        /// steerpoint text box text lost focus: pass along lat/lon updates after there's been a jiffy to let the
+        /// changes propagate to the edit state.
+        /// </summary>
+        private void StptTextBoxCoord_LostFocus(object sender, RoutedEventArgs args)
+        {
+            // HACK: 100% uncut cya. as the app is shutting down we can get lost focus events that may try to
+            // HACK: operate on ui that has been torn down. in that case, return without doing anything.
+            //
+            if ((Application.Current as JAFDTC.App).IsAppShuttingDown)
+                return;
+
+            DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low, () =>
+            {
+                MapMarkerInfo info = new(MapMarkerInfo.MarkerType.NAV_PT, STPTSystem.SystemInfo.RouteNames[0],
+                                         EditStptIndex + 1, EditStpt.Lat, EditStpt.Lon);
+                NavArgs.VerbMirror?.MirrorVerbMarkerMoved(NavArgs.ParentEditor as IMapControlVerbHandler, info);
+            });
+        }
+
+        /// <summary>
+        /// synchonize the mgrs and lat/lon coordinate information in the editor in response to a text box control
+        /// loosing focus and updating.
+        /// </summary>
+        private void StptTextBoxMGRS_LostFocus(object sender, RoutedEventArgs args)
+        {
+            // HACK: 100% uncut cya. as the app is shutting down we can get lost focus events that may try to
+            // HACK: operate on ui that has been torn down. in that case, return without doing anything.
+            //
+            if ((Application.Current as JAFDTC.App).IsAppShuttingDown)
+                return;
+
+            if (!string.IsNullOrEmpty(uiStptValueMGRS.Text))
+            {
+                CoordLL ll = CoordMGRS.MGRStoLL(uiStptValueMGRS.Text);
+                if (ll != null)
+                {
+                    IsRebuildMGRS = true;
+                    EditStpt.Lat = $"{ll.Lat}";
+                    EditStpt.Lon = $"{ll.Lon}";
+                    EditStpt.LatUI = EditStpt.LatUI;                // clears transient false positive errors
+                    EditStpt.LonUI = EditStpt.LonUI;
+                    CopyEditToConfig(EditStptIndex);
+                    IsRebuildMGRS = false;
+
+                    uiStptMGRSRezText.Text = (uiStptValueMGRS.Text.Length - 5) switch
+                    {
+                        12 => "0.1m",
+                        10 => "1m",
+                        8 => "10m",
+                        6 => "100m",
+                        4 => "1Km",
+                        2 => "10Km",
+                        _ => ""
+                    };
+                }
+                SetFieldValidState(uiStptValueMGRS, (ll != null));
+            }
+            else
+            {
+                SetFieldValidState(uiStptValueMGRS, true);
+                uiStptValueMGRS.Text = CoordMGRS.LLtoMGRS(EditStpt.Lat, EditStpt.Lon, 5);
+                uiStptMGRSRezText.Text = "1m";
+            }
         }
 
         /// <summary>

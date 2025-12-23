@@ -34,6 +34,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using Windows.System;
 
 using static JAFDTC.Utilities.Networking.WyptCaptureDataRx;
@@ -103,11 +104,13 @@ namespace JAFDTC.UI.Base
 
         private bool IsRebuildPending { get; set; }
 
+        private bool IsRebuildMGRS { get; set; }
+
         private PointOfInterest CurSelectedPoI { get; set; }
 
         private PoIFilterSpec FilterSpec { get; set; }
 
-        // read-only properties
+        // ---- read-only properties
 
         private readonly Dictionary<string, TextBox> _curNavptFieldValueMap;
         private readonly Dictionary<string, TextBox> _curNavptTxtBoxExtMap;
@@ -128,6 +131,7 @@ namespace JAFDTC.UI.Base
             CurSelectedPoI = null;
 
             IsRebuildPending = false;
+            IsRebuildMGRS = false;
 
             _curNavptFieldValueMap = new Dictionary<string, TextBox>()
             {
@@ -480,6 +484,13 @@ namespace JAFDTC.UI.Base
             CurSelectedPoI = null;
             RebuildPointsOfInterest();
             RebuildInterfaceState();
+
+            DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low, () =>
+            {
+                MapMarkerInfo info = new(MapMarkerInfo.MarkerType.NAV_PT, PageHelper.SystemInfo.RouteNames[0],
+                                         EditNavptIndex + 1, EditNavpt.Lat, EditNavpt.Lon);
+                NavArgs.VerbMirror?.MirrorVerbMarkerMoved(NavArgs.ParentEditor as IMapControlVerbHandler, info);
+            });
         }
 
         /// <summary>
@@ -562,23 +573,75 @@ namespace JAFDTC.UI.Base
         /// <summary>
         /// navpoint text box text changed: rebuild the interface state to update based on current valid/invalid state.
         /// </summary>
-        private void NavptTextBoxExt_TextChanged(object sender, TextChangedEventArgs args)
+        private void NavptTextBoxCoord_TextChanged(object sender, TextChangedEventArgs args)
         {
             RebuildInterfaceState();
         }
 
         /// <summary>
         /// navpoint text box text lost focus: pass along lat/lon updates after there's been a jiffy to let the
-        /// changes propagate to the edit state.
+        /// changes propagate to the edit state. also use this opportunity to update mgrs.
         /// </summary>
-        private void NavptTextBoxExt_LostFocus(object sender, RoutedEventArgs args)
+        private void NavptTextBoxCoord_LostFocus(object sender, RoutedEventArgs args)
         {
+            // HACK: 100% uncut cya. as the app is shutting down we can get lost focus events that may try to
+            // HACK: operate on ui that has been torn down. in that case, return without doing anything.
+            //
+            if ((Application.Current as JAFDTC.App).IsAppShuttingDown)
+                return;
+
             DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low, () =>
             {
                 MapMarkerInfo info = new(MapMarkerInfo.MarkerType.NAV_PT, PageHelper.SystemInfo.RouteNames[0],
                                          EditNavptIndex + 1, EditNavpt.Lat, EditNavpt.Lon);
                 NavArgs.VerbMirror?.MirrorVerbMarkerMoved(NavArgs.ParentEditor as IMapControlVerbHandler, info);
             });
+        }
+
+        /// <summary>
+        /// synchonize the mgrs and lat/lon coordinate information in the editor in response to a text box control
+        /// loosing focus and updating.
+        /// </summary>
+        private void NavptTextBoxMGRS_LostFocus(object sender, RoutedEventArgs args)
+        {
+            // HACK: 100% uncut cya. as the app is shutting down we can get lost focus events that may try to
+            // HACK: operate on ui that has been torn down. in that case, return without doing anything.
+            //
+            if ((Application.Current as JAFDTC.App).IsAppShuttingDown)
+                return;
+
+            if (!string.IsNullOrEmpty(uiNavptValueMGRS.Text))
+            {
+                CoordLL ll = CoordMGRS.MGRStoLL(uiNavptValueMGRS.Text);
+                if (ll != null)
+                {
+                    IsRebuildMGRS = true;
+                    EditNavpt.Lat = $"{ll.Lat}";
+                    EditNavpt.Lon = $"{ll.Lon}";
+                    EditNavpt.LatUI = EditNavpt.LatUI;              // clears transient false positive errors
+                    EditNavpt.LonUI = EditNavpt.LonUI;
+                    CopyEditToConfig(EditNavptIndex);
+                    IsRebuildMGRS = false;
+
+                    uiNavptMGRSRezText.Text = (uiNavptValueMGRS.Text.Length - 5) switch
+                    {
+                        12 => "0.1m",
+                        10 => "1m",
+                        8 => "10m",
+                        6 => "100m",
+                        4 => "1Km",
+                        2 => "10Km",
+                        _ => ""
+                    };
+                }
+                SetFieldValidState(uiNavptValueMGRS, (ll != null));
+            }
+            else
+            {
+                SetFieldValidState(uiNavptValueMGRS, true);
+                uiNavptValueMGRS.Text = CoordMGRS.LLtoMGRS(EditNavpt.Lat, EditNavpt.Lon, 5);
+                uiNavptMGRSRezText.Text = "1m";
+            }
         }
 
         private void NavptValueName_TextChanged(object sender, TextChangedEventArgs e)
@@ -601,8 +664,8 @@ namespace JAFDTC.UI.Base
                 Utilities.GetModifierKeyStates(out bool isShiftDown, out bool isCtrlDown);
                 if (isCtrlDown)
                 {
-                    // Explicit property set is necessary because the binding update
-                    // is on lost focus, which doesn't occur here.
+                    // Explicit property set is necessary because the binding update is on lost focus, which
+                    // doesn't occur here.
 
                     // TODO: this is broken on TextBoxExtensions text boxes (like the lat/lon fields). for now,
                     // TODO: only do support the hotkeys on the name field.
@@ -625,6 +688,24 @@ namespace JAFDTC.UI.Base
                         e.Handled = true;
                     }
                 }
+            }
+        }
+
+        /// <summary>
+        /// on EditNavpt.LocationUI property changes, update the MGRS coordinates accordingly.
+        /// </summary>
+        private void EditNavpt_PropertyChanged(object sender, PropertyChangedEventArgs args)
+        {
+            if (!IsRebuildMGRS && (args.PropertyName == "LocationUI") && !EditNavpt.HasErrors)
+            {
+                SetFieldValidState(uiNavptValueMGRS, true);
+                uiNavptValueMGRS.Text = CoordMGRS.LLtoMGRS(EditNavpt.Lat, EditNavpt.Lon, 5);
+                uiNavptMGRSRezText.Text = "1m";
+            }
+            else if (!IsRebuildMGRS && (args.PropertyName == "LocationUI"))
+            {
+                uiNavptValueMGRS.Text = "";
+                uiNavptMGRSRezText.Text = "";
             }
         }
 
@@ -669,6 +750,8 @@ namespace JAFDTC.UI.Base
 
             EditNavpt ??= PageHelper.CreateEditNavpt(EditField_PropertyChanged, EditNavpt_DataValidationError);
             ValidateNavpt ??= PageHelper.CreateEditNavpt(null, null);
+
+            EditNavpt.PropertyChanged += EditNavpt_PropertyChanged;
 
             Config = NavArgs.Config;
 
