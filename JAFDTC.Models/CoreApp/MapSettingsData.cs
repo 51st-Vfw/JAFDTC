@@ -1,6 +1,6 @@
-// ********************************************************************************************************************
+﻿// ********************************************************************************************************************
 //
-// MapSettingsDialog.xaml.cs -- ui c# for map settings dialog
+// MapSettingsData.cs -- map window settings specification
 //
 // Copyright(C) 2025 ilominar/raven
 //
@@ -17,16 +17,14 @@
 //
 // ********************************************************************************************************************
 
-using JAFDTC.Models.CoreApp;
-using Microsoft.UI.Xaml.Controls;
+using System.Text.Json.Serialization;
 
-namespace JAFDTC.UI.App
+namespace JAFDTC.Models.CoreApp
 {
     /// <summary>
-    /// ContentDialog to allow the user to specify the settings for a map window. these settings control things like
-    /// auto open of the window, tile cache usage, etc.
+    /// captures parameters for the map window settings.
     /// </summary>
-    public sealed partial class MapSettingsDialog : ContentDialog
+    public sealed class MapSettingsData
     {
         // ------------------------------------------------------------------------------------------------------------
         //
@@ -34,12 +32,16 @@ namespace JAFDTC.UI.App
         //
         // ------------------------------------------------------------------------------------------------------------
 
-        public MapSettingsData Settings => new(uiSetCkbxAutoOpen.IsChecked ?? false,
-                                               uiSetCkbxEnableCache.IsChecked ?? false);
+        public bool IsAutoOpen { get; set; }
+        public bool IsTileCacheEnabled { get; set; }
 
-        public bool IsAutoOpen => uiSetCkbxAutoOpen.IsChecked ?? false;
+        // ---- constructed properties
 
-        public bool IsTileCacheEnabled => uiSetCkbxEnableCache.IsChecked ?? false;
+        [JsonIgnore]
+        public bool IsDefault => ((IsAutoOpen == false) && (IsTileCacheEnabled == true));
+
+        [JsonIgnore]
+        public static MapFilterSpec Default => new();
 
         // ------------------------------------------------------------------------------------------------------------
         //
@@ -47,15 +49,9 @@ namespace JAFDTC.UI.App
         //
         // ------------------------------------------------------------------------------------------------------------
 
-        public MapSettingsDialog(MapSettingsData settings, string dbasePath, string dbaseSize)
-        {
-            InitializeComponent();
+        public MapSettingsData() => (IsAutoOpen, IsTileCacheEnabled) = (false, true);
 
-            uiTxtCacheInfo.Text = $"The map tile cache currently uses {dbaseSize} in the directory:";
-            uiTxtCachePath.Text = dbasePath;
-
-            uiSetCkbxAutoOpen.IsChecked = settings.IsAutoOpen;
-            uiSetCkbxEnableCache.IsChecked = settings.IsTileCacheEnabled;
-        }
+        public MapSettingsData(bool isAutoOpen, bool isTileCacheEabled)
+            => (IsAutoOpen, IsTileCacheEnabled) = (isAutoOpen, isTileCacheEabled);
     }
 }

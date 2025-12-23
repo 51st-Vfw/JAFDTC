@@ -1610,7 +1610,7 @@ namespace JAFDTC.UI.App
 
             base.OnNavigatedTo(args);
 
-            if (Settings.IsMapWindowAutoOpen)
+            if (Settings.MapSettings.IsAutoOpen)
                 Utilities.DispatchAfterDelay(DispatcherQueue, 1.0, false, (s, e) => CoreOpenMap(false));
 
             (Application.Current as JAFDTC.App).Window.POIDbFileActivation += Window_FileActivation;

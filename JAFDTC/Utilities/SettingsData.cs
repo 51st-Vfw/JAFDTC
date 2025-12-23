@@ -84,6 +84,8 @@ namespace JAFDTC.Utilities
 
         public string LastWindowSetupMap { get; set; }
 
+        public MapSettingsData MapSettings { get; set; }
+
         public string WingName { get; set; }
 
         public string Callsign { get; set; }

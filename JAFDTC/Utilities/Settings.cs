@@ -187,32 +187,6 @@ namespace JAFDTC.Utilities
             }
         }
 
-        public static bool IsMapWindowAutoOpen
-        {
-            get => _currentSettings.IsMapWindowAutoOpen;
-            set
-            {
-                if (_currentSettings.IsMapWindowAutoOpen != value)
-                {
-                    _currentSettings.IsMapWindowAutoOpen = value;
-                    FileManager.WriteSettings(_currentSettings);
-                }
-            }
-        }
-
-        public static bool IsMapTileCacheDisabled
-        {
-            get => _currentSettings.IsMapTileCacheDisabled;
-            set
-            {
-                if (_currentSettings.IsMapTileCacheDisabled != value)
-                {
-                    _currentSettings.IsMapTileCacheDisabled = value;
-                    FileManager.WriteSettings(_currentSettings);
-                }
-            }
-        }
-
         public static int LastAirframeSelection
         {
             get => _currentSettings.LastAirframeSelection;
@@ -395,6 +369,19 @@ namespace JAFDTC.Utilities
             }
         }
 
+        public static MapSettingsData MapSettings
+        {
+            get => _currentSettings.MapSettings;
+            set
+            {
+                if (_currentSettings.MapSettings != value)
+                {
+                    _currentSettings.MapSettings = value;
+                    FileManager.WriteSettings(_currentSettings);
+                }
+}
+        }
+
         public static int TCPPortCmdTx
         {
             get => _currentSettings.TCPPortCmdTx;
@@ -436,6 +423,11 @@ namespace JAFDTC.Utilities
             Settings.IsVersionUpdated = false;
 
             _currentSettings = FileManager.ReadSettings();
+
+            // ensure we have defaults for object types in the settings.
+            //
+            _currentSettings.MapSettings ??= new();
+            _currentSettings.LastThreatFilter ??= new();
 
             if (Settings.VersionJAFDTC != Globals.VersionJAFDTC)
             {

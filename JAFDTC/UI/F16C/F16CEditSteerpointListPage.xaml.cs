@@ -841,7 +841,7 @@ namespace JAFDTC.UI.F16C
 
             base.OnNavigatedTo(args);
 
-            if (Settings.IsMapWindowAutoOpen)
+            if (Settings.MapSettings.IsAutoOpen)
                 Utilities.DispatchAfterDelay(DispatcherQueue, 1.0, false, (s, e) => CoreOpenMap(false));
         }
 

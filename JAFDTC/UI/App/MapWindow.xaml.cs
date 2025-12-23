@@ -259,7 +259,7 @@ namespace JAFDTC.UI.App
                 uiMapTextAttribution.Inlines.Add(inline);
 
             _mapTileCache = null;
-            if (!Settings.IsMapTileCacheDisabled)
+            if (Settings.MapSettings.IsTileCacheEnabled)
             {
 #if ENABLE_MAP_FILE_CACHE
 
@@ -959,17 +959,14 @@ namespace JAFDTC.UI.App
         /// </summary>
         public async void CmdSettings_Click(object sender, RoutedEventArgs args)
         {
-            MapSettingsDialog settingsDialog = new(FileManager.MapTileCachePath, FileManager.GetCurrentMapTileCacheSize(),
-                                                   Settings.IsMapWindowAutoOpen, !Settings.IsMapTileCacheDisabled)
+            MapSettingsDialog settingsDialog = new(Settings.MapSettings,
+                                                   FileManager.MapTileCachePath, FileManager.GetCurrentMapTileCacheSize())
             {
                 XamlRoot = Content.XamlRoot
             };
             ContentDialogResult result = await settingsDialog.ShowAsync();
             if (result == ContentDialogResult.Primary)
-            {
-                Settings.IsMapTileCacheDisabled = !settingsDialog.IsTileCacheEnabled;
-                Settings.IsMapWindowAutoOpen = settingsDialog.IsAutoOpen;
-            }
+                Settings.MapSettings = settingsDialog.Settings;
         }
 
         // ---- zoom slider -------------------------------------------------------------------------------------------

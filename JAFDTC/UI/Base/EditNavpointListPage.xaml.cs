@@ -750,7 +750,7 @@ namespace JAFDTC.UI.Base
 
             ClipboardChangedHandler(null, null);
 
-            if (Settings.IsMapWindowAutoOpen)
+            if (Settings.MapSettings.IsAutoOpen)
                 Utilities.DispatchAfterDelay(DispatcherQueue, 1.0, false, (s, e) => CoreOpenMap(false));
         }
 
