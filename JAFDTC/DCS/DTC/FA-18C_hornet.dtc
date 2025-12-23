@@ -2141,6 +2141,10 @@
                                                                                                                                "displayName": "",
                                                                                                                                  "unit_type": "",
                                                                                                                                     "wstype": [ 3, 12, 14, 11 ]
+                                                                                                                           }, {
+                                                                                                                               "displayName": "",
+                                                                                                                                 "unit_type": "ALBATROS",
+                                                                                                                                    "wstype": [  ]
                                                                                                                            } ],
                                                                                                              "thresholds": [ {
                                                                                                                                "index": 1,
@@ -7070,6 +7074,10 @@
                                                                                                         "displayName": "",
                                                                                                           "unit_type": "",
                                                                                                              "wstype": [ 3, 12, 14, 11 ]
+                                                                                                    }, {
+                                                                                                        "displayName": "",
+                                                                                                          "unit_type": "ALBATROS",
+                                                                                                             "wstype": [  ]
                                                                                                     } ]
                                                                                   }, {
                                                                                        "aspj_xmit": true,
@@ -8243,6 +8251,10 @@
                                                                                                         "displayName": "",
                                                                                                           "unit_type": "",
                                                                                                              "wstype": [ 3, 12, 14, 11 ]
+                                                                                                    }, {
+                                                                                                        "displayName": "",
+                                                                                                          "unit_type": "ALBATROS",
+                                                                                                             "wstype": [  ]
                                                                                                     } ]
                                                                                   }, {
                                                                                        "aspj_xmit": true,
@@ -9548,6 +9560,10 @@
                                                                                                         "displayName": "",
                                                                                                           "unit_type": "",
                                                                                                              "wstype": [ 3, 12, 14, 11 ]
+                                                                                                    }, {
+                                                                                                        "displayName": "",
+                                                                                                          "unit_type": "ALBATROS",
+                                                                                                             "wstype": [  ]
                                                                                                     } ]
                                                                                   }, {
                                                                                        "aspj_xmit": true,
@@ -10901,6 +10917,10 @@
                                                                                                         "displayName": "",
                                                                                                           "unit_type": "",
                                                                                                              "wstype": [ 3, 12, 14, 11 ]
+                                                                                                    }, {
+                                                                                                        "displayName": "",
+                                                                                                          "unit_type": "ALBATROS",
+                                                                                                             "wstype": [  ]
                                                                                                     } ]
                                                                                   }, {
                                                                                        "aspj_xmit": true,
@@ -12266,6 +12286,10 @@
                                                                                                         "displayName": "",
                                                                                                           "unit_type": "",
                                                                                                              "wstype": [ 3, 12, 14, 11 ]
+                                                                                                    }, {
+                                                                                                        "displayName": "",
+                                                                                                          "unit_type": "ALBATROS",
+                                                                                                             "wstype": [  ]
                                                                                                     } ]
                                                                                   }, {
                                                                                        "aspj_xmit": true,

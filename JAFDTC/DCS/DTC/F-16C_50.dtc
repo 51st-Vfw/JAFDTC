@@ -2211,6 +2211,10 @@
                                                                                                        "displayName": "",
                                                                                                          "unit_type": "",
                                                                                                             "wstype": [ 3, 12, 14, 11 ]
+                                                                                                   }, {
+                                                                                                       "displayName": "",
+                                                                                                         "unit_type": "ALBATROS",
+                                                                                                            "wstype": [  ]
                                                                                                    } ],
                                                                                         "unknown": false
                                                                                  }, {
@@ -3792,6 +3796,10 @@
                                                                                                        "displayName": "",
                                                                                                          "unit_type": "",
                                                                                                             "wstype": [ 3, 12, 14, 11 ]
+                                                                                                   }, {
+                                                                                                       "displayName": "",
+                                                                                                         "unit_type": "ALBATROS",
+                                                                                                            "wstype": [  ]
                                                                                                    } ],
                                                                                         "unknown": false
                                                                                  }, {
@@ -6247,6 +6255,10 @@
                                                                                                                                   "displayName": "",
                                                                                                                                     "unit_type": "",
                                                                                                                                        "wstype": [ 3, 12, 14, 11 ]
+                                                                                                                              }, {
+                                                                                                                                  "displayName": "",
+                                                                                                                                    "unit_type": "ALBATROS",
+                                                                                                                                       "wstype": [  ]
                                                                                                                               } ],
                                                                                                                 "thresholds": [ {
                                                                                                                                   "index": 1,
