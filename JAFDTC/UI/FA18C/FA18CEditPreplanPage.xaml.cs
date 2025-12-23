@@ -17,7 +17,6 @@
 //
 // ********************************************************************************************************************
 
-using CommunityToolkit.WinUI;
 using JAFDTC.Models;
 using JAFDTC.Models.DCS;
 using JAFDTC.Models.FA18C;
@@ -35,15 +34,12 @@ using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Threading;
 using System.Threading.Tasks;
-using Windows.Security.EnterpriseData;
+
 using static JAFDTC.Utilities.Networking.WyptCaptureDataRx;
-using static System.Collections.Specialized.BitVector32;
 
 namespace JAFDTC.UI.FA18C
 {
@@ -1057,6 +1053,12 @@ namespace JAFDTC.UI.FA18C
         /// </summary>
         private void CoordText_LostFocus(object sender, RoutedEventArgs args)
         {
+            // HACK: 100% uncut cya. as the app is shutting down we can get lost focus events that may try to
+            // HACK: operate on ui that has been torn down. in that case, return without doing anything.
+            //
+            if ((Application.Current as JAFDTC.App).IsAppShuttingDown)
+                return;
+
             // CONSIDER: may be better here to handle this in a property changed handler rather than here?
             DispatcherQueue.TryEnqueue(DispatcherQueuePriority.Low, () =>
             {

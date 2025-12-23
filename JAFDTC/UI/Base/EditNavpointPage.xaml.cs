@@ -586,6 +586,7 @@ namespace JAFDTC.UI.Base
         {
             // HACK: 100% uncut cya. as the app is shutting down we can get lost focus events that may try to
             // HACK: operate on ui that has been torn down. in that case, return without doing anything.
+            // HACK: this potentially prevents persisting changes made to the control prior to focus loss.
             //
             if ((Application.Current as JAFDTC.App).IsAppShuttingDown)
                 return;
@@ -606,6 +607,7 @@ namespace JAFDTC.UI.Base
         {
             // HACK: 100% uncut cya. as the app is shutting down we can get lost focus events that may try to
             // HACK: operate on ui that has been torn down. in that case, return without doing anything.
+            // HACK: this potentially prevents persisting changes made to the control prior to focus loss.
             //
             if ((Application.Current as JAFDTC.App).IsAppShuttingDown)
                 return;

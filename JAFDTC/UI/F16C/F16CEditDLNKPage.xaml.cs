@@ -597,6 +597,13 @@ namespace JAFDTC.UI.F16C
         /// </summary>
         private void OwnTextFillTNDL_LostFocus(object sender, RoutedEventArgs args)
         {
+            // HACK: 100% uncut cya. as the app is shutting down we can get lost focus events that may try to
+            // HACK: operate on ui that has been torn down. in that case, return without doing anything.
+            // HACK: this potentially prevents persisting changes made to the control prior to focus loss.
+            //
+            if ((Application.Current as JAFDTC.App).IsAppShuttingDown)
+                return;
+
             TextBox tbox = (TextBox)sender;
             tbox.IsEnabled = false;
 #if NOPE
@@ -637,6 +644,13 @@ namespace JAFDTC.UI.F16C
         /// </summary>
         private void OwnText_LostFocus(object sender, RoutedEventArgs args)
         {
+            // HACK: 100% uncut cya. as the app is shutting down we can get lost focus events that may try to
+            // HACK: operate on ui that has been torn down. in that case, return without doing anything.
+            // HACK: this potentially prevents persisting changes made to the control prior to focus loss.
+            //
+            if ((Application.Current as JAFDTC.App).IsAppShuttingDown)
+                return;
+
             TextBox textBox = (TextBox)sender;
             if (((textBox == uiOwnTextCallsign) || (textBox == uiOwnTextFENum)) && (textBox.Text == "––"))
             {
@@ -670,6 +684,13 @@ namespace JAFDTC.UI.F16C
         /// </summary>
         private void TNDLTextTNDL_LostFocus(object sender, RoutedEventArgs args)
         {
+            // HACK: 100% uncut cya. as the app is shutting down we can get lost focus events that may try to
+            // HACK: operate on ui that has been torn down. in that case, return without doing anything.
+            // HACK: this potentially prevents persisting changes made to the control prior to focus loss.
+            //
+            if ((Application.Current as JAFDTC.App).IsAppShuttingDown)
+                return;
+
             TextBox tbox = (TextBox)sender;
             if (string.IsNullOrEmpty(tbox.Text))
             {
