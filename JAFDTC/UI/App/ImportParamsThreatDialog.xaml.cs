@@ -35,18 +35,14 @@ namespace JAFDTC.UI.App
         //
         // ------------------------------------------------------------------------------------------------------------
 
-        // ---- public properties, computed
+        public MapImportSpec Spec => new(Path,
+                                         uiComboCoalition.SelectedIndex switch { 1 => CoalitionType.RED,
+                                                                                 _ => CoalitionType.BLUE },
+                                         (uiCkbxEnemyOnly.IsChecked == true),
+                                         (uiCkbxIsSummaryOnly.IsChecked == true),
+                                         (uiCkbxIsAliveOnly.IsChecked == true));
 
-        public CoalitionType FriendlyCoalition
-        {
-            get => uiComboCoalition.SelectedIndex switch { 0 => CoalitionType.BLUE, _ => CoalitionType.RED };
-        }
-
-        public bool IsEnemyOnly { get => (uiCkbxEnemyOnly.IsChecked == true); }
-
-        public bool IsSummaryOnly { get => (uiCkbxIsSummaryOnly.IsChecked == true); }
-
-        public bool IsAliveOnly { get => (uiCkbxIsAliveOnly.IsChecked == true); }
+        private string Path { get; set; }
 
         // ------------------------------------------------------------------------------------------------------------
         //
@@ -54,14 +50,21 @@ namespace JAFDTC.UI.App
         //
         // ------------------------------------------------------------------------------------------------------------
 
-        public ImportParamsThreatDialog()
+        public ImportParamsThreatDialog(MapImportSpec spec = null)
         {
+            spec ??= new();
+
             InitializeComponent();
 
-            uiComboCoalition.SelectedIndex = 0;
-            uiCkbxEnemyOnly.IsChecked = true;
-            uiCkbxIsSummaryOnly.IsChecked = false;
-            uiCkbxIsAliveOnly.IsChecked = true;
+            Path = spec.Path;
+            uiComboCoalition.SelectedIndex = spec.FriendlyCoalition switch
+            {
+                CoalitionType.RED => 1,
+                _ => 0
+            };
+            uiCkbxEnemyOnly.IsChecked = spec.IsEnemyOnly;
+            uiCkbxIsSummaryOnly.IsChecked = spec.IsSummaryOnly;
+            uiCkbxIsAliveOnly.IsChecked = spec.IsAliveOnly;
         }
     }
 }

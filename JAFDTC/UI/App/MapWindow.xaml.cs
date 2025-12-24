@@ -815,19 +815,24 @@ namespace JAFDTC.UI.App
 
             // set up parameters for the import with ImportParamsThreatDialog.
             //
-            ImportParamsThreatDialog setupDialog = new()
+            MapImportSpec importSpec = new()
+            {
+                Path = resultPick.Path
+            };
+            ImportParamsThreatDialog setupDialog = new(importSpec)
             {
                 XamlRoot = Content.XamlRoot
             };
             result = await setupDialog.ShowAsync(ContentDialogPlacement.Popup);
             if (result != ContentDialogResult.Primary)
                 return;                                         // **** EXITS: cancel
+            importSpec = setupDialog.Spec;
 
             try
             {
                 // build extractor and import groups/units from the file.
                 //
-                ImportedMarkerPath = resultPick.Path;
+                ImportedMarkerPath = importSpec.Path;
 
                 IExtractor extractor = Path.GetExtension(resultPick.Path).ToLower() switch
                 {
@@ -842,11 +847,11 @@ namespace JAFDTC.UI.App
                     FilePath = resultPick.Path,
                     Theater = Theater,
                     UnitCategories = [UnitCategoryType.GROUND, UnitCategoryType.NAVAL],
-                    IsAlive = (setupDialog.IsAliveOnly) ? true : null
+                    IsAlive = (importSpec.IsAliveOnly) ? true : null
                 };
-                if (setupDialog.IsEnemyOnly && (setupDialog.FriendlyCoalition == CoalitionType.BLUE))
+                if (importSpec.IsEnemyOnly && (importSpec.FriendlyCoalition == CoalitionType.BLUE))
                     criteria.Coalitions = [CoalitionType.RED];
-                else if (setupDialog.IsEnemyOnly && (setupDialog.FriendlyCoalition == CoalitionType.RED))
+                else if (importSpec.IsEnemyOnly && (importSpec.FriendlyCoalition == CoalitionType.RED))
                     criteria.Coalitions = [CoalitionType.BLUE];
                 IReadOnlyList<UnitGroupItem> groups = extractor.Extract(criteria)
                     ?? throw new Exception($"Encountered an error while importing from path\n\n{resultPick.Path}");
@@ -859,7 +864,7 @@ namespace JAFDTC.UI.App
                 foreach (UnitGroupItem group in groups)
                 {
 // TODO: what to do on units outside of current theater? ignore? warn and create anyway?
-                    MapMarkerInfo.MarkerType type = (group.Coalition == setupDialog.FriendlyCoalition)
+                    MapMarkerInfo.MarkerType type = (group.Coalition == importSpec.FriendlyCoalition)
                                                     ? MapMarkerInfo.MarkerType.UNIT_FRIEND
                                                     : MapMarkerInfo.MarkerType.UNIT_ENEMY;
                     string threatType = null;
@@ -879,7 +884,7 @@ namespace JAFDTC.UI.App
                         avgLat += unit.Position.Latitude;
                         avgLon += unit.Position.Longitude;
 
-                        if (!setupDialog.IsSummaryOnly)
+                        if (!importSpec.IsSummaryOnly)
                         {
                             uiMap.AddMarker(type, unit.UniqueID,
                                             new Location(unit.Position.Latitude, unit.Position.Longitude));
@@ -892,7 +897,7 @@ namespace JAFDTC.UI.App
                     if (threatRadius > 0.0)
                     {
                         uiMap.AddMarker(type, group.UniqueID, new Location(avgLat, avgLon), threatRadius,
-                                        !setupDialog.IsSummaryOnly);
+                                        !importSpec.IsSummaryOnly);
                         _mapImportedMarkerDict[group.UniqueID] = threatType + " WEZ";
                     }
                 }
