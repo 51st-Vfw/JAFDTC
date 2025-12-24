@@ -18,15 +18,14 @@
 // ********************************************************************************************************************
 
 using JAFDTC.Models.DCS;
+using JAFDTC.Models.POI;
 using JAFDTC.UI.App;
 using JAFDTC.Utilities;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.Windows.Storage.Pickers;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Reflection;
 using System.Threading.Tasks;
 using Windows.Storage;
 

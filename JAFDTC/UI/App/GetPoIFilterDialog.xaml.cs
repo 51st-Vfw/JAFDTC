@@ -18,6 +18,7 @@
 // ********************************************************************************************************************
 
 using JAFDTC.Models.DCS;
+using JAFDTC.Models.POI;
 using Microsoft.UI.Xaml.Controls;
 using System.Collections.Generic;
 

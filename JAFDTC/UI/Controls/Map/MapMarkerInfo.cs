@@ -17,7 +17,7 @@
 //
 // ********************************************************************************************************************
 
-using JAFDTC.Models.DCS;
+using JAFDTC.Models.POI;
 using System;
 
 namespace JAFDTC.UI.Controls.Map

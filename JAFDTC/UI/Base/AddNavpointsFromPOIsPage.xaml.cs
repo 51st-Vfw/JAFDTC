@@ -19,6 +19,7 @@
 
 using JAFDTC.Models;
 using JAFDTC.Models.DCS;
+using JAFDTC.Models.POI;
 using JAFDTC.UI.App;
 using JAFDTC.Utilities;
 using Microsoft.UI.Xaml;
@@ -28,7 +29,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text.RegularExpressions;
 
 namespace JAFDTC.UI.Base
 {

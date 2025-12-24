@@ -18,12 +18,12 @@
 //
 // ********************************************************************************************************************
 
+using JAFDTC.Models.POI;
 using JAFDTC.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
-using System.Xml.Linq;
 
 namespace JAFDTC.Models.DCS
 {

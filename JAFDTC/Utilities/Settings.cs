@@ -19,7 +19,7 @@
 // ********************************************************************************************************************
 
 using JAFDTC.Models.CoreApp;
-using JAFDTC.Models.DCS;
+using JAFDTC.Models.POI;
 using System.Collections.Generic;
 using System.Diagnostics;
 

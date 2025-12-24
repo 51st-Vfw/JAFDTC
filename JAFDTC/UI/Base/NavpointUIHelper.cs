@@ -22,11 +22,11 @@ using JAFDTC.File.Models;
 using JAFDTC.Models.Base;
 using JAFDTC.Models.CoreApp;
 using JAFDTC.Models.DCS;
+using JAFDTC.Models.POI;
 using JAFDTC.Models.Units;
 using JAFDTC.UI.App;
 using JAFDTC.UI.Controls.Map;
 using JAFDTC.Utilities;
-using Microsoft.Extensions.Options;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -37,8 +37,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Xml.Serialization;
-using Windows.Services.Maps;
 
 namespace JAFDTC.UI.Base
 {
