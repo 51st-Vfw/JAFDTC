@@ -20,7 +20,7 @@
 using CommunityToolkit.WinUI;
 using JAFDTC.Models;
 using JAFDTC.Models.Base;
-using JAFDTC.Models.DCS;
+using JAFDTC.Models.POI;
 using JAFDTC.UI.Controls.Map;
 using JAFDTC.Utilities;
 using JAFDTC.Utilities.Networking;

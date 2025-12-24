@@ -19,9 +19,9 @@
 
 using JAFDTC.Models;
 using JAFDTC.Models.Base;
-using JAFDTC.Models.DCS;
 using JAFDTC.Models.M2000C;
 using JAFDTC.Models.M2000C.WYPT;
+using JAFDTC.Models.POI;
 using JAFDTC.UI.App;
 using JAFDTC.UI.Base;
 using JAFDTC.UI.Controls.Map;
@@ -99,7 +99,7 @@ namespace JAFDTC.UI.M2000C
             M2000CConfiguration m2kConfig = (M2000CConfiguration)config;
             ObservableCollection<WaypointInfo> points = m2kConfig.WYPT.Points;
             int startNumber = (points.Count == 0) ? 1 : points[^1].Number + 1;
-            foreach (Models.DCS.PointOfInterest poi in pois)
+            foreach (PointOfInterest poi in pois)
             {
                 WaypointInfo wypt = new()
                 {

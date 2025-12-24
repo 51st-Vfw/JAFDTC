@@ -26,6 +26,7 @@ using JAFDTC.Models;
 using JAFDTC.Models.A10C;
 using JAFDTC.Models.DCS;
 using JAFDTC.Models.F16C;
+using JAFDTC.Models.POI;
 using System;
 using System.Collections.Generic;
 using System.Data;

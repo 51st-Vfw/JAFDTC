@@ -19,6 +19,7 @@
 
 using JAFDTC.Models.DCS;
 using JAFDTC.Models.F16C.DLNK;
+using JAFDTC.Models.POI;
 using JAFDTC.UI.Base;
 using JAFDTC.Utilities;
 using Microsoft.UI.Windowing;

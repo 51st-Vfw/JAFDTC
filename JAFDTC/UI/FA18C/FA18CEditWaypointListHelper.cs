@@ -19,9 +19,9 @@
 
 using JAFDTC.Models;
 using JAFDTC.Models.Base;
-using JAFDTC.Models.DCS;
 using JAFDTC.Models.FA18C;
 using JAFDTC.Models.FA18C.WYPT;
+using JAFDTC.Models.POI;
 using JAFDTC.UI.App;
 using JAFDTC.UI.Base;
 using JAFDTC.UI.Controls.Map;

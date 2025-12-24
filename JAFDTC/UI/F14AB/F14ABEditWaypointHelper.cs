@@ -19,9 +19,9 @@
 
 using JAFDTC.Models;
 using JAFDTC.Models.Base;
-using JAFDTC.Models.DCS;
 using JAFDTC.Models.F14AB;
 using JAFDTC.Models.F14AB.WYPT;
+using JAFDTC.Models.POI;
 using JAFDTC.UI.Base;
 using JAFDTC.Utilities;
 using System;

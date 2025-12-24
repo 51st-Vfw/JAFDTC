@@ -18,9 +18,9 @@
 // ********************************************************************************************************************
 
 using CommunityToolkit.WinUI;
-using JAFDTC.Models.DCS;
 using JAFDTC.Models.F16C;
 using JAFDTC.Models.F16C.STPT;
+using JAFDTC.Models.POI;
 using JAFDTC.UI.Base;
 using JAFDTC.UI.Controls.Map;
 using JAFDTC.Utilities;

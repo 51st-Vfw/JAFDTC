@@ -18,9 +18,9 @@
 // ********************************************************************************************************************
 
 using JAFDTC.Models.Base;
-using JAFDTC.Models.DCS;
 using JAFDTC.Models.M2000C;
 using JAFDTC.Models.M2000C.WYPT;
+using JAFDTC.Models.POI;
 using JAFDTC.Models;
 using JAFDTC.UI.Base;
 using JAFDTC.Utilities;

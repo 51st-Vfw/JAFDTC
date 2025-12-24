@@ -19,7 +19,7 @@
 
 using JAFDTC.Models;
 using JAFDTC.Models.Base;
-using JAFDTC.Models.DCS;
+using JAFDTC.Models.POI;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

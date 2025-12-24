@@ -17,9 +17,9 @@
 //
 // ********************************************************************************************************************
 
-using JAFDTC.Models.DCS;
 using JAFDTC.Models.F15E;
 using JAFDTC.Models.F15E.STPT;
+using JAFDTC.Models.POI;
 using JAFDTC.Utilities.Networking;
 using JAFDTC.Utilities;
 using Microsoft.UI.Dispatching;

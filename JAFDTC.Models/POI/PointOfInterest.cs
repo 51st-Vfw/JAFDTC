@@ -22,15 +22,10 @@
 //
 #define noDEBUG_POI_UID_HUMAN_FRIENDLY
 
-using JAFDTC.Models.DCS;
-using JAFDTC.Models.POI;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace JAFDTC.Models.DCS
+namespace JAFDTC.Models.POI
 {
     /// <summary>
     /// defines the properties of a point of interest (poi) known to jafdtc. these instances are managed by the poi

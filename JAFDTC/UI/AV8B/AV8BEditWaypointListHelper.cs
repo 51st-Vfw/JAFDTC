@@ -21,7 +21,7 @@ using JAFDTC.Models;
 using JAFDTC.Models.AV8B;
 using JAFDTC.Models.AV8B.WYPT;
 using JAFDTC.Models.Base;
-using JAFDTC.Models.DCS;
+using JAFDTC.Models.POI;
 using JAFDTC.UI.App;
 using JAFDTC.UI.Base;
 using JAFDTC.UI.Controls.Map;
