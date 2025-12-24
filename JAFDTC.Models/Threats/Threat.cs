@@ -19,6 +19,7 @@
 
 using JAFDTC.Models.Core;
 using JAFDTC.Models.Units;
+using System.Text.Json.Serialization;
 
 namespace JAFDTC.Models.Threats
 {
@@ -45,6 +46,13 @@ namespace JAFDTC.Models.Threats
 
         // ---- computed properties
 
+        [JsonIgnore]
         public string UniqueID => $"{Type}:{Coalition}:{UnitTypeDCS.Replace(' ', '_').Replace('-', '_')}";
+
+        // ---- construction
+
+        public Threat()
+            => (Type, Category, Coalition, UnitTypeDCS, Name, RadiusWEZ)
+                = (ThreatType.UNKNOWN, UnitCategoryType.UNKNOWN, CoalitionType.UNKNOWN, "", "", 0.0);
     }
 }
