@@ -23,7 +23,6 @@ using JAFDTC.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Xml;
 
 namespace JAFDTC.Models.DCS
 {
@@ -33,19 +32,19 @@ namespace JAFDTC.Models.DCS
     /// </summary>
     public class ThreatDbaseQuery
     {
-        public string[]? TypesDCS;                              // match iff type in array
+        public string[]? UnitTypesDCS;                          // match iff type in array
         public ThreatType[]? ThreatTypes;                       // match iff threat in array
         public UnitCategoryType[]? Categories;                  // match iff categories in array
         public CoalitionType[]? Coalitions;                     // match iff coalition in array
         public string Name;                                     // match iff name contains value (case-insensitive)
 
-        public bool IsSingleMatch;                              // return USER ThreatType when multiple types match
+        public bool IsUserOnly;                                 // return USER ThreatType when multiple types match
 
-        public ThreatDbaseQuery(string[]? typesDCS = null, string name = null, ThreatType[]? threatTypes = null,
+        public ThreatDbaseQuery(string[]? unitTypesDCS = null, string name = null, ThreatType[]? threatTypes = null,
                                 UnitCategoryType[]? categories = null, CoalitionType[]? coalitions = null,
-                                bool isSingleMatch = false)
-            => (TypesDCS, Name, ThreatTypes, Categories, Coalitions, IsSingleMatch)
-                = (typesDCS, name, threatTypes, categories, coalitions, isSingleMatch);
+                                bool isUserOnly = false)
+            => (UnitTypesDCS, Name, ThreatTypes, Categories, Coalitions, IsUserOnly)
+                = (unitTypesDCS, name, threatTypes, categories, coalitions, isUserOnly);
     }
 
     // ================================================================================================================
@@ -121,11 +120,20 @@ namespace JAFDTC.Models.DCS
             List<Threat> matches = [.. threats.LimitThreatTypes(query.ThreatTypes)
                                               .LimitNames(query.Name)
                                               .LimitCategories(query.Categories)
-                                              .LimitDCSTypes(query.TypesDCS)
+                                              .LimitDCSTypes(query.UnitTypesDCS)
                                               .LimitCoalitions(query.Coalitions) ];
-            if (query.IsSingleMatch)
+            if (query.IsUserOnly)
             {
-// TODO: handle isSingleMatch
+                HashSet<string> userTypes = [ ];
+                foreach (Threat threat in matches)
+                    if (threat.Type == ThreatType.USER)
+                        userTypes.Add(threat.UnitTypeDCS);
+
+                List<Threat> origMatches = [.. matches ];
+                matches.Clear();
+                foreach (Threat threat in origMatches)
+                    if ((threat.Type != ThreatType.SYSTEM) || !userTypes.Contains(threat.UnitTypeDCS))
+                        matches.Add(threat);
             }
             if (isSort)
                 matches = [.. matches.OrderBy(x => x.Type)
