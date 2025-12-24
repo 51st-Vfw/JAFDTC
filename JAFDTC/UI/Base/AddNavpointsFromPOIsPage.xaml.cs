@@ -18,6 +18,7 @@
 // ********************************************************************************************************************
 
 using JAFDTC.Models;
+using JAFDTC.Models.CoreApp;
 using JAFDTC.Models.DCS;
 using JAFDTC.Models.POI;
 using JAFDTC.UI.App;
@@ -62,20 +63,9 @@ namespace JAFDTC.UI.Base
 
         private LLFormat LLDisplayFmt { get; set; }
 
-        private string FilterTheater { get; set; }
+        private POIFilterSpec POIFilter { get; set; }
 
-        private string FilterCampaign { get; set; }
-
-        private string FilterTags { get; set; }
-
-        private PointOfInterestTypeMask FilterIncludeTypes { get; set; }
-
-        private bool IsFiltered => !(string.IsNullOrEmpty(FilterTheater) &&
-                                     string.IsNullOrEmpty(FilterCampaign) && 
-                                     string.IsNullOrEmpty(FilterTags) &&
-                                     FilterIncludeTypes.HasFlag(PointOfInterestTypeMask.SYSTEM) &&
-                                     FilterIncludeTypes.HasFlag(PointOfInterestTypeMask.USER) &&
-                                     FilterIncludeTypes.HasFlag(PointOfInterestTypeMask.CAMPAIGN));
+        private bool IsFiltered => !POIFilter.IsDefault;
 
         private NavigationArg NavArgs;
 
@@ -94,6 +84,14 @@ namespace JAFDTC.UI.Base
         {
             InitializeComponent();
 
+// TODO: move to POIFilterSpec in settings w/ copy constructor
+            POIFilter = new();
+            POIFilter.Theater = Settings.LastPoIFilterTheater;
+            POIFilter.Campaign = Settings.LastPoIFilterCampaign;
+            POIFilter.Tags = Settings.LastPoIFilterTags;
+            POIFilter.IncludeTypes = Settings.LastPoIFilterIncludeTypes;
+
+            LLDisplayFmt = LLFormat.DDM_P3ZF;
             CurPoIItems = [ ];
 
             // NOTE: these need to be kept in sync with PoIDetails and the xaml.
@@ -111,7 +109,7 @@ namespace JAFDTC.UI.Base
                 ["Degrees, Decimal Minutes"] = LLFormat.DDM_P3ZF,
             };
 
-            LLDisplayFmt = LLFormat.DDM_P3ZF;
+            uiBarBtnFilter.IsChecked = IsFiltered;
         }
 
         // ------------------------------------------------------------------------------------------------------------
@@ -126,8 +124,8 @@ namespace JAFDTC.UI.Base
         /// </summary>
         private List<PointOfInterest> GetPoIsMatchingFilter(string name = null)
         {
-            PointOfInterestDbQuery query = new(FilterIncludeTypes, FilterTheater, FilterCampaign, name, FilterTags,
-                                               PointOfInterestDbQueryFlags.NAME_PARTIAL_MATCH);
+            PointOfInterestDbQuery query = new(POIFilter.IncludeTypes, POIFilter.Theater, POIFilter.Campaign,
+                                               name, POIFilter.Tags, PointOfInterestDbQueryFlags.NAME_PARTIAL_MATCH);
             return PointOfInterestDbase.Instance.Find(query, true);
         }
 
@@ -294,37 +292,26 @@ namespace JAFDTC.UI.Base
             if (button.IsChecked != IsFiltered)
                 button.IsChecked = IsFiltered;
 
-            GetPoIFilterDialog filterDialog = new(FilterTheater, FilterCampaign, FilterTags, FilterIncludeTypes)
+            GetPoIFilterDialog filterDialog = new(POIFilter)
             {
                 XamlRoot = Content.XamlRoot,
                 Title = $"Set a Filter for Points of Interest"
             };
             ContentDialogResult result = await filterDialog.ShowAsync(ContentDialogPlacement.Popup);
             if (result == ContentDialogResult.Primary)
-            {
-                FilterTheater = filterDialog.Theater;
-                FilterCampaign = filterDialog.Campaign;
-                FilterTags = PointOfInterest.SanitizedTags(filterDialog.Tags);
-                FilterIncludeTypes = filterDialog.IncludeTypes;
-            }
+                POIFilter = new(filterDialog.Filter);
             else if (result == ContentDialogResult.Secondary)
-            {
-                FilterTheater = "";
-                FilterCampaign = "";
-                FilterTags = "";
-                FilterIncludeTypes = PointOfInterestTypeMask.ANY;
-            }
+                POIFilter = new();
             else
-            {
                 return;                                         // EXIT: cancelled, no change...
-            }
 
             button.IsChecked = IsFiltered;
 
-            Settings.LastPoIFilterTheater = FilterTheater;
-            Settings.LastPoIFilterCampaign = FilterCampaign;
-            Settings.LastPoIFilterTags = FilterTags;
-            Settings.LastPoIFilterIncludeTypes = FilterIncludeTypes;
+// TODO: move settings to POIFilterSpec type
+            Settings.LastPoIFilterTheater = POIFilter.Theater;
+            Settings.LastPoIFilterCampaign = POIFilter.Campaign;
+            Settings.LastPoIFilterTags = POIFilter.Tags;
+            Settings.LastPoIFilterIncludeTypes = POIFilter.IncludeTypes;
 
             uiPoIListView.SelectedItems.Clear();
             RebuildPoIList();
@@ -368,12 +355,6 @@ namespace JAFDTC.UI.Base
         protected override void OnNavigatedTo(NavigationEventArgs args)
         {
             NavArgs = (NavigationArg)args.Parameter;
-
-            FilterTheater = Settings.LastPoIFilterTheater;
-            FilterCampaign = Settings.LastPoIFilterCampaign;
-            FilterTags = Settings.LastPoIFilterTags;
-            FilterIncludeTypes = Settings.LastPoIFilterIncludeTypes;
-            uiBarBtnFilter.IsChecked = IsFiltered;
 
             ChangeCoordFormat(Settings.LastPoICoordFmtSelection);
             RebuildPoIList();

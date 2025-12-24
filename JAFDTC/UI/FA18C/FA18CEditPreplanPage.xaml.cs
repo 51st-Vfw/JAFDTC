@@ -18,6 +18,7 @@
 // ********************************************************************************************************************
 
 using JAFDTC.Models;
+using JAFDTC.Models.CoreApp;
 using JAFDTC.Models.FA18C;
 using JAFDTC.Models.FA18C.PP;
 using JAFDTC.Models.FA18C.WYPT;
@@ -88,7 +89,7 @@ namespace JAFDTC.UI.FA18C
 
         private PointOfInterest CurSelectedPoI { get; set; }
 
-        private PoIFilterSpec FilterSpec { get; set; }
+        private POIFilterSpec FilterSpec { get; set; }
 
         private bool IsCoordSupressError { get; set; }
 
@@ -116,6 +117,9 @@ namespace JAFDTC.UI.FA18C
             EditCoordSrcIdx = 0;
             EditCoordIdx = 0;
             EditCoordInfo = new();
+
+            FilterSpec = new(Settings.LastStptFilterTheater, Settings.LastStptFilterCampaign,
+                             Settings.LastStptFilterTags, Settings.LastStptFilterIncludeTypes);
 
             InitializeComponent();
             InitializeBase(EditCoordInfo, uiPosnValueName, uiCtlLinkResetBtns);
@@ -624,7 +628,7 @@ namespace JAFDTC.UI.FA18C
             Utilities.SetEnableState(uiPosnBtnCapture, isPosnEnabled && isDCSListening);
             uiPosnTextPoI.Foreground = posnBrush;
 
-            uiPoIBtnFilter.IsChecked = (FilterSpec.IsFiltered && isEditable);
+            uiPoIBtnFilter.IsChecked = (!FilterSpec.IsDefault && isEditable);
 
             uiCoordTextSrc.Foreground = (isWeaponLoaded) ? _brushEnabledText : _brushDisabledText;
 
@@ -823,11 +827,11 @@ namespace JAFDTC.UI.FA18C
         private async void PoIBtnFilter_Click(object sender, RoutedEventArgs args)
         {
             ToggleButton button = (ToggleButton)sender;
-            PoIFilterSpec spec = await NavpointUIHelper.FilterSpecDialog(Content.XamlRoot, FilterSpec, button);
+            POIFilterSpec spec = await NavpointUIHelper.FilterSpecDialog(Content.XamlRoot, FilterSpec, button);
             if (spec != null)
             {
                 FilterSpec = spec;
-                button.IsChecked = FilterSpec.IsFiltered;
+                button.IsChecked = !FilterSpec.IsDefault;
 
                 Settings.LastStptFilterTheater = FilterSpec.Theater;
                 Settings.LastStptFilterTags = FilterSpec.Tags;
@@ -1078,9 +1082,6 @@ namespace JAFDTC.UI.FA18C
         /// </summary>
         protected override void OnNavigatedTo(NavigationEventArgs args)
         {
-            FilterSpec = new(Settings.LastStptFilterTheater, Settings.LastStptFilterCampaign,
-                             Settings.LastStptFilterTags, Settings.LastStptFilterIncludeTypes);
-
             base.OnNavigatedTo(args);
 
             BuildCoordSourceSelectMenu();

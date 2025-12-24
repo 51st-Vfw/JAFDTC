@@ -69,33 +69,6 @@ namespace JAFDTC.UI.Base
     // ================================================================================================================
 
     /// <summary>
-    /// point of interest filter specification to build a PoIFilterSpec suitable for use by the poi find methods.
-    /// </summary>
-    public sealed class PoIFilterSpec
-    {
-        public string Theater { get; set; }
-
-        public string Campaign { get; set; }
-
-        public string Tags { get; set; }
-
-        public PointOfInterestTypeMask IncludeTypes { get; set; }
-
-        public bool IsFiltered => !(string.IsNullOrEmpty(Theater) &&
-                                    string.IsNullOrEmpty(Campaign) &&
-                                    string.IsNullOrEmpty(Tags) &&
-                                    IncludeTypes.HasFlag(PointOfInterestTypeMask.SYSTEM) &&
-                                    IncludeTypes.HasFlag(PointOfInterestTypeMask.USER) &&
-                                    IncludeTypes.HasFlag(PointOfInterestTypeMask.CAMPAIGN));
-
-        public PoIFilterSpec(string theater = null, string campaign = null, string tags = null,
-                             PointOfInterestTypeMask types = PointOfInterestTypeMask.ANY)
-            => (Theater, Campaign, Tags, IncludeTypes) = (theater, campaign, tags, types);
-    }
-
-    // ================================================================================================================
-
-    /// <summary>
     /// helper class to provide a number of static support functions for use in the navpoint user interface. this
     /// includes things like common dialogs, import/export core operations, etc.
     /// </summary>
@@ -205,46 +178,35 @@ namespace JAFDTC.UI.Base
         /// <summary>
         /// display the filter dialog and gather a new filter spec to use.
         /// </summary>
-        public static async Task<PoIFilterSpec> FilterSpecDialog(XamlRoot root, PoIFilterSpec spec, ToggleButton button)
+        public static async Task<POIFilterSpec> FilterSpecDialog(XamlRoot root, POIFilterSpec filter, ToggleButton button)
         {
-            if (button.IsChecked != spec.IsFiltered)
-                button.IsChecked = spec.IsFiltered;
+            if (button.IsChecked != !filter.IsDefault)
+                button.IsChecked = !filter.IsDefault;
 
-            GetPoIFilterDialog filterDialog = new(spec.Theater, spec.Campaign, spec.Tags, spec.IncludeTypes)
+            GetPoIFilterDialog filterDialog = new(filter)
             {
                 XamlRoot = root,
                 Title = $"Set a Filter for Points of Interest"
             };
             ContentDialogResult result = await filterDialog.ShowAsync(ContentDialogPlacement.Popup);
             if (result == ContentDialogResult.Primary)
-            {
-                spec.Theater = filterDialog.Theater;
-                spec.Tags = PointOfInterest.SanitizedTags(filterDialog.Tags);
-                spec.Tags = filterDialog.Tags;
-                spec.IncludeTypes = filterDialog.IncludeTypes;
-            }
+                filter = new(filterDialog.Filter);
             else if (result == ContentDialogResult.Secondary)
-            {
-                spec.Theater = "";
-                spec.Tags = "";
-                spec.IncludeTypes = PointOfInterestTypeMask.ANY;
-            }
+                filter = new();
             else
-            {
                 return null;                                    // EXIT: cancelled, no change...
-            }
 
-            button.IsChecked = spec.IsFiltered;
-            return spec;
+            button.IsChecked = !filter.IsDefault;
+            return filter;
         }
 
         /// <summary>
         /// return the point of interest list to display in the filter box candidates list.
         /// </summary>
-        public static List<PoIListItem> RebuildPointsOfInterest(PoIFilterSpec spec, string name = null)
+        public static List<PoIListItem> RebuildPointsOfInterest(POIFilterSpec filter, string name = null)
         {
             List<PoIListItem> suitableItems = [ ];
-            PointOfInterestDbQuery query = new(spec.IncludeTypes, spec.Theater, null, name, spec.Tags,
+            PointOfInterestDbQuery query = new(filter.IncludeTypes, filter.Theater, null, name, filter.Tags,
                                                PointOfInterestDbQueryFlags.NAME_PARTIAL_MATCH);
             foreach (PointOfInterest poi in PointOfInterestDbase.Instance.Find(query, true))
                 suitableItems.Add(new PoIListItem(poi));
@@ -258,9 +220,9 @@ namespace JAFDTC.UI.Base
         {
             List<string> allowedTheaters = TheatersForNavpoints(navpts);
 
-            GetPoIFilterDialog filterDialog = new(
-                Settings.LastPoIFilterTheater, Settings.LastPoIFilterCampaign, Settings.LastPoIFilterTags,
-                mode: GetPoIFilterDialog.Mode.Choose, allowedTheaters: allowedTheaters)
+// TODO: settings persist POIFilterSpec
+            POIFilterSpec filter = new(Settings.LastPoIFilterTheater, Settings.LastPoIFilterCampaign, Settings.LastPoIFilterTags, PointOfInterestTypeMask.ANY);
+            GetPoIFilterDialog filterDialog = new(filter, GetPoIFilterDialog.Mode.CHOOSE, allowedTheaters)
             {
                 XamlRoot = root,
                 Title = $"Copy to Points of Interest",
@@ -271,14 +233,16 @@ namespace JAFDTC.UI.Base
             ContentDialogResult result = await filterDialog.ShowAsync(ContentDialogPlacement.Popup);
             if (result == ContentDialogResult.Primary)
             {
-                // Persist POI filters
-                Settings.LastPoIFilterTheater = filterDialog.Theater;
-                Settings.LastPoIFilterCampaign = filterDialog.Campaign;
-                Settings.LastPoIFilterTags = filterDialog.Tags;
+                filter = filterDialog.Filter;
+
+// TODO: settings persist POIFilterSpec
+                Settings.LastPoIFilterTheater = filter.Theater;
+                Settings.LastPoIFilterCampaign = filter.Campaign;
+                Settings.LastPoIFilterTags = filter.Tags;
 
                 // set common POI properties
                 PointOfInterestType poiType = PointOfInterestType.USER;
-                if (filterDialog.Campaign != null)
+                if (filter.Campaign != null)
                     poiType = PointOfInterestType.CAMPAIGN;
 
                 // save POIs
@@ -288,9 +252,9 @@ namespace JAFDTC.UI.Base
                     bool success = PointOfInterestDbase.Instance.AddPointOfInterest(new()
                     {
                         Type = poiType,
-                        Theater = filterDialog.Theater,
-                        Campaign = filterDialog.Campaign,
-                        Tags = PointOfInterest.SanitizedTags(filterDialog.Tags),
+                        Theater = filter.Theater,
+                        Campaign = filter.Campaign,
+                        Tags = PointOfInterest.SanitizedTags(filter.Tags),
                         Name = nav.Name,
                         Latitude = nav.Lat,
                         Longitude = nav.Lon,
@@ -299,13 +263,14 @@ namespace JAFDTC.UI.Base
                     if (!success)
                         dupes.Add(nav.Name);
                 }
-                PointOfInterestDbase.Instance.Save(filterDialog.Campaign);
+                PointOfInterestDbase.Instance.Save(filter.Campaign);
 
                 if (dupes.Count > 0)
                 {
-                    string dupeMsg = (dupes.Count == 1) ?
-                        $"The point of interest “{dupes[0]}” already exists and was not copied." :
-                        $"The following points of interest already exist and were not copied:\n- {string.Join("\n- ", dupes)}";
+                    string dupeMsg = (dupes.Count == 1)
+                        ? $"The point of interest “{dupes[0]}” already exists and was not copied."
+                        : $"The following points of interest already exist and were not copied:\n" +
+                          $"- {string.Join("\n- ", dupes)}";
                     await Utilities.Message1BDialog(root, "Duplicate Points of Interest", dupeMsg);
                 }
             }

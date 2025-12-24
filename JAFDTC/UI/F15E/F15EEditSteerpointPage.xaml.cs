@@ -17,6 +17,7 @@
 //
 // ********************************************************************************************************************
 
+using JAFDTC.Models.CoreApp;
 using JAFDTC.Models.F15E;
 using JAFDTC.Models.F15E.STPT;
 using JAFDTC.Models.POI;
@@ -98,8 +99,7 @@ namespace JAFDTC.UI.F15E
 
         private PointOfInterest CurSelectedPoI { get; set; }
 
-        private PoIFilterSpec FilterSpec { get; set; }
-
+        private POIFilterSpec FilterSpec { get; set; }
 
         // ---- read-only properties
 
@@ -497,7 +497,7 @@ namespace JAFDTC.UI.F15E
             Utilities.SetEnableState(uiPoIBtnApply, isEditable && (CurSelectedPoI != null));
             Utilities.SetEnableState(uiPoIBtnCapture, isEditable && isDCSListening);
 
-            uiPoIBtnFilter.IsChecked = (FilterSpec.IsFiltered && isEditable);
+            uiPoIBtnFilter.IsChecked = (!FilterSpec.IsDefault && isEditable);
 
             Utilities.SetEnableState(uiStptValueName, isEditable);
             foreach (KeyValuePair<string, TextBox> kvp in _curStptFieldValueMap)
@@ -638,11 +638,11 @@ namespace JAFDTC.UI.F15E
         private async void PoIBtnFilter_Click(object sender, RoutedEventArgs args)
         {
             ToggleButton button = (ToggleButton)sender;
-            PoIFilterSpec spec = await NavpointUIHelper.FilterSpecDialog(Content.XamlRoot, FilterSpec, button);
+            POIFilterSpec spec = await NavpointUIHelper.FilterSpecDialog(Content.XamlRoot, FilterSpec, button);
             if (spec != null)
             {
                 FilterSpec = spec;
-                button.IsChecked = FilterSpec.IsFiltered;
+                button.IsChecked = !FilterSpec.IsDefault;
 
                 Settings.LastStptFilterTheater = FilterSpec.Theater;
                 Settings.LastStptFilterTags = FilterSpec.Tags;
