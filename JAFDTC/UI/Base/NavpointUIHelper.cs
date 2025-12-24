@@ -489,11 +489,12 @@ namespace JAFDTC.UI.Base
         // ------------------------------------------------------------------------------------------------------------
 
         /// <summary>
-        /// TODO: document
+        /// create and active a map window with the specified content and observers.
         /// </summary>
         public static MapWindow OpenMap(IMapControlVerbHandler observer, int maxRouteLen, LLFormat coordFormat,
                                         MapMarkerInfo.MarkerTypeMask openMask, MapMarkerInfo.MarkerTypeMask editMask,
-                                        Dictionary<string, List<INavpointInfo>> routes)
+                                        Dictionary<string, List<INavpointInfo>> routes,
+                                        MapImportSpec mapImport = null, MapFilterSpec mapFilter = null)
         {
             List<INavpointInfo> allRoutes = [ ];
             foreach (string route in routes.Keys)
@@ -514,8 +515,7 @@ namespace JAFDTC.UI.Base
                 CoordFormat = coordFormat,
                 MaxRouteLength = maxRouteLen
             };
-// TODO: include cached/persisted threats here?
-            mapWindow.SetupMapContent(routes, marks, [ ]);
+            mapWindow.SetupMapContent(routes, marks, mapImport, mapFilter);
             mapWindow.RegisterMapControlVerbObserver(observer);
 
             mapWindow.Activate();

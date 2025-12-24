@@ -166,7 +166,8 @@ namespace JAFDTC.UI.F16C
                 [ STPTSystem.SystemInfo.RouteNames[0] ] = [.. EditSTPT.Points]
             };
             MapWindow = NavpointUIHelper.OpenMap(this, STPTSystem.SystemInfo.NavptMaxCount, LLFormat.DDM_P3ZF,
-                                                 openMask, editMask, routes);
+                                                 openMask, editMask, routes, Config.LastMapMarkerImport,
+                                                 Config.LastMapFilter);
             MapWindow.MarkerExplainer = this;
             MapWindow.Closed += MapWindow_Closed;
 
@@ -786,10 +787,15 @@ namespace JAFDTC.UI.F16C
         }
 
         /// <summary>
-        /// TODO: document
+        /// map window closing: persist the import and filter specifications that the user set up for next time, save
+        /// the configuration, and cancel subscriptions.
         /// </summary>
         private void MapWindow_Closed(object sender, WindowEventArgs args)
         {
+            Config.LastMapMarkerImport = MapWindow.MapImportSpec;
+            Config.LastMapFilter = MapWindow.MapFilterSpec;
+            Config.Save(this);
+
             MapWindow.Closed -= MapWindow_Closed;
             MapWindow = null;
         }

@@ -720,7 +720,7 @@ namespace JAFDTC.UI.App
             if (MapWindow != null)
             {
                 MapWindow.Theater = (string.IsNullOrEmpty(FilterTheater)) ? "All Theaters" : FilterTheater;
-                MapWindow.SetupMapContent([ ], marks, [ ]);
+                MapWindow.SetupMapContent([ ], marks);
             }
         }
 
