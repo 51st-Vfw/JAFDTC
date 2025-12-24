@@ -18,6 +18,7 @@
 //
 // ********************************************************************************************************************
 
+using JAFDTC.Models.CoreApp;
 using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
@@ -82,15 +83,15 @@ namespace JAFDTC.Models
         public string Filename { get; set; }
 
         /// <summary>
+        /// boolen indicating wheter or not the configuration is marked as a "favorite".
+        /// </summary>
+        public bool IsFavorite { get; set; }
+
+        /// <summary>
         /// provides the name of the configuration. this must be unique within an airframe (name comparisons are
         /// always case-insensitive).
         /// </summary>
         public string Name { get; set; }
-
-        /// <summary>
-        /// boolen indicating wheter or not the configuration is marked as a "favorite".
-        /// </summary>
-        public bool IsFavorite { get; set; }
 
         /// <summary>
         /// provides a map from a system tag (string) to a uid (string) that establishes a link between a system on
@@ -103,6 +104,16 @@ namespace JAFDTC.Models
         /// index of the system editor page last used. this property is used to persist ui state.
         /// </summary>
         public int LastSystemEdited { get; set; }
+
+        /// <summary>
+        /// last map filter applied to a map window used when editing the configuration.
+        /// </summary>
+        public MapFilterSpec LastMapFilter { get; set; }
+
+        /// <summary>
+        /// last import specification for file imported for map window markers used when editing the configuration.
+        /// </summary>
+        public MapImportSpec LastMapMarkerImport { get; set; }
 
         /// <summary>
         /// return a list of system tags for systems that can be merged wth a dcs dtc.

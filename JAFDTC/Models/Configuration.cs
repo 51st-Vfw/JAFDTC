@@ -20,6 +20,7 @@
 
 using JAFDTC.Models.A10C;
 using JAFDTC.Models.AV8B;
+using JAFDTC.Models.CoreApp;
 using JAFDTC.Models.F14AB;
 using JAFDTC.Models.F15E;
 using JAFDTC.Models.F16C;
@@ -63,10 +64,6 @@ namespace JAFDTC.Models
 
         public string Filename { get; set; }
 
-        public Dictionary<string, string> LinkedSysMap { get; private set; }
-
-        public int LastSystemEdited { get; set; }
-
         private bool _isFavorite;
         public bool IsFavorite
         {
@@ -80,6 +77,14 @@ namespace JAFDTC.Models
                 }
             }
         }
+
+        public Dictionary<string, string> LinkedSysMap { get; private set; }
+
+        public int LastSystemEdited { get; set; }
+
+        public MapFilterSpec LastMapFilter { get; set; }
+
+        public MapImportSpec LastMapMarkerImport { get; set; }
 
         // ---- public properties, posts change/validation events
 
@@ -222,6 +227,8 @@ namespace JAFDTC.Models
             IsFavorite = false;
             UnlinkSystem(null);
             LastSystemEdited = 0;
+            LastMapFilter = null;
+            LastMapMarkerImport = null;
 
             if (isResetUID)
                 ResetUID();
