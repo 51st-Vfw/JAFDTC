@@ -24,6 +24,7 @@
 
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace JAFDTC.Models.POI
 {
@@ -61,10 +62,12 @@ namespace JAFDTC.Models.POI
 
 #if DEBUG_POI_UID_HUMAN_FRIENDLY
 
+        [JsonIgnore]
         public string UniqueID => $"{(int)Type}:{Theater.ToLower()}:{Name.ToLower()}:{SanitizedTags(Tags).ToLower()}";
 
 #else
 
+        [JsonIgnore]
         public string UniqueID
         {
             get
@@ -131,7 +134,7 @@ namespace JAFDTC.Models.POI
                 List<string> theaters = JAFDTC.Models.DCS.Theater.TheatersForCoords(lat, lon);
                 if ((theaters != null) && (theaters.Count >= 1))
                 {
-                    Theater = (theaters.Count == 1) ? theaters[0] : null;
+                    Theater = (theaters.Count == 1) ? theaters[0] : "";
                     Name = cols[0].Trim();
                     Tags = cols[1].Trim();
                     Campaign = cols[2].Trim();
