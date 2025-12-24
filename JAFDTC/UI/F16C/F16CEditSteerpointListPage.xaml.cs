@@ -230,7 +230,7 @@ namespace JAFDTC.UI.F16C
 
             Utilities.SetEnableState(uiBarCapture, isEditable && isDCSListening);
             Utilities.SetEnableState(uiBarImport, isEditable);
-            Utilities.SetEnableState(uiBarMap, (uiStptListView.Items.Count > 0));
+            Utilities.SetEnableState(uiBarMap, (EditSTPT.Count > 0));
             Utilities.SetEnableState(uiBarImportPOIs, true);
             Utilities.SetEnableState(uiBarExportPOIs, isEditable && (EditSTPT.Count > 0));
 
