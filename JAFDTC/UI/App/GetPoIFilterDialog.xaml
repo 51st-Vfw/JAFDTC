@@ -27,8 +27,8 @@ https://www.gnu.org/licenses/.
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     Title="Untitled"
-    DefaultButton="Primary"
-    PrimaryButtonText="OK"
+    PrimaryButtonText="Set Filter"
+    SecondaryButtonText = "Reset to Defaults"
     CloseButtonText="Cancel">
 
     <ContentDialog.Resources>

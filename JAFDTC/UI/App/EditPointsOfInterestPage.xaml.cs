@@ -877,10 +877,7 @@ namespace JAFDTC.UI.App
             GetPoIFilterDialog filterDialog = new(FilterTheater, FilterCampaign, FilterTags, FilterIncludeTypes)
             {
                 XamlRoot = Content.XamlRoot,
-                Title = $"Set a Filter for Points of Interest",
-                PrimaryButtonText = "Set",
-                SecondaryButtonText = "Clear Filters",
-                CloseButtonText = "Cancel",
+                Title = $"Set a Filter for Points of Interest"
             };
             ContentDialogResult result = await filterDialog.ShowAsync(ContentDialogPlacement.Popup);
             if (result == ContentDialogResult.Primary)

@@ -29,7 +29,7 @@ https://www.gnu.org/licenses/.
     Title="Map Element Filter"
     DefaultButton="Primary"
     PrimaryButtonText="Set Filter"
-    SecondaryButtonText = "Set to Defaults"
+    SecondaryButtonText = "Reset to Defaults"
     CloseButtonText="Cancel">
 
     <ContentDialog.Resources>
