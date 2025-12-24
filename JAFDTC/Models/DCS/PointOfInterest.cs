@@ -22,6 +22,7 @@
 //
 #define noDEBUG_POI_UID_HUMAN_FRIENDLY
 
+using JAFDTC.Models.DCS;
 using JAFDTC.Models.POI;
 using System;
 using System.Collections.Generic;
@@ -31,34 +32,6 @@ using System.Text;
 
 namespace JAFDTC.Models.DCS
 {
-#if DEPRECATED
-    /// <summary>
-    /// types for points of interest.
-    /// </summary>
-    public enum PointOfInterestType
-    {
-        UNKNOWN = -1,
-        SYSTEM = 0,
-        USER = 1,
-        CAMPAIGN = 2
-    }
-
-    /// <summary>
-    /// type mask for PointOfInterestType enum.
-    /// </summary>
-    [Flags]
-    public enum PointOfInterestTypeMask
-    {
-        NONE = 0,
-        ANY = -1,
-        SYSTEM = 1 << PointOfInterestType.SYSTEM,
-        USER = 1 << PointOfInterestType.USER,
-        CAMPAIGN = 1 << PointOfInterestType.CAMPAIGN
-    }
-
-    // ================================================================================================================
-#endif
-
     /// <summary>
     /// defines the properties of a point of interest (poi) known to jafdtc. these instances are managed by the poi
     /// database (PointOfInterestDbase). pois include a theater (set based on lat/lon), optional campaign name,
