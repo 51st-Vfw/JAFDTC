@@ -18,6 +18,8 @@
 // ********************************************************************************************************************
 
 using JAFDTC.Models.Core;
+using JAFDTC.Models.Threats;
+using JAFDTC.Models.Threats.Extensions;
 using JAFDTC.Models.Units;
 using JAFDTC.Utilities;
 using System;

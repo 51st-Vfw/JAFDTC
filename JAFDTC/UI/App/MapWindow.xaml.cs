@@ -28,6 +28,7 @@ using JAFDTC.Models.Core;
 using JAFDTC.Models.CoreApp;
 using JAFDTC.Models.DCS;
 using JAFDTC.Models.POI;
+using JAFDTC.Models.Threats;
 using JAFDTC.Models.Units;
 using JAFDTC.UI.Base;
 using JAFDTC.UI.Controls.Map;

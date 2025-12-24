@@ -19,48 +19,9 @@
 
 using JAFDTC.Models.Core;
 using JAFDTC.Models.Units;
-using System.Collections.Generic;
-using System.Linq;
 
-namespace JAFDTC.Models.DCS
+namespace JAFDTC.Models.Threats
 {
-    /// <summary>
-    /// types for threats tracked through the threat database.
-    /// </summary>
-    public enum ThreatType
-    {
-        UNKNOWN = -1,
-        SYSTEM = 0,
-        USER = 1
-    }
-
-    // ================================================================================================================
-
-    /// <summary>
-    /// filter extensions for processing lists of Threat instances.
-    /// </summary>
-    public static class FilterExtension
-    {
-        public static IEnumerable<Threat> LimitThreatTypes(this IEnumerable<Threat> values, ThreatType[]? threatTypes)
-            => (threatTypes == null || threatTypes.Length == 0) ? values : values.Where(u => threatTypes.Contains(u.Type));
-
-        public static IEnumerable<Threat> LimitDCSTypes(this IEnumerable<Threat> values, string[]? dcsTypes)
-            => (dcsTypes == null || dcsTypes.Length == 0) ? values : values.Where(u => dcsTypes.Contains(u.UnitTypeDCS));
-
-        public static IEnumerable<Threat> LimitCoalitions(this IEnumerable<Threat> values, CoalitionType[]? coalitions)
-            => (coalitions == null || coalitions.Length == 0) ? values : values.Where(u => coalitions.Contains(u.Coalition));
-
-        public static IEnumerable<Threat> LimitCategories(this IEnumerable<Threat> values, UnitCategoryType[]? categories)
-            => (categories == null || categories.Length == 0) ? values : values.Where(u => categories.Contains(u.Category));
-
-        public static IEnumerable<Threat> LimitNames(this IEnumerable<Threat> values, string? name)
-            => (string.IsNullOrEmpty(name))
-                    ? values
-                    : values.Where(u => u.Name.Contains(name, System.StringComparison.CurrentCultureIgnoreCase));
-    }
-
-    // ================================================================================================================
-
     /// <summary>
     /// defines the properties of a potential threat. these instances are managed by threat database (ThreatDbase).
     /// threats include a type, dcs type, coalition, name, and wez radius. the ( Type, Coalition, TypeDCS ) tuple
