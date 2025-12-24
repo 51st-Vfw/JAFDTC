@@ -98,10 +98,6 @@ namespace JAFDTC.Utilities
 
         public bool IsNewVersCheckDisabled { get; set; }
 
-        public bool IsMapWindowAutoOpen { get; set; }
-
-        public bool IsMapTileCacheDisabled { get; set; }
-
         public int TCPPortCmdTx { get; }
 
         public int TCPPortCfgNameTx { get; }
@@ -154,8 +150,7 @@ namespace JAFDTC.Utilities
 
             // map window settings
 
-            IsMapWindowAutoOpen = false;
-            IsMapTileCacheDisabled = false;
+            MapSettings = new();
 
             // NOTE: the tx/rx ports need to be kept in sync with corresponding port numbers in Lua and cannot be
             // NOTE: changed without corresponding changes to the Lua files. they are readonly here.
