@@ -44,7 +44,8 @@ namespace JAFDTC.Models.CoreApp
         // ---- constructed properties
 
         [JsonIgnore]
-        public bool IsDefault => ((FriendlyCoalition == CoalitionType.BLUE) && IsEnemyOnly && !IsSummaryOnly && IsAliveOnly);
+        public bool IsDefault => (string.IsNullOrEmpty(Path) && (FriendlyCoalition == CoalitionType.BLUE) &&
+                                  IsEnemyOnly && !IsSummaryOnly && IsAliveOnly);
 
         [JsonIgnore]
         public static MapImportSpec Default => new();
