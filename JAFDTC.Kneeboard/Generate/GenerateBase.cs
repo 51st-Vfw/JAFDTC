@@ -1,9 +1,6 @@
 ﻿using JAFDTC.Kneeboard.Models;
 using Svg;
-using System;
-using System.Collections.Generic;
 using System.Drawing.Imaging;
-using System.Text;
 
 namespace JAFDTC.Kneeboard.Generate
 {

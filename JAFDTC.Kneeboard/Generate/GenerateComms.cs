@@ -1,10 +1,7 @@
 ﻿using JAFDTC.Kneeboard.Models;
 using Svg;
 using System;
-using System.Collections.Generic;
-using System.Drawing.Imaging;
-using System.IO;
-using System.Text;
+using System.Runtime.Intrinsics.Arm;
 
 namespace JAFDTC.Kneeboard.Generate
 {
@@ -14,11 +11,18 @@ namespace JAFDTC.Kneeboard.Generate
         {
             var destinationPath = base.GetDestinationPath(generateCriteria, templateFilePath);
 
-            var svgDocument = SvgDocument.Open(templateFilePath);
+            var svg = SvgDocument.Open(templateFilePath);
 
             //todo: find/replace text/etc etc
 
-            base.Save(svgDocument, destinationPath);
+            var textElement = svg.Descendants()
+                                 .First(t => t.ID == "Header")
+                                 .Children[0] as SvgTextSpan;
+
+            textElement.Text = "Rage";
+
+
+            base.Save(svg, destinationPath);
 
             return destinationPath;
         }

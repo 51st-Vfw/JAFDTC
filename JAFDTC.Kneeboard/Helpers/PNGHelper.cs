@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace JAFDTC.Kneeboard.Helpers
+﻿namespace JAFDTC.Kneeboard.Helpers
 {
     internal class PNGHelper
     {

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace JAFDTC.Kneeboard.Models
+﻿namespace JAFDTC.Kneeboard.Models
 {
     public class GenerateCriteria
     {
@@ -12,6 +8,7 @@ namespace JAFDTC.Kneeboard.Models
         public required string Name { get; set; } //the jaf profile name for headers and cleaned filename prefix per kb
 
         public string Theater { get; set; } //for kb header info + date
+        public bool NightMode { get; set; } //tint option.. or just always gen both?
         public string PathLogo { get; set; } //from settings for squad or wing logo
         public string[] Flights { get; set; } //from jaf profile, from global models.. flight into todo
         public string[] Comms { get; set; } //from jaf profile, from global models, also  uhf/vhf, preset num, freq, name (inclue guard).. flight specific? ie primary victors, etc?
