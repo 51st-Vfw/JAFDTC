@@ -36,4 +36,8 @@
     <Using Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="AppData\kb\output\F-16C_50\" />
+  </ItemGroup>
+
 </Project>

@@ -27,6 +27,12 @@ namespace JAFDTC.Tests
     [TestClass]
     public sealed class KneeboardTest
     {
+        [TestInitialize]
+        public void Initialize()
+        {
+            //todo: delete all old test files...
+        }
+
         [TestMethod]
         public void Test_Generate_Null()
         {
@@ -34,5 +40,88 @@ namespace JAFDTC.Tests
             Assert.ThrowsException<ArgumentException>(() => generator.GenerateKneeboards(null));
         }
 
+        [TestMethod]
+        public void Test_Generate_Criteria_Required()
+        {
+            using var generator = new Generate();
+
+            Assert.ThrowsException<ArgumentException>(() => generator.GenerateKneeboards(new()
+            {
+                Airframe = "",
+                Name = "",
+                PathOutput = "",
+                PathTemplates = ""
+            }));
+
+            Assert.ThrowsException<ArgumentException>(() => generator.GenerateKneeboards(new()
+            {
+                Airframe = "F-16C_50",
+                Name = "",
+                PathOutput = "",
+                PathTemplates = ""
+            }));
+
+            Assert.ThrowsException<ArgumentException>(() => generator.GenerateKneeboards(new()
+            {
+                Airframe = "F-16C_50",
+                Name = "JAF_TEST",
+                PathOutput = "",
+                PathTemplates = ""
+            }));
+
+            Assert.ThrowsException<ArgumentException>(() => generator.GenerateKneeboards(new()
+            {
+                Airframe = "F-16C_50",
+                Name = "JAF_TEST",
+                PathOutput = "..\\..\\..\\appdata\\kb\\output",
+                PathTemplates = ""
+            }));
+
+        }
+
+        [TestMethod]
+        public void Test_Generate_Output_Invalid()
+        {
+            using var generator = new Generate();
+            Assert.ThrowsException<DirectoryNotFoundException>(() => generator.GenerateKneeboards(new() 
+            {
+                Airframe = "F-16C_50",
+                Name = "JAF_TEST",
+                PathOutput = "..\\..\\..\\appdata\\missing-output-folder",
+                PathTemplates = "..\\..\\..\\appdata\\kb\\",
+            }));
+        }
+
+        [TestMethod]
+        public void Test_Generate_Templates_Missing()
+        {
+            using var generator = new Generate();
+            Assert.ThrowsException<DirectoryNotFoundException>(() => generator.GenerateKneeboards(new()
+            {
+                Airframe = "F-16C_50",
+                Name = "JAF_TEST",
+                PathOutput = "..\\..\\..\\appdata\\kb\\output",
+                PathTemplates = "..\\..\\..\\appdata\\kb\\missing",
+            }));
+        }
+
+        [TestMethod]
+        public void Test_Generate_Process_F16_Comms()
+        {
+            using var generator = new Generate();
+
+            var result = generator.GenerateKneeboards(new()
+            {
+                Airframe = "F-16C_50",
+                Name = $"JAF_TEST_{DateTime.Now.ToString("yyyyMMddhhmmss")}",
+                PathOutput = "..\\..\\..\\appdata\\kb\\output",
+                PathTemplates = "..\\..\\..\\appdata\\kb\\",
+            });
+
+            Assert.IsTrue(result.HasData());
+            Assert.IsTrue(result.Length == 1);
+        }
+
     }
 }
+//C:\Users\VT\Saved Games\DCS.openbeta\Kneeboard\F-16C_50

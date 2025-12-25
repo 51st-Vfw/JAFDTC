@@ -7,6 +7,11 @@ namespace JAFDTC.Kneeboard
 {
     public interface IGenerate : IDisposable
     {
-        void GenerateKneeboards(GenerateCriteria generateCriteria);
+        /// <summary>
+        /// Generate all the Airframe Templates
+        /// </summary>
+        /// <param name="generateCriteria"></param>
+        /// <returns>Filepath to all generated files</returns>
+        string[] GenerateKneeboards(GenerateCriteria generateCriteria);
     }
 }
