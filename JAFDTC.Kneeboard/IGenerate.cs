@@ -12,6 +12,6 @@ namespace JAFDTC.Kneeboard
         /// </summary>
         /// <param name="generateCriteria"></param>
         /// <returns>Filepath to all generated files</returns>
-        string[] GenerateKneeboards(GenerateCriteria generateCriteria);
+        IReadOnlyList<string> GenerateKneeboards(GenerateCriteria generateCriteria);
     }
 }

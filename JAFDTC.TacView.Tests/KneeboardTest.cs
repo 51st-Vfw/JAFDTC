@@ -119,9 +119,8 @@ namespace JAFDTC.Tests
             });
 
             Assert.IsTrue(result.HasData());
-            Assert.IsTrue(result.Length == 1);
+            Assert.IsTrue(result.Count == 1);
         }
 
     }
 }
-//C:\Users\VT\Saved Games\DCS.openbeta\Kneeboard\F-16C_50
