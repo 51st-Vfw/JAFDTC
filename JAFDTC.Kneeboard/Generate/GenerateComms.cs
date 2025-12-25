@@ -1,7 +1,5 @@
 ﻿using JAFDTC.Kneeboard.Models;
 using Svg;
-using System;
-using System.Runtime.Intrinsics.Arm;
 
 namespace JAFDTC.Kneeboard.Generate
 {

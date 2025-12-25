@@ -119,7 +119,7 @@ namespace JAFDTC.Tests
             });
 
             Assert.IsTrue(result.HasData());
-            Assert.IsTrue(result.Count == 1);
+            Assert.IsTrue(result.Count == 5);
         }
 
     }

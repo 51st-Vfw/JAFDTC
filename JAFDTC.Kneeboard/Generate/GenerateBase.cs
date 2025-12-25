@@ -20,7 +20,7 @@ namespace JAFDTC.Kneeboard.Generate
         public void Save(SvgDocument svgDocument, string filePath)
         {
             using var stream = new MemoryStream();
-            var bitmap = svgDocument.Draw();
+            using var bitmap = svgDocument.Draw();
             bitmap.Save(filePath, ImageFormat.Png);
         }
 
