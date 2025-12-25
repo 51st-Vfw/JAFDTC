@@ -11,7 +11,12 @@ namespace JAFDTC.Kneeboard.Generate
         public string GetDestinationPath(GenerateCriteria generateCriteria, string templateFilePath)
         {
             var baseName = Path.GetFileNameWithoutExtension(templateFilePath);
-            var fileName = $"{generateCriteria.Name}_{baseName}.png";
+
+            var safeFileName = string.Concat(generateCriteria.Name);
+            foreach (var c in Path.GetInvalidFileNameChars())
+                safeFileName = safeFileName.Replace(c, '-');
+
+            var fileName = $"{safeFileName}_{baseName}.png";
             var destinationPath = Path.Combine(generateCriteria.PathOutput, generateCriteria.Airframe, fileName);
 
             return destinationPath;
