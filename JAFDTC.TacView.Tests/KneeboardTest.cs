@@ -106,7 +106,7 @@ namespace JAFDTC.Tests
         }
 
         [TestMethod]
-        public void Test_Generate_Process_F16_Comms()
+        public void Test_Generate_Process_F16()
         {
             using var generator = new Generate();
 
@@ -119,7 +119,7 @@ namespace JAFDTC.Tests
             });
 
             Assert.IsTrue(result.HasData());
-            Assert.IsTrue(result.Count == 5);
+            Assert.IsTrue(result.Count == 6);
         }
 
     }
