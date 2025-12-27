@@ -20,6 +20,7 @@
 using JAFDTC.Core.Extensions;
 using JAFDTC.Kneeboard.Generate;
 using JAFDTC.Models.Core;
+using JAFDTC.Models.Radios;
 using JAFDTC.Models.Units;
 
 namespace JAFDTC.Tests
@@ -116,6 +117,41 @@ namespace JAFDTC.Tests
                 Name = $"JAF_TEST_{DateTime.Now.ToString("yyyyMMddhhmmss")}",
                 PathOutput = "..\\..\\..\\appdata\\kb\\output",
                 PathTemplates = "..\\..\\..\\appdata\\kb\\",
+                Comms =
+                [
+                    new Radio
+                    {
+                        CommMode = 1,
+                        Name = "AN/ARC-164",
+                        FrequencyName = "UHF",
+                        Preset = 2,
+                        FrequencyMin = 200.0,
+                        FrequencyMax = 400.0,
+                        MonitorGuard = true,
+                        Channels =
+                        [
+                            new (){ ChannelId = 1, Frequency = 333.0, Description = "Tac Common" },
+                            new (){ ChannelId = 2, Frequency = 270.5, Description = "AWACS AI" },
+                        ]
+                    },
+                     new Radio
+                    {
+                        CommMode = 2,
+                        Name = "AN/ARC-210",
+                        FrequencyName = "VHF",
+                        Preset = 3,
+                        FrequencyMin = 100.0,
+                        FrequencyMax = 200.0,
+                        MonitorGuard = null,
+                        Channels =
+                        [
+                            new (){ ChannelId = 1, Frequency = 138.25, Description = "Viper 1" },
+                            new (){ ChannelId = 2, Frequency = 138.75, Description = "Viper 2" },
+                            new (){ ChannelId = 3, Frequency = 138.5, Description = "Viper AUX" },
+                        ]
+                    }
+
+                ]
             });
 
             Assert.IsTrue(result.HasData());

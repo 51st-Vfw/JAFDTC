@@ -82,11 +82,11 @@ namespace JAFDTC.Models.F15E.Upload
         private void BuildRadioCore(AirframeDevice ufc)
         {
             AddActions(ufc, new() { "CLR", "CLR", "CLR", "CLR", "MENU" });
-            BuildRadio(ufc, _cfg.Radio.Presets[(int)Radios.COMM1], "PB5", _cfg.Radio.IsCOMM1MonitorGuard,
+            BuildRadio(ufc, _cfg.Radio.Presets[(int)Radio.Radios.COMM1], "PB5", _cfg.Radio.IsCOMM1MonitorGuard,
                        _cfg.Radio.IsCOMM1PresetMode, _cfg.Radio.COMM1DefaultTuning);
 
             AddActions(ufc, new() { "CLR", "CLR", "CLR", "CLR", "MENU" });
-            BuildRadio(ufc, _cfg.Radio.Presets[(int)Radios.COMM2], "PB6", _cfg.Radio.IsCOMM2MonitorGuard,
+            BuildRadio(ufc, _cfg.Radio.Presets[(int)Radio.Radios.COMM2], "PB6", _cfg.Radio.IsCOMM2MonitorGuard,
                        _cfg.Radio.IsCOMM2PresetMode, _cfg.Radio.COMM2DefaultTuning);
 
             AddActions(ufc, new() { "CLR", "CLR", "CLR", "CLR", "MENU" });

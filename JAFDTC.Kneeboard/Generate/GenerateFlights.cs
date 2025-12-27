@@ -19,6 +19,16 @@ namespace JAFDTC.Kneeboard.Generate
 
             //textElement.Text = "Rage";
 
+            //51st VFW: Flight Card (F-16C)
+            //[header]
+
+            //51st VFW: Flight Card (F-16C) — 2.0, 27-MAR-23
+            //[footer]
+
+            //headerLogo
+
+
+
 
             base.Save(svg, destinationPath);
 

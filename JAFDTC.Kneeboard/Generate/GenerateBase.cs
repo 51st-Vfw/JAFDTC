@@ -1,4 +1,5 @@
-﻿using JAFDTC.Kneeboard.Models;
+﻿using JAFDTC.Core.Extensions;
+using JAFDTC.Kneeboard.Models;
 using Svg;
 using System.Drawing.Imaging;
 
@@ -27,6 +28,27 @@ namespace JAFDTC.Kneeboard.Generate
             using var stream = new MemoryStream();
             using var bitmap = svgDocument.Draw();
             bitmap.Save(filePath, ImageFormat.Png);
+        }
+
+        public void Assign(SvgDocument svg, string key, string value)
+        {
+            var match = $"[{key}]";
+
+            var items = svg
+                .Descendants()
+                .OfType<SvgTextSpan>()
+                .Where(p => string.Equals(p.Text, match, StringComparison.OrdinalIgnoreCase));
+
+            if (items.IsEmpty())
+                return;
+
+            foreach (var item in items)
+                item.Text = item.Text.Replace(item.Text, value, StringComparison.OrdinalIgnoreCase);
+        }
+
+        public void Assign(SvgDocument svg, string keyPrefix, string keySuffix, string value)
+        {
+            Assign(svg, $"{keyPrefix}_{keySuffix}", value);
         }
 
         public virtual void Dispose()
