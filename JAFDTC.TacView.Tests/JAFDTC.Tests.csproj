@@ -43,7 +43,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="AppData\kb\output\F-16C_50\.gitignore" />
+    <Content Include="AppData\kb\output\.gitignore" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="AppData\kb\output\F-16C_50\" />
   </ItemGroup>
 
 </Project>

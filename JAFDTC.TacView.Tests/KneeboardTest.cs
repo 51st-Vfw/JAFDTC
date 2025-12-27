@@ -117,6 +117,12 @@ namespace JAFDTC.Tests
                 Name = $"JAF_TEST_{DateTime.Now.ToString("yyyyMMddhhmmss")}",
                 PathOutput = "..\\..\\..\\appdata\\kb\\output",
                 PathTemplates = "..\\..\\..\\appdata\\kb\\",
+                NightMode = false,
+                Theater = "Syria",
+                PathLogo = null,
+                Flights = null,
+                Steerpoints = null,
+                Units = null,
                 Comms =
                 [
                     new Radio

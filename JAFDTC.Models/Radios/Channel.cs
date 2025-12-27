@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace JAFDTC.Models.Radios
+﻿namespace JAFDTC.Models.Radios
 {
     public class Channel
     {

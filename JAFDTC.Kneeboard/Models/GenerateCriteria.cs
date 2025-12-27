@@ -1,5 +1,4 @@
 ﻿using JAFDTC.Models.Radios;
-using JAFDTC.Models.Units;
 
 namespace JAFDTC.Kneeboard.Models
 {

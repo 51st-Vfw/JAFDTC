@@ -29,29 +29,14 @@ namespace JAFDTC.Kneeboard.Generate
 
             var result = templates
                 .AsParallel()
-                .Select(p=> GenFactory(generateCriteria, p))
+                .Select(p =>
+                {
+                    using var pkb = new ProcessKneeboard(generateCriteria, p);
+                    return pkb.Process();
+                })
                 .ToList();
 
             return result;
-        }
-
-        private static string GenFactory(GenerateCriteria generateCriteria, string template)
-        {
-            IGenerateKB generateKB = null;
-            if (template.Contains("comm"))
-                generateKB = new GenerateComms();
-            else if (template.Contains("airfield"))
-                generateKB = new GenerateAirfields();
-            else if (template.Contains("flight"))
-                generateKB = new GenerateFlights();
-            else if (template.Contains("map"))
-                generateKB = new GenerateMaps();
-            else if (template.Contains("steer"))
-                generateKB = new GenerateSteerpoints();
-            else
-                throw new NotSupportedException(template);
-
-            return generateKB.Process(generateCriteria, template);
         }
 
         public void Dispose()
