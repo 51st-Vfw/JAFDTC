@@ -23,13 +23,31 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\JAFDTC.Core\JAFDTC.Core.csproj" />
     <ProjectReference Include="..\JAFDTC.File.CF\JAFDTC.File.CF.csproj" />
     <ProjectReference Include="..\JAFDTC.File.MIZ\JAFDTC.File.MIZ.csproj" />
+    <ProjectReference Include="..\JAFDTC.File\JAFDTC.File.csproj" />
+    <ProjectReference Include="..\JAFDTC.Kneeboard\JAFDTC.Kneeboard.csproj" />
+    <ProjectReference Include="..\JAFDTC.Models\JAFDTC.Models.csproj" />
     <ProjectReference Include="..\JAFDTC.TacView\JAFDTC.File.ACMI.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Using Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="AppData\kb\output\F-16C_50\**" />
+    <EmbeddedResource Remove="AppData\kb\output\F-16C_50\**" />
+    <None Remove="AppData\kb\output\F-16C_50\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="AppData\kb\output\.gitignore" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="AppData\kb\output\F-16C_50\" />
   </ItemGroup>
 
 </Project>

@@ -75,8 +75,8 @@ namespace JAFDTC.Models.FA18C.Upload
 
             if (!_cfg.IsMerged(RadioSystem.SystemTag))
             {
-                BuildRadio(ufc, 1, _cfg.Radio.Presets[(int)Radios.COMM1], _cfg.Radio.COMM1DefaultTuning);
-                BuildRadio(ufc, 2, _cfg.Radio.Presets[(int)Radios.COMM2], _cfg.Radio.COMM2DefaultTuning);
+                BuildRadio(ufc, 1, _cfg.Radio.Presets[(int)Radio.Radios.COMM1], _cfg.Radio.COMM1DefaultTuning);
+                BuildRadio(ufc, 2, _cfg.Radio.Presets[(int)Radio.Radios.COMM2], _cfg.Radio.COMM2DefaultTuning);
                 AddAction(ufc, "COM", WAIT_LONG);
             }
         }

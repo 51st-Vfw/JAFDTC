@@ -19,12 +19,10 @@
 
 using JAFDTC.Core.Extensions;
 using JAFDTC.File.ACMI;
-using JAFDTC.File.ACMI.Extensions;
-using JAFDTC.File.ACMI.Models;
 using JAFDTC.Models.Core;
 using JAFDTC.Models.Units;
 
-namespace JAFDTC.File.Tests
+namespace JAFDTC.Tests
 {
     [TestClass]
     public sealed class ACMIExtractorTest

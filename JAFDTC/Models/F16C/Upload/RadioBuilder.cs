@@ -63,9 +63,9 @@ namespace JAFDTC.Models.F16C.Upload
 
             AirframeDevice ufc = _aircraft.GetDevice("UFC");
 
-            BuildRadio(ufc, "COM1", _cfg.Radio.Presets[(int)Radios.COMM1], _cfg.Radio.COMM1DefaultTuning,
+            BuildRadio(ufc, "COM1", _cfg.Radio.Presets[(int)Radio.Radios.COMM1], _cfg.Radio.COMM1DefaultTuning,
                        _cfg.Radio.IsCOMM1MonitorGuard);
-            BuildRadio(ufc, "COM2", _cfg.Radio.Presets[(int)Radios.COMM2], _cfg.Radio.COMM2DefaultTuning, false);
+            BuildRadio(ufc, "COM2", _cfg.Radio.Presets[(int)Radio.Radios.COMM2], _cfg.Radio.COMM2DefaultTuning, false);
         }
 
         /// <summary>

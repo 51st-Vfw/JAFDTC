@@ -17,10 +17,7 @@
 //
 // ********************************************************************************************************************
 
-using JAFDTC.Models.Core;
-using JAFDTC.Models.DCS;
 using JAFDTC.Models.POI;
-using JAFDTC.Models.Units;
 using System.Text.Json.Serialization;
 
 namespace JAFDTC.Models.CoreApp
