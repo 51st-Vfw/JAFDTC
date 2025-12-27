@@ -37,13 +37,13 @@ namespace JAFDTC.Kneeboard.Generate
             var items = svg
                 .Descendants()
                 .OfType<SvgTextSpan>()
-                .Where(p => string.Equals(p.Text, match, StringComparison.OrdinalIgnoreCase));
+                .Where(p => p.Text.Contains(match, StringComparison.OrdinalIgnoreCase));
 
             if (items.IsEmpty())
                 return;
 
             foreach (var item in items)
-                item.Text = item.Text.Replace(item.Text, value, StringComparison.OrdinalIgnoreCase);
+                item.Text = item.Text.Replace(match, value, StringComparison.OrdinalIgnoreCase);
         }
 
         public void Assign(SvgDocument svg, string keyPrefix, string keySuffix, string value)
