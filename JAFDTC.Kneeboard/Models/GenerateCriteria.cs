@@ -8,6 +8,7 @@ namespace JAFDTC.Kneeboard.Models
         public required string PathOutput { get; set; } //should come from settings for dcs path
         public required string Airframe { get; set; } //from jaf profile so we know what complete path to write to
         public required string Name { get; set; } //the jaf profile name for headers and cleaned filename prefix per kb
+        public required string Owner { get; set; } //the jaf user.. ie 51_Raven.. should be the name, stn/tndl info...
 
         public string Theater { get; set; } //for kb header info + date
         public bool NightMode { get; set; } //tint option.. or just always gen both?

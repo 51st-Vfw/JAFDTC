@@ -51,7 +51,8 @@ namespace JAFDTC.Tests
                 Airframe = "",
                 Name = "",
                 PathOutput = "",
-                PathTemplates = ""
+                PathTemplates = "",
+                Owner = ""
             }));
 
             Assert.ThrowsException<ArgumentException>(() => generator.GenerateKneeboards(new()
@@ -59,7 +60,8 @@ namespace JAFDTC.Tests
                 Airframe = "F-16C_50",
                 Name = "",
                 PathOutput = "",
-                PathTemplates = ""
+                PathTemplates = "",
+                Owner = ""
             }));
 
             Assert.ThrowsException<ArgumentException>(() => generator.GenerateKneeboards(new()
@@ -67,7 +69,8 @@ namespace JAFDTC.Tests
                 Airframe = "F-16C_50",
                 Name = "JAF_TEST",
                 PathOutput = "",
-                PathTemplates = ""
+                PathTemplates = "",
+                Owner = ""
             }));
 
             Assert.ThrowsException<ArgumentException>(() => generator.GenerateKneeboards(new()
@@ -75,7 +78,8 @@ namespace JAFDTC.Tests
                 Airframe = "F-16C_50",
                 Name = "JAF_TEST",
                 PathOutput = "..\\..\\..\\appdata\\kb\\output",
-                PathTemplates = ""
+                PathTemplates = "",
+                Owner = ""
             }));
 
         }
@@ -90,6 +94,7 @@ namespace JAFDTC.Tests
                 Name = "JAF_TEST",
                 PathOutput = "..\\..\\..\\appdata\\missing-output-folder",
                 PathTemplates = "..\\..\\..\\appdata\\kb\\",
+                Owner = ""
             }));
         }
 
@@ -103,6 +108,7 @@ namespace JAFDTC.Tests
                 Name = "JAF_TEST",
                 PathOutput = "..\\..\\..\\appdata\\kb\\output",
                 PathTemplates = "..\\..\\..\\appdata\\kb\\missing",
+                Owner = ""
             }));
         }
 
@@ -117,6 +123,7 @@ namespace JAFDTC.Tests
                 Name = $"JAF_TEST_{DateTime.Now.ToString("yyyyMMddhhmmss")}",
                 PathOutput = "..\\..\\..\\appdata\\kb\\output",
                 PathTemplates = "..\\..\\..\\appdata\\kb\\",
+                Owner = "51_Rage",
                 NightMode = false,
                 Theater = "Syria",
                 PathLogo = null,
