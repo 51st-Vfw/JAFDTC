@@ -127,9 +127,8 @@ namespace JAFDTC.Tests
                 NightMode = false,
                 Theater = "Syria",
                 PathLogo = "..\\..\\..\\appdata\\kb\\misc\\667logo.png",
-                Flights = null,
-                Steerpoints = null,
-                Units = null,
+                Flight = null,
+                UnitGroups = null,
                 Comms =
                 [
                     new Radio

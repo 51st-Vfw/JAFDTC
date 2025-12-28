@@ -23,6 +23,10 @@ namespace JAFDTC.Kneeboard.Generate
             if (!System.IO.Directory.Exists(templatePath))
                 throw new DirectoryNotFoundException($"KB Template Directory Not Found: {templatePath}");
 
+            if (!string.IsNullOrWhiteSpace(generateCriteria.PathLogo))
+                if (!System.IO.File.Exists(generateCriteria.PathLogo))
+                    throw new FileNotFoundException($"Logo Not Found: {generateCriteria.PathLogo}");
+
             var templates = System.IO.Directory.GetFiles(templatePath, "*.svg");
             if (templates.IsEmpty())
                 throw new FileNotFoundException("Template Directory has no files!");

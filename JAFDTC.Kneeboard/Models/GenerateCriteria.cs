@@ -1,4 +1,5 @@
 ﻿using JAFDTC.Models.Radios;
+using JAFDTC.Models.Units;
 
 namespace JAFDTC.Kneeboard.Models
 {
@@ -10,15 +11,12 @@ namespace JAFDTC.Kneeboard.Models
         public required string Name { get; set; } //the jaf profile name for headers and cleaned filename prefix per kb
         public required string Owner { get; set; } //the jaf user.. ie 51_Raven.. should be the name, stn/tndl info...
 
-        public string Theater { get; set; } //for kb header info + date
-        public bool NightMode { get; set; } //tint option.. or just always gen both?
-        public string PathLogo { get; set; } //from settings for squad or wing logo
-        public string[] Flights { get; set; } //from jaf profile, from global models.. flight into todo
+        public string? Theater { get; set; } //for kb header info + date
+        public bool? NightMode { get; set; } //tint option.. or just always gen both?
+        public string? PathLogo { get; set; } //from settings for squad or wing logo
+        public UnitGroupItem Flight { get; set; } //from jaf profile, from global models.. flight into todo
         public IReadOnlyList<Radio> Comms { get; set; } //from jaf profile, from global models, also  uhf/vhf, preset num, freq, name (inclue guard).. flight specific? ie primary victors, etc?
-        public IReadOnlyList<string> Steerpoints { get; set; } //from jaf profile, from global models... with theater should drive what map to load and "in-mem screenshot", ip/tgt drive zoomed in map
-                //if STP is near a POI, global marker, or imported ground unit.. should have that info as well!
-                //if stp is an airbase or FARP... extract to KB about airfields/landing/takeoff/alt, prefix, ground, tower, atis comms if available from theater...
-
-        public string[] Units { get;set; } //if available from theater, import miz/cf/acmi.... drive more info on Map, threat rings, labels, etc
+        public string[] POIs { get; set; } //from jaf DB, global models.. pois from DB as well as miz/cf/acmi import .. (this is maybe JUST airfields and farps?)
+        public IReadOnlyList<UnitGroupItem> UnitGroups { get; set; } //if available from import miz/cf/acmi.... ground units (maybe statics?) drive more info on Map, threat rings, labels, etc 
     }
 }
