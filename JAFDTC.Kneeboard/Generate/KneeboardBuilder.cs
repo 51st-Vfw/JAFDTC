@@ -1,8 +1,9 @@
 ﻿using JAFDTC.Core.Extensions;
 using JAFDTC.Kneeboard.Models;
+using JAFDTC.Models.Radios;
 using Svg;
 using System.Drawing.Imaging;
-using System.Text.RegularExpressions;
+using System.Xml.Linq;
 
 namespace JAFDTC.Kneeboard.Generate
 {
@@ -41,7 +42,6 @@ namespace JAFDTC.Kneeboard.Generate
                 var b64Logo = Convert.ToBase64String(System.IO.File.ReadAllBytes(_generateCriteria.PathLogo));
                 AssignImage("LOGO", b64Logo);
             }
-
         }
 
         private void BuildComms()
@@ -71,7 +71,7 @@ namespace JAFDTC.Kneeboard.Generate
 
                     AssignText(presetPrefix, "ID", channel.ChannelId.ToString());
                     AssignText(presetPrefix, "FREQ", channel.Frequency.ToString("{d:#.##}"));
-                    AssignText(presetPrefix, "DESC", channel.Description ?? "Unassigned"); //always replace text with Unassigned or blank...?
+                    AssignText(presetPrefix, "DESC", Clean(channel.Description, "Unassigned")); //always replace text with Unassigned or blank...?
                 }
             }
         }
@@ -123,6 +123,51 @@ namespace JAFDTC.Kneeboard.Generate
              *      maybe if STP in WEZ or know threats..list them out in Notes ?
              * 
              */
+
+
+            if (_generateCriteria.Flight?.Route?.IsEmpty() ?? true)
+                return;
+
+            for (var i = 0; i < 50; i++) //this could get weird...? ie what if you have 1 to 500 stps?
+            {
+                var prefix = $"STP{i + 1}";
+
+                var stp = (_generateCriteria.Flight.Route.Count() > i) ?
+                        _generateCriteria.Flight.Route[i]
+                        : null;
+
+                if (stp == null)
+                {
+                    AssignText(prefix, "NUM", (i + 1).ToString());
+                    AssignText(prefix, "NAME", prefix);
+                    AssignText(prefix, "DESC", "Unassigned"); //or blank?
+                    AssignText(prefix, "ALT", string.Empty);
+                    AssignText(prefix, "TOS", string.Empty);
+                    AssignText(prefix, "COORD", string.Empty);
+                    AssignText(prefix, "MGRS", string.Empty);
+                }
+                else
+                {
+                    var desc = stp.Name;
+                    if (string.IsNullOrWhiteSpace(desc)
+                        || string.Equals(desc, $"STP{i + 1}", StringComparison.OrdinalIgnoreCase)
+                        || string.Equals(desc, $"SP{i + 1}", StringComparison.OrdinalIgnoreCase))
+                    {
+                        //todo: attempt to match by location to the POI DB
+                        //maybe even import from miz/cf/acmi  group/unit/static
+
+                        //name = "better name..."
+                    }
+
+                    AssignText(prefix, "NUM", (i + 1).ToString());
+                    AssignText(prefix, "NAME", prefix);
+                    AssignText(prefix, "DESC", Clean(desc, prefix));
+                    AssignText(prefix, "ALT", stp.Altitude.ToString("#"));
+                    AssignText(prefix, "TOS", stp.TimeOnAsHMS); //todo: should be extension method...
+                    AssignText(prefix, "COORD", "normal".ToDisplay(stp.Latitude, stp.Longitude));
+                    AssignText(prefix, "MGRS", 10.ToMGRS(stp.Latitude, stp.Longitude));
+                }
+            }
         }
 
         private void BuildAirfields()
@@ -279,6 +324,14 @@ namespace JAFDTC.Kneeboard.Generate
         private string ToMatch(string value)
         {
             return $"[{value}]";
+        }
+
+        private string Clean(string? input, string defaultValue)
+        {
+            if (string.IsNullOrWhiteSpace(input))
+                return defaultValue;
+
+            return input;
         }
 
         #endregion

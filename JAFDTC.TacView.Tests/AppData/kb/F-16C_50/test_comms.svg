@@ -97,16 +97,16 @@
                     <rect id="C2-Border" stroke="#32372A" stroke-width="4" x="136" y="0" width="574" height="48"></rect>
                     <rect id="C1-Border" stroke="#32372A" stroke-width="4" x="0" y="2.84217094e-14" width="136" height="48"></rect>
                     <text id="C4" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#9B9B9B">
-                        <tspan x="864" y="33">Unassigned</tspan>
+                        <tspan x="864" y="33">[STP12_DESC]</tspan>
                     </text>
                     <text id="C3" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#FFFFFF">
-                        <tspan x="761.096" y="33">12</tspan>
+                        <tspan x="761.096" y="33">[STP12_NUM]</tspan>
                     </text>
                     <text id="C2" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#9B9B9B">
-                        <tspan x="150" y="33">Unassigned</tspan>
+                        <tspan x="150" y="33">[STP4_DESC]</tspan>
                     </text>
                     <text id="C1" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#FFFFFF">
-                        <tspan x="58.548" y="33">4</tspan>
+                        <tspan x="58.548" y="33">[STP4_NUM]</tspan>
                     </text>
                 </g>
                 <g id="Template" transform="translate(0.000000, 150.000000)">
@@ -115,16 +115,16 @@
                     <rect id="C2-Border" stroke="#32372A" stroke-width="4" x="136" y="0" width="574" height="48"></rect>
                     <rect id="C1-Border" stroke="#32372A" stroke-width="4" x="0" y="2.84217094e-14" width="136" height="48"></rect>
                     <text id="C4" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#9B9B9B">
-                        <tspan x="864" y="33">Unassigned</tspan>
+                        <tspan x="864" y="33">[STP11_DESC]</tspan>
                     </text>
                     <text id="C3" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#FFFFFF">
-                        <tspan x="761.096" y="33">11</tspan>
+                        <tspan x="761.096" y="33">[STP11_NUM]</tspan>
                     </text>
                     <text id="C2" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#9B9B9B">
-                        <tspan x="150" y="33">Unassigned</tspan>
+                        <tspan x="150" y="33">[STP3_DESC]</tspan>
                     </text>
                     <text id="C1" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#FFFFFF">
-                        <tspan x="58.548" y="33">3</tspan>
+                        <tspan x="58.548" y="33">[STP3_NUM]</tspan>
                     </text>
                 </g>
                 <g id="Template" transform="translate(0.000000, 102.000000)">
@@ -133,16 +133,16 @@
                     <rect id="C2-Border" stroke="#32372A" stroke-width="4" x="136" y="0" width="574" height="48"></rect>
                     <rect id="C1-Border" stroke="#32372A" stroke-width="4" x="0" y="2.84217094e-14" width="136" height="48"></rect>
                     <text id="C4" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#9B9B9B">
-                        <tspan x="864" y="33">Unassigned</tspan>
+                        <tspan x="864" y="33">[STP10_DESC]</tspan>
                     </text>
                     <text id="C3" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#FFFFFF">
-                        <tspan x="761.096" y="33">10</tspan>
+                        <tspan x="761.096" y="33">[STP10_NUM]</tspan>
                     </text>
                     <text id="C2" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#9B9B9B">
-                        <tspan x="150" y="33">Unassigned</tspan>
+                        <tspan x="150" y="33">[STP2_DESC]</tspan>
                     </text>
                     <text id="C1" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#FFFFFF">
-                        <tspan x="58.548" y="33">2</tspan>
+                        <tspan x="58.548" y="33">[STP2_NUM]</tspan>
                     </text>
                 </g>
                 <g id="Template" transform="translate(0.000000, 54.000000)">
@@ -151,16 +151,16 @@
                     <rect id="C2-Border" stroke="#32372A" stroke-width="4" x="136" y="0" width="574" height="48"></rect>
                     <rect id="C1-Border" stroke="#32372A" stroke-width="4" x="0" y="2.84217094e-14" width="136" height="48"></rect>
                     <text id="C4" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#9B9B9B">
-                        <tspan x="864" y="33">Unassigned</tspan>
+                        <tspan x="864" y="33">[STP9_DESC]</tspan>
                     </text>
                     <text id="C3" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#FFFFFF">
-                        <tspan x="770.548" y="33">9</tspan>
+                        <tspan x="770.548" y="33">[STP9_NUM]</tspan>
                     </text>
                     <text id="C2" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#9B9B9B">
-                        <tspan x="150" y="33">Unassigned</tspan>
+                        <tspan x="150" y="33">[STP1_DESC]</tspan>
                     </text>
                     <text id="C1" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#FFFFFF">
-                        <tspan x="58.548" y="33">1</tspan>
+                        <tspan x="58.548" y="33">[STP1_NUM]</tspan>
                     </text>
                 </g>
                 <g id="Header">

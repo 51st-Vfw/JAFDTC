@@ -127,7 +127,81 @@ namespace JAFDTC.Tests
                 NightMode = false,
                 Theater = "Syria",
                 PathLogo = "..\\..\\..\\appdata\\kb\\misc\\667logo.png",
-                Flight = null,
+                Flight = new()
+                {
+                    Category = UnitCategoryType.AIRCRAFT,
+                    Coalition = CoalitionType.BLUE,
+                    Name = "Cowboy 1",
+                    Route = 
+                    [
+                        new()
+                        {
+                            Altitude = 43,
+                            Latitude = 34.0000,
+                            Longitude = 36.0000,
+                            Name = "", //see if it hanldes to STP1...
+                            TimeOn = 0
+                        },
+                        new()
+                        {
+                            Altitude = 5000,
+                            Latitude = 34.1000,
+                            Longitude = 36.2000,
+                            Name = "IP",
+                            TimeOn = 0
+                        },
+                        new()
+                        {
+                            Altitude = 278,
+                            Latitude = 34.2200,
+                            Longitude = 36.3300,
+                            Name = "Target",
+                            TimeOn = 0
+                        },
+                         new()
+                        {
+                            Altitude = 984,
+                            Latitude = 35.118033, //N 35° 07.082'
+                            Longitude = 36.712367, //E 036° 42.742'
+                            Name = null, //Hama airbase see if it matches it/finds it
+                            TimeOn = 0
+                        }
+                    ],
+                    UniqueID = "asdf",
+                    Units =
+                    [
+                        new ()
+                        {
+                            IsAlive = true,
+                            Name = "Cowboy 1-1",
+                            Position = new()
+                            {
+                                Altitude = 278,
+                                Latitude = 34.2200,
+                                Longitude = 36.3300,
+                                Name = "",
+                                TimeOn = 0
+                            },
+                            Type = "F-16C_50",
+                            UniqueID = "fdad"
+                        },
+                        new ()
+                        {
+                            IsAlive = true,
+                            Name = "Cowboy 1-2",
+                            Position = new()
+                            {
+                                Altitude = 278,
+                                Latitude = 34.2200,
+                                Longitude = 36.3300,
+                                Name = "",
+                                TimeOn = 0
+                            },
+                            Type = "F-16C_50",
+                            UniqueID = "fdad"
+                        }
+                    ]
+                },
                 UnitGroups = null,
                 Comms =
                 [
