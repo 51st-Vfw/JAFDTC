@@ -35,14 +35,14 @@ namespace JAFDTC.Tests
         }
 
         [TestMethod]
-        public void Test_Generate_Null()
+        public void Test_Kneeboard_Null()
         {
             using var generator = new Generate();
             Assert.ThrowsException<ArgumentException>(() => generator.GenerateKneeboards(null));
         }
 
         [TestMethod]
-        public void Test_Generate_Criteria_Required()
+        public void Test_Kneeboard_Criteria_Required()
         {
             using var generator = new Generate();
 
@@ -85,7 +85,7 @@ namespace JAFDTC.Tests
         }
 
         [TestMethod]
-        public void Test_Generate_Output_Invalid()
+        public void Test_Kneeboard_Output_Invalid()
         {
             using var generator = new Generate();
             Assert.ThrowsException<DirectoryNotFoundException>(() => generator.GenerateKneeboards(new() 
@@ -99,7 +99,7 @@ namespace JAFDTC.Tests
         }
 
         [TestMethod]
-        public void Test_Generate_Templates_Missing()
+        public void Test_Kneeboard_Templates_Missing()
         {
             using var generator = new Generate();
             Assert.ThrowsException<DirectoryNotFoundException>(() => generator.GenerateKneeboards(new()
@@ -113,7 +113,7 @@ namespace JAFDTC.Tests
         }
 
         [TestMethod]
-        public void Test_Generate_Process_F16()
+        public void Test_Kneeboard_Process_F16()
         {
             using var generator = new Generate();
 
@@ -126,7 +126,7 @@ namespace JAFDTC.Tests
                 Owner = "51_Rage",
                 NightMode = false,
                 Theater = "Syria",
-                PathLogo = null,
+                PathLogo = "..\\..\\..\\appdata\\kb\\misc\\667logo.png",
                 Flights = null,
                 Steerpoints = null,
                 Units = null,

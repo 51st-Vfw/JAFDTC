@@ -2,14 +2,17 @@
 using JAFDTC.Kneeboard.Models;
 using Svg;
 using System.Drawing.Imaging;
+using System.Text.RegularExpressions;
 
 namespace JAFDTC.Kneeboard.Generate
 {
     internal class ProcessKneeboard(GenerateCriteria _generateCriteria, string _templateFilePath) : IDisposable
     {
         private SvgDocument _svgDocument;
-        private List<SvgTextSpan> _elements;
+        private List<SvgTextSpan> _textItems;
+        private List<SvgImage> _imageItems;
 
+        
         public string Process()
         {
             LoadKB();
@@ -27,14 +30,15 @@ namespace JAFDTC.Kneeboard.Generate
 
         private void ProcessMisc()
         {
-            Assign("HEADER", _generateCriteria.Name);
-            Assign("FOOTER", $"{_generateCriteria.Name}, by {_generateCriteria.Owner.ToString()} @ {DateTime.Now.ToString("MM/dd/yyyy")}");
-            Assign("THEATER", _generateCriteria.Theater);
-            Assign("ISNIGHT", _generateCriteria.NightMode.ToString()); //eh?
+            AssignText("HEADER", _generateCriteria.Name);
+            AssignText("FOOTER", $"{_generateCriteria.Name}, by {_generateCriteria.Owner.ToString()} @ {DateTime.Now.ToString("MM/dd/yyyy")}");
+            AssignText("THEATER", _generateCriteria.Theater);
+            AssignText("ISNIGHT", _generateCriteria.NightMode.ToString()); //eh?
 
             if (!string.IsNullOrWhiteSpace(_generateCriteria.PathLogo))
             {
-                //todo: load into mem and assign (base64?) to svg...
+                var b64Logo = Convert.ToBase64String(System.IO.File.ReadAllBytes(_generateCriteria.PathLogo));
+                AssignImage("LOGO", b64Logo);
             }
 
         }
@@ -48,8 +52,8 @@ namespace JAFDTC.Kneeboard.Generate
             {
                 var commPrefix = $"COMM{radio.CommMode}";
 
-                Assign(commPrefix, "NAME", radio.Name);
-                Assign(commPrefix, "FREQNAME", radio.FrequencyName);
+                AssignText(commPrefix, "NAME", radio.Name);
+                AssignText(commPrefix, "FREQNAME", radio.FrequencyName);
 
                 for (var i = 0; i < 20; i++)
                 {
@@ -61,12 +65,12 @@ namespace JAFDTC.Kneeboard.Generate
                             Frequency = 0,
                             Description = null
                         };
-                    
+
                     var presetPrefix = $"{commPrefix}_PRESET{channel.ChannelId}";
 
-                    Assign(presetPrefix, "ID", channel.ChannelId.ToString());
-                    Assign(presetPrefix, "FREQ", channel.Frequency.ToString("{d:#.##}"));
-                    Assign(presetPrefix, "DESC", channel.Description ?? "Unassigned"); //always replace text with Unassigned or blank...?
+                    AssignText(presetPrefix, "ID", channel.ChannelId.ToString());
+                    AssignText(presetPrefix, "FREQ", channel.Frequency.ToString("{d:#.##}"));
+                    AssignText(presetPrefix, "DESC", channel.Description ?? "Unassigned"); //always replace text with Unassigned or blank...?
                 }
             }
         }
@@ -199,10 +203,15 @@ namespace JAFDTC.Kneeboard.Generate
         {
             _svgDocument = SvgDocument.Open(_templateFilePath);
 
-            _elements = _svgDocument
+            _textItems = _svgDocument
                 .Descendants()
                 .OfType<SvgTextSpan>()
                 .ToList();
+
+            _imageItems = _svgDocument
+               .Descendants()
+               .OfType<SvgImage>()
+               .ToList();
         }
 
         private string GetDestinationPath()
@@ -230,11 +239,11 @@ namespace JAFDTC.Kneeboard.Generate
             return filePath;
         }
 
-        private void Assign(string key, string value)
+        private void AssignText(string key, string value)
         {
-            var match = $"[{key}]";
+            var match = ToMatch(key);
 
-            var items = _elements
+            var items = _textItems
                 .Where(p => p.Text.Contains(match, StringComparison.OrdinalIgnoreCase));
 
             if (items.IsEmpty())
@@ -244,14 +253,36 @@ namespace JAFDTC.Kneeboard.Generate
                 item.Text = item.Text.Replace(match, value, StringComparison.OrdinalIgnoreCase);
         }
 
-        private void Assign(string keyPrefix, string keySuffix, string value)
+        //<image id="51st_Fighter_Wing" x="1402" y="37" width="97.2765957" height="96" xlink:href="data:image/png;base64,[LOGO]"></image>
+
+        private void AssignText(string keyPrefix, string keySuffix, string value)
         {
-            Assign($"{keyPrefix}_{keySuffix}", value);
+            AssignText($"{keyPrefix}_{keySuffix}", value);
+        }
+
+        private void AssignImage(string key, string base64Image)
+        {
+            var match = ToMatch(key);
+
+            var items = _imageItems
+                .Where(p => p.Href.Contains(match, StringComparison.OrdinalIgnoreCase));
+
+            if (items.IsEmpty())
+                return;
+
+            foreach (var item in items)
+                item.Href = item.Href.Replace(match, base64Image, StringComparison.OrdinalIgnoreCase);
+        }
+
+        private string ToMatch(string value)
+        {
+            return $"[{value}]";
         }
 
         public void Dispose()
         {
-            _elements?.Clear();
+            _textItems?.Clear();
+            _imageItems?.Clear();
             _svgDocument = null;
         }
 
