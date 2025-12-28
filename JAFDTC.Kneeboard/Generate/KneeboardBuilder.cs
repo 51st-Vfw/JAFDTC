@@ -1,9 +1,7 @@
 ﻿using JAFDTC.Core.Extensions;
 using JAFDTC.Kneeboard.Models;
-using JAFDTC.Models.Radios;
 using Svg;
 using System.Drawing.Imaging;
-using System.Xml.Linq;
 
 namespace JAFDTC.Kneeboard.Generate
 {
@@ -51,10 +49,10 @@ namespace JAFDTC.Kneeboard.Generate
 
             foreach (var radio in _generateCriteria.Comms)
             {
-                var commPrefix = $"COMM{radio.CommMode}";
+                var prefix = $"COMM{radio.CommMode}";
 
-                AssignText(commPrefix, "NAME", radio.Name);
-                AssignText(commPrefix, "FREQNAME", radio.FrequencyName);
+                AssignText(prefix, "NAME", radio.Name);
+                AssignText(prefix, "FREQNAME", radio.FrequencyName);
 
                 for (var i = 0; i < 20; i++)
                 {
@@ -67,7 +65,7 @@ namespace JAFDTC.Kneeboard.Generate
                             Description = null
                         };
 
-                    var presetPrefix = $"{commPrefix}_PRESET{channel.ChannelId}";
+                    var presetPrefix = $"{prefix}_PRESET{channel.ChannelId}";
 
                     AssignText(presetPrefix, "ID", channel.ChannelId.ToString());
                     AssignText(presetPrefix, "FREQ", channel.Frequency.ToString("{d:#.##}"));
@@ -105,26 +103,144 @@ namespace JAFDTC.Kneeboard.Generate
              *          if your name is set to lead.. then everyone else gets recip.. else set primary to reciprocal
              *      JOKER (or just flight level)
              */
+
+            if (_generateCriteria.Flight?.Units?.IsEmpty() ?? true)
+                return;
+
+            var flightName = string.Empty;
+            var flightNum = string.Empty;
+            var tacanLead = string.Empty;
+            var tacanWing = string.Empty;
+            var tacanBand = string.Empty;
+
+            if (!string.IsNullOrWhiteSpace(_generateCriteria.Flight.Name))
+            {
+                var initialName = string.Concat(_generateCriteria.Flight.Name).ToUpper().Trim().Replace(" ", "-").Replace("_", "-");
+
+                flightName = initialName.Split('-')[0];
+                
+                if (initialName.Contains('-'))
+                    flightNum = initialName.Split('-')[1];
+            }
+
+            if (_generateCriteria.Pilots.HasData())
+            {
+                var currentPilot = _generateCriteria.Pilots
+                    .FirstOrDefault(p => string.Equals(p.Callsign, _generateCriteria.Owner, StringComparison.OrdinalIgnoreCase));
+
+                if (currentPilot != null)
+                {
+                    if (currentPilot.IsLead)
+                    {
+                        tacanLead = currentPilot.Tacan?.ToString() ?? string.Empty;
+                        tacanWing = currentPilot.Tacan.HasValue ? (currentPilot.Tacan.Value + 63).ToString() : "";
+                        tacanBand = currentPilot.TacanBand?.ToString().ToUpper() ?? string.Empty;
+                    }
+                    else
+                    {
+                        tacanWing = currentPilot.Tacan?.ToString() ?? string.Empty;
+                        tacanLead = currentPilot.Tacan.HasValue ? (currentPilot.Tacan.Value - 63).ToString() : "";
+                        tacanBand = currentPilot.TacanBand?.ToString()?.ToUpper() ?? string.Empty;
+                    }
+
+                    if (string.IsNullOrWhiteSpace(flightName) && !string.IsNullOrWhiteSpace(currentPilot.Callsign)) //if it didnt come from imported Unit with STPs.. then use DL pilot current data...
+                    {
+                        flightName = currentPilot.Callsign.Split(' ')[0].ToUpper(); //WF 22 -> WF
+
+                        if (currentPilot.Callsign.Contains(' '))
+                            flightNum = currentPilot.Callsign.Split(' ')[1][0].ToString(); //WF 22 -> 22 -> 2
+                    }
+                }
+            }
+
+            if (string.IsNullOrWhiteSpace(flightName)) //default
+                flightName = "FLIGHT";
+
+            if (flightName.Length == 2) //jaf CY SD etc
+            {
+                if (flightName == "CY")
+                    flightName = "COWBOY";
+                else if (flightName == "LO")
+                    flightName = "LOBO";
+                else if (flightName == "WF")
+                    flightName = "WOLF";
+                else if (flightName == "UI")
+                    flightName = "UZI";
+                else if (flightName == "VR")
+                    flightName = "VIPER";
+                else if (flightName == "SD")
+                    flightName = "SPRINGFIELD";
+                else if (flightName == "EN")
+                    flightName = "ENSIGN";
+                else if (flightName == "NA")
+                    flightName = "NINJA";
+                else if (flightName == "CT")
+                    flightName = "COLT";
+            }
+
+            flightName += $"-{flightNum}"; //finalize flight name
+
+            //var presetVictor = "";
+
+            AssignText("FLIGHT_NAME", flightName);
+            AssignText("FLIGHT_TYPE", _generateCriteria.Airframe);
+            AssignText("FLIGHT_TACAN", string.IsNullOrWhiteSpace(tacanLead) ? string.Empty : $"{tacanLead}/{tacanWing}{tacanBand}");
+
+            for (var i = 0; i < 8; i++) //jaf only supports 8 pilot slots (technically 2 4ships but whatevs)
+            {
+                var prefix = $"PILOT{i + 1}";
+
+                //these are really tied together...
+                var flight = (_generateCriteria.Flight.Units.Count() > i) ?
+                        _generateCriteria.Flight.Units[i]
+                        : null;
+
+                var pilot = (_generateCriteria.Pilots.Count() > i) ?
+                    _generateCriteria.Pilots[i]
+                    : null;
+
+                if (pilot == null)
+                {
+                    AssignText(prefix, "CALLSIGN", string.Empty);
+                    AssignText(prefix, "TYPE", string.Empty);
+                    AssignText(prefix, "NAME", string.Empty);
+                    AssignText(prefix, "TNDL", string.Empty);
+                    AssignText(prefix, "TACAN", string.Empty);
+                    AssignText(prefix, "TACAN_NUM", string.Empty);
+                    AssignText(prefix, "TACAN_BAND", string.Empty);
+                    AssignText(prefix, "JOKER", string.Empty);
+                    AssignText(prefix, "LASE_CODE", string.Empty);
+                }
+                else
+                {
+                    AssignText(prefix, "CALLSIGN", $"{flightName}-{i + 1}");
+                    
+                    AssignText(prefix, "TYPE", Clean(flight?.Type, _generateCriteria.Airframe));
+                    
+                    AssignText(prefix, "NAME", Clean(pilot.Name, "Unassigned"));
+                    AssignText(prefix, "TNDL", Clean(pilot.TNDL, "Unassigned"));
+
+                    AssignText(prefix, "TACAN", (pilot.IsLead ? tacanLead: tacanWing) + tacanBand);
+                    AssignText(prefix, "TACAN_NUM", pilot.IsLead ? tacanLead: tacanWing);
+                    AssignText(prefix, "TACAN_BAND", tacanBand);
+
+                    if (string.Equals(pilot.Callsign, _generateCriteria.Owner, StringComparison.OrdinalIgnoreCase))
+                    {
+                        AssignText(prefix, "JOKER", pilot.Joker?.ToString() ?? string.Empty);
+                        AssignText(prefix, "LASE_CODE", pilot.LaseCode?.ToString() ?? string.Empty);
+                    }
+                    else
+                    {
+                        AssignText(prefix, "JOKER", string.Empty);
+                        AssignText(prefix, "LASE_CODE", string.Empty);
+                    }
+
+                }
+            }
         }
 
         private void BuildSteerpoints()
         {
-            /*
-             * STP page for
-             *      stp num
-             *      stp name if avail
-             *      lat/lon (or just noise...)
-             *      alt
-             *      speed
-             *      TOS/TOT
-             * 
-             * from Map POI DB and/or Import Miz/CF/ACMI
-             *      if stp is at (or near??) then upgrade any missing data (like name, alt, etc)
-             *      maybe if STP in WEZ or know threats..list them out in Notes ?
-             * 
-             */
-
-
             if (_generateCriteria.Flight?.Route?.IsEmpty() ?? true)
                 return;
 
@@ -155,6 +271,13 @@ namespace JAFDTC.Kneeboard.Generate
                     {
                         //todo: attempt to match by location to the POI DB
                         //maybe even import from miz/cf/acmi  group/unit/static
+
+                        /*
+                         * from Map POI DB and/or Import Miz/CF/ACMI
+                         *      if stp is at (or near??) then upgrade any missing data (like name, alt, etc)
+                         *      maybe if STP in WEZ or know threats..list them out in Notes ?
+                         * 
+                         */
 
                         //name = "better name..."
                     }
@@ -293,7 +416,7 @@ namespace JAFDTC.Kneeboard.Generate
             var match = ToMatch(key);
 
             var items = _textItems
-                .Where(p => p.Text.Contains(match, StringComparison.OrdinalIgnoreCase));
+                .Where(p => p.Text != null && p.Text.Contains(match, StringComparison.OrdinalIgnoreCase));
 
             if (items.IsEmpty())
                 return;
@@ -312,7 +435,7 @@ namespace JAFDTC.Kneeboard.Generate
             var match = ToMatch(key);
 
             var items = _imageItems
-                .Where(p => p.Href.Contains(match, StringComparison.OrdinalIgnoreCase));
+                .Where(p => p.Href != null && p.Href.Contains(match, StringComparison.OrdinalIgnoreCase));
 
             if (items.IsEmpty())
                 return;

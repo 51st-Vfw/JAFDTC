@@ -123,7 +123,7 @@ namespace JAFDTC.Tests
                 Name = $"JAF_TEST_{DateTime.Now.ToString("yyyyMMddhhmmss")}",
                 PathOutput = "..\\..\\..\\appdata\\kb\\output",
                 PathTemplates = "..\\..\\..\\appdata\\kb\\",
-                Owner = "51_Rage",
+                Owner = "Rage",
                 NightMode = false,
                 Theater = "Syria",
                 PathLogo = "..\\..\\..\\appdata\\kb\\misc\\667logo.png",
@@ -131,7 +131,7 @@ namespace JAFDTC.Tests
                 {
                     Category = UnitCategoryType.AIRCRAFT,
                     Coalition = CoalitionType.BLUE,
-                    Name = "Cowboy 1",
+                    Name = "WF 2",
                     Route = 
                     [
                         new()
@@ -173,7 +173,7 @@ namespace JAFDTC.Tests
                         new ()
                         {
                             IsAlive = true,
-                            Name = "Cowboy 1-1",
+                            Name = "WF 2-1",
                             Position = new()
                             {
                                 Altitude = 278,
@@ -188,7 +188,7 @@ namespace JAFDTC.Tests
                         new ()
                         {
                             IsAlive = true,
-                            Name = "Cowboy 1-2",
+                            Name = "WF 2-2",
                             Position = new()
                             {
                                 Altitude = 278,
@@ -202,6 +202,28 @@ namespace JAFDTC.Tests
                         }
                     ]
                 },
+                Pilots =
+                [
+                    new()
+                    {
+                        Name = "Rage",
+                        Callsign = "WF 21",
+                        IsLead = true,
+                        IsTDOA = true,
+                        TNDL = "67001",
+                        Joker = 4000,
+                        LaseCode = 1234,
+                        Tacan = 38,
+                        TacanBand = 'Y'
+                    },
+                    new()
+                    {
+                        Name = "Raven",
+                        IsLead = false,
+                        IsTDOA = true,
+                        TNDL = "67002",
+                    }
+                ],
                 UnitGroups = null,
                 Comms =
                 [
@@ -241,7 +263,7 @@ namespace JAFDTC.Tests
             });
 
             Assert.IsTrue(result.HasData());
-            Assert.IsTrue(result.Count == 6);
+            Assert.IsTrue(result.Count == 3);
         }
 
     }

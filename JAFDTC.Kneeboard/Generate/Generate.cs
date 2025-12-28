@@ -31,6 +31,12 @@ namespace JAFDTC.Kneeboard.Generate
             if (templates.IsEmpty())
                 throw new FileNotFoundException("Template Directory has no files!");
 
+            if ((generateCriteria.Pilots?.Count ?? 0) != (generateCriteria.Flight?.Units?.Count ?? 0))
+                throw new ArgumentException("Pilot count must match flight unit count!");
+
+            //if (generateCriteria.Pilots.HasData() && !generateCriteria.Pilots.Any(p => string.Equals(p.Callsign, generateCriteria.Owner, StringComparison.OrdinalIgnoreCase)))
+            //    throw new ArgumentException("Pilot count must match flight unit count!");
+
             var result = templates
                 .AsParallel()
                 .Select(p =>

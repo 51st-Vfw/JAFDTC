@@ -1,4 +1,5 @@
-﻿using JAFDTC.Models.Radios;
+﻿using JAFDTC.Models.Pilots;
+using JAFDTC.Models.Radios;
 using JAFDTC.Models.Units;
 
 namespace JAFDTC.Kneeboard.Models
@@ -14,7 +15,8 @@ namespace JAFDTC.Kneeboard.Models
         public string? Theater { get; set; } //for kb header info + date
         public bool? NightMode { get; set; } //tint option.. or just always gen both?
         public string? PathLogo { get; set; } //from settings for squad or wing logo
-        public UnitGroupItem Flight { get; set; } //from jaf profile, from global models.. flight into todo
+        public UnitGroupItem Flight { get; set; }
+        public IReadOnlyList<Pilot> Pilots { get; set; } //this needs to align with Flight Unit order...
         public IReadOnlyList<Radio> Comms { get; set; } //from jaf profile, from global models, also  uhf/vhf, preset num, freq, name (inclue guard).. flight specific? ie primary victors, etc?
         public string[] POIs { get; set; } //from jaf DB, global models.. pois from DB as well as miz/cf/acmi import .. (this is maybe JUST airfields and farps?)
         public IReadOnlyList<UnitGroupItem> UnitGroups { get; set; } //if available from import miz/cf/acmi.... ground units (maybe statics?) drive more info on Map, threat rings, labels, etc 
