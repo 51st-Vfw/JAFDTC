@@ -6,29 +6,30 @@ using System.Text.RegularExpressions;
 
 namespace JAFDTC.Kneeboard.Generate
 {
-    internal class ProcessKneeboard(GenerateCriteria _generateCriteria, string _templateFilePath) : IDisposable
+    internal class KneeboardBuilder(GenerateCriteria _generateCriteria, string _templateFilePath) : IDisposable
     {
         private SvgDocument _svgDocument;
         private List<SvgTextSpan> _textItems;
         private List<SvgImage> _imageItems;
-
         
-        public string Process()
+        public string Build()
         {
             LoadKB();
 
-            ProcessMisc();
-            ProcessComms();
-            ProcessFlights();
-            ProcessSteerpoints();
-            ProcessAirfields();
-            ProcessThreats();
-            ProcessMaps();
+            BuildMisc();
+            BuildComms();
+            BuildFlights();
+            BuildSteerpoints();
+            BuildAirfields();
+            BuildThreats();
+            BuildMaps();
 
             return Save();
         }
 
-        private void ProcessMisc()
+        #region Build Sections
+
+        private void BuildMisc()
         {
             AssignText("HEADER", _generateCriteria.Name);
             AssignText("FOOTER", $"{_generateCriteria.Name}, by {_generateCriteria.Owner.ToString()} @ {DateTime.Now.ToString("MM/dd/yyyy")}");
@@ -43,7 +44,7 @@ namespace JAFDTC.Kneeboard.Generate
 
         }
 
-        private void ProcessComms()
+        private void BuildComms()
         {
             if (_generateCriteria.Comms.IsEmpty())
                 return;
@@ -75,7 +76,7 @@ namespace JAFDTC.Kneeboard.Generate
             }
         }
 
-        private void ProcessFlights()
+        private void BuildFlights()
         {
             /*
              * for general flight
@@ -106,7 +107,7 @@ namespace JAFDTC.Kneeboard.Generate
              */
         }
 
-        private void ProcessSteerpoints()
+        private void BuildSteerpoints()
         {
             /*
              * STP page for
@@ -124,7 +125,7 @@ namespace JAFDTC.Kneeboard.Generate
              */
         }
 
-        private void ProcessAirfields()
+        private void BuildAirfields()
         {
             /*
              * for any STPs that are linked or "at/near" airfield (farp tbd)
@@ -138,7 +139,7 @@ namespace JAFDTC.Kneeboard.Generate
              */
         }
 
-        private void ProcessThreats()
+        private void BuildThreats()
         {
             /*
              * from POI import of miz/cf/acmi
@@ -177,7 +178,7 @@ namespace JAFDTC.Kneeboard.Generate
              */
         }
 
-        private void ProcessMaps()
+        private void BuildMaps()
         {
             /*
              * long term...
@@ -198,6 +199,9 @@ namespace JAFDTC.Kneeboard.Generate
              */
         }
 
+        #endregion
+
+        #region Support Methods
 
         private void LoadKB()
         {
@@ -253,8 +257,6 @@ namespace JAFDTC.Kneeboard.Generate
                 item.Text = item.Text.Replace(match, value, StringComparison.OrdinalIgnoreCase);
         }
 
-        //<image id="51st_Fighter_Wing" x="1402" y="37" width="97.2765957" height="96" xlink:href="data:image/png;base64,[LOGO]"></image>
-
         private void AssignText(string keyPrefix, string keySuffix, string value)
         {
             AssignText($"{keyPrefix}_{keySuffix}", value);
@@ -279,12 +281,13 @@ namespace JAFDTC.Kneeboard.Generate
             return $"[{value}]";
         }
 
+        #endregion
+
         public void Dispose()
         {
             _textItems?.Clear();
             _imageItems?.Clear();
             _svgDocument = null;
         }
-
     }
 }

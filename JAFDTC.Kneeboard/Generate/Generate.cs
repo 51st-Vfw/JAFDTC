@@ -31,8 +31,8 @@ namespace JAFDTC.Kneeboard.Generate
                 .AsParallel()
                 .Select(p =>
                 {
-                    using var pkb = new ProcessKneeboard(generateCriteria, p);
-                    return pkb.Process();
+                    using var pkb = new KneeboardBuilder(generateCriteria, p);
+                    return pkb.Build();
                 })
                 .ToList();
 
