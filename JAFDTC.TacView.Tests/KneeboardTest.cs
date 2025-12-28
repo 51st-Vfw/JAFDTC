@@ -212,7 +212,7 @@ namespace JAFDTC.Tests
                         IsTDOA = true,
                         TNDL = "67001",
                         Joker = 4000,
-                        LaseCode = 1234,
+                        LaseCode = 1688,
                         Tacan = 38,
                         TacanBand = 'Y'
                     },
@@ -221,7 +221,7 @@ namespace JAFDTC.Tests
                         Name = "Raven",
                         IsLead = false,
                         IsTDOA = true,
-                        TNDL = "67002",
+                        TNDL = "67062",
                     }
                 ],
                 UnitGroups = null,

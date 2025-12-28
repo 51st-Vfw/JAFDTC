@@ -126,7 +126,7 @@ namespace JAFDTC.Kneeboard.Generate
             if (_generateCriteria.Pilots.HasData())
             {
                 var currentPilot = _generateCriteria.Pilots
-                    .FirstOrDefault(p => string.Equals(p.Callsign, _generateCriteria.Owner, StringComparison.OrdinalIgnoreCase));
+                    .FirstOrDefault(p => string.Equals(p.Name, _generateCriteria.Owner, StringComparison.OrdinalIgnoreCase));
 
                 if (currentPilot != null)
                 {
@@ -224,7 +224,7 @@ namespace JAFDTC.Kneeboard.Generate
                     AssignText(prefix, "TACAN_NUM", pilot.IsLead ? tacanLead: tacanWing);
                     AssignText(prefix, "TACAN_BAND", tacanBand);
 
-                    if (string.Equals(pilot.Callsign, _generateCriteria.Owner, StringComparison.OrdinalIgnoreCase))
+                    if (string.Equals(pilot.Name, _generateCriteria.Owner, StringComparison.OrdinalIgnoreCase))
                     {
                         AssignText(prefix, "JOKER", pilot.Joker?.ToString() ?? string.Empty);
                         AssignText(prefix, "LASE_CODE", pilot.LaseCode?.ToString() ?? string.Empty);
