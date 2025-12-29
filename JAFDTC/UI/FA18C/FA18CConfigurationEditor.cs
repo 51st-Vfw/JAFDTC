@@ -30,7 +30,7 @@ namespace JAFDTC.UI.FA18C
     {
         public const string CMS = "\xEA18";
         public const string MISC = "\xE8B7";
-        public const string PP = "\xF0E3";
+        public const string PP = "\xE8FD";
         public const string RADIO = "\xE704";
         public const string WYPT = "\xE707";
     }
