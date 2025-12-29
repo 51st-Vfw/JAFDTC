@@ -18,6 +18,7 @@
 // ********************************************************************************************************************
 
 using JAFDTC.Models.AV8B.WYPT;
+using JAFDTC.Models.Core;
 using JAFDTC.UI.AV8B;
 using JAFDTC.Utilities;
 using System;

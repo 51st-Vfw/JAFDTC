@@ -18,6 +18,7 @@
 // ********************************************************************************************************************
 
 using JAFDTC.Models;
+using JAFDTC.Models.Core;
 using JAFDTC.UI.Base;
 using JAFDTC.Utilities;
 using JAFDTC.Utilities.Networking;

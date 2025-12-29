@@ -18,6 +18,7 @@
 // ********************************************************************************************************************
 
 using JAFDTC.Utilities;
+using JAFDTC.Models.Core;
 using JAFDTC.Models.DCS;
 
 namespace JAFDTC.Models.A10C

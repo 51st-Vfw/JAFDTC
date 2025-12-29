@@ -17,6 +17,7 @@
 //
 // ********************************************************************************************************************
 
+using JAFDTC.Models.Core;
 using JAFDTC.Models.M2000C.WYPT;
 using JAFDTC.UI.M2000C;
 using JAFDTC.Utilities;

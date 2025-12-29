@@ -22,6 +22,7 @@
 #define ENABLE_FILE_ACTIVATION
 
 using JAFDTC.Models;
+using JAFDTC.Models.Core;
 using JAFDTC.UI.App;
 using JAFDTC.UI.Base;
 using JAFDTC.Utilities;
@@ -246,7 +247,7 @@ namespace JAFDTC
                 {
                     if (_isDCSExporting && (TelemDataRx.Instance.NumPackets == LastDCSExportPacketCount))
                     {
-                        DCSActiveAirframe = AirframeTypes.None;
+                        DCSActiveAirframe = AirframeTypes.UNKNOWN;
                         _isDCSExporting = false;
                         OnPropertyChanged(nameof(IsDCSExporting));
                     }
@@ -851,7 +852,7 @@ namespace JAFDTC
             if (Window != null)
             {
                 DCSActiveAirframe = (_dcsToJAFDTCTypeMap.TryGetValue(data.Model, out AirframeTypes value))
-                                        ? value : AirframeTypes.None;
+                                        ? value : AirframeTypes.UNKNOWN;
 
 #if DCS_TELEM_INCLUDES_LAT_LON
                 DCSLastLat = (double.TryParse(data.Lat, out double lat)) ? lat : 0.0;

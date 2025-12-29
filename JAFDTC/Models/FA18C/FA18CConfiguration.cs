@@ -19,6 +19,7 @@
 // ********************************************************************************************************************
 
 using JAFDTC.Models.Base;
+using JAFDTC.Models.Core;
 using JAFDTC.Models.FA18C.CMS;
 using JAFDTC.Models.FA18C.PP;
 using JAFDTC.Models.FA18C.Radio;

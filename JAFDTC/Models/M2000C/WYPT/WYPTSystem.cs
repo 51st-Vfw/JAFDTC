@@ -18,7 +18,7 @@
 // ********************************************************************************************************************
 
 using JAFDTC.Models.Base;
-using JAFDTC.Models.CoreApp;
+using JAFDTC.Models.Core;
 using JAFDTC.Models.Units;
 using JAFDTC.Utilities;
 using System.Collections.Generic;

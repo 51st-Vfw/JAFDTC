@@ -20,6 +20,7 @@
 using JAFDTC.File;
 using JAFDTC.File.Models;
 using JAFDTC.Models.Base;
+using JAFDTC.Models.Core;
 using JAFDTC.Models.CoreApp;
 using JAFDTC.Models.DCS;
 using JAFDTC.Models.POI;
@@ -381,7 +382,7 @@ namespace JAFDTC.UI.Base
                 {
                     FilePath = resultPick.Path,
                     UnitCategories = [UnitCategoryType.AIRCRAFT, UnitCategoryType.HELICOPTER],
-                    UnitTypes = ((Settings.IsNavPtImportIgnoreAirframe) ? AirframeTypes.None : airframe) switch
+                    UnitTypes = ((Settings.IsNavPtImportIgnoreAirframe) ? AirframeTypes.UNKNOWN : airframe) switch
                     {
                         AirframeTypes.A10C => ["A-10C_2"],
                         AirframeTypes.AH64D => ["AH-64D_BLK_II"],

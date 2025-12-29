@@ -24,6 +24,7 @@
 
 using JAFDTC.Models;
 using JAFDTC.Models.A10C;
+using JAFDTC.Models.Core;
 using JAFDTC.Models.F16C;
 using JAFDTC.Models.POI;
 using JAFDTC.Models.Threats;

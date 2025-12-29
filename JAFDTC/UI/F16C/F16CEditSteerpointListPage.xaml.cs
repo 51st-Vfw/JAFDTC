@@ -19,6 +19,7 @@
 
 using JAFDTC.Models;
 using JAFDTC.Models.Base;
+using JAFDTC.Models.Core;
 using JAFDTC.Models.F16C;
 using JAFDTC.Models.F16C.STPT;
 using JAFDTC.UI.App;

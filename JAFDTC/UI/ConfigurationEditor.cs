@@ -18,6 +18,7 @@
 // ********************************************************************************************************************
 
 using JAFDTC.Models;
+using JAFDTC.Models.Core;
 using JAFDTC.UI.A10C;
 using JAFDTC.UI.AV8B;
 using JAFDTC.UI.F14AB;
@@ -111,7 +112,6 @@ namespace JAFDTC.UI
         {
             return config.Airframe switch
             {
-                AirframeTypes.None => null,
                 AirframeTypes.A10C => new A10CConfigurationEditor(config),
                 AirframeTypes.AH64D => null,
                 AirframeTypes.AV8B => new AV8BConfigurationEditor(config),

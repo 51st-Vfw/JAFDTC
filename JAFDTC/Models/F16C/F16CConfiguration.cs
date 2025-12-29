@@ -19,6 +19,7 @@
 // ********************************************************************************************************************
 
 using JAFDTC.Models.Base;
+using JAFDTC.Models.Core;
 using JAFDTC.Models.F16C.CMDS;
 using JAFDTC.Models.F16C.DLNK;
 using JAFDTC.Models.F16C.HARM;

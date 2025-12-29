@@ -20,6 +20,7 @@
 using JAFDTC.Models;
 using JAFDTC.Models.AV8B;
 using JAFDTC.Models.Base;
+using JAFDTC.Models.Core;
 using JAFDTC.UI.App;
 using JAFDTC.UI.Base;
 using JAFDTC.Utilities;
