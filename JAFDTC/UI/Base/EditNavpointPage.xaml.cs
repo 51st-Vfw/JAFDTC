@@ -464,9 +464,7 @@ namespace JAFDTC.UI.Base
                 FilterSpec = spec;
                 button.IsChecked = !FilterSpec.IsDefault;
 
-                Settings.LastStptFilterTheater = FilterSpec.Theater;
-                Settings.LastStptFilterTags = FilterSpec.Tags;
-                Settings.LastStptFilterIncludeTypes = FilterSpec.IncludeTypes;
+                Settings.LastNavptPOIFilter = FilterSpec;
 
                 RebuildPointsOfInterest();
                 RebuildInterfaceState();
@@ -763,8 +761,7 @@ namespace JAFDTC.UI.Base
             EditNavptIndex = NavArgs.IndexNavpt;
             CopyConfigToEdit(EditNavptIndex);
 
-            FilterSpec = new(Settings.LastStptFilterTheater, Settings.LastStptFilterCampaign,
-                             Settings.LastStptFilterTags, Settings.LastStptFilterIncludeTypes);
+            FilterSpec = new(Settings.LastNavptPOIFilter);
 
             ValidateAllFields(_curNavptFieldValueMap, PageHelper.GetErrors(EditNavpt, null));
             RebuildPointsOfInterest();

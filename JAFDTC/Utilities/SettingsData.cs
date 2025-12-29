@@ -62,6 +62,13 @@ namespace JAFDTC.Utilities
 
         public ThreatFilterSpec LastThreatFilter { get; set; }
 
+        public POIFilterSpec LastNavptPOIFilter { get; set; }
+
+        public POIFilterSpec LastPOIFilter { get; set; }
+
+        public LLFormat LastPOICoordFmtSelection { get; set; }
+
+#if NOPE
         public string LastStptFilterTheater { get; set; }
 
         public string LastStptFilterCampaign { get; set; }
@@ -79,6 +86,7 @@ namespace JAFDTC.Utilities
         public PointOfInterestTypeMask LastPoIFilterIncludeTypes { get; set; }
 
         public LLFormat LastPoICoordFmtSelection { get; set; }
+#endif
 
         public string LastWindowSetupMain { get; set; }
 
@@ -129,15 +137,9 @@ namespace JAFDTC.Utilities
             LastConfigFilenameSelection = "";
 
             LastThreatFilter = new();
-            LastStptFilterTheater = "";
-            LastStptFilterCampaign = "";
-            LastStptFilterTags = "";
-            LastStptFilterIncludeTypes = PointOfInterestTypeMask.ANY;
-            LastPoIFilterTheater = "";
-            LastPoIFilterCampaign = "";
-            LastPoIFilterTags = "";
-            LastPoIFilterIncludeTypes = PointOfInterestTypeMask.ANY;
-            LastPoICoordFmtSelection = LLFormat.DDM_P3ZF;
+            LastNavptPOIFilter = new();
+            LastPOIFilter = new();
+            LastPOICoordFmtSelection = LLFormat.DDM_P3ZF;
 
             // main application settings
 

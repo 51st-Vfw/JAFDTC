@@ -642,11 +642,8 @@ namespace JAFDTC.UI.F15E
             if (spec != null)
             {
                 FilterSpec = spec;
+                Settings.LastNavptPOIFilter = new(FilterSpec);
                 button.IsChecked = !FilterSpec.IsDefault;
-
-                Settings.LastStptFilterTheater = FilterSpec.Theater;
-                Settings.LastStptFilterTags = FilterSpec.Tags;
-                Settings.LastStptFilterIncludeTypes = FilterSpec.IncludeTypes;
 
                 RebuildPointsOfInterest();
                 RebuildInterfaceState();
@@ -900,8 +897,7 @@ namespace JAFDTC.UI.F15E
             uiRfptComboSelect.SelectedIndex = EditRfptNum - 1;
             LoadEditRfptFromPointNumber(EditRfptNum);
 
-            FilterSpec = new(Settings.LastStptFilterTheater, Settings.LastStptFilterCampaign,
-                             Settings.LastStptFilterTags, Settings.LastStptFilterIncludeTypes);
+            FilterSpec = new(Settings.LastNavptPOIFilter);
 
             ValidateAllFields(_curStptFieldValueMap, EditStpt.GetErrors(null));
             RebuildPointsOfInterest();

@@ -84,12 +84,7 @@ namespace JAFDTC.UI.Base
         {
             InitializeComponent();
 
-// TODO: move to POIFilterSpec in settings w/ copy constructor
-            POIFilter = new();
-            POIFilter.Theater = Settings.LastPoIFilterTheater;
-            POIFilter.Campaign = Settings.LastPoIFilterCampaign;
-            POIFilter.Tags = Settings.LastPoIFilterTags;
-            POIFilter.IncludeTypes = Settings.LastPoIFilterIncludeTypes;
+            POIFilter = new(Settings.LastPOIFilter);
 
             LLDisplayFmt = LLFormat.DDM_P3ZF;
             CurPoIItems = [ ];
@@ -307,11 +302,7 @@ namespace JAFDTC.UI.Base
 
             button.IsChecked = IsFiltered;
 
-// TODO: move settings to POIFilterSpec type
-            Settings.LastPoIFilterTheater = POIFilter.Theater;
-            Settings.LastPoIFilterCampaign = POIFilter.Campaign;
-            Settings.LastPoIFilterTags = POIFilter.Tags;
-            Settings.LastPoIFilterIncludeTypes = POIFilter.IncludeTypes;
+            Settings.LastPOIFilter = POIFilter;
 
             uiPoIListView.SelectedItems.Clear();
             RebuildPoIList();
@@ -336,7 +327,7 @@ namespace JAFDTC.UI.Base
             ContentDialogResult result = await coordList.ShowAsync(ContentDialogPlacement.Popup);
             if (result == ContentDialogResult.Primary)
             {
-                Settings.LastPoICoordFmtSelection = _llFmtTextToFmtMap[coordList.SelectedItem];
+                Settings.LastPOICoordFmtSelection = _llFmtTextToFmtMap[coordList.SelectedItem];
                 ChangeCoordFormat(_llFmtTextToFmtMap[coordList.SelectedItem]);
                 RebuildPoIList();
             }
@@ -356,7 +347,7 @@ namespace JAFDTC.UI.Base
         {
             NavArgs = (NavigationArg)args.Parameter;
 
-            ChangeCoordFormat(Settings.LastPoICoordFmtSelection);
+            ChangeCoordFormat(Settings.LastPOICoordFmtSelection);
             RebuildPoIList();
 
             base.OnNavigatedTo(args);

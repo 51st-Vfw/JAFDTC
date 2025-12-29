@@ -118,8 +118,7 @@ namespace JAFDTC.UI.FA18C
             EditCoordIdx = 0;
             EditCoordInfo = new();
 
-            FilterSpec = new(Settings.LastStptFilterTheater, Settings.LastStptFilterCampaign,
-                             Settings.LastStptFilterTags, Settings.LastStptFilterIncludeTypes);
+            FilterSpec = new(Settings.LastNavptPOIFilter);
 
             InitializeComponent();
             InitializeBase(EditCoordInfo, uiPosnValueName, uiCtlLinkResetBtns);
@@ -831,11 +830,8 @@ namespace JAFDTC.UI.FA18C
             if (spec != null)
             {
                 FilterSpec = spec;
+                Settings.LastNavptPOIFilter = new(FilterSpec);
                 button.IsChecked = !FilterSpec.IsDefault;
-
-                Settings.LastStptFilterTheater = FilterSpec.Theater;
-                Settings.LastStptFilterTags = FilterSpec.Tags;
-                Settings.LastStptFilterIncludeTypes = FilterSpec.IncludeTypes;
 
                 RebuildPointsOfInterest();
                 UpdateUIFromEditState();
