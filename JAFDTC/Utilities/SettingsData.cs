@@ -20,7 +20,6 @@
 
 using JAFDTC.Models.Core;
 using JAFDTC.Models.CoreApp;
-using JAFDTC.Models.POI;
 using System.Collections.Generic;
 
 namespace JAFDTC.Utilities
@@ -68,26 +67,6 @@ namespace JAFDTC.Utilities
         public POIFilterSpec LastPOIFilter { get; set; }
 
         public LLFormat LastPOICoordFmtSelection { get; set; }
-
-#if NOPE
-        public string LastStptFilterTheater { get; set; }
-
-        public string LastStptFilterCampaign { get; set; }
-
-        public string LastStptFilterTags { get; set; }
-
-        public PointOfInterestTypeMask LastStptFilterIncludeTypes { get; set; }
-
-        public string LastPoIFilterTheater { get; set; }
-
-        public string LastPoIFilterCampaign { get; set; }
-
-        public string LastPoIFilterTags { get; set; }
-
-        public PointOfInterestTypeMask LastPoIFilterIncludeTypes { get; set; }
-
-        public LLFormat LastPoICoordFmtSelection { get; set; }
-#endif
 
         public string LastWindowSetupMain { get; set; }
 

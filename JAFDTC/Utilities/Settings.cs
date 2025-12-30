@@ -350,6 +350,8 @@ namespace JAFDTC.Utilities
             //
             _currentSettings.MapSettings ??= new();
             _currentSettings.LastThreatFilter ??= new();
+            _currentSettings.LastNavptPOIFilter ??= new();
+            _currentSettings.LastPOIFilter ??= new();
 
             if (Settings.VersionJAFDTC != Globals.VersionJAFDTC)
             {
