@@ -111,7 +111,7 @@ namespace JAFDTC.UI.Controls.Map
         {
             Tuple<MapMarkerInfo.MarkerType, string, int> tuple = marker.Tag as Tuple<MapMarkerInfo.MarkerType, string, int>;
             Type = tuple.Item1;
-            TagStr = (Type != MapMarkerInfo.MarkerType.UNKNOWN) ? tuple.Item2 : null;
+            TagStr = (Type != MapMarkerInfo.MarkerType.UNKNOWN) ? tuple.Item2 : "<unknown>";
             TagInt = (Type != MapMarkerInfo.MarkerType.UNKNOWN) ? tuple.Item3 : -1;
             Lat = (Type != MapMarkerInfo.MarkerType.UNKNOWN) ? $"{marker.Location.Latitude:F8}" : null;
             Lon = (Type != MapMarkerInfo.MarkerType.UNKNOWN) ? $"{marker.Location.Longitude:F8}" : null;
