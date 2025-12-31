@@ -20,6 +20,7 @@
 using JAFDTC.File;
 using JAFDTC.File.Models;
 using JAFDTC.Models.Base;
+using JAFDTC.Models.Core;
 using JAFDTC.Models.CoreApp;
 using JAFDTC.Models.DCS;
 using JAFDTC.Models.POI;
@@ -220,8 +221,10 @@ namespace JAFDTC.UI.Base
         {
             List<string> allowedTheaters = TheatersForNavpoints(navpts);
 
-// TODO: settings persist POIFilterSpec
-            POIFilterSpec filter = new(Settings.LastPoIFilterTheater, Settings.LastPoIFilterCampaign, Settings.LastPoIFilterTags, PointOfInterestTypeMask.ANY);
+            POIFilterSpec filter = new(Settings.LastNavptPOIFilter)
+            {
+                IncludeTypes = PointOfInterestTypeMask.ANY
+            };
             GetPoIFilterDialog filterDialog = new(filter, GetPoIFilterDialog.Mode.CHOOSE, allowedTheaters)
             {
                 XamlRoot = root,
@@ -234,11 +237,9 @@ namespace JAFDTC.UI.Base
             if (result == ContentDialogResult.Primary)
             {
                 filter = filterDialog.Filter;
+                filter.IncludeTypes = PointOfInterestTypeMask.ANY;
 
-// TODO: settings persist POIFilterSpec
-                Settings.LastPoIFilterTheater = filter.Theater;
-                Settings.LastPoIFilterCampaign = filter.Campaign;
-                Settings.LastPoIFilterTags = filter.Tags;
+                Settings.LastNavptPOIFilter = filter;
 
                 // set common POI properties
                 PointOfInterestType poiType = PointOfInterestType.USER;
@@ -381,7 +382,7 @@ namespace JAFDTC.UI.Base
                 {
                     FilePath = resultPick.Path,
                     UnitCategories = [UnitCategoryType.AIRCRAFT, UnitCategoryType.HELICOPTER],
-                    UnitTypes = ((Settings.IsNavPtImportIgnoreAirframe) ? AirframeTypes.None : airframe) switch
+                    UnitTypes = ((Settings.IsNavPtImportIgnoreAirframe) ? AirframeTypes.UNKNOWN : airframe) switch
                     {
                         AirframeTypes.A10C => ["A-10C_2"],
                         AirframeTypes.AH64D => ["AH-64D_BLK_II"],

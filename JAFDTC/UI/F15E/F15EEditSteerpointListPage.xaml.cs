@@ -18,6 +18,7 @@
 // ********************************************************************************************************************
 
 using JAFDTC.Models;
+using JAFDTC.Models.Core;
 using JAFDTC.Models.F15E;
 using JAFDTC.Models.F15E.STPT;
 using JAFDTC.UI.App;

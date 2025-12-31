@@ -1,6 +1,6 @@
 # JAFDTC: Just Another #%*@^!& DTC
 
-**_Version 1.1.2 of 22 November 2025_**
+**_Version 1.2.0 of 29 December 2025_**
 
 Just Another #%*@^!% DTC (JAFDTC) is a native C# WinUI Windows application for Windows 11 that
 allows you to upload data typically saved on a data cartridge, such as steerpoints/waypoints
@@ -17,8 +17,10 @@ the following DCS airframes and systems,
 - *Mirage M-2000C* &ndash; Waypoints
 
 > Support for the *Harrier*, *Tomcat*, and *Mirage* airframes is experimental and has had
-> limited testing. While the application should run under Windows 10, all development is on
-> Windows 11.
+> limited testing.
+
+> While the application should run under Windows 10, all development is on
+> Windows 11 exclusively.
 
 This document describes how to get JAFDTC installed and running on your system. See the
 [_User's Guide_](https://github.com/51st-Vfw/JAFDTC/tree/master/doc)

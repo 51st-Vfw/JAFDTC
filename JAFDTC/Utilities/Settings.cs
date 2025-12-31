@@ -18,8 +18,8 @@
 //
 // ********************************************************************************************************************
 
+using JAFDTC.Models.Core;
 using JAFDTC.Models.CoreApp;
-using JAFDTC.Models.POI;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -226,118 +226,40 @@ namespace JAFDTC.Utilities
             }
         }
 
-        public static string LastStptFilterTheater
+        public static POIFilterSpec LastNavptPOIFilter
         {
-            get => _currentSettings.LastStptFilterTheater;
+            get => _currentSettings.LastNavptPOIFilter;
             set
             {
-                if (_currentSettings.LastStptFilterTheater != value)
+                if (_currentSettings.LastNavptPOIFilter != value)
                 {
-                    _currentSettings.LastStptFilterTheater = value;
+                    _currentSettings.LastNavptPOIFilter = value;
                     FileManager.WriteSettings(_currentSettings);
                 }
             }
         }
 
-        public static string LastStptFilterCampaign
+        public static POIFilterSpec LastPOIFilter
         {
-            get => _currentSettings.LastStptFilterCampaign;
+            get => _currentSettings.LastPOIFilter;
             set
             {
-                if (_currentSettings.LastStptFilterCampaign != value)
+                if (_currentSettings.LastPOIFilter != value)
                 {
-                    _currentSettings.LastStptFilterCampaign = value;
+                    _currentSettings.LastPOIFilter = value;
                     FileManager.WriteSettings(_currentSettings);
                 }
             }
         }
 
-        public static string LastStptFilterTags
+        public static LLFormat LastPOICoordFmtSelection
         {
-            get => _currentSettings.LastStptFilterTags;
+            get => _currentSettings.LastPOICoordFmtSelection;
             set
             {
-                if (_currentSettings.LastStptFilterTags != value)
+                if (_currentSettings.LastPOICoordFmtSelection != value)
                 {
-                    _currentSettings.LastStptFilterTags = value;
-                    FileManager.WriteSettings(_currentSettings);
-                }
-            }
-        }
-
-        public static PointOfInterestTypeMask LastStptFilterIncludeTypes
-        {
-            get => _currentSettings.LastStptFilterIncludeTypes;
-            set
-            {
-                if (_currentSettings.LastStptFilterIncludeTypes != value)
-                {
-                    _currentSettings.LastStptFilterIncludeTypes = value;
-                    FileManager.WriteSettings(_currentSettings);
-                }
-            }
-        }
-
-        public static string LastPoIFilterTheater
-        {
-            get => _currentSettings.LastPoIFilterTheater;
-            set
-            {
-                if (_currentSettings.LastPoIFilterTheater != value)
-                {
-                    _currentSettings.LastPoIFilterTheater = value;
-                    FileManager.WriteSettings(_currentSettings);
-                }
-            }
-        }
-
-        public static string LastPoIFilterCampaign
-        {
-            get => _currentSettings.LastPoIFilterCampaign;
-            set
-            {
-                if (_currentSettings.LastPoIFilterCampaign != value)
-                {
-                    _currentSettings.LastPoIFilterCampaign = value;
-                    FileManager.WriteSettings(_currentSettings);
-                }
-            }
-        }
-
-        public static string LastPoIFilterTags
-        {
-            get => _currentSettings.LastPoIFilterTags;
-            set
-            {
-                if (_currentSettings.LastPoIFilterTags != value)
-                {
-                    _currentSettings.LastPoIFilterTags = value;
-                    FileManager.WriteSettings(_currentSettings);
-                }
-}
-        }
-
-        public static PointOfInterestTypeMask LastPoIFilterIncludeTypes
-        {
-            get => _currentSettings.LastPoIFilterIncludeTypes;
-            set
-            {
-                if (_currentSettings.LastPoIFilterIncludeTypes != value)
-                {
-                    _currentSettings.LastPoIFilterIncludeTypes = value;
-                    FileManager.WriteSettings(_currentSettings);
-                }
-            }
-        }
-
-        public static LLFormat LastPoICoordFmtSelection
-        {
-            get => _currentSettings.LastPoICoordFmtSelection;
-            set
-            {
-                if (_currentSettings.LastPoICoordFmtSelection != value)
-                {
-                    _currentSettings.LastPoICoordFmtSelection = value;
+                    _currentSettings.LastPOICoordFmtSelection = value;
                     FileManager.WriteSettings(_currentSettings);
                 }
             }
@@ -428,6 +350,8 @@ namespace JAFDTC.Utilities
             //
             _currentSettings.MapSettings ??= new();
             _currentSettings.LastThreatFilter ??= new();
+            _currentSettings.LastNavptPOIFilter ??= new();
+            _currentSettings.LastPOIFilter ??= new();
 
             if (Settings.VersionJAFDTC != Globals.VersionJAFDTC)
             {

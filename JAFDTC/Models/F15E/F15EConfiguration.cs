@@ -18,6 +18,7 @@
 //
 // ********************************************************************************************************************
 
+using JAFDTC.Models.Core;
 using JAFDTC.Models.F15E.Misc;
 using JAFDTC.Models.F15E.MPD;
 using JAFDTC.Models.F15E.Radio;

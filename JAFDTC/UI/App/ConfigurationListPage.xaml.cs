@@ -18,6 +18,7 @@
 // ********************************************************************************************************************
 
 using JAFDTC.Models;
+using JAFDTC.Models.Core;
 using JAFDTC.UI.Base;
 using JAFDTC.Utilities;
 using JAFDTC.Utilities.Networking;
@@ -708,7 +709,7 @@ namespace JAFDTC.UI.App
                              $"\n" +
                              $"On borrowed time until ED releases their native solution (2 weeks!)...\n" +
                              $"\n" +
-                             $"A Raven & fizzle / 51st VFW fork";
+                             $"A Raven & fizzle & Rage / 51st VFW fork";
             await Utilities.Message1BDialog(Content.XamlRoot, $"JAFDTC {Settings.VersionJAFDTC}", content);
         }
 

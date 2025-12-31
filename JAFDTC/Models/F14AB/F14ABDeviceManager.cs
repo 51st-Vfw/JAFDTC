@@ -18,6 +18,7 @@
 // ********************************************************************************************************************
 
 using JAFDTC.Utilities;
+using JAFDTC.Models.Core;
 using JAFDTC.Models.DCS;
 using System.Diagnostics;
 

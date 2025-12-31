@@ -1,6 +1,6 @@
 # JAFDTC: User’s Guide
 
-**_Version 1.1.2 of 22 November 2025_**
+**_Version 1.2.0 of 29 December 2025_**
 
 _Just Another #%*@^!% DTC_ (JAFDTC) is a native Windows application that allows you to upload
 data typically saved on a data cartridge in real life, such as steerpoints/waypoints and other
@@ -167,11 +167,11 @@ link with "A2G Mission", the MFD settings in "A2G Mission" will match the MFD se
 ## Points of Interest
 
 JAFDTC supports a database of points of interest (POI) that can be used to speed up creation
-of navigation points or target locations. There are three basic types of POI,
+of navigation points or target locations. There are three basic types of POIs,
 
-- **DCS** &ndash; Includes airfields and other features defined on the supported DCS maps; for
-  example, Nellis AFB from the NTTR map. These POIs are provided by JAFDTC and cannot be edited
-  by the user.
+- **System** &ndash; Includes airfields and other features defined on the supported DCS maps;
+  for example, Nellis AFB from the NTTR map. These POIs are provided by JAFDTC and cannot be
+  edited by the user.
 - **User** &ndash; Includes individual POIs defined by the user; for example, a commonly used
   navigation point for a map. These POIs are provided by, and can be edited by, the user.
 - **Campaign** &ndash; Includes groups of POIs defined by the user that support a group of
@@ -183,12 +183,26 @@ elevation), optional campaign information, and optional user-specified tag infor
 classifies the point of interest.
 
 The user interface provides mechanisms to search and select POIs from the set of known
-locations. Points of interest are discussed further
-[later](#point-of-interest-database).
+locations. The point of interest database is discussed further
+[below](#point-of-interest-database).
 
 ## Threats
 
-TODO
+JAFDTC supports a database of threats that can be used to display threat circles for elements
+shown on the
+[map window](#map-window).
+The core threat database has entries for DCS S2A threats that defines the size of their *Weapon
+Engagement Zones* (WEZ). There are two basic types of threats,
+
+- **System** &ndash; Includes a core set of surface-to-air threats for red and blue DCS units.
+- **User** &ndash; Includes additional threats added by the user. These can over-ride system
+  threats in the event the user wants to change the default parameters of a system threat.
+
+Each threat includes a WEZ size, display name, and other information.
+
+The user interface provides mechanisms to update and add threats. The threat database is
+discussed further
+[below](#threat-database-page).
 
 ## DCS Integration
 
@@ -330,6 +344,8 @@ can perform on configurations. Clicking on the `...` button at the right of the 
 the command bar in its "open" state that includes the secondary commands along with help text
 for all commands.
 
+**TODO: update for threat editor**
+
 ![](images/uguide_config_list_command_ui.png)
 
 The command bar includes the following commands,
@@ -367,6 +383,9 @@ The overflow menu (exposed by clicking on the "`...`" button) holds three comman
 - **Points of Interest** &ndash; Navigates to the
   [POI Editor](#point-of-interest-database)
   page to allow you to edit points of interest.
+- **Threats** &ndash; Navigates to the
+  [Threat Editor](#threat-database-page)
+  page to allow you to edit threat database entries.
 - **Settings** &ndash; Opens up the
   [JAFDTC Settings](#settings)
   dialog to allow you to change JAFDTC settings.
@@ -542,14 +561,14 @@ DCS theaters. This database consists of three types of entries as
 [navigation system editors](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/Common_Elements.md#navigation-system-editors)
 and other location-aware systems.
 
-DCS and User POIs are treated as independent locations in the world. These points are intended
-to support usages like tracking an often-used airfield or approach fix to allow the points to
-be loaded into a navigation point list in navigation avionics.
+System and User POIs are treated as independent locations in the world. These points are
+intended to support usages like tracking an often-used airfield or approach fix to allow the
+points to be loaded into a navigation point list in navigation avionics.
 
 Campaign POIs encompass a set of related locations relevant to a mission or set of missions.
 These POI sets might include target DPIs for various targets or ingress points for a mission.
-While individual DCS and User POIs are independent, Campaign POIs are intended to be managed
-as a set.
+Like User POIs, Campaign POIs are created by the user. While individual system and User POIs
+are independent, Campaign POIs are intended to be managed as a set.
 
 For example, consider a campaign covering multiple missions. Prior to campaign start, you can
 build campaign POIs that include DPIs for all potential targets, ingress and egress
@@ -604,7 +623,7 @@ The command bar includes the following commands,
 
 - **Copy to User** &ndash; Copies the selected POIs to new user POIs.
 - **Copy to Campaign** &ndash; Copies the selected POIs to new POIs in a campaign.
-- **Delete** &ndash; Deletes the selected POIs from the database. Note that DCS POIs cannot
+- **Delete** &ndash; Deletes the selected POIs from the database. Note that system POIs cannot
   be deleted and that deleting all campaign POIs implicitly deletes the campaign.
 - **Map** &ndash; Opens up a
   [map window](#map-window)
@@ -640,7 +659,7 @@ the left of each row in this list indicates the POI type:
 
 - **Pin** &ndash; A user POI.
 - **Flag** &ndash; A campaign POI.
-- **No Icon** &ndash; A DCS system POI.
+- **No Icon** &ndash; A system POI.
 
 The gray text in each row identifies the campaign the POI is associated with along with
 any tags associated with the POI. For example, in the image of the POI UI above, the
@@ -700,8 +719,8 @@ specify the file to export to.
 
 Using the **Import** command from the
 [*Point of Interest Command Bar*](#point-of-interest-command-bar)
-lets you export selected POIs from the database in `.jafdtc_db` or `CSV` based formats. The
-POIs present in the file must match the export criteria
+lets you import POIs from `.jafdtc_db` or `CSV` based formats into the database. The POIs
+present in the file must match the export criteria
 [outlined above](#exporting-points-of-interest).
 
 > A `.jafdtc_db` file for POIs also can be imported by double-clicking on it in the Windows
@@ -748,13 +767,15 @@ filtered,
 
 Clicking the filter button opens a dialog that lets you specify filter criteria,
 
+**TODO: update**
 ![](images/uguide_poi_filter_ui.png)
 
 The three buttons at the bottom of the dialog apply changes to the current filter and dismiss
 the dialog.
 
-- **Set** &ndash; Sets the filter to match the fields in the dialog.
-- **Clear Filters** &ndash; Removes the current filter.
+- **Set Filter** &ndash; Sets the filter to match the fields in the dialog.
+- **Reset to Defaults** &ndash; Removes the current filter and sets the filter to its default
+  setup.
 - **Cancel** &ndash; Leaves the current filter unchanged.
 
 The other fields in the dialog together specify the filter,
@@ -765,7 +786,7 @@ The other fields in the dialog together specify the filter,
 - **Tags** &ndash; Limits the points of interest to those that contain the specified tags. For
   eaxmple, setting this field to `foo; bar` matches any point of interest with tags that
   include `foo` and `bar` (comparisons are case-insensitive).
-- **Shows...** &ndash; Shows DCS, User, or Campaign points of interest as selected.
+- **Shows...** &ndash; Shows System, User, or Campaign points of interest as selected.
 
 For example, setting **Theater** to "Nevada", **Campaign** to "Dark Materials", **Tags** to
 "Base; Target", and selecting only **Shows Campaign...** would limit the POIs listed to
@@ -776,6 +797,7 @@ Once you have set the filter, typing in the search box will show a list of point
 with names that match the typed text and other properties (for example, theater) that match the
 current filter.
 
+**TODO: change filter terminology here?**
 ![](images/uguide_poi_list_filter_ui.png)
 
 As you type, the list of matching points of interest updates to include the PoIs that match.
@@ -790,7 +812,236 @@ systems.
 
 ## Threat Database Page
 
+JAFDTC provides a *Threat* database that contains sizes of weapon engagement zones for various
+(primarily surface-to-air) DCS units. This database is used to help proivde threat information
+for display on
+[map windows](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/Common_Elements.md#navigation-system-editors).
+
+As
+[described earlier](#threats)
+the threat database includes both system and user threats. Generally, user threats are used to
+either change the behavior of a system threat (for example, increasing the size of the WEZ to
+display) or add a threat that is not in the system set.
+
+The **Threats** command in the
+[overflow menu](#command-bar)
+on the
+[*Configuration List Page*](#configuration-list-page)
+command bar opens up an editor page to manage known threats, replacing the
+[*Configuration List Page*](#configuration-list-page)
+in the main window.
+
+![](images/uguide_threat_editor_ui.png)
+
+Working from top to bottom, the primary components of this page include,
+
+1. [***Threat Filter***](#threat-filter)
+   &ndash; Filters the threats displayed in the
+   [*Threat List*](#threat-list).
+2. [***Command Bar***](#threat-command-bar)
+   &ndash; Defines operations you can apply to the selected threats in the
+   [*Threat List*](#threat-list).
+3. [***Threat List***](#threat-list)
+   &ndash; Lists the threats that match the current filter the
+   [*Threat Filter*](#threat-filter)
+   specifies.
+4. [***Threat Editor***](#TODO)
+   &ndash; Editor to add and update POIs in the database.
+
+The reaminder of this section discusses each of these elements in more detail.
+
+### Threat Filter 
+
+The *Threat Filter* controls at the top left of the window in area (1) allow you to filter the
+threats listed in the
+[*Threat List*](#threat-list).
+These controls operate as described
+[below](#selecting--filtering-points-of-interest).
+
+### Threat Command Bar
+
+The command bar in area (2) provides commands you can apply to threats selected from the
+[*Threat List*](#threat-list),
+
+**TODO: fix me**
+![](images/uguide_poi_command_ui.png)
+
+The command bar includes the following commands,
+
+- **Copy to User** &ndash; Copies the selected threats to new user threats.
+- **Delete** &ndash; Deletes the selected threats from the database. Note that system threats
+  cannot be deleted.
+- **Import** &ndash; Imports threats from a previously exported `.jafdtc_db` file created with
+  the **Export** command, updating or adding threats as appropriate. `.jafdtc_db` files are
+  discused further in the
+  [*Common Elements Guide*](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/Common_Elements.md).
+- **Export** &ndash; Creates a `.jafdtc_db` file that contains the selected threats suitable for
+  import using the **Import** command.  `.jafdtc_db` files are discused further in the
+  [*Common Elements Guide*](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/Common_Elements.md).
+
+Depending on the state of the system, commands may be disabled. For example, **Delete** is
+disabled when the selected threats cannot be deleted. Right-clicking on a threat or selection
+in the threat list will display context menu allowing you to perform many of these commands on
+the selected threats.
+
+### Threat List
+
+The *Threat List* in the center of the page lists known threats in the database as filtered by
+the
+[*Threat Filter*](#poiunt-of-interest-filter).
+Each row in the *Threat List* corresponds to a single threat in the database and provides
+information such as display name and WEZ size. The icon at the left of each row in this list
+indicates information on the threat type:
+
+- **Pin** &ndash; A user threat. The addition of a **Plus** icon indicates the user threat
+  overrides a system threat.
+- **No Icon** &ndash; A system threat. The addtion of a **Circle + Slash** icon indicates
+  a user threat overrides this system threat.
+
+You can select one or more threats from the table using the standard Windows table
+interactions such as `SHIFT`-click to extend the selection, and so on.
+
+### Editing Threats
+
+Clicking on a threats copies its parameters (coalition, category, display name, DCS type,
+WEZ radius) to the threat editor at the bottom of the page in area (4). The bottom button in
+the editor then changes to,
+
+- **Clear** &ndash; Clears all values from the POI editor and unselects the selected POI in
+  the POI list.
+
+While the POI editor has parameters  from a POI, you can update the parameters to make
+changes to the selected POI. Once you make a change, the buttons in the editor change to,
+
+- **Update** &ndash; Saves the changes to the POI to the database.
+- **Reset** &ndash; Resets any changes in the editor to match the last-saved version of the
+  POI.
+
+A red background and border indicates a field is invalid. You will not be able to update the
+POI until it is error-free.
+
+To add a new POI, first clear the editor and then enter the name, latitude, longitude, and
+elevation (tags are optional). Once you do so, the buttons in the editor change to,
+
+- **Add** &ndash; Adds a new POI to the database with the specified values. On an add, JAFDTC
+  will display a dialog allowing you to pick a campaign or user POI type for the new POI.
+- **Reset** &ndash; Resets the editor to an empty state.
+
+When DCS is available, coordinates (latitude, longitude, and elevation) can be captured from
+DCS and filled in using the DCS pin button in the POI editor. See
+[TODO]()
+for more information on capturing location information from DCS.
+
+### Exporting Threats
+
+Using the **Export** command from the
+[*Threat Command Bar*](#threat-command-bar)
+lets you export selected threats from the database to a `.jafdtc_db` file. To start an export,
+select one or more threats and then select **Export**. The selected threats must all be user
+threats.
+
+JAFDTC displays a standard Windows file picker to allow you to specify the file to export to.
+
+### Importing Threats
+
+Using the **Import** command from the
+[*Threat Command Bar*](#threat-command-bar)
+lets you import threats from a `.jafdtc_db` file. The threats present in the file must match
+the export criteria
+[outlined above](#exporting-threats).
+
+> A `.jafdtc_db` file for threats also can be imported by double-clicking on it in the Windows
+> File Explorer.
+
+After selecting **Import**, JAFDTC will display a standard Windows file picker to allow you
+to specify the file to import from. The import process will update threats from the database
+that match threats in the imported data. Threats from the import file that are not in the
+database are added.
+
+## Filtering & Selecting Threats
+
+JAFDTC uses a common set of UI widgets to allow you to filter and select from a list of points
+of interest (POI) as
+[described earlier](#point-of-interest-filter).
+Systems, such as navigation systems, that allow you to interact with the POI database may use
+these widgets to make it easier to use the POI database by limiting displayed POIs to a
+relevant subset of all POIs JAFDTC knows about. The widgets include a search box with a filter
+button to its right. The filter button allows you to limit the points of interest to those that
+meet certain criteria. The highlight state of the filter button indicates whether or not a
+filter is being applied with a tinted or highlighted button indicating the POIs are currently
+filtered,
+
+![](images/uguide_poi_filter_state.png)
+
+Clicking the filter button opens a dialog that lets you specify filter criteria,
+
+**TODO: update**
+![](images/uguide_poi_filter_ui.png)
+
+The three buttons at the bottom of the dialog apply changes to the current filter and dismiss
+the dialog.
+
+- **Set Filter** &ndash; Sets the filter to match the fields in the dialog.
+- **Reset to Defaults** &ndash; Removes the current filter and sets the filter to its default
+  setup.
+- **Cancel** &ndash; Leaves the current filter unchanged.
+
+The other fields in the dialog together specify the filter,
+
+- **Theater** &ndash; Limits the points of interest to a particular DCS map or theater.
+- **Campaign** &ndash; Limits the points of interest to a particular campaign defined in the
+  POI database.
+- **Tags** &ndash; Limits the points of interest to those that contain the specified tags. For
+  eaxmple, setting this field to `foo; bar` matches any point of interest with tags that
+  include `foo` and `bar` (comparisons are case-insensitive).
+- **Shows...** &ndash; Shows System, User, or Campaign points of interest as selected.
+
+For example, setting **Theater** to "Nevada", **Campaign** to "Dark Materials", **Tags** to
+"Base; Target", and selecting only **Shows Campaign...** would limit the POIs listed to
+campaign POIs that are in Nevada, part of the "Dark Materials" campaign, with either "Base"
+or "Target" in their tags.
+
+Once you have set the filter, typing in the search box will show a list of points of interest
+with names that match the typed text and other properties (for example, theater) that match the
+current filter.
+
+**TODO: change filter terminology here?**
+![](images/uguide_poi_list_filter_ui.png)
+
+As you type, the list of matching points of interest updates to include the PoIs that match.
+Typing `RETURN` or clicking on the **Accept Filter** button sets the filter on names. Clicking
+on **Clear Filter** removes the filter on names. Clicking on an item in the matching points of
+interest list selects a single PoI.
+
+The
+[airframe guides](#what-now)
+detail the specific systems that make these controls available when configuring airframe
+systems.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 TODO
+
 
 ## Map Window
 

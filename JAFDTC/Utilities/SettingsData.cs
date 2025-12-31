@@ -18,8 +18,8 @@
 //
 // ********************************************************************************************************************
 
+using JAFDTC.Models.Core;
 using JAFDTC.Models.CoreApp;
-using JAFDTC.Models.POI;
 using System.Collections.Generic;
 
 namespace JAFDTC.Utilities
@@ -62,23 +62,11 @@ namespace JAFDTC.Utilities
 
         public ThreatFilterSpec LastThreatFilter { get; set; }
 
-        public string LastStptFilterTheater { get; set; }
+        public POIFilterSpec LastNavptPOIFilter { get; set; }
 
-        public string LastStptFilterCampaign { get; set; }
+        public POIFilterSpec LastPOIFilter { get; set; }
 
-        public string LastStptFilterTags { get; set; }
-
-        public PointOfInterestTypeMask LastStptFilterIncludeTypes { get; set; }
-
-        public string LastPoIFilterTheater { get; set; }
-
-        public string LastPoIFilterCampaign { get; set; }
-
-        public string LastPoIFilterTags { get; set; }
-
-        public PointOfInterestTypeMask LastPoIFilterIncludeTypes { get; set; }
-
-        public LLFormat LastPoICoordFmtSelection { get; set; }
+        public LLFormat LastPOICoordFmtSelection { get; set; }
 
         public string LastWindowSetupMain { get; set; }
 
@@ -129,15 +117,9 @@ namespace JAFDTC.Utilities
             LastConfigFilenameSelection = "";
 
             LastThreatFilter = new();
-            LastStptFilterTheater = "";
-            LastStptFilterCampaign = "";
-            LastStptFilterTags = "";
-            LastStptFilterIncludeTypes = PointOfInterestTypeMask.ANY;
-            LastPoIFilterTheater = "";
-            LastPoIFilterCampaign = "";
-            LastPoIFilterTags = "";
-            LastPoIFilterIncludeTypes = PointOfInterestTypeMask.ANY;
-            LastPoICoordFmtSelection = LLFormat.DDM_P3ZF;
+            LastNavptPOIFilter = new();
+            LastPOIFilter = new();
+            LastPOICoordFmtSelection = LLFormat.DDM_P3ZF;
 
             // main application settings
 

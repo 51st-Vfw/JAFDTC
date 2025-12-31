@@ -24,6 +24,7 @@ using JAFDTC.Models.A10C.Radio;
 using JAFDTC.Models.A10C.TAD;
 using JAFDTC.Models.A10C.TGP;
 using JAFDTC.Models.A10C.WYPT;
+using JAFDTC.Models.Core;
 using JAFDTC.UI.A10C;
 using JAFDTC.Utilities;
 using System;

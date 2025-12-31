@@ -17,6 +17,7 @@
 //
 // ********************************************************************************************************************
 
+using JAFDTC.Models.Core;
 using JAFDTC.Utilities;
 using System.Collections.ObjectModel;
 using System.Diagnostics;

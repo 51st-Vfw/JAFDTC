@@ -474,12 +474,33 @@ namespace JAFDTC.UI.App
                 HorizontalOffset = 24,
                 VerticalOffset = -6
             };
-
+            StackPanel pupTitleStack = new()
+            {
+                Orientation = Orientation.Horizontal,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Center
+            };
             TextBlock pupTextTitle = new()
             {
+                Margin = new Thickness(0, 0, 0, 2),
+                VerticalAlignment = VerticalAlignment.Center,
                 FontSize = 14,
-                FontWeight = FontWeights.Bold
+                FontWeight = FontWeights.Bold,
             };
+            pupTitleStack.Children.Add(pupTextTitle);
+            if (uiMap.EditMask.HasFlag((MapMarkerInfo.MarkerTypeMask)(1 << (int)mrkInfo.Type)))
+            {
+                FontIcon pupStatusIcon = new()
+                {
+                    Margin = new Thickness(6, 0, 0, 0),
+                    VerticalAlignment = VerticalAlignment.Center,
+                    FontFamily = new("Segoe Fluent Icons"),
+                    FontSize = 11,
+                    Glyph = "\xE70F"
+                };
+                pupTitleStack.Children.Add(pupStatusIcon);
+            }
+
             TextBlock pupTextSubtitle = new()
             {
                 FontSize = 11,
@@ -493,7 +514,7 @@ namespace JAFDTC.UI.App
                 HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment = VerticalAlignment.Center
             };
-            pupStack.Children.Add(pupTextTitle);
+            pupStack.Children.Add(pupTitleStack);
             pupStack.Children.Add(pupTextSubtitle);
 
             popup.Child = new Border ()

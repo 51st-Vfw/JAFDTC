@@ -20,6 +20,7 @@
 
 using JAFDTC.Models.A10C;
 using JAFDTC.Models.AV8B;
+using JAFDTC.Models.Core;
 using JAFDTC.Models.CoreApp;
 using JAFDTC.Models.F14AB;
 using JAFDTC.Models.F15E;
@@ -367,7 +368,6 @@ namespace JAFDTC.Models
                 AirframeTypes.F16C  => new F16CConfiguration(Guid.NewGuid().ToString(), name, [ ]),
                 AirframeTypes.FA18C => new FA18CConfiguration(Guid.NewGuid().ToString(), name, [ ]),
                 AirframeTypes.M2000C => new M2000CConfiguration(Guid.NewGuid().ToString(), name, [ ]),
-                AirframeTypes.None  => null,
                 _                   => null,
             };
         }
@@ -391,7 +391,6 @@ namespace JAFDTC.Models
                     AirframeTypes.F16C  => JsonSerializer.Deserialize<F16CConfiguration>(json),
                     AirframeTypes.FA18C => JsonSerializer.Deserialize<FA18CConfiguration>(json),
                     AirframeTypes.M2000C => JsonSerializer.Deserialize<M2000CConfiguration>(json),
-                    AirframeTypes.None  => null,
                     _                   => null,
                 };
             }

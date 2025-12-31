@@ -411,6 +411,25 @@
   {
     "Type": 0,
     "Theater": "Germany",
+    "Name": "Adelsheim (Road)",
+    "Tags": "Airbase",
+    "Latitude": "49.36918333",
+    "Longitude": "9.44018333",
+    "Elevation": "1199"
+  },
+
+  {
+    "Type": 0,
+    "Theater": "Germany",
+    "Name": "Adelsheim (Road)",
+    "Tags": "Airbase",
+    "Latitude": "49.36918333",
+    "Longitude": "9.44018333",
+    "Elevation": "1199"
+  },
+  {
+    "Type": 0,
+    "Theater": "Germany",
     "Name": "Airracing Koblenz",
     "Tags": "Airbase",
     "Latitude": "50.292067",
@@ -461,6 +480,33 @@
     "Latitude": "49.945167",
     "Longitude": "6.565133",
     "Elevation": "1211"
+  },
+  {
+    "Type": 0,
+    "Theater": "Germany",
+    "Name": "Bornholm",
+    "Tags": "Airbase",
+    "Latitude": "55.06336667",
+    "Longitude": "14.75903333",
+    "Elevation": "49"
+  },
+  {
+    "Type": 0,
+    "Theater": "Germany",
+    "Name": "Brand",
+    "Tags": "Airbase",
+    "Latitude": "50.03683333",
+    "Longitude": "12.74650000",
+    "Elevation": "164"
+  },
+  {
+    "Type": 0,
+    "Theater": "Germany",
+    "Name": "Brandis",
+    "Tags": "Airbase",
+    "Latitude": "51.32835000",
+    "Longitude": "12.65651667",
+    "Elevation": "509"
   },
   {
     "Type": 0,
@@ -519,11 +565,29 @@
   {
     "Type": 0,
     "Theater": "Germany",
+    "Name": "Chojna",
+    "Tags": "Airbase",
+    "Latitude": "52.93955000",
+    "Longitude": "14.42196667",
+    "Elevation": "176"
+  },
+  {
+    "Type": 0,
+    "Theater": "Germany",
     "Name": "Cochstedt",
     "Tags": "Airbase",
     "Latitude": "51.856083",
     "Longitude": "11.419017",
     "Elevation": "569"
+  },
+  {
+    "Type": 0,
+    "Theater": "Germany",
+    "Name": "Cologne-Bonn",
+    "Tags": "Airbase",
+    "Latitude": "50.86788333",
+    "Longitude": "7.14756667",
+    "Elevation": "236"
   },
   {
     "Type": 0,
@@ -542,6 +606,24 @@
     "Latitude": "51.831683",
     "Longitude": "12.193600",
     "Elevation": "195"
+  },
+  {
+    "Type": 0,
+    "Theater": "Germany",
+    "Name": "Dusseldorf",
+    "Tags": "Airbase",
+    "Latitude": "50.28708333",
+    "Longitude": "6.76800000",
+    "Elevation": "121"
+  },
+  {
+    "Type": 0,
+    "Theater": "Germany",
+    "Name": "Falkenberg",
+    "Tags": "Airbase",
+    "Latitude": "51.54645000",
+    "Longitude": "13.21513333",
+    "Elevation": "285"
   },
   {
     "Type": 0,
@@ -654,11 +736,38 @@
   {
     "Type": 0,
     "Theater": "Germany",
+    "Name": "Heidelberg",
+    "Tags": "Airbase",
+    "Latitude": "49.39351667",
+    "Longitude": "8.65220000",
+    "Elevation": "346"
+  },
+  {
+    "Type": 0,
+    "Theater": "Germany",
     "Name": "Holzdorf",
     "Tags": "Airbase",
     "Latitude": "51.767833",
     "Longitude": "13.169550",
     "Elevation": "245"
+  },
+  {
+    "Type": 0,
+    "Theater": "Germany",
+    "Name": "Kastrup",
+    "Tags": "Airbase",
+    "Latitude": "55.61921667",
+    "Longitude": "12.65245000",
+    "Elevation": "25"
+  },
+  {
+    "Type": 0,
+    "Theater": "Germany",
+    "Name": "Keil",
+    "Tags": "Airbase",
+    "Latitude": "54.37950000",
+    "Longitude": "10.14475000",
+    "Elevation": "36"
   },
   {
     "Type": 0,
@@ -677,6 +786,15 @@
     "Latitude": "53.918033",
     "Longitude": "12.279700",
     "Elevation": "115"
+  },
+  {
+    "Type": 0,
+    "Theater": "Germany",
+    "Name": "Landstuhl",
+    "Tags": "Airbase",
+    "Latitude": "49.40305000",
+    "Longitude": "7.53635000",
+    "Elevation": "1182"
   },
   {
     "Type": 0,
@@ -726,6 +844,24 @@
   {
     "Type": 0,
     "Theater": "Germany",
+    "Name": "Mainz Finthen",
+    "Tags": "Airbase",
+    "Latitude": "49.96913333",
+    "Longitude": "8.14790000",
+    "Elevation": "722"
+  },
+  {
+    "Type": 0,
+    "Theater": "Germany",
+    "Name": "Marxwalde / Neuhardenberg",
+    "Tags": "Airbase",
+    "Latitude": "52.61300000",
+    "Longitude": "14.2427000",
+    "Elevation": "49"
+  },
+  {
+    "Type": 0,
+    "Theater": "Germany",
     "Name": "Mendig",
     "Tags": "Airbase",
     "Latitude": "50.366017",
@@ -744,7 +880,7 @@
   {
     "Type": 0,
     "Theater": "Germany",
-    "Name": "Neubrandenburg",
+    "Name": "Neubrandenburg / Trollenhagen",
     "Tags": "Airbase",
     "Latitude": "53.602267",
     "Longitude": "13.306450",
@@ -762,11 +898,38 @@
   {
     "Type": 0,
     "Theater": "Germany",
+    "Name": "Nordholz",
+    "Tags": "Airbase",
+    "Latitude": "53.76758333",
+    "Longitude": "8.65855000",
+    "Elevation": "39"
+  },
+  {
+    "Type": 0,
+    "Theater": "Germany",
+    "Name": "Norvenich",
+    "Tags": "Airbase",
+    "Latitude": "50.83128333",
+    "Longitude": "6.65871667",
+    "Elevation": "296"
+  },
+  {
+    "Type": 0,
+    "Theater": "Germany",
     "Name": "Obermehler Schlotheim",
     "Tags": "Airbase",
-    "Latitude": "51.267633",
-    "Longitude": "10.635033",
+    "Latitude": "51.26771667",
+    "Longitude": "10.63485000",
     "Elevation": "889"
+  },
+  {
+    "Type": 0,
+    "Theater": "Germany",
+    "Name": "Oranienburg",
+    "Tags": "Airbase",
+    "Latitude": "52.72501667",
+    "Longitude": "13.21676667",
+    "Elevation": "108"
   },
   {
     "Type": 0,
@@ -785,6 +948,15 @@
     "Latitude": "54.158967",
     "Longitude": "13.773483",
     "Elevation": "23"
+  },
+  {
+    "Type": 0,
+    "Theater": "Germany",
+    "Name": "Perwenitz (Road)",
+    "Tags": "Airbase",
+    "Latitude": "52.67563333",
+    "Longitude": "13.00693333",
+    "Elevation": "135"
   },
   {
     "Type": 0,
@@ -816,6 +988,15 @@
   {
     "Type": 0,
     "Theater": "Germany",
+    "Name": "Revinge (Road)",
+    "Tags": "Airbase",
+    "Latitude": "55.72881667",
+    "Longitude": "13.42728333",
+    "Elevation": "58"
+  },
+  {
+    "Type": 0,
+    "Theater": "Germany",
     "Name": "Schonefeld",
     "Tags": "Airbase",
     "Latitude": "52.384767",
@@ -843,6 +1024,15 @@
   {
     "Type": 0,
     "Theater": "Germany",
+    "Name": "Sittensen (Road)",
+    "Tags": "Airbase",
+    "Latitude": "53.32096667",
+    "Longitude": "9.582950000",
+    "Elevation": "125"
+  },
+  {
+    "Type": 0,
+    "Theater": "Germany",
     "Name": "Spangdahlem",
     "Tags": "Airbase",
     "Latitude": "49.976517",
@@ -861,11 +1051,47 @@
   {
     "Type": 0,
     "Theater": "Germany",
+    "Name": "Sprendlingen (Road)",
+    "Tags": "Airbase",
+    "Latitude": "49.87096667",
+    "Longitude": "7.95991667",
+    "Elevation": "396"
+  },
+  {
+    "Type": 0,
+    "Theater": "Germany",
     "Name": "Stendal",
     "Tags": "Airbase",
     "Latitude": "52.629100",
     "Longitude": "11.820017",
     "Elevation": "122"
+  },
+  {
+    "Type": 0,
+    "Theater": "Germany",
+    "Name": "Sturup / Malmo",
+    "Tags": "Airbase",
+    "Latitude": "55.53571667",
+    "Longitude": "13.37638333",
+    "Elevation": "217"
+  },
+  {
+    "Type": 0,
+    "Theater": "Germany",
+    "Name": "Szczecins Goleniow",
+    "Tags": "Airbase",
+    "Latitude": "53.58473333",
+    "Longitude": "14.90228333",
+    "Elevation": "98"
+  },
+  {
+    "Type": 0,
+    "Theater": "Germany",
+    "Name": "Tagra (Road)",
+    "Tags": "Airbase",
+    "Latitude": "55.60081667",
+    "Longitude": "13.71413333",
+    "Elevation": "115"
   },
   {
     "Type": 0,
@@ -893,6 +1119,15 @@
     "Latitude": "53.032033",
     "Longitude": "13.544933",
     "Elevation": "242"
+  },
+  {
+    "Type": 0,
+    "Theater": "Germany",
+    "Name": "Thurland (Road)",
+    "Tags": "Airbase",
+    "Latitude": "51.69640000",
+    "Longitude": "12.21023333",
+    "Elevation": "282"
   },
   {
     "Type": 0,
@@ -947,6 +1182,15 @@
     "Latitude": "51.999717",
     "Longitude": "12.144400",
     "Elevation": "250"
+  },
+  {
+    "Type": 0,
+    "Theater": "Germany",
+    "Name": "Zollschen (Road)",
+    "Tags": "Airbase",
+    "Latitude": "51.26638333",
+    "Longitude": "12.10005000",
+    "Elevation": "392"
   },
   {
     "Type": 0,
@@ -1244,7 +1488,7 @@
   {
     "Type": 0,
     "Theater": "Kola",
-    "Name": "Hosio (Airstrip Road 924)",
+    "Name": "Hosio (Road)",
     "Tags": "Airbase",
     "Latitude": "65.89610000",
     "Longitude": "25.70403333",
@@ -1442,7 +1686,7 @@
   {
     "Type": 0,
     "Theater": "Kola",
-    "Name": "Vuojarvi",
+    "Name": "Vuojarvi (Road)",
     "Tags": "Airbase",
     "Latitude": "67.06923333",
     "Longitude": "26.54001667",

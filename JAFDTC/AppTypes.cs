@@ -17,29 +17,17 @@
 //
 // ********************************************************************************************************************
 
+using JAFDTC.Models.Core;
 using System.Collections.Generic;
 using System.Text.Json;
 
 namespace JAFDTC
 {
-    public enum AirframeTypes
-    {
-        None = 0,
-        A10C = 1,
-        AH64D = 2,
-        AV8B = 3,
-        F15E = 4,
-        F16C = 5,
-        FA18C = 6,
-        M2000C = 7,
-        F14AB = 8
-    }
-
     public static class Globals
     {
         public static readonly Dictionary<AirframeTypes, string> AirframeNames = new()
         {
-            [AirframeTypes.None] = "",
+            [AirframeTypes.UNKNOWN] = "",
             [AirframeTypes.A10C] = "A-10C Warthog",
             [AirframeTypes.AH64D] = "AH-64D Apache",
             [AirframeTypes.AV8B] = "AV-8B Harrier",
@@ -52,7 +40,7 @@ namespace JAFDTC
 
         public static readonly Dictionary<AirframeTypes, string> AirframeShortNames = new()
         {
-            [AirframeTypes.None] = "",
+            [AirframeTypes.UNKNOWN] = "",
             [AirframeTypes.A10C] = "A-10C",
             [AirframeTypes.AH64D] = "AH-64D",
             [AirframeTypes.AV8B] = "AV-8B",
@@ -65,7 +53,7 @@ namespace JAFDTC
 
         public static readonly Dictionary<AirframeTypes, string> AirframeDTCTypes = new()
         {
-            [AirframeTypes.None] = "",
+            [AirframeTypes.UNKNOWN] = "",
             [AirframeTypes.A10C] = "",
             [AirframeTypes.AH64D] = "",
             [AirframeTypes.AV8B] = "",
@@ -78,8 +66,8 @@ namespace JAFDTC
 
         public static readonly JsonSerializerOptions JSONOptions = new() { WriteIndented = true };
 
-        public const string VersionJAFDTC = "v1.1.2";              // current version
+        public const string VersionJAFDTC = "v1.2.0";              // current version
 
-        public const string BuildJAFDTC = "version 1.1.2 of 22-Nov-25 (build c67bdfb)";
+        public const string BuildJAFDTC = "version 1.2.0 of 29-Dec-25 (build 1d9ac1f)";
     }
 }
