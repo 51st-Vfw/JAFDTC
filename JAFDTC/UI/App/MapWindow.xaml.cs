@@ -531,7 +531,7 @@ namespace JAFDTC.UI.App
                 pupTextTitle.Text = MarkerExplainer?.MarkerDisplayName(mrkInfo) ?? "Unknown";
             pupTextSubtitle.Text = mrkInfo.Type switch
             {
-                MapMarkerInfo.MarkerType.POI_SYSTEM => "DCS System POI",
+                MapMarkerInfo.MarkerType.POI_SYSTEM => "System POI",
                 MapMarkerInfo.MarkerType.POI_USER => "User POI",
                 MapMarkerInfo.MarkerType.POI_CAMPAIGN => "Campaign POI",
                 MapMarkerInfo.MarkerType.NAV_PT => "Navigation Route",
@@ -697,7 +697,7 @@ namespace JAFDTC.UI.App
 
             uiMap.PathVisibility(( _ ) => MapFilterSpec.ShowNavRoutes);
 
-            uiMap.MarkerVisibility((MapMarkerInfo.MarkerType type, string tag, bool hasRing) => {
+            uiMap.MarkerVisibility((type, tag, hasRing) => {
                 if (type == MapMarkerInfo.MarkerType.POI_SYSTEM)
                     return new(MapFilterSpec.ShowPOIDCS, MapFilterSpec.ShowPOIDCS);
                 else if (type == MapMarkerInfo.MarkerType.POI_USER)
