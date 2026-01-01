@@ -20,6 +20,7 @@
 using JAFDTC.Models.Base;
 using JAFDTC.Models.DCS;
 using MapControl;
+using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -83,12 +84,11 @@ namespace JAFDTC.UI.Controls.Map
 
             /// <summary>
             /// set the visibility of the path control as indicated. note that the path is assumed to be unselected
-            /// on visibility changes so the background control is always collapsed.
+            /// on visibility changes in which case the background control is always collapsed.
             /// </summary>
-            /// <param name="visibility"></param>
-            public void Visibility(Visibility visibility)
+            public void Visibility(Visibility visibility, bool isSelected = false)
             {
-                ControlBg.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
+                ControlBg.Visibility = (isSelected) ? visibility : Microsoft.UI.Xaml.Visibility.Collapsed;
                 ControlFg.Visibility = visibility;
             }
 
@@ -124,10 +124,8 @@ namespace JAFDTC.UI.Controls.Map
             public void Visibility(Visibility visibility)
             {
                 Path.Visibility(visibility);
-                if (EditHandleNeg != null)
-                    EditHandleNeg.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
-                if (EditHandlePos != null)
-                    EditHandlePos.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
+                EditHandleNeg?.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
+                EditHandlePos?.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
                 foreach (MapMarkerControl marker in Points)
                     marker.Visibility = visibility;
             }
@@ -209,7 +207,13 @@ namespace JAFDTC.UI.Controls.Map
         //
         private const double DIST2_MOVE_THRESHOLD = (7.0 * 7.0);
 
-        // defines state of map or marker drags for managing ui behaviors.
+        // useful math constants.
+        //
+        private const double RADIUS_EARTH_M = 6378137.0;        // radius of earth in meters
+        private const double NM_PER_M = 0.00053996;             // nautical miles per meter
+        private const double FT_PER_NM = 6076.11549;            // feet per nautical mile
+
+        // defines state of map, marker, or yardstick drags for managing ui behaviors.
         //
         private enum DragStateEnum
         {
@@ -217,7 +221,8 @@ namespace JAFDTC.UI.Controls.Map
             READY_MARKER = 1,           // pointer has been pressed (but not released) on a marker
             ACTIVE_MARKER = 2,          // actively dragging the previously-selected marker
             READY_MAP = 3,              // pointer has been pressed (but not released) on the map
-            ACTIVE_MAP = 4              // actively dragging the map
+            ACTIVE_MAP = 4,             // actively dragging the map
+            ACTIVE_YARDSTICK = 5        // actively dragging yardstick
         }
 
         // ------------------------------------------------------------------------------------------------------------
@@ -273,6 +278,10 @@ namespace JAFDTC.UI.Controls.Map
         private bool _isNewMarker = false;
 
         private MapPathControlLayered _theaterBounds;
+        private MapPathControlLayered _yardstickLine;
+        private MapMarkerControl _yardstickMarker;
+        private Popup _yardstickPopup;
+        private TextBlock _yardstickLabel;
 
         // ---- read-only properties
 
@@ -321,12 +330,58 @@ namespace JAFDTC.UI.Controls.Map
                              | ManipulationModes.TranslateY
                              | ManipulationModes.TranslateInertia;
 
+            Loaded += MapControl_Loaded;
             PointerWheelChanged += OnPointerWheelChanged;
             PointerMoved += OnPointerMoved;
             PointerPressed += OnPointerPressed;
             PointerReleased += OnPointerReleased;
             DoubleTapped += OnDoubleTapped;
             ManipulationDelta += OnManipulationDelta;
+        }
+
+        /// <summary>
+        /// on loaded, build out internal controls for the yardstick and any other standard parts of the control.
+        /// </summary>
+        private void MapControl_Loaded(object sender, RoutedEventArgs args)
+        {
+            _yardstickLine = new();
+            _yardstickLine.Paths.Add(new MapPathControlPath([ ]));
+            _yardstickLine.ControlBg = BuildMapItemsControl("<YardstickLine>", false, MAP_MARKER_Z_SELECTION,
+                                                            "Tmplt_Yardstick_Bg_Path", _yardstickLine.Paths);
+            _yardstickLine.ControlFg = BuildMapItemsControl("<YardstickLine>", false, MAP_MARKER_Z_SELECTION,
+                                                            "Tmplt_Yardstick_Fg_Path", _yardstickLine.Paths);
+            _yardstickLine.Visibility(Visibility.Collapsed);
+
+            _yardstickLabel = new()
+            {
+                Margin = new Thickness(8, 4, 8, 4),
+            };
+
+            _yardstickPopup = new()
+            {
+                VerticalOffset = -12,
+                HorizontalOffset = 10,
+                DesiredPlacement = PopupPlacementMode.Left,
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                Child = new Border()
+                {
+                    Padding = new Thickness(0, 0, 0, 0),
+                    CornerRadius = new CornerRadius(6),
+                    HorizontalAlignment = HorizontalAlignment.Stretch,
+                    Background = new SolidColorBrush(Color.FromArgb(192, 0, 0, 0)),
+                    Child = _yardstickLabel
+                }
+            };
+
+            Brush clearBrush = new SolidColorBrush(Color.FromArgb(0, 0, 0, 0));
+            _yardstickMarker = new MapMarkerSquareControl(clearBrush, clearBrush, new Size(4.0, 4.0))
+            {
+                Tag = TagForMarkerOfKind(MapMarkerInfo.MarkerType.UNKNOWN, null, -1),
+                Location = new()
+            };
+
+            Canvas.SetZIndex(_yardstickMarker, MAP_MARKER_Z_SELECTION);
+            Children.Add(_yardstickMarker);
         }
 
         // ------------------------------------------------------------------------------------------------------------
@@ -363,6 +418,21 @@ namespace JAFDTC.UI.Controls.Map
                 VerbMirror?.MirrorVerbMarkerSelected(this, new());
                 _selectedMarker = null;
             }
+        }
+
+        /// <summary>
+        /// TODO: document
+        /// </summary>
+        private static string YardstickText(ObservableCollection<Location> points, out bool isLeftHalfPlane)
+        {
+            points[0].GetAzimuthDistance(points[1], out double bearing, out double dist);
+            bearing = bearing * (180.0 / Math.PI);
+            isLeftHalfPlane = (bearing < 0.0);
+            bearing += (bearing < 0.0) ? 360.0 : 0.0;
+            dist *= RADIUS_EARTH_M * NM_PER_M;
+            string units = (dist < 1.0) ? "ft" : "nm";
+            dist *= (dist < 1.0) ? FT_PER_NM : 1.0;
+            return $"{dist:F1}{units} at {bearing:F1}° T";
         }
 
         // ------------------------------------------------------------------------------------------------------------
@@ -423,7 +493,7 @@ namespace JAFDTC.UI.Controls.Map
                 if (marker != null)
                 {
                     CrackMarkerTag(marker, out MapMarkerInfo.MarkerType type, out string _, out int _);
-                    if (type != MapMarkerInfo.MarkerType.PATH_EDIT_HANDLE)
+                    if ((type != MapMarkerInfo.MarkerType.PATH_EDIT_HANDLE) && (type != MapMarkerInfo.MarkerType.UNKNOWN))
                     {
                         minLat = Math.Min(minLat, marker.Location.Latitude - dP);
                         maxLat = Math.Max(maxLat, marker.Location.Latitude + dP);
@@ -449,8 +519,7 @@ namespace JAFDTC.UI.Controls.Map
         /// </summary>
         public void SetTheater(string theater)
         {
-            if (_theaterBounds != null)
-                Children.Remove(_theaterBounds.ControlFg);
+            _theaterBounds?.Remove(this);
             _theaterBounds = null;
 
             if (Theater.TheaterInfo.TryGetValue(theater, out TheaterInfo info))
@@ -499,15 +568,15 @@ namespace JAFDTC.UI.Controls.Map
 
         /// <summary>
         /// clear all markers matching a removal type that are currently associated with the control along with the
-        /// current selection. selection verb is invoked for the selection clear. delete verb(s) are not invoked for
-        /// element(s) removed from the map.
+        /// current selection. type list of null removes all markers. selection verb is invoked for the selection
+        /// clear. delete verb(s) are not invoked for element(s) removed from the map.
         /// </summary>
-        public void ClearMarkers(List<MapMarkerInfo.MarkerType> removingTypes)
+        public void ClearMarkers(List<MapMarkerInfo.MarkerType> removingTypes = null)
         {
             DoUnselectMarker();
             Dictionary<string, MarkerInfo> tmpMarks = new(_marks);
             foreach (KeyValuePair<string, MarkerInfo> kvp in tmpMarks)
-                if (kvp.Value.Remove(this, removingTypes))
+                if ((removingTypes == null) || kvp.Value.Remove(this, removingTypes))
                     _marks.Remove(kvp.Key);
         }
 
@@ -975,6 +1044,59 @@ namespace JAFDTC.UI.Controls.Map
 
         // ------------------------------------------------------------------------------------------------------------
         //
+        // yardstick management
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
+        /// <summary>
+        /// show the yardstick panel. popup is added to the yardstick marker content (and opened) and the paths are
+        /// updated to specify a zero-length path from location to location.
+        /// </summary>
+        private void YardstickShow(Location location)
+        {
+            if (location != null)
+            {
+                _yardstickLine.Visibility(Visibility.Visible, true);
+                _yardstickLine.Paths[0].Locations.Add(location);
+                _yardstickLine.Paths[0].Locations.Add(location);
+                YardstickUpdate(location);
+                _yardstickMarker.Visibility = Visibility.Visible;
+                (_yardstickMarker.Content as Panel).Children.Add(_yardstickPopup);
+                _yardstickPopup.IsOpen = true;
+            }
+        }
+
+        /// <summary>
+        /// hide the yardstick panel. popup is removed from the yardstick marker content (and opened) and the paths
+        /// are cleared.
+        /// </summary>
+        private void YardstickHide()
+        {
+            _yardstickPopup.IsOpen = false;
+            (_yardstickMarker.Content as Panel).Children.Remove(_yardstickPopup);
+            _yardstickMarker.Visibility = Visibility.Collapsed;
+            _yardstickLine.Visibility(Visibility.Collapsed);
+            _yardstickLine.Paths[0].Locations.Clear();
+        }
+
+        /// <summary>
+        /// update the yardstick panel to match the current location. range and bearing text is updated in the
+        /// popup element and popup offset is switched around to keep the popup out of the way.
+        /// </summary>
+        private void YardstickUpdate(Location location)
+        {
+            if (location != null)
+            {
+                _yardstickLine.Paths[0].Locations[1] = location;
+                _yardstickMarker.Location = location;
+                _yardstickLabel.Text = YardstickText(_yardstickLine.Paths[0].Locations, out bool isLeftHalf);
+                _yardstickPopup.UpdateLayout();
+                _yardstickPopup.HorizontalOffset = (isLeftHalf) ? -_yardstickLabel.ActualWidth - 20.0 : 10.0;
+            }
+        }
+
+        // ------------------------------------------------------------------------------------------------------------
+        //
         // IWorldMapControlVerbHandler
         //
         // ------------------------------------------------------------------------------------------------------------
@@ -1127,7 +1249,9 @@ namespace JAFDTC.UI.Controls.Map
             _lastPressKeyModifiers = evt.KeyModifiers;
 
             MapMarkerControl marker = IsSourceMarker(evt.OriginalSource);
-            if (evt.GetCurrentPoint(this).Properties.IsLeftButtonPressed && (marker != null))
+            PointerPoint ptrPt = evt.GetCurrentPoint(this);
+            Location location = ViewToLocation(ptrPt.Position);
+            if (ptrPt.Properties.IsLeftButtonPressed && (marker != null))
             {
                 if (_selectedMarker != marker)
                 {
@@ -1139,9 +1263,15 @@ namespace JAFDTC.UI.Controls.Map
                 }
                 _dragState = DragStateEnum.READY_MARKER;
             }
-            else if (evt.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
+            else if (ptrPt.Properties.IsLeftButtonPressed)
             {
                 _dragState = DragStateEnum.READY_MAP;
+            }
+            else if (ptrPt.Properties.IsRightButtonPressed && CapturePointer(evt.Pointer))
+            {
+                Marker_PointerExited(sender, evt);              // hides any open marker popup
+                YardstickShow(location);
+                _dragState = DragStateEnum.ACTIVE_YARDSTICK;
             }
             else
             {
@@ -1172,6 +1302,11 @@ namespace JAFDTC.UI.Controls.Map
                 _selectedMarker = null;
                 VerbMirror?.MirrorVerbMarkerSelected(this, new());
             }
+            else if (_dragState == DragStateEnum.ACTIVE_YARDSTICK)
+            {
+                ReleasePointerCapture(evt.Pointer);
+                YardstickHide();
+            }
 
             _dragState = DragStateEnum.IDLE;
             _isNewMarker = false;
@@ -1200,7 +1335,13 @@ namespace JAFDTC.UI.Controls.Map
         /// </summary>
         private void OnPointerMoved(object sender, PointerRoutedEventArgs evt)
         {
-            if (evt.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
+            PointerPoint ptrPt = evt.GetCurrentPoint(this);
+            Location location = ViewToLocation(ptrPt.Position);
+            if (ptrPt.Properties.IsRightButtonPressed && (_dragState == DragStateEnum.ACTIVE_YARDSTICK))
+            {
+                YardstickUpdate(location);
+            }
+            else if (ptrPt.Properties.IsLeftButtonPressed)
             {
                 if (_dragState == DragStateEnum.READY_MAP)
                 {
@@ -1209,7 +1350,7 @@ namespace JAFDTC.UI.Controls.Map
                 }
                 else if (_dragState == DragStateEnum.ACTIVE_MARKER)
                 {
-                    MoveMapMarker(_selectedMarker, ViewToLocation(evt.GetCurrentPoint(this).Position));
+                    MoveMapMarker(_selectedMarker, location);
                     //
                     // if we're moving an edit handle, MoveMapMarker will take care of creating a new marker to
                     // replace the handle (setting it to the selected marker) and getting the handle out of the
@@ -1260,9 +1401,11 @@ namespace JAFDTC.UI.Controls.Map
         }
 
         /// <summary>
-        /// TODO: document
+        /// trigger the display of the marker popup after a brief delay if the popup should still be displayed (i.e.,
+        /// the pointer has remained over the marker). build out the popup, add it as a child of the marker, and open
+        /// it if necessary. this is dispatched following a pointer entered event.
         /// </summary>
-        private void TriggerHover(object tag, int serial)
+        private void TriggerMarkerPopup(object tag, int serial)
         {
             if ((_mouseOverMarker != null) && (_mouseOverMarker.Tag == tag) && (_mouseOverSerial == serial))
             {
@@ -1273,7 +1416,8 @@ namespace JAFDTC.UI.Controls.Map
         }
 
         /// <summary>
-        /// TODO: document
+        /// on pointer entered, schedule TriggerHover to trip after a small delay (to ensure the pointer remains
+        /// within the marker for a brief period).
         /// </summary>
         private void Marker_PointerEntered(object sender, PointerRoutedEventArgs args)
         {
@@ -1283,12 +1427,13 @@ namespace JAFDTC.UI.Controls.Map
                 _mouseOverMarker = marker;
                 object tag = marker.Tag;
                 int enterSerial = ++_mouseOverSerial;
-                Utilities.DispatchAfterDelay(DispatcherQueue, 1.5, false, (s, e) => TriggerHover(tag, enterSerial));
+                Utilities.DispatchAfterDelay(DispatcherQueue, 1.5, false, (s, e) => TriggerMarkerPopup(tag, enterSerial));
             }
         }
 
         /// <summary>
-        /// TODO: document
+        /// on pointer exited, if there is a mouse over popup open for the marker, close it, and pull its content
+        /// from marker the pointer was within.
         /// </summary>
         private void Marker_PointerExited(object sender, PointerRoutedEventArgs args)
         {
@@ -1298,8 +1443,7 @@ namespace JAFDTC.UI.Controls.Map
                 (_mouseOverMarker.Content as Panel).Children.Remove(_mouseOverPopup);
                 _mouseOverPopup = null;
             }
-            if (_mouseOverMarker != null)
-                _mouseOverMarker = null;
+            _mouseOverMarker = null;
         }
     }
 }
