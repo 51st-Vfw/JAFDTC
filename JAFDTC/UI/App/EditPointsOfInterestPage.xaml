@@ -91,7 +91,7 @@ https://www.gnu.org/licenses/.
             <!-- poi search box -->
             <AutoSuggestBox Grid.Column="0" Width="325" x:Name="uiPoINameFilterBox"
                             VerticalAlignment="Center"
-                            PlaceholderText="Filter Points of Interest by Name"
+                            PlaceholderText="Filter points of interest by name"
                             QueryIcon="Find"
                             TextChanged="PoINameFilterBox_TextChanged"
                             QuerySubmitted="PoINameFilterBox_QuerySubmitted"/>

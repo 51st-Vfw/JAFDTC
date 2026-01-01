@@ -19,8 +19,8 @@ the following DCS airframes and systems,
 > Support for the *Harrier*, *Tomcat*, and *Mirage* airframes is experimental and has had
 > limited testing.
 
-> While the application should run under Windows 10, all development is on
-> Windows 11 exclusively.
+> While JAFDTC should run under Windows 10, all development currently takes place on Windows 11
+> exclusively. Testing on Windows 10 is likewise limited.
 
 This document describes how to get JAFDTC installed and running on your system. See the
 [_User's Guide_](https://github.com/51st-Vfw/JAFDTC/tree/master/doc)

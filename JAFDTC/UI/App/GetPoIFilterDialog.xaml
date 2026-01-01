@@ -27,6 +27,7 @@ https://www.gnu.org/licenses/.
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     Title="Untitled"
+    DefaultButton="Primary"
     PrimaryButtonText="Set Filter"
     SecondaryButtonText = "Reset to Defaults"
     CloseButtonText="Cancel">
@@ -83,17 +84,17 @@ https://www.gnu.org/licenses/.
         <!-- type checkboxen -->
         <CheckBox Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="1" Margin="0,18,0,0" x:Name="uiCkbxDCSPoI"
                   HorizontalAlignment="Left">
-            Shows DCS Points of Interest
+            Shows system points of interest
         </CheckBox>
 
         <CheckBox Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="1" x:Name="uiCkbxUserPoI"
                   HorizontalAlignment="Left">
-            Shows User Points of Interest
+            Shows user points of interest
         </CheckBox>
 
         <CheckBox Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="1" x:Name="uiCkbxCampaignPoI"
                   HorizontalAlignment="Left">
-            Shows Campaign Points of Interest
+            Shows campaign points of interest
         </CheckBox>
     </Grid>
 </ContentDialog>
