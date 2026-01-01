@@ -872,7 +872,7 @@ namespace JAFDTC.UI.App
             GetPoIFilterDialog filterDialog = new(POIFilter)
             {
                 XamlRoot = Content.XamlRoot,
-                Title = $"Set a Filter for Points of Interest"
+                Title = $"Point of Interest Database Filter"
             };
             ContentDialogResult result = await filterDialog.ShowAsync(ContentDialogPlacement.Popup);
             if (result == ContentDialogResult.Primary)

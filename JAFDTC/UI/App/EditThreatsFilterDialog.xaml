@@ -88,12 +88,12 @@ https://www.gnu.org/licenses/.
         <CheckBox Grid.Row="1" Margin="0,18,0,0" x:Name="uiCkbxThreatsDCS"
                   HorizontalAlignment="Left"
                   Click="CheckBox_Click">
-            Show DCS system threats
+            Shows system threats
         </CheckBox>
         <CheckBox Grid.Row="2" Margin="0,0,0,0" x:Name="uiCkbxThreatsUsr"
                   HorizontalAlignment="Left"
                   Click="CheckBox_Click">
-            Show user threats
+            Shows user threats
         </CheckBox>
 
     </Grid>
