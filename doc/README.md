@@ -242,12 +242,12 @@ interacting with DCS in any capacity.
 
 ### Working with DCS DTC
 
-ED delivered an initial DTC implementation in DCS 2.9.15.9408 released in April of 2025 that
-supports some modules. While the DTC implementation in DCS is not yet complete, it does provide
-some advantages over tools like JAFDTC (primarily, by being able to inject configurations
-directly into the jet without needing to rely on clicking cockpit controls). For some
-airframes, JAFDTC provides the ability to push configurations into the jet through the ED DCS
-DTC, with some restrictions. The
+ED delivered an initial native DTC implementation in DCS 2.9.15.9408 released in April of 2025
+that supports some modules. While the DTC implementation in DCS is not yet complete, it does
+provide some advantages over tools like JAFDTC (primarily, by being able to inject
+configurations directly into the jet without needing to rely on clicking cockpit controls). For
+some airframes, JAFDTC provides the ability to push configurations into the jet through the ED
+DCS DTC, with some restrictions. The
 [*Common Elements Guide*](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/Common_Elements.md#working-with-the-native-dcs-dtc)
 and
 [airframe guides](#what-now)
@@ -343,8 +343,6 @@ The command bar at the top of the page in area (3) provides quick access to the 
 can perform on configurations. Clicking on the `...` button at the right of the bar displays
 the command bar in its "open" state that includes the secondary commands along with help text
 for all commands.
-
-**TODO: update for threat editor**
 
 ![](images/uguide_config_list_command_ui.png)
 
@@ -553,6 +551,55 @@ configuration through the source configuration). When unlinking, the system conf
 retains its setup, but will no longer change due to updates from the source configuration.
 Icons for linked systems are badged with a small gold dot as described earlier.
 
+## Filtering & Selecting Database Elements
+
+JAFDTC uses a common set of UI widgets to allow you to filter and select from a list of
+database elements such as points of interest (POI) or threats. Systems, such as navigation
+systems, that allow you to interact with the database elements may use these widgets to make it
+easier to use the database by limiting displayed elements to a relevant subset. The widgets
+include an optional search box with a filter button (the filter button is always on the right
+of a filter box). Together, these widgets allow you to limit the database elements to those
+that meet certain criteria. The highlight state of the filter button indicates whether or not a
+filter is being applied with a tinted or highlighted button indicating the elements are
+currently filtered,
+
+![](images/uguide_poi_filter_state.png)
+
+The filter button specifies broad filters to apply to database elements while the search box
+allows you to fine tune the filter to elements with specific names or fields.
+
+Clicking the filter button opens a dialog that lets you specify filter criteria. For example,
+the point of interest filter dialog looks like this,
+
+![](images/uguide_poi_filter_ui.png)
+
+The bulk of the content in the dialog depends on the specific database being filtered and will
+differ from database to database. The three buttons at the bottom of the dialog are common to
+all databases and apply changes to the current filter and dismiss the dialog.
+
+- **Set Filter** &ndash; Sets the filter to match the fields in the dialog.
+- **Reset to Defaults** &ndash; Removes the current filter and sets the filter to its default
+  setup.
+- **Cancel** &ndash; Leaves the current filter unchanged.
+
+Typing in the search box will show a list of database elements with that match the typed text
+(for example, name of a point of interest) along with the criteria the filter dialog is
+currently set for. For example, if the filter dialog for the points of interest database were
+set to show only system POIs, typing "Foo" in the search box would further filter the elements
+to those that are system POIs with "Foo" in their name.
+
+![](images/uguide_poi_list_filter_ui.png)
+
+As you type, the list of matching elements updates to include those that match. Typing `RETURN`
+or clicking on the **Accept Filter** button sets the filter on names. Clicking on
+**Clear Filter** removes the filter on names. Clicking on an item in the matching elements
+list selects a element.
+
+The
+[airframe guides](#what-now)
+detail the specific systems that make these controls available when configuring airframe
+systems.
+
 ## Point of Interest Database Page
 
 JAFDTC provides a *Points of Interest* (POI) database that contains common locations throughout
@@ -610,7 +657,32 @@ The *Point of Interest Filter* controls at the top left of the window in area (1
 to filter the points of interest listed in the
 [*Point of Interest List*](#point-of-interst-list).
 These controls operate as described
-[below](#selecting--filtering-points-of-interest).
+[earlier](#filtering--selecting-database-elements).
+The filter dialog for point of interest database elements is as follows,
+
+![](images/uguide_poi_filter_ui.png)
+
+The top portion of the dialog specifies the filter criteria specific to the point of interest
+database.
+
+- **Theater** &ndash; Limits the points of interest to a particular DCS map or theater.
+- **Campaign** &ndash; Limits the points of interest to a particular campaign defined in the
+  POI database.
+- **Tags** &ndash; Limits the points of interest to those that contain the specified tags. For
+  eaxmple, setting this field to `foo; bar` matches any point of interest with tags that
+  include `foo` and `bar` (comparisons are case-insensitive).
+- **Shows...** &ndash; Shows System, User, or Campaign points of interest as selected.
+
+For example, setting **Theater** to "Nevada", **Campaign** to "Dark Materials", **Tags** to
+"Base; Target", and selecting only **Shows Campaign...** would limit the POIs listed to
+campaign POIs that are in Nevada, part of the "Dark Materials" campaign, with either "Base"
+or "Target" in their tags.
+
+Once you have set the filter, typing in the search box will show a list of points of interest
+with names that match the typed text (case-insensitive and partial matches allowed) and other
+properties (for example, theater) that match the current filter.
+
+The three buttons at the bottom of the dialog operate as described earlier.
 
 ### Point of Interest Command Bar
 
@@ -750,66 +822,6 @@ semicolon-separated list of tags like "`Airbase;Target;Required`" and may be emp
 feet. JAFDTC infers the theater from the latitude and longitude and expects the point of
 interest location to fall within a DCS theater.
 
-## Filtering & Selecting Points of Interest
-
-JAFDTC uses a common set of UI widgets to allow you to filter and select from a list of points
-of interest (POI) as
-[described earlier](#point-of-interest-filter).
-Systems, such as navigation systems, that allow you to interact with the POI database may use
-these widgets to make it easier to use the POI database by limiting displayed POIs to a
-relevant subset of all POIs JAFDTC knows about. The widgets include a search box with a filter
-button to its right. The filter button allows you to limit the points of interest to those that
-meet certain criteria. The highlight state of the filter button indicates whether or not a
-filter is being applied with a tinted or highlighted button indicating the POIs are currently
-filtered,
-
-![](images/uguide_poi_filter_state.png)
-
-Clicking the filter button opens a dialog that lets you specify filter criteria,
-
-**TODO: update**
-![](images/uguide_poi_filter_ui.png)
-
-The three buttons at the bottom of the dialog apply changes to the current filter and dismiss
-the dialog.
-
-- **Set Filter** &ndash; Sets the filter to match the fields in the dialog.
-- **Reset to Defaults** &ndash; Removes the current filter and sets the filter to its default
-  setup.
-- **Cancel** &ndash; Leaves the current filter unchanged.
-
-The other fields in the dialog together specify the filter,
-
-- **Theater** &ndash; Limits the points of interest to a particular DCS map or theater.
-- **Campaign** &ndash; Limits the points of interest to a particular campaign defined in the
-  POI database.
-- **Tags** &ndash; Limits the points of interest to those that contain the specified tags. For
-  eaxmple, setting this field to `foo; bar` matches any point of interest with tags that
-  include `foo` and `bar` (comparisons are case-insensitive).
-- **Shows...** &ndash; Shows System, User, or Campaign points of interest as selected.
-
-For example, setting **Theater** to "Nevada", **Campaign** to "Dark Materials", **Tags** to
-"Base; Target", and selecting only **Shows Campaign...** would limit the POIs listed to
-campaign POIs that are in Nevada, part of the "Dark Materials" campaign, with either "Base"
-or "Target" in their tags.
-
-Once you have set the filter, typing in the search box will show a list of points of interest
-with names that match the typed text and other properties (for example, theater) that match the
-current filter.
-
-**TODO: change filter terminology here?**
-![](images/uguide_poi_list_filter_ui.png)
-
-As you type, the list of matching points of interest updates to include the PoIs that match.
-Typing `RETURN` or clicking on the **Accept Filter** button sets the filter on names. Clicking
-on **Clear Filter** removes the filter on names. Clicking on an item in the matching points of
-interest list selects a single PoI.
-
-The
-[airframe guides](#what-now)
-detail the specific systems that make these controls available when configuring airframe
-systems.
-
 ## Threat Database Page
 
 JAFDTC provides a *Threat* database that contains sizes of weapon engagement zones for various
@@ -856,15 +868,30 @@ The *Threat Filter* controls at the top left of the window in area (1) allow you
 threats listed in the
 [*Threat List*](#threat-list).
 These controls operate as described
-[below](#selecting--filtering-points-of-interest).
+[below](#filtering--selecting-database-elements).
+The filter dialog for threat database elements is as follows,
+
+![](images/uguide_threat_filter_ui.png)
+
+The top portion of the dialog specifies the filter criteria specific to the threat database.
+
+- **Shows coalition** &ndash; Limits the points of interest to a particular DCS map or theater.
+- **Shows category** &ndash; Limits the points of interest to a particular campaign defined in the
+  POI database.
+- **Shows...** &ndash; Shows System or User threats as selected.
+
+Once you have set the filter, typing in the search box will show a list of threats with display
+names that match the typed text (case-insensitive and partial matches allowed) and other
+properties (for example, category) that match the current filter.
+
+The three buttons at the bottom of the dialog operate as described earlier.
 
 ### Threat Command Bar
 
 The command bar in area (2) provides commands you can apply to threats selected from the
 [*Threat List*](#threat-list),
 
-**TODO: fix me**
-![](images/uguide_poi_command_ui.png)
+![](images/uguide_threat_command_ui.png)
 
 The command bar includes the following commands,
 
@@ -902,6 +929,8 @@ You can select one or more threats from the table using the standard Windows tab
 interactions such as `SHIFT`-click to extend the selection, and so on.
 
 ### Editing Threats
+
+TODO
 
 Clicking on a threats copies its parameters (coalition, category, display name, DCS type,
 WEZ radius) to the threat editor at the bottom of the page in area (4). The bottom button in
@@ -958,94 +987,11 @@ to specify the file to import from. The import process will update threats from 
 that match threats in the imported data. Threats from the import file that are not in the
 database are added.
 
-## Filtering & Selecting Threats
-
-JAFDTC uses a common set of UI widgets to allow you to filter and select from a list of points
-of interest (POI) as
-[described earlier](#point-of-interest-filter).
-Systems, such as navigation systems, that allow you to interact with the POI database may use
-these widgets to make it easier to use the POI database by limiting displayed POIs to a
-relevant subset of all POIs JAFDTC knows about. The widgets include a search box with a filter
-button to its right. The filter button allows you to limit the points of interest to those that
-meet certain criteria. The highlight state of the filter button indicates whether or not a
-filter is being applied with a tinted or highlighted button indicating the POIs are currently
-filtered,
-
-![](images/uguide_poi_filter_state.png)
-
-Clicking the filter button opens a dialog that lets you specify filter criteria,
-
-**TODO: update**
-![](images/uguide_poi_filter_ui.png)
-
-The three buttons at the bottom of the dialog apply changes to the current filter and dismiss
-the dialog.
-
-- **Set Filter** &ndash; Sets the filter to match the fields in the dialog.
-- **Reset to Defaults** &ndash; Removes the current filter and sets the filter to its default
-  setup.
-- **Cancel** &ndash; Leaves the current filter unchanged.
-
-The other fields in the dialog together specify the filter,
-
-- **Theater** &ndash; Limits the points of interest to a particular DCS map or theater.
-- **Campaign** &ndash; Limits the points of interest to a particular campaign defined in the
-  POI database.
-- **Tags** &ndash; Limits the points of interest to those that contain the specified tags. For
-  eaxmple, setting this field to `foo; bar` matches any point of interest with tags that
-  include `foo` and `bar` (comparisons are case-insensitive).
-- **Shows...** &ndash; Shows System, User, or Campaign points of interest as selected.
-
-For example, setting **Theater** to "Nevada", **Campaign** to "Dark Materials", **Tags** to
-"Base; Target", and selecting only **Shows Campaign...** would limit the POIs listed to
-campaign POIs that are in Nevada, part of the "Dark Materials" campaign, with either "Base"
-or "Target" in their tags.
-
-Once you have set the filter, typing in the search box will show a list of points of interest
-with names that match the typed text and other properties (for example, theater) that match the
-current filter.
-
-**TODO: change filter terminology here?**
-![](images/uguide_poi_list_filter_ui.png)
-
-As you type, the list of matching points of interest updates to include the PoIs that match.
-Typing `RETURN` or clicking on the **Accept Filter** button sets the filter on names. Clicking
-on **Clear Filter** removes the filter on names. Clicking on an item in the matching points of
-interest list selects a single PoI.
-
-The
-[airframe guides](#what-now)
-detail the specific systems that make these controls available when configuring airframe
-systems.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-TODO
-
-
 ## Map Window
 
 TODO
+
+![](images/uguide_map_ui.png)
 
 double click centers map
 
@@ -1053,6 +999,9 @@ shift double click centers and re-zooms map
 
 click off marker drags map
 
+right click yardstick
+
+![](images/uguide_map_command.png)
 
 The command bar includes the following commands,
 
@@ -1061,6 +1010,10 @@ The command bar includes the following commands,
 - **Delete** &ndash; Deletes the selected marker if it can be deleted.
 - **Import** &ndash; Import temporary markers from a file (WIP).
 - **Settings** &ndash; Manages settings for the map window.
+
+TODO
+
+![](images/uguide_map_filter_ui.png)
 
 Adding navpoints
 
