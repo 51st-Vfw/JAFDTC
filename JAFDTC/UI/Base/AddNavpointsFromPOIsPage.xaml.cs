@@ -2,7 +2,7 @@
 //
 // AddNavpointsFromPOIsPage.xaml.cs : ui c# point of navpoint addition
 //
-// Copyright(C) 2025 ilominar/raven, fizzle
+// Copyright(C) 2025-2026 ilominar/raven, fizzle
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 // Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -287,7 +287,7 @@ namespace JAFDTC.UI.Base
             if (button.IsChecked != IsFiltered)
                 button.IsChecked = IsFiltered;
 
-            GetPoIFilterDialog filterDialog = new(POIFilter)
+            PoIFilterDialog filterDialog = new(POIFilter)
             {
                 XamlRoot = Content.XamlRoot,
                 Title = $"Point of Interest Filter"

@@ -2,9 +2,9 @@
 <!--
 **********************************************************************************************************************
     
-GetPoIFilterDialog.xaml : ui xaml for dialog to grab a poi filter
+PoIFilterDialog.xaml : ui xaml for dialog to grab a poi filter
 
-Copyright(C) 2024 ilominar/raven
+Copyright(C) 2024-2026 ilominar/raven
 
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -19,7 +19,7 @@ https://www.gnu.org/licenses/.
 **********************************************************************************************************************
 -->
 <ContentDialog
-    x:Class="JAFDTC.UI.App.GetPoIFilterDialog"
+    x:Class="JAFDTC.UI.App.PoIFilterDialog"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:JAFDTC.UI.App"
@@ -33,7 +33,7 @@ https://www.gnu.org/licenses/.
     CloseButtonText="Cancel">
 
     <ContentDialog.Resources>
-        <Style TargetType="local:GetPoIFilterDialog" BasedOn="{StaticResource DefaultContentDialogStyle}"/>
+        <Style TargetType="local:PoIFilterDialog" BasedOn="{StaticResource DefaultContentDialogStyle}"/>
     </ContentDialog.Resources>
 
     <Grid>

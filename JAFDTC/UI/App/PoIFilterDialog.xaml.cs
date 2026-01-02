@@ -1,8 +1,8 @@
 // ********************************************************************************************************************
 //
-// GetPoIFilterDialog.xaml.cs -- ui c# for dialog to grab a poi filter
+// PoIFilterDialog.xaml.cs -- ui c# for dialog to grab a poi filter
 //
-// Copyright(C) 2024 ilominar/raven
+// Copyright(C) 2024-2026 ilominar/raven
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 // Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -29,7 +29,7 @@ namespace JAFDTC.UI.App
     /// ContentDialog to allow the user to specify the filter criteria for points of interest. the dialog has two
     /// modes: a mode to filter pois and a mode to choose pois.
     /// </summary>
-    public sealed partial class GetPoIFilterDialog : ContentDialog
+    public sealed partial class PoIFilterDialog : ContentDialog
     {
         public enum Mode
         {
@@ -67,7 +67,7 @@ namespace JAFDTC.UI.App
         //
         // ------------------------------------------------------------------------------------------------------------
 
-        public GetPoIFilterDialog(POIFilterSpec filter, Mode mode = Mode.FILTER, List<string> allowedTheaters = null)
+        public PoIFilterDialog(POIFilterSpec filter, Mode mode = Mode.FILTER, List<string> allowedTheaters = null)
         {
             _mode = mode;
 
