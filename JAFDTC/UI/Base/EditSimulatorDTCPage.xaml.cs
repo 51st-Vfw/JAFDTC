@@ -310,7 +310,6 @@ namespace JAFDTC.UI.Base
                 {
                     FileSavePicker picker = new((Application.Current as JAFDTC.App).Window.AppWindow.Id)
                     {
-                        // SettingsIdentifier = "JAFDTC_ExportDTC",
                         CommitButtonText = "Save Merged Tape",
                         SuggestedStartLocation = PickerLocationId.Desktop,
                         SuggestedFileName = "JAFDTC_Tape.dtc",
@@ -322,6 +321,7 @@ namespace JAFDTC.UI.Base
                     if (resultPick != null)
                     {
                         UpdateDTCOutputPath(resultPick.Path);
+                        SaveEditStateToConfig();
                         shouldMerge = true;
                     }
                 }
@@ -340,7 +340,7 @@ namespace JAFDTC.UI.Base
             {
                 try
                 {
-                    Config.SaveMergedSimDTC(EditDTC.Template, EditDTC.OutputPath);
+                    Config.SaveMergedSimDTC();
                     await Utilities.Message1BDialog(Content.XamlRoot, "Tape Merged",
                                                     $"Successfully generated and saved the merged tape to the file\n\n" +
                                                     $"{EditDTC.OutputPath}");
