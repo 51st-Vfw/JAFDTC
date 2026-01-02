@@ -4,7 +4,8 @@
     {
         public required string Name { get; set; }
         public required bool IsLead { get; set; }
-        public string? STN { get; set; }
+        public string? DataId { get; set; }
+        public string? SCL { get; set; }
         //public string? Board { get; set; }
         //public int? Tacan { get; set; }
         //public char? TacanBand { get; set; }

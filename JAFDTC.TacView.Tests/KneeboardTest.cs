@@ -109,14 +109,16 @@ namespace JAFDTC.Tests
                                         new()
                                         {
                                             Name = "Rage",
-                                            STN = "67001",
+                                            DataId = "67001",
                                             IsLead = true,
+                                            SCL = "bla",
                                         },
                                         new()
                                         {
                                             Name = "Raven",
-                                            STN = "67056",
+                                            DataId = "67056",
                                             IsLead = false,
+                                            SCL = "bla2",
                                         }
                                     ],
                                     Comms = 
@@ -125,63 +127,83 @@ namespace JAFDTC.Tests
                                         {
                                             CommId = 1,
                                             Frequency = 251.0,
-                                            Description = "TAC COMMON"
+                                            Description = "TAC COMMON",
+                                            Name = "AN/ARC-164",
+                                            Modulation = "AM"
                                         },
                                         new ()
                                         {
                                             CommId = 1,
                                             Frequency = 270.75,
-                                            Description = "OVERLOAD 1-1"
+                                            Description = "OVERLOAD 1-1",
+                                            Name = "AN/ARC-164",
+                                            Modulation = "AM"
                                         },
                                         new ()
                                         {
                                             CommId = 2,
                                             Frequency = 138.25,
-                                            Description = "Viper Primary"
+                                            Description = "Viper Primary",
+                                            Name = "AN/ARC-210",
+                                            Modulation = "FM"
                                         },
                                         new ()
                                         {
                                             CommId = 2,
                                             Frequency = 138.75,
-                                            Description = "Viper Secondary"
+                                            Description = "Viper Secondary",
+                                            Name = "AN/ARC-210",
+                                            Modulation = "FM"
                                         },
                                         new ()
                                         {
                                             CommId = 2,
                                             Frequency = 138.5,
-                                            Description = "Viper AUX"
+                                            Description = "Viper AUX",
+                                            Name = "AN/ARC-210",
+                                            Modulation = "FM"
                                         }
                                     ],
-                                    Navs = 
+                                    Routes = 
                                     [
                                         new()
                                         {
-                                            Altitude = 43,
-                                            Latitude = 34.0000,
-                                            Longitude = 36.0000,
-                                            Name = "", //see if it hanldes to STP1...
-                                        },
-                                        new()
-                                        {
-                                            Altitude = 5000,
-                                            Latitude = 34.1000,
-                                            Longitude = 36.2000,
-                                            Name = "IP",
-                                        },
-                                        new()
-                                        {
-                                            Altitude = 278,
-                                            Latitude = 34.2200,
-                                            Longitude = 36.3300,
-                                            Name = "Target",
-                                        },
-                                        new()
-                                        {
-                                            Altitude = 984,
-                                            Latitude = 35.118033, //N 35° 07.082'
-                                            Longitude = 36.712367, //E 036° 42.742'
-                                            Name = null, //Hama airbase see if it matches it/finds it
+                                            Name = "Route 1",
+                                            NavPoints =
+                                            [
+                                                new()
+                                                {
+                                                    Altitude = 43,
+                                                    Latitude = 34.0000,
+                                                    Longitude = 36.0000,
+                                                    Name = "", //see if it hanldes to STP1...                                                    
+                                                },
+                                                new()
+                                                {
+                                                    Altitude = 5000,
+                                                    Latitude = 34.1000,
+                                                    Longitude = 36.2000,
+                                                    Name = "IP",
+                                                },
+                                                new()
+                                                {
+                                                    Altitude = 278,
+                                                    Latitude = 34.2200,
+                                                    Longitude = 36.3300,
+                                                    Name = "Target",
+                                                    TOS = "15",
+                                                    TOT = "13:01"
+                                                },
+                                                new()
+                                                {
+                                                    Altitude = 984,
+                                                    Latitude = 35.118033, //N 35° 07.082'
+                                                    Longitude = 36.712367, //E 036° 42.742'
+                                                    Name = null, //Hama airbase see if it matches it/finds it
+                                                }
+                                            ]
                                         }
+                                        
                                     ]
                                 }
                             ]

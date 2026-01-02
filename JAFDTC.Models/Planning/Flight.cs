@@ -7,7 +7,7 @@
 
         public required IReadOnlyList<Pilot> Pilots { get; set; }
         public IReadOnlyList<Comm>? Comms { get; set; }
-        public IReadOnlyList<Nav>? Navs { get; set; }
+        public IReadOnlyList<Route>? Routes { get; set; }
 
     }
 }

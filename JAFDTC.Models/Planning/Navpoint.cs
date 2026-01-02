@@ -1,6 +1,6 @@
 ﻿namespace JAFDTC.Models.Planning
 {
-    public class Nav
+    public class Navpoint
     {
         public required double Latitude { get; set; }
         public required double Longitude { get; set; }

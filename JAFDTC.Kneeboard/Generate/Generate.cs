@@ -45,7 +45,8 @@ namespace JAFDTC.Kneeboard.Generate
             if (generateCriteria.Mission.Packages[0].Flights.Count != 1)
                 throw new NotSupportedException("Currently only missions with a single Flight are supported.");
 
-            var dict = generateCriteria.ToDataDictionary(); //just explicit
+            using var mapper = new Mapper();
+            var dict = mapper.Map(generateCriteria);
 
             var result = new List<string>();
             foreach (var package in generateCriteria.Mission.Packages)
@@ -70,6 +71,8 @@ namespace JAFDTC.Kneeboard.Generate
                     }
                 }
             }
+
+            mapper.Dispose();
 
             return result;
         }
