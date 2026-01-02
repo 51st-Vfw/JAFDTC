@@ -38,7 +38,7 @@ namespace JAFDTC.Kneeboard.Generate
                         throw new FileNotFoundException($"Template Directory has no files: {templatePath}");
                 }
 
-            var dict = generateCriteria.ToDataDictionary();
+            var dict = generateCriteria.ToDataDictionary(); //just explicit
 
             var result = new List<string>();
             foreach (var package in generateCriteria.Mission.Packages)

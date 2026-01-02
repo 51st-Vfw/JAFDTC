@@ -1,5 +1,4 @@
-﻿using JAFDTC.Core.Extensions;
-using Svg;
+﻿using Svg;
 using System.Drawing.Imaging;
 
 namespace JAFDTC.Kneeboard.Generate
@@ -9,7 +8,12 @@ namespace JAFDTC.Kneeboard.Generate
         private SvgDocument _svgDocument;
         private List<SvgTextSpan> _textItems;
         private List<SvgImage> _imageItems;
-        
+
+        private const char KeyStart = '[';
+        private const char KeyEnd = ']';
+
+        private static readonly char[] _KeyDelim = [KeyStart, KeyEnd];
+
         public void Build()
         {
             LoadKB();
@@ -34,10 +38,20 @@ namespace JAFDTC.Kneeboard.Generate
 
         private void Assign()
         {
-            foreach (var item in _data)
+            foreach (var item in _textItems.Where(p => p?.Text != null && p.Text.Contains(KeyStart) && p.Text.Contains(KeyEnd)))
             {
-                AssignText(item.Key, item.Value);
-                AssignImage(item.Key, item.Value);
+                var matches = item.Text.Split(_KeyDelim, StringSplitOptions.RemoveEmptyEntries);
+                foreach(var match in matches)
+                    if (_data.TryGetValue(match, out var value))
+                        item.Text = item.Text.Replace(ToMatch(match), value, StringComparison.OrdinalIgnoreCase);
+            }
+
+            foreach (var item in _imageItems.Where(p => p?.Href != null && p.Href.Contains(KeyStart) && p.Href.Contains(KeyEnd)))
+            {
+                var matches = item.Href.Split(_KeyDelim, StringSplitOptions.RemoveEmptyEntries);
+                foreach (var match in matches)
+                    if (_data.TryGetValue(match, out var value))
+                        item.Href = item.Href.Replace(ToMatch(match), value, StringComparison.OrdinalIgnoreCase);
             }
         }
 
@@ -48,37 +62,9 @@ namespace JAFDTC.Kneeboard.Generate
             bitmap.Save(_destinationFilePath, ImageFormat.Png);
         }
 
-        private void AssignText(string key, string value)
-        {
-            var match = ToMatch(key);
-
-            var items = _textItems
-                .Where(p => p.Text != null && p.Text.Contains(match, StringComparison.OrdinalIgnoreCase));
-
-            if (items.IsEmpty())
-                return;
-
-            foreach (var item in items)
-                item.Text = item.Text.Replace(match, value, StringComparison.OrdinalIgnoreCase);
-        }
-
-        private void AssignImage(string key, string base64Image)
-        {
-            var match = ToMatch(key);
-
-            var items = _imageItems
-                .Where(p => p.Href != null && p.Href.Contains(match, StringComparison.OrdinalIgnoreCase));
-
-            if (items.IsEmpty())
-                return;
-
-            foreach (var item in items)
-                item.Href = item.Href.Replace(match, base64Image, StringComparison.OrdinalIgnoreCase);
-        }
-
         private static string ToMatch(string value)
         {
-            return $"[{value}]";
+            return $"{KeyStart}{value}{KeyEnd}";
         }
 
         public void Dispose()

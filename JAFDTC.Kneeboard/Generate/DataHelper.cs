@@ -1,145 +1,228 @@
 ﻿using JAFDTC.Core.Extensions;
 using JAFDTC.Kneeboard.Models;
 using JAFDTC.Models.Planning;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using static System.Net.WebRequestMethods;
 
 namespace JAFDTC.Kneeboard.Generate
 {
     public static class DataHelper
     {
+        public static class Keys
+        {
+            public const string HEADER = "HEADER";
+            public const string FOOTER = "FOOTER";
+            public const string THEATER = "THEATER";
+            public const string NAME = "NAME";
+            public const string NIGHTMODE = "NIGHTMODE";
+            public const string LOGO = "LOGO";
+            
+            public const string PACKAGE_NAME = "PACKAGE_*_NAME";
+
+            //in future should be package based
+            public const string FLIGHT_NAME = "FLIGHT_*_NAME"; 
+            public const string FLIGHT_AIRCRAFT = "FLIGHT_*_AIRCRAFT";
+
+            //since we only are supporting 1 flight right now.. let all pilots, nav points, and comms tied to that first flight...
+            public const string COMM_PREFIX = "COMM*_";
+            public const string COMM_NUM = "NUM";
+            public const string COMM_FREQ = "FREQ";
+            public const string COMM_DESC = "DESC";
+
+            public const string NAV_NUM = "NAV_*_NUM";
+            public const string NAV_NAME = "NAV_*_NAME";
+            public const string NAV_NOTE = "NAV_*_NOTE";
+            public const string NAV_ALT = "NAV_*_ALT";
+            public const string NAV_TOS = "NAV_*_TOS";
+            public const string NAV_TOT = "NAV_*_TOT";
+            public const string NAV_SPEED = "NAV_*_SPEED";
+            public const string NAV_COORD = "NAV_*_COORD";
+            public const string NAV_MGRS = "NAV_*_MGRS";
+
+
+            public const string THREAT_NAME = "THREAT_*_NAME";
+            public const string THREAT_TYPE = "THREAT_*_TYPE";
+
+        }
+
         public static IReadOnlyDictionary<string, string> ToDataDictionary(this GenerateCriteria criteria)
         {
             var result = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
-            //todo: do we want to "generate" a KB with looping and templatizing in future vs just string match replacement...
-            //that will change the "gen X num of records per type vs raw looping..
+            BuildMisc(result, criteria);
+            BuildPackages(result, criteria.Mission);
+            BuildThreats(result, criteria.Mission);
+            BuildAirfields(result, criteria);
+            BuildMaps(result, criteria);
 
-            #region Mission
+            return result;
+        }
 
-            result.Add("HEADER", criteria.Name);
-            result.Add("FOOTER", $"{criteria.Name}, by {criteria.Owner.ToString()} @ {DateTime.Now.ToString("MM/dd/yyyy")}");
-            result.Add("Theater", criteria.Mission.Theater);
-            result.Add("Name", criteria.Mission.Name);
-            result.Add("NightMode", criteria.NightMode.GetValueOrDefault(false).ToString());
+        private static void BuildMisc(Dictionary<string, string> data, GenerateCriteria criteria)
+        {
+            data.Add(Keys.HEADER, criteria.Name);
+            data.Add(Keys.FOOTER, $"{criteria.Name}, by {criteria.Owner.ToString()} @ {DateTime.Now.ToString("MM/dd/yyyy")}");
+            data.Add(Keys.THEATER, criteria.Mission.Theater);
+            data.Add(Keys.NAME, criteria.Mission.Name);
+            data.Add(Keys.NIGHTMODE, criteria.NightMode.GetValueOrDefault(false).ToString());
 
             if (!string.IsNullOrWhiteSpace(criteria.PathLogo))
             {
                 var b64Logo = Convert.ToBase64String(System.IO.File.ReadAllBytes(criteria.PathLogo));
-                result.Add("LOGO", b64Logo);
+                data.Add(Keys.LOGO, b64Logo);
             }
+        }
 
-            #endregion
+        private static void BuildPackages(Dictionary<string, string> data, Mission mission)
+        {
+            if (mission.Packages.IsEmpty())
+                return;
 
-            #region Packages
-
-            for (var i = 0; i < 8; i++)
+            for (var i = 0; i < mission.Packages.Count; i++)
             {
-                var prefix = $"PACKAGE_{i + 1}_";
-                var item = i < criteria.Mission.Packages.Count ? criteria.Mission.Packages[i] : null;
-                if (item == null)
-                {
-                    result.Add($"{prefix}Name", "");
-                }
-                else
-                {
-                    result.Add($"{prefix}Name", item.Name);
-                }
+                var package = mission.Packages[i];
+                data.Add(ToKey(Keys.PACKAGE_NAME, i), package.Name);
+
+                BuildFlights(data, package);
             }
+        }
 
-            #endregion
+        private static void BuildFlights(Dictionary<string, string> data, Package package)
+        {
+            if (package.Flights.IsEmpty())
+                return;
 
-            //we really just care about our flight for now... dont really care about its relation to packages or other flights as we just support "1" flight 0-8 ship
-            #region Flights
-
-            for (var i = 0; i < 16; i++)
+            for (var i = 0; i < package.Flights.Count; i++)
             {
-                var prefix = $"FLIGHT_{i + 1}_";
-                var item = i < (criteria.Mission.Packages[0].Flights?.Count ?? -1) ? criteria.Mission.Packages[0].Flights[i] : null;
-                if (item == null)
+                var flight = package.Flights[i];
+                data.Add(ToKey(Keys.FLIGHT_NAME, i), flight.Name);
+                data.Add(ToKey(Keys.FLIGHT_AIRCRAFT, i), flight.Aircraft);
+
+                if (flight.Pilots.HasData())
                 {
-                    result.Add($"{prefix}Name", "");
-                }
-                else
-                {
-                    result.Add($"{prefix}Name", item.Name);
-                    result.Add($"{prefix}Aircraft", item.Aircraft);
+                    for (var f = 0; f < package.Flights.Count; f++)
+                    {
+
+                    }
                 }
 
-                //pilots
-                //comms
-                //nav points                
+                if (flight.Comms.HasData())
+                {
+                    var radios = flight.Comms.Select(p => p.CommId).Distinct().Order().ToList();
+                    foreach (var radioId in radios)
+                    {
+                        var channels = flight.Comms.Where(p => p.CommId == radioId).ToList(); //dont reorder!
+                        for(var c = 0; c < channels.Count; c++)
+                        {
+                            var channel = channels[c];
+                            var commPrefix = Keys.COMM_PREFIX.Replace("*", channel.CommId.ToString());
+
+                            data.Add(ToKey(commPrefix, Keys.COMM_NUM, c), (c + 1).ToString());
+                            data.Add(ToKey(commPrefix, Keys.COMM_FREQ, c),channel.Frequency.ToString("{d:#.##}"));
+                            data.Add(ToKey(commPrefix, Keys.COMM_DESC, c), Clean(channel.Description, "")); //always replace text with Unassigned or blank...?
+                        }
+                    }
+                }
+
+                if (flight.Navs.HasData())
+                {
+                    for(var n = 0; n < flight.Navs.Count; n++)
+                    {
+                        var nav = flight.Navs[n];
+
+                        data.Add(ToKey(Keys.NAV_NUM, n), (n + 1).ToString()); //or allow start 0??
+                        data.Add(ToKey(Keys.NAV_ALT, n), nav.Altitude.ToString("#"));
+                        data.Add(ToKey(Keys.NAV_TOS, n), Clean(nav.TOS, ""));
+                        data.Add(ToKey(Keys.NAV_TOT, n), Clean(nav.TOT, ""));
+                        data.Add(ToKey(Keys.NAV_SPEED, n), Clean(nav.Speed?.ToString(), ""));
+                        data.Add(ToKey(Keys.NAV_COORD, n), "normal".ToDisplay(nav.Latitude, nav.Longitude));
+                        data.Add(ToKey(Keys.NAV_MGRS, n), 10.ToMGRS(nav.Latitude, nav.Longitude));
+
+                        var desc = nav.Name;
+                        if (string.IsNullOrWhiteSpace(desc)
+                            || string.Equals(desc, $"STP{n + 1}", StringComparison.OrdinalIgnoreCase)
+                            || string.Equals(desc, $"SP{n + 1}", StringComparison.OrdinalIgnoreCase))
+                        {
+                            //todo: attempt to match by location to the POI DB
+                            //maybe even import from miz/cf/acmi  group/unit/static
+
+                            /*
+                             * from Map POI DB and/or Import Miz/CF/ACMI
+                             *      if stp is at (or near??) then upgrade any missing data (like name, alt, etc)
+                             *      maybe if STP in WEZ or know threats..list them out in Notes ?
+                             * 
+                             */
+
+                            //name = "better name..."
+                        }
+
+                        data.Add(ToKey(Keys.NAV_NAME, n), Clean(nav.Name, $"STP{n + 1}"));
+
+                        data.Add(ToKey(Keys.NAV_NOTE, n), "todo nav note"); //things about the STP.. airfield, threats, WEZ, etc...
+
+                    }
+                }
             }
+        }
 
-            #endregion
+        private static void BuildThreats(Dictionary<string, string> data, Mission mission)
+        {
+            if (mission.Threats.IsEmpty())
+                return;
 
-            #region Threats
             /*
-             * from POI import of miz/cf/acmi
-             * distinct list of air/ground threats
-             * 
-             * Aircraft
-             *      name, amount, rwr symbol, MAR?
-             *      Mig-29, 12x
-             *      Su-27, 3x
-             *      AN-50, 1x
-             *      
-             * SAM
-             *      name, rwr symbol, WEZ, ceiling, IR/EO/RD
-             *      EWR, 3x
-             *      SA-2 10x
-             *      SA-5 2x
-             *      SA-10 3x
-             *      MIM-111 4x
-             * 
-             * SHORAD
-             *      name, rwr, WEZ, ceiling, IR/EO/RD
-             *      SA-8 x23
-             *      SA-11 2x
-             * 
-             * AAA
-             *      name, rwr, WEZ, ceiling, EO/RD
-             *      Gepard 2x
-             *      ZSU-23 80x
-             * 
-             * 
-             * Locations 
-             *      just airfields, farps?  cities?
-             *      Aleppo: SA-10, SA-11, SA-15, Mig-29
-             *      Damascus: EWR, SA-8, Su-27
-             * 
-             */
+            * from POI import of miz/cf/acmi
+            * distinct list of air/ground threats
+            * 
+            * Aircraft
+            *      name, amount, rwr symbol, MAR?
+            *      Mig-29, 12x
+            *      Su-27, 3x
+            *      AN-50, 1x
+            *      
+            * SAM
+            *      name, rwr symbol, WEZ, ceiling, IR/EO/RD
+            *      EWR, 3x
+            *      SA-2 10x
+            *      SA-5 2x
+            *      SA-10 3x
+            *      MIM-111 4x
+            * 
+            * SHORAD
+            *      name, rwr, WEZ, ceiling, IR/EO/RD
+            *      SA-8 x23
+            *      SA-11 2x
+            * 
+            * AAA
+            *      name, rwr, WEZ, ceiling, EO/RD
+            *      Gepard 2x
+            *      ZSU-23 80x
+            * 
+            * 
+            * Locations 
+            *      just airfields, farps?  cities?
+            *      Aleppo: SA-10, SA-11, SA-15, Mig-29
+            *      Damascus: EWR, SA-8, Su-27
+            * 
+            */
 
-            for (var i = 0; i < 1000; i++)
+            for (var i = 0; i < mission.Threats.Count; i++)
             {
-                var prefix = $"THREAT_{i + 1}_";
-                var item = i < (criteria.Mission.Threats?.Count ?? -1) ? criteria.Mission.Threats[i] : null;
-                if (item == null)
-                {
-                    result.Add($"{prefix}Name", "");
-                    result.Add($"{prefix}Type", "");
-                    result.Add($"{prefix}COORD", "");
-                    result.Add($"{prefix}MGRS", "");
-                    result.Add($"{prefix}DMPI", "");
-                    result.Add($"{prefix}Altitude", "");
-                    result.Add($"{prefix}WEZ", "");
-                }
-                else
-                {
-                    result.Add($"{prefix}Name", item.Name);
-                    result.Add($"{prefix}Type", item.Type);
-                    result.Add($"{prefix}COORD", "normal".ToDisplay(item.Latitude, item.Longitude));
-                    result.Add($"{prefix}MGRS", 10.ToMGRS(item.Latitude, item.Longitude));
-                    result.Add($"{prefix}DMPI", "DMPItodo");
-                    result.Add($"{prefix}Altitude", item.Altitude.ToString("#"));
-                    result.Add($"{prefix}WEZ", item.WEZ.HasValue ? item.WEZ.Value.ToString("#") : "");
-                }
-            }
-            #endregion
+                var threat = mission.Threats[i];
+                data.Add(ToKey(Keys.THREAT_NAME, i), threat.Name);
+                data.Add(ToKey(Keys.THREAT_TYPE, i), threat.Type);
 
-            #region Airfields
+                //todo: depends on how we want to use this.. ie Ref'd by STP, general notes distinct list/count by types, etc...
+
+                //result.Add($"{prefix}COORD", "normal".ToDisplay(item.Latitude, item.Longitude));
+                //result.Add($"{prefix}MGRS", 10.ToMGRS(item.Latitude, item.Longitude));
+                //result.Add($"{prefix}DMPI", "DMPItodo");
+                //result.Add($"{prefix}Altitude", item.Altitude.ToString("#"));
+                //result.Add($"{prefix}WEZ", item.WEZ.HasValue ? item.WEZ.Value.ToString("#") : "");
+            }
+        }
+
+        private static void BuildAirfields(Dictionary<string, string> data, GenerateCriteria criteria)
+        {
             /*
              * for any STPs that are linked or "at/near" airfield (farp tbd)
              *      also if first/last stp...?
@@ -150,9 +233,10 @@ namespace JAFDTC.Kneeboard.Generate
              *      Enemy Threats: Aircraft, AAA, SAM, SHORAD, other?
              * 
              */
-            #endregion
+        }
 
-            #region Maps
+        private static void BuildMaps(Dictionary<string, string> data, GenerateCriteria criteria)
+        {
             /*
              * long term...
              * gen an image from "map widget"
@@ -170,9 +254,16 @@ namespace JAFDTC.Kneeboard.Generate
              *      enemy aircraft fields (ie mig29 aleppo)
              * 
              */
-            #endregion
+        }
 
-            return result;
+        private static string ToKey(string key, int index)
+        {
+            return key.Replace("*", (index + 1).ToString());
+        }
+
+        private static string ToKey(string prefix, string key, int index)
+        {
+            return prefix + key.Replace("*", (index + 1).ToString());
         }
 
         private static string Clean(string? input, string defaultValue)
