@@ -38,6 +38,13 @@ namespace JAFDTC.Kneeboard.Generate
                         throw new FileNotFoundException($"Template Directory has no files: {templatePath}");
                 }
 
+
+            //restict to what we currently support
+            if (generateCriteria.Mission.Packages.Count != 1)
+                throw new NotSupportedException("Currently only missions with a single Package are supported.");
+            if (generateCriteria.Mission.Packages[0].Flights.Count != 1)
+                throw new NotSupportedException("Currently only missions with a single Flight are supported.");
+
             var dict = generateCriteria.ToDataDictionary(); //just explicit
 
             var result = new List<string>();

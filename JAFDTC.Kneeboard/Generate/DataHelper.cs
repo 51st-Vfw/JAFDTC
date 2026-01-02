@@ -18,9 +18,19 @@ namespace JAFDTC.Kneeboard.Generate
             
             public const string PACKAGE_NAME = "PACKAGE_*_NAME";
 
-            //in future should be package based
+            //in future should be package prefix...based
             public const string FLIGHT_NAME = "FLIGHT_*_NAME"; 
             public const string FLIGHT_AIRCRAFT = "FLIGHT_*_AIRCRAFT";
+
+            //in future should be package/flight prefix...based
+            public const string PILOT_NAME = "PILOT_*_NAME";
+            public const string PILOT_CALLSIGN = "PILOT_*_CALLSIGN";
+            public const string PILOT_STN = "PILOT_*_STN";
+            //public const string FLIGHT_PILOT_BOARD = "FLIGHT_*_AIRCRAFT";
+            //public const string FLIGHT_PILOT_TACAN = "FLIGHT_*_AIRCRAFT";
+            //public const string FLIGHT_PILOT_TACANBAND = "FLIGHT_*_AIRCRAFT";
+            //public const string FLIGHT_PILOT_JOKER = "FLIGHT_*_AIRCRAFT";
+            //public const string FLIGHT_PILOT_LASE = "FLIGHT_*_AIRCRAFT";
 
             //since we only are supporting 1 flight right now.. let all pilots, nav points, and comms tied to that first flight...
             public const string COMM_PREFIX = "COMM*_";
@@ -101,7 +111,13 @@ namespace JAFDTC.Kneeboard.Generate
                 {
                     for (var f = 0; f < package.Flights.Count; f++)
                     {
+                        var pilot = flight.Pilots[f];
 
+                        data.Add(ToKey(Keys.PILOT_NAME, f), pilot.Name);
+                        data.Add(ToKey(Keys.PILOT_STN, f), Clean(pilot.STN, ""));
+                        data.Add(ToKey(Keys.PILOT_CALLSIGN, f), $"{flight.Name}_{f + 1}");
+
+                        //todo: more if we want...
                     }
                 }
 

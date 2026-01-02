@@ -109,7 +109,6 @@ namespace JAFDTC.Tests
                                         new()
                                         {
                                             Name = "Rage",
-                                            Callsign = "COLT 1-1",
                                             IsLead = true
                                         }
                                     ],

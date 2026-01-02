@@ -7,7 +7,6 @@ namespace JAFDTC.Models.Planning
     public class Pilot
     {
         public required string Name { get; set; }
-        public required string Callsign { get; set; }
         public required bool IsLead { get; set; }
         public string? STN { get; set; }
         public string? Board { get; set; }
