@@ -90,6 +90,7 @@
     <None Remove="UI\Base\EditNavpointListPage.xaml" />
     <None Remove="UI\Base\EditNavpointPage.xaml" />
     <None Remove="UI\Base\EditRadioPage.xaml" />
+    <None Remove="UI\Base\EditSimulatorKboardPage.xaml" />
     <None Remove="UI\BlankPage1.xaml" />
     <None Remove="UI\Controls\LinkResetBtnsControl.xaml" />
     <None Remove="UI\F15E\F15EEditMiscPage.xaml" />
@@ -259,6 +260,9 @@
     <None Update="Images\mk-84hd.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Page Update="UI\Base\EditSimulatorKboardPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="UI\App\EditThreatsFilterDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
