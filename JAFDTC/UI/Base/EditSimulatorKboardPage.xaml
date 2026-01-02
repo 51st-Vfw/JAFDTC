@@ -97,7 +97,7 @@ https://www.gnu.org/licenses/.
                   Margin="12,12,12,0" HorizontalAlignment="Center"
                   SelectionMode="None">
             <GridView.ItemTemplate>
-                <DataTemplate x:DataType="local:DTCSystemItem">
+                <DataTemplate x:DataType="local:SystemGridItem">
                     <StackPanel Margin="0,0,2,0">
                         <ToggleButton Width="240" Tag="{x:Bind Tag}" IsChecked="{x:Bind IsChecked, Mode=TwoWay}"
                                       Click="BtnSystemItem_Click">

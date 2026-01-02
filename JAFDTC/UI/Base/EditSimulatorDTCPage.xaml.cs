@@ -1,8 +1,8 @@
 // ********************************************************************************************************************
 //
-// EditSimulatorDTCPage.cs : ui c# for for general radio setup editor page
+// EditSimulatorDTCPage.cs : ui c# for for general dte/dtc setup editor page
 //
-// Copyright(C) 2025 ilominar/raven
+// Copyright(C) 2025-2026 ilominar/raven
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 // Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -36,25 +36,6 @@ using System.Text.Json;
 
 namespace JAFDTC.UI.Base
 {
-    /// <summary>
-    /// object representing the user interface view of a system that can be included in the dtc tape.
-    /// </summary>
-    public sealed partial class DTCSystemItem : BindableObject
-    {
-        public string Tag { get; set; }
-
-        public string Glyph { get; set; }
-
-        public string Name { get; set; }
-
-        public Boolean IsChecked { get; set; }
-
-        public DTCSystemItem(string tag, string glyph, string name, Boolean isChecked)
-            => (Tag, Glyph, Name, IsChecked) = (tag, glyph, name, isChecked);
-    }
-
-    // ================================================================================================================
-
     /// <summary>
     /// page to edit dcs dtc integration fields. this is a general-purpose class that is instatiated in combination
     /// a IEditSimulatorDTCPageHelper class to provide airframe-specific specialization.
@@ -227,7 +208,7 @@ namespace JAFDTC.UI.Base
             Utilities.FindDescendantControls<ToggleButton>(tbtns, uiGridSystemItems);
             foreach (ToggleButton tbtn in tbtns)
                 tbtn.IsChecked = false;
-            foreach (DTCSystemItem item in uiGridSystemItems.Items.Cast<DTCSystemItem>())
+            foreach (SystemGridItem item in uiGridSystemItems.Items.Cast<SystemGridItem>())
                 item.IsChecked = false;
         }
 
@@ -438,9 +419,9 @@ namespace JAFDTC.UI.Base
 
             CopyConfigToEditState();
 
-            ObservableCollection<DTCSystemItem> items = [ ];
+            ObservableCollection<SystemGridItem> items = [ ];
             foreach (ConfigEditorPageInfo info in PageHelper.MergableSystems)
-                items.Add(new DTCSystemItem(info.Tag, info.Glyph, info.Label, EditDTC.MergedSystemTags.Contains(info.Tag)));
+                items.Add(new SystemGridItem(info.Tag, info.Glyph, info.Label, EditDTC.MergedSystemTags.Contains(info.Tag)));
             uiGridSystemItems.ItemsSource = items;
         }
     }

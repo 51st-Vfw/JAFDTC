@@ -208,7 +208,7 @@ namespace JAFDTC.UI.Base
             Utilities.FindDescendantControls<ToggleButton>(tbtns, uiGridSystemItems);
             foreach (ToggleButton tbtn in tbtns)
                 tbtn.IsChecked = false;
-            foreach (DTCSystemItem item in uiGridSystemItems.Items.Cast<DTCSystemItem>())
+            foreach (SystemGridItem item in uiGridSystemItems.Items.Cast<SystemGridItem>())
                 item.IsChecked = false;
         }
 
@@ -417,9 +417,9 @@ namespace JAFDTC.UI.Base
 
             CopyConfigToEditState();
 
-            ObservableCollection<DTCSystemItem> items = [];
+            ObservableCollection<SystemGridItem> items = [];
             foreach (ConfigEditorPageInfo info in PageHelper.ContentSystems)
-                items.Add(new DTCSystemItem(info.Tag, info.Glyph, info.Label, EditKboard.ContentSystemTags.Contains(info.Tag)));
+                items.Add(new SystemGridItem(info.Tag, info.Glyph, info.Label, EditKboard.ContentSystemTags.Contains(info.Tag)));
             uiGridSystemItems.ItemsSource = items;
         }
     }
