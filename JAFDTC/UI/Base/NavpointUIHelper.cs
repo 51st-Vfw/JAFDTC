@@ -2,7 +2,7 @@
 //
 // NavpointUIHelper.cs : helper classes for navpoint ui
 //
-// Copyright(C) 2023-2025 ilominar/raven
+// Copyright(C) 2023-2026 ilominar/raven
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 // Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -184,7 +184,7 @@ namespace JAFDTC.UI.Base
             if (button.IsChecked != !filter.IsDefault)
                 button.IsChecked = !filter.IsDefault;
 
-            GetPoIFilterDialog filterDialog = new(filter)
+            PoIFilterDialog filterDialog = new(filter)
             {
                 XamlRoot = root,
                 Title = $"Set a Filter for Points of Interest"
@@ -221,11 +221,11 @@ namespace JAFDTC.UI.Base
         {
             List<string> allowedTheaters = TheatersForNavpoints(navpts);
 
-            POIFilterSpec filter = new(Settings.LastNavptPOIFilter)
+            POIFilterSpec filter = new()
             {
                 IncludeTypes = PointOfInterestTypeMask.ANY
             };
-            GetPoIFilterDialog filterDialog = new(filter, GetPoIFilterDialog.Mode.CHOOSE, allowedTheaters)
+            PoIFilterDialog filterDialog = new(filter, PoIFilterDialog.Mode.CHOOSE, allowedTheaters)
             {
                 XamlRoot = root,
                 Title = $"Copy to Points of Interest",
@@ -238,8 +238,6 @@ namespace JAFDTC.UI.Base
             {
                 filter = filterDialog.Filter;
                 filter.IncludeTypes = PointOfInterestTypeMask.ANY;
-
-                Settings.LastNavptPOIFilter = filter;
 
                 // set common POI properties
                 PointOfInterestType poiType = PointOfInterestType.USER;
