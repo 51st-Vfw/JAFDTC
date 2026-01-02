@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace JAFDTC.Models.Planning
+﻿namespace JAFDTC.Models.Planning
 {
     public class Pilot
     {

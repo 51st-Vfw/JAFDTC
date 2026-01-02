@@ -1,7 +1,6 @@
 ﻿using JAFDTC.Core.Extensions;
 using JAFDTC.Kneeboard.Models;
 using JAFDTC.Models.Planning;
-using static System.Net.WebRequestMethods;
 
 namespace JAFDTC.Kneeboard.Generate
 {
@@ -34,9 +33,9 @@ namespace JAFDTC.Kneeboard.Generate
 
             //since we only are supporting 1 flight right now.. let all pilots, nav points, and comms tied to that first flight...
             public const string COMM_PREFIX = "COMM*_";
-            public const string COMM_NUM = "NUM";
-            public const string COMM_FREQ = "FREQ";
-            public const string COMM_DESC = "DESC";
+            public const string COMM_NUM = "PRESET*_NUM"; //PREFIX + this
+            public const string COMM_FREQ = "PRESET*_FREQ"; //PREFIX + this
+            public const string COMM_DESC = "PRESET*_DESC"; //PREFIX + this
 
             public const string NAV_NUM = "NAV_*_NUM";
             public const string NAV_NAME = "NAV_*_NAME";
@@ -274,12 +273,12 @@ namespace JAFDTC.Kneeboard.Generate
 
         private static string ToKey(string key, int index)
         {
-            return key.Replace("*", (index + 1).ToString());
+            return key.Replace("*", (index + 1).ToString()).ToUpper();
         }
 
         private static string ToKey(string prefix, string key, int index)
         {
-            return prefix + key.Replace("*", (index + 1).ToString());
+            return prefix + key.Replace("*", (index + 1).ToString()).ToUpper();
         }
 
         private static string Clean(string? input, string defaultValue)

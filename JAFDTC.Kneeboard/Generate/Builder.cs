@@ -44,6 +44,8 @@ namespace JAFDTC.Kneeboard.Generate
                 foreach(var match in matches)
                     if (_data.TryGetValue(match, out var value))
                         item.Text = item.Text.Replace(ToMatch(match), value, StringComparison.OrdinalIgnoreCase);
+                   else 
+                        item.Text = item.Text.Replace(ToMatch(match), string.Empty, StringComparison.OrdinalIgnoreCase); //or default parsed data...
             }
 
             foreach (var item in _imageItems.Where(p => p?.Href != null && p.Href.Contains(KeyStart) && p.Href.Contains(KeyEnd)))
@@ -52,6 +54,8 @@ namespace JAFDTC.Kneeboard.Generate
                 foreach (var match in matches)
                     if (_data.TryGetValue(match, out var value))
                         item.Href = item.Href.Replace(ToMatch(match), value, StringComparison.OrdinalIgnoreCase);
+                    else
+                        item.Href = item.Href.Replace(ToMatch(match), string.Empty, StringComparison.OrdinalIgnoreCase); //or default parsed data...
             }
         }
 
