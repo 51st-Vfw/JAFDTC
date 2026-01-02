@@ -61,16 +61,17 @@ namespace JAFDTC.UI.F16C
 
         private static readonly ObservableCollection<ConfigEditorPageInfo> _configEditorPageInfo =
         [
-                F16CEditSteerpointListPage.PageInfo,
-                F16CEditMFDPage.PageInfo,
-                F16CEditRadioPageHelper.PageInfo,
-                F16CEditSMSPage.PageInfo,
-                F16CEditCMDSPage.PageInfo,
-                F16CEditHARMPage.PageInfo,
-                F16CEditHTSPage.PageInfo,
-                F16CEditDLNKPage.PageInfo,
-                F16CEditMiscPage.PageInfo,
-                F16CEditSimulatorDTCPageHelper.PageInfo
+            F16CEditSteerpointListPage.PageInfo,
+            F16CEditMFDPage.PageInfo,
+            F16CEditRadioPageHelper.PageInfo,
+            F16CEditSMSPage.PageInfo,
+            F16CEditCMDSPage.PageInfo,
+            F16CEditHARMPage.PageInfo,
+            F16CEditHTSPage.PageInfo,
+            F16CEditDLNKPage.PageInfo,
+            F16CEditMiscPage.PageInfo,
+            F16CEditSimulatorDTCPageHelper.PageInfo,
+            F16CEditSimulatorKboardPageHelper.PageInfo,
         ];
 
         private static readonly ObservableCollection<ConfigAuxCommandInfo> _configAuxCmdInfo =
