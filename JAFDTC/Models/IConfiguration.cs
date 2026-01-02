@@ -3,7 +3,7 @@
 // IConfiguration.cs -- interface for airframe configuration class
 //
 // Copyright(C) 2021-2023 the-paid-actor & others
-// Copyright(C) 2023-2025 ilominar/raven
+// Copyright(C) 2023-2026 ilominar/raven
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 // Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -212,7 +212,7 @@ namespace JAFDTC.Models
         /// <summary>
         /// returns true if the system with specified tag is merged into dcs dtc configuration, false otherwise.
         /// </summary>
-        public bool IsMerged(string systemTag);
+        public bool IsMergedToDTC(string systemTag);
 
         /// <summary>
         /// update a system in this configuration to match the system in a target configuration. this method creates

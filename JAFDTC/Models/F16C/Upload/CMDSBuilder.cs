@@ -3,7 +3,7 @@
 // CMDSBuilder.cs -- f-16c cmds command builder
 //
 // Copyright(C) 2021-2023 the-paid-actor & others
-// Copyright(C) 2023-2025 ilominar/raven
+// Copyright(C) 2023-2026 ilominar/raven
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 // Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -56,9 +56,9 @@ namespace JAFDTC.Models.F16C.Upload
             if (_cfg.CMDS.IsDefault)
                 return;
 
-            AddExecFunction("NOP", new() { "==== CMDSBuilder:Build()" });
+            AddExecFunction("NOP", [ "==== CMDSBuilder:Build()" ]);
 
-            if (_cfg.IsMerged(CMDSSystem.SystemTag))
+            if (_cfg.IsMergedToDTC(CMDSSystem.SystemTag))
                 return;
 
             AirframeDevice ufc = _aircraft.GetDevice("UFC");
@@ -69,8 +69,8 @@ namespace JAFDTC.Models.F16C.Upload
 
             if (!string.IsNullOrEmpty(_cfg.CMDS.BingoChaff) || !string.IsNullOrEmpty(_cfg.CMDS.BingoFlare))
             {
-                AddActions(ufc, PredActionsForNumAndEnter(_cfg.CMDS.BingoChaff), new() { "DOWN" }, WAIT_BASE);
-                AddActions(ufc, PredActionsForNumAndEnter(_cfg.CMDS.BingoFlare), new() { "UP" }, WAIT_BASE);
+                AddActions(ufc, PredActionsForNumAndEnter(_cfg.CMDS.BingoChaff), [ "DOWN" ], WAIT_BASE);
+                AddActions(ufc, PredActionsForNumAndEnter(_cfg.CMDS.BingoFlare), [ "UP" ], WAIT_BASE);
             }
 
             // ---- move to chaff program 1 and enter chaff programs 1-6
@@ -96,10 +96,10 @@ namespace JAFDTC.Models.F16C.Upload
         {
             if (!pgm.IsDefault)
             {
-                AddActions(ufc, PredActionsForCleanNumAndEnter(pgm.BQ), new() { "DOWN" }, WAIT_SHORT);
-                AddActions(ufc, PredActionsForCleanNumAndEnter(pgm.BI), new() { "DOWN" }, WAIT_SHORT);
-                AddActions(ufc, PredActionsForCleanNumAndEnter(pgm.SQ), new() { "DOWN" }, WAIT_SHORT);
-                AddActions(ufc, PredActionsForCleanNumAndEnter(pgm.SI), new() { "DOWN" }, WAIT_SHORT);
+                AddActions(ufc, PredActionsForCleanNumAndEnter(pgm.BQ), [ "DOWN" ], WAIT_SHORT);
+                AddActions(ufc, PredActionsForCleanNumAndEnter(pgm.BI), [ "DOWN" ], WAIT_SHORT);
+                AddActions(ufc, PredActionsForCleanNumAndEnter(pgm.SQ), [ "DOWN" ], WAIT_SHORT);
+                AddActions(ufc, PredActionsForCleanNumAndEnter(pgm.SI), [ "DOWN" ], WAIT_SHORT);
             }
             AddAction(ufc, "INC", WAIT_BASE);
         }

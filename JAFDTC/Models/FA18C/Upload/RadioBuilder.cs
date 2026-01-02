@@ -3,7 +3,7 @@
 // RadioBuilder.cs -- fa-18c radio command builder
 //
 // Copyright(C) 2021-2023 the-paid-actor & others
-// Copyright(C) 2023-2024 ilominar/raven
+// Copyright(C) 2023-2026 ilominar/raven
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 // Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -32,7 +32,8 @@ namespace JAFDTC.Models.FA18C.Upload
     /// command builder for the radio system (com1/com2 uhf/vhf radios) in the hornet. translates radio setup in
     /// FA18CConfiguration into commands that drive the dcs clickable cockpit.
     /// </summary>
-    internal class RadioBuilder : FA18CBuilderBase, IBuilder
+    internal class RadioBuilder(FA18CConfiguration cfg, FA18CDeviceManager dcsCmds, StringBuilder sb)
+                   : FA18CBuilderBase(cfg, dcsCmds, sb), IBuilder
     {
         // TODO: implement non-numeric presets
         private enum ComKnobPresets
@@ -44,14 +45,6 @@ namespace JAFDTC.Models.FA18C.Upload
             PRESET_1 = 1,
             PRESET_20 = 20
         }
-
-        // ------------------------------------------------------------------------------------------------------------
-        //
-        // construction
-        //
-        // ------------------------------------------------------------------------------------------------------------
-
-        public RadioBuilder(FA18CConfiguration cfg, FA18CDeviceManager dcsCmds, StringBuilder sb) : base(cfg, dcsCmds, sb) { }
 
         // ------------------------------------------------------------------------------------------------------------
         //
@@ -69,11 +62,11 @@ namespace JAFDTC.Models.FA18C.Upload
             if (_cfg.Radio.IsDefault)
                 return;
 
-            AddExecFunction("NOP", new() { "==== RadioBuilder:Build()" });
+            AddExecFunction("NOP", [ "==== RadioBuilder:Build()" ]);
 
             AirframeDevice ufc = _aircraft.GetDevice("UFC");
 
-            if (!_cfg.IsMerged(RadioSystem.SystemTag))
+            if (!_cfg.IsMergedToDTC(RadioSystem.SystemTag))
             {
                 BuildRadio(ufc, 1, _cfg.Radio.Presets[(int)Radio.Radios.COMM1], _cfg.Radio.COMM1DefaultTuning);
                 BuildRadio(ufc, 2, _cfg.Radio.Presets[(int)Radio.Radios.COMM2], _cfg.Radio.COMM2DefaultTuning);
@@ -88,7 +81,7 @@ namespace JAFDTC.Models.FA18C.Upload
         /// </summary>
         private void SelectPreset(AirframeDevice ufc, int radioNum, string preset)
         {
-            AddWhileBlock("IsRadioOnChannel", false, new() { $"{radioNum}", preset }, delegate ()
+            AddWhileBlock("IsRadioOnChannel", false, [ $"{radioNum}", preset ], delegate ()
             {
                 AddAction(ufc, $"COM{radioNum}ChInc", WAIT_SHORT);
             });
@@ -104,7 +97,7 @@ namespace JAFDTC.Models.FA18C.Upload
             {
                 SelectPreset(ufc, radioNum, preset.Preset.ToString());
                 AddAction(ufc, $"COM{radioNum}", WAIT_LONG);
-                AddActions(ufc, ActionsForCleanNum(preset.Frequency), new() { "ENT" }, WAIT_BASE);
+                AddActions(ufc, ActionsForCleanNum(preset.Frequency), [ "ENT" ], WAIT_BASE);
             }
 
             if (int.TryParse(initialTuning, out int presetInit) && (presetInit < 20))
@@ -116,7 +109,7 @@ namespace JAFDTC.Models.FA18C.Upload
                 SelectPreset(ufc, radioNum, "M");
                 AddAction(ufc, $"COM{radioNum}", WAIT_LONG);
                 AddAction(ufc, "CLR", WAIT_BASE);
-                AddActions(ufc, ActionsForCleanNum(initialTuning), new() { "ENT" }, WAIT_BASE);
+                AddActions(ufc, ActionsForCleanNum(initialTuning), [ "ENT" ], WAIT_BASE);
             }
         }
     }

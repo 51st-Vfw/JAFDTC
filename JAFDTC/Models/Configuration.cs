@@ -3,7 +3,7 @@
 // Configuration.cs -- abstract base class for airframe configuration
 //
 // Copyright(C) 2021-2023 the-paid-actor & others
-// Copyright(C) 2023-2025 ilominar/raven
+// Copyright(C) 2023-2026 ilominar/raven
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 // Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -249,7 +249,7 @@ namespace JAFDTC.Models
             return system == null || system.IsDefault;
         }
 
-        public virtual bool IsMerged(string systemTag) => false;
+        public virtual bool IsMergedToDTC(string systemTag) => false;
 
         public void LinkSystemTo(string systemTag, IConfiguration linkedConfig)
         {
@@ -299,7 +299,7 @@ namespace JAFDTC.Models
                     foreach (string tag in MergeableSysTagsForDTC)
                     {
                         ISystem system = SystemForTag(tag);
-                        if (!system.IsDefault && IsMerged(tag))
+                        if (!system.IsDefault && IsMergedToDTC(tag))
                             system.MergeIntoSimDTC(dom["data"]);
                     }
 

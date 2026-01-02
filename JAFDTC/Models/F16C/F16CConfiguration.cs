@@ -297,7 +297,7 @@ namespace JAFDTC.Models.F16C
             };
         }
 
-        public override bool IsMerged(string systemTag) => DTE.MergedSystemTags.Contains(systemTag);
+        public override bool IsMergedToDTC(string systemTag) => DTE.MergedSystemTags.Contains(systemTag);
 
         public override void ConfigurationUpdated()
         {

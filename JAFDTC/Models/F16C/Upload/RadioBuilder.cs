@@ -3,7 +3,7 @@
 // RadioBuilder.cs -- f-16c radio command builder
 //
 // Copyright(C) 2021-2023 the-paid-actor & others
-// Copyright(C) 2023-2025 ilominar/raven
+// Copyright(C) 2023-2026 ilominar/raven
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 // Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -33,16 +33,9 @@ namespace JAFDTC.Models.F16C.Upload
     /// to an F16CConfiguration. the stream returns the ded to its default page. the builder does not require any
     /// state to function.
     /// </summary>
-    internal class RadioBuilder : F16CBuilderBase, IBuilder
+    internal class RadioBuilder(F16CConfiguration cfg, F16CDeviceManager dm, StringBuilder sb)
+                   : F16CBuilderBase(cfg, dm, sb), IBuilder
     {
-        // ------------------------------------------------------------------------------------------------------------
-        //
-        // construction
-        //
-        // ------------------------------------------------------------------------------------------------------------
-
-        public RadioBuilder(F16CConfiguration cfg, F16CDeviceManager dm, StringBuilder sb) : base(cfg, dm, sb) { }
-
         // ------------------------------------------------------------------------------------------------------------
         //
         // build methods
@@ -59,7 +52,7 @@ namespace JAFDTC.Models.F16C.Upload
             if (_cfg.Radio.IsDefault)
                 return;
 
-            AddExecFunction("NOP", new() { "==== RadioBuilder:Build()" });
+            AddExecFunction("NOP", [ "==== RadioBuilder:Build()" ]);
 
             AirframeDevice ufc = _aircraft.GetDevice("UFC");
 
@@ -80,19 +73,19 @@ namespace JAFDTC.Models.F16C.Upload
             if (isGuardMonitor)
                 AddAction(ufc, "SEQ");
 
-            if (!_cfg.IsMerged(RadioSystem.SystemTag))
+            if (!_cfg.IsMergedToDTC(RadioSystem.SystemTag))
             {
-                AddActions(ufc, new() { "DOWN", "DOWN" });
+                AddActions(ufc, [ "DOWN", "DOWN" ]);
 
                 foreach (RadioPresetInfoBase preset in presets)
                 {
-                    AddActions(ufc, PredActionsForNumAndEnter(preset.Preset.ToString()), new() { "DOWN" });
-                    AddActions(ufc, PredActionsForCleanNumAndEnter(preset.Frequency.ToString()), new() { "UP" });
+                    AddActions(ufc, PredActionsForNumAndEnter(preset.Preset.ToString()), [ "DOWN" ]);
+                    AddActions(ufc, PredActionsForCleanNumAndEnter(preset.Frequency.ToString()), [ "UP" ]);
                 }
-                AddActions(ufc, new() { "1", "ENTR" });
+                AddActions(ufc, [ "1", "ENTR" ]);
 
                 if (!string.IsNullOrEmpty(initialTuning))
-                    AddActions(ufc, new() { "DOWN", "DOWN" });
+                    AddActions(ufc, [ "DOWN", "DOWN" ]);
             }
 
             AddActions(ufc, PredActionsForCleanNumAndEnter(initialTuning));

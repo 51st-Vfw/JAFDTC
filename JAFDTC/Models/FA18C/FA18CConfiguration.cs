@@ -3,7 +3,7 @@
 // FA18CConfiguration.cs -- fa-18c airframe configuration
 //
 // Copyright(C) 2021-2023 the-paid-actor & others
-// Copyright(C) 2023-2025 ilominar/raven
+// Copyright(C) 2023-2026 ilominar/raven
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 // Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -60,11 +60,11 @@ namespace JAFDTC.Models.FA18C
         public SimDTCSystem MUMI { get; set; }
 
         [JsonIgnore]
-        public override List<string> MergeableSysTagsForDTC => new()
-        {
+        public override List<string> MergeableSysTagsForDTC =>
+        [
             RadioSystem.SystemTag,
             CMSSystem.SystemTag
-        };
+        ];
 
         [JsonIgnore]
         public override IUploadAgent UploadAgent => new FA18CUploadAgent(this);
@@ -88,7 +88,7 @@ namespace JAFDTC.Models.FA18C
 
         public override IConfiguration Clone()
         {
-            Dictionary<string, string> linkedSysMap = new();
+            Dictionary<string, string> linkedSysMap = [ ];
             foreach (KeyValuePair<string, string> kvp in LinkedSysMap)
                 linkedSysMap[new(kvp.Key)] = new(kvp.Value);
             FA18CConfiguration clone = new("", Name, linkedSysMap)
@@ -137,7 +137,7 @@ namespace JAFDTC.Models.FA18C
             };
         }
 
-        public override bool IsMerged(string systemTag) => MUMI.MergedSystemTags.Contains(systemTag);
+        public override bool IsMergedToDTC(string systemTag) => MUMI.MergedSystemTags.Contains(systemTag);
 
         public override void ConfigurationUpdated()
         {

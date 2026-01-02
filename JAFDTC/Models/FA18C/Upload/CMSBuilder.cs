@@ -3,7 +3,7 @@
 // CMSBuilder.cs -- fa-18c cms command builder
 //
 // Copyright(C) 2021-2023 the-paid-actor & others
-// Copyright(C) 2023-2025 ilominar/raven
+// Copyright(C) 2023-2026 ilominar/raven
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 // Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -30,16 +30,9 @@ namespace JAFDTC.Models.FA18C.Upload
     /// command builder for the cms system in the hornet. translates countermeasures setup in FA18CConfiguration
     /// into commands that drive the dcs clickable cockpit.
     /// </summary>
-    internal class CMSBuilder : FA18CBuilderBase, IBuilder
+    internal class CMSBuilder(FA18CConfiguration cfg, FA18CDeviceManager dcsCmds, StringBuilder sb)
+                   : FA18CBuilderBase(cfg, dcsCmds, sb), IBuilder
     {
-        // ------------------------------------------------------------------------------------------------------------
-        //
-        // construction
-        //
-        // ------------------------------------------------------------------------------------------------------------
-
-        public CMSBuilder(FA18CConfiguration cfg, FA18CDeviceManager dcsCmds, StringBuilder sb) : base(cfg, dcsCmds, sb) { }
-
         // ------------------------------------------------------------------------------------------------------------
         //
         // build methods
@@ -55,9 +48,9 @@ namespace JAFDTC.Models.FA18C.Upload
             if (_cfg.CMS.IsDefault)
                 return;
 
-            AddExecFunction("NOP", new() { "==== CMSBuilder:Build()" });
+            AddExecFunction("NOP", [ "==== CMSBuilder:Build()" ]);
 
-            if (_cfg.IsMerged(CMSSystem.SystemTag))
+            if (_cfg.IsMergedToDTC(CMSSystem.SystemTag))
                 return;
 
             AirframeDevice lddi = _aircraft.GetDevice("LDDI");
@@ -73,13 +66,13 @@ namespace JAFDTC.Models.FA18C.Upload
             AddIfBlock("IsDispenserOff", true, null, delegate ()
             {
                 AddAction(cmds, "ON");
-                AddWhileBlock("IsALE47Mode", false, new() { "STBY" }, delegate ()
+                AddWhileBlock("IsALE47Mode", false, [ "STBY" ], delegate ()
                 {
                     AddWait(1000);
                 });
             });
             AddAction(lddi, "OSB-08", WAIT_BASE);                                           // ALE-47
-            AddWhileBlock("IsALE47Mode", false, new() { "MAN 1" }, delegate ()
+            AddWhileBlock("IsALE47Mode", false, [ "MAN 1" ], delegate ()
             {
                 AddAction(lddi, "OSB-19", WAIT_BASE);                                       // MODE
             });
@@ -119,12 +112,12 @@ namespace JAFDTC.Models.FA18C.Upload
                 AddAction(lddi, "OSB-19", WAIT_BASE);                                       // SAVE
                 AddAction(lddi, "OSB-20", WAIT_BASE);                                       // STEP
             }
-            AddActions(lddi, new() { "OSB-09" });                                           // RTN
+            AddActions(lddi, [ "OSB-09" ]);                                                 // RTN
             AddWhileBlock("IsLDDITAC", false, null, delegate ()
             {
                 AddAction(lddi, "OSB-18");                                                  // MENU
             });
-            AddActions(lddi, new() { "OSB-03" });                                           // HUD
+            AddActions(lddi, [ "OSB-03" ]);                                                 // HUD
         }
 
         /// <summary>
