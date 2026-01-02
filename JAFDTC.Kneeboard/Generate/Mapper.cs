@@ -10,6 +10,8 @@ namespace JAFDTC.Kneeboard.Generate
 
         public IReadOnlyDictionary<string, string> Map(GenerateCriteria criteria)
         {
+            _data.Clear(); //just in case...
+
             BuildMisc(criteria);
             BuildPackages(criteria.Mission);
             BuildOwnship(criteria);

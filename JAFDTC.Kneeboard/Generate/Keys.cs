@@ -28,10 +28,10 @@
         public const string COMM_PREFIX = "COMM_*_";
 
         //COMM PREFIX + this
-        public const string COMM_NUM = "PRESET*_NUM";
-        public const string COMM_FREQ = "PRESET*_FREQ";
-        public const string COMM_DESC = "PRESET*_DESC";
-        public const string COMM_MOD = "PRESET*_MOD";
+        public const string COMM_NUM = "PRESET_*_NUM";
+        public const string COMM_FREQ = "PRESET_*_FREQ";
+        public const string COMM_DESC = "PRESET_*_DESC";
+        public const string COMM_MOD = "PRESET_*_MOD";
 
         public const string ROUTE_NUM = "ROUTE_*_NUM";
         public const string ROUTE_NAME = "ROUTE_*_NAME";
