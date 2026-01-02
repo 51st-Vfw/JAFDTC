@@ -1,13 +1,13 @@
-﻿namespace JAFDTC.Kneeboard.Generate
+﻿namespace JAFDTC.Kneeboard.Models
 {
-    public static class Keys
+    internal static class Keys
     {
         public const string HEADER = "HEADER";
         public const string FOOTER = "FOOTER";
         public const string THEATER = "THEATER";
         public const string NAME = "NAME";
         public const string NIGHTMODE = "NIGHTMODE";
-        public const string LOGO = "LOGO";
+        //public const string LOGO = "LOGO";
 
         public const string PACKAGE_NAME = "PACKAGE_*_NAME";
 

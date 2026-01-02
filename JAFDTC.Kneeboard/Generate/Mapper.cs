@@ -4,7 +4,7 @@ using JAFDTC.Models.Planning;
 
 namespace JAFDTC.Kneeboard.Generate
 {
-    public class Mapper : IDisposable
+    internal class Mapper : IDisposable
     {
         private readonly Dictionary<string, string> _data = new(StringComparer.OrdinalIgnoreCase);
 
@@ -24,17 +24,19 @@ namespace JAFDTC.Kneeboard.Generate
 
         private void BuildMisc(GenerateCriteria criteria)
         {
-            _data.Add(Keys.HEADER, criteria.Name);
-            _data.Add(Keys.FOOTER, $"{criteria.Name}, by {criteria.Owner.ToString()} @ {DateTime.Now.ToString("MM/dd/yyyy")}");
-            _data.Add(Keys.THEATER, criteria.Mission.Theater);
-            _data.Add(Keys.NAME, criteria.Mission.Name);
+            var name = Clean(criteria.Mission?.Name, criteria.Name);
+
+            _data.Add(Keys.HEADER, name);
+            _data.Add(Keys.FOOTER, $"{name}, by {criteria.Owner?.Name} @ {DateTime.Now.ToString("MM/dd/yyyy")}");
+            _data.Add(Keys.THEATER, criteria.Mission?.Theater);
+            _data.Add(Keys.NAME, name);
             _data.Add(Keys.NIGHTMODE, criteria.NightMode.GetValueOrDefault(false).ToString());
 
-            if (!string.IsNullOrWhiteSpace(criteria.PathLogo))
-            {
-                var b64Logo = Convert.ToBase64String(System.IO.File.ReadAllBytes(criteria.PathLogo));
-                _data.Add(Keys.LOGO, b64Logo);
-            }
+            //if (!string.IsNullOrWhiteSpace(criteria.PathLogo))
+            //{
+            //    var b64Logo = Convert.ToBase64String(System.IO.File.ReadAllBytes(criteria.PathLogo));
+            //    _data.Add(Keys.LOGO, b64Logo);
+            //}
         }
 
         private void BuildPackages(Mission mission)

@@ -92,7 +92,7 @@ namespace JAFDTC.Tests
             {
                 Mission = new()
                 {
-                    Name = "JAF TEST MISSION",
+                    Name = "Operation KB",
                     Packages =
                     [
                         new()
@@ -102,7 +102,7 @@ namespace JAFDTC.Tests
                             [
                                 new()
                                 {
-                                    Aircraft = "F-16C_50",
+                                    Aircraft = Kneeboard.Models.Aircraft.F16,
                                     Name = "COLT-1",
                                     Pilots = 
                                     [
@@ -173,24 +173,24 @@ namespace JAFDTC.Tests
                                             [
                                                 new()
                                                 {
-                                                    Altitude = 43,
-                                                    Latitude = 34.0000,
-                                                    Longitude = 36.0000,
-                                                    Name = "", //see if it hanldes to STP1...                                                    
+                                                    Altitude = 93,
+                                                    Latitude = 35.401667, //N 35° 24.100’
+                                                    Longitude = 35.950383, //E 035° 57.023’
+                                                    Name = "", //see if it hanldes to STP1... Bassel Al-Assad
                                                 },
                                                 new()
                                                 {
-                                                    Altitude = 5000,
-                                                    Latitude = 34.1000,
-                                                    Longitude = 36.2000,
-                                                    Name = "IP",
+                                                    Altitude = 250,
+                                                    Latitude = 35.950383, //N 34° 35.510’
+                                                    Longitude = 35.69915, //E 035° 41.949’
+                                                    Name = "IP", //ocean E of Rene
                                                 },
                                                 new()
                                                 {
-                                                    Altitude = 278,
-                                                    Latitude = 34.2200,
-                                                    Longitude = 36.3300,
-                                                    Name = "Target",
+                                                    Altitude = 16,
+                                                    Latitude = 34.589283, //N 34° 35.357’
+                                                    Longitude = 36.011433, //E 036° 00.686’
+                                                    Name = "Target", //Rene Mouawad
                                                     TOS = "15",
                                                     TOT = "13:01"
                                                 },
@@ -213,17 +213,26 @@ namespace JAFDTC.Tests
                     Threats = [
                         new()
                         {
-                            Name = "SA-2 Guideline",
+                            Name = "SA-2 Guideline", //at hama airbase...
                             Type = "SAM",
                             Altitude = 97,
                             Latitude = 35.118033,
                             Longitude = 36.712367,
                             WEZ = 22.0
+                        },
+                        new()
+                        {
+                            Name = "ZSU-22", //at hama airbase...
+                            Type = "AAA",
+                            Altitude = 97,
+                            Latitude = 35.118033,
+                            Longitude = 36.712367,
+                            WEZ = 1.5
                         }
                     ]
 
                 },
-                Name = $"JAF_TEST_{DateTime.Now.ToString("yyyyMMddhhmmss")}",
+                Name = $"JAF TEST {DateTime.Now.ToString("yyyyMMddhhmmss")}",
                 PathOutput = "..\\..\\..\\appdata\\kb\\output",
                 PathTemplates = "..\\..\\..\\appdata\\kb\\",
                 Owner = new()
@@ -242,139 +251,7 @@ namespace JAFDTC.Tests
                     }
                 },
                 NightMode = false,
-                PathLogo = "..\\..\\..\\appdata\\kb\\misc\\667logo.png",
-                //Flight = new()
-                //{
-                //    Category = UnitCategoryType.AIRCRAFT,
-                //    Coalition = CoalitionType.BLUE,
-                //    Name = "WF 2",
-                //    Route = 
-                //    [
-                //        new()
-                //        {
-                //            Altitude = 43,
-                //            Latitude = 34.0000,
-                //            Longitude = 36.0000,
-                //            Name = "", //see if it hanldes to STP1...
-                //            TimeOn = 0
-                //        },
-                //        new()
-                //        {
-                //            Altitude = 5000,
-                //            Latitude = 34.1000,
-                //            Longitude = 36.2000,
-                //            Name = "IP",
-                //            TimeOn = 0
-                //        },
-                //        new()
-                //        {
-                //            Altitude = 278,
-                //            Latitude = 34.2200,
-                //            Longitude = 36.3300,
-                //            Name = "Target",
-                //            TimeOn = 0
-                //        },
-                //         new()
-                //        {
-                //            Altitude = 984,
-                //            Latitude = 35.118033, //N 35° 07.082'
-                //            Longitude = 36.712367, //E 036° 42.742'
-                //            Name = null, //Hama airbase see if it matches it/finds it
-                //            TimeOn = 0
-                //        }
-                //    ],
-                //    UniqueID = "asdf",
-                //    Units =
-                //    [
-                //        new ()
-                //        {
-                //            IsAlive = true,
-                //            Name = "WF 2-1",
-                //            Position = new()
-                //            {
-                //                Altitude = 278,
-                //                Latitude = 34.2200,
-                //                Longitude = 36.3300,
-                //                Name = "",
-                //                TimeOn = 0
-                //            },
-                //            Type = "F-16C_50",
-                //            UniqueID = "fdad"
-                //        },
-                //        new ()
-                //        {
-                //            IsAlive = true,
-                //            Name = "WF 2-2",
-                //            Position = new()
-                //            {
-                //                Altitude = 278,
-                //                Latitude = 34.2200,
-                //                Longitude = 36.3300,
-                //                Name = "",
-                //                TimeOn = 0
-                //            },
-                //            Type = "F-16C_50",
-                //            UniqueID = "fdad"
-                //        }
-                //    ]
-                //},
-                //Pilots =
-                //[
-                //    new()
-                //    {
-                //        Name = "Rage",
-                //        Callsign = "WF 21",
-                //        IsLead = true,
-                //        IsTDOA = true,
-                //        TNDL = "67001",
-                //        Joker = 4000,
-                //        LaseCode = 1688,
-                //        Tacan = 38,
-                //        TacanBand = 'Y'
-                //    },
-                //    new()
-                //    {
-                //        Name = "Raven",
-                //        IsLead = false,
-                //        IsTDOA = true,
-                //        TNDL = "67062",
-                //    }
-                //],
-                //Comms =
-                //[
-                //    new Radio
-                //    {
-                //        CommMode = 1,
-                //        Name = "AN/ARC-164",
-                //        FrequencyName = "UHF",
-                //        Preset = 2,
-                //        FrequencyMin = 200.0,
-                //        FrequencyMax = 400.0,
-                //        MonitorGuard = true,
-                //        Channels =
-                //        [
-                //            new (){ ChannelId = 1, Frequency = 333.0, Description = "Tac Common" },
-                //            new (){ ChannelId = 2, Frequency = 270.5, Description = "AWACS AI" },
-                //        ]
-                //    },
-                //     new Radio
-                //    {
-                //        CommMode = 2,
-                //        Name = "AN/ARC-210",
-                //        FrequencyName = "VHF",
-                //        Preset = 3,
-                //        FrequencyMin = 100.0,
-                //        FrequencyMax = 200.0,
-                //        MonitorGuard = null,
-                //        Channels =
-                //        [
-                //            new (){ ChannelId = 1, Frequency = 138.25, Description = "Viper 1" },
-                //            new (){ ChannelId = 2, Frequency = 138.75, Description = "Viper 2" },
-                //            new (){ ChannelId = 3, Frequency = 138.5, Description = "Viper AUX" },
-                //        ]
-                //    }
-
-                //]
+                //PathLogo = "..\\..\\..\\appdata\\kb\\misc\\667logo.png",
             });
 
             Assert.IsTrue(result.HasData());

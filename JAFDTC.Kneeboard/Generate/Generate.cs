@@ -18,9 +18,15 @@ namespace JAFDTC.Kneeboard.Generate
             generateCriteria.Mission.Packages[0].Flights.Required();
             generateCriteria.Mission.Packages[0].Flights[0].Required();
 
-            if (!string.IsNullOrWhiteSpace(generateCriteria.PathLogo))
-                if (!File.Exists(generateCriteria.PathLogo))
-                    throw new FileNotFoundException($"Logo Not Found: {generateCriteria.PathLogo}");
+            //restict to what we currently support
+            if (generateCriteria.Mission.Packages.Count != 1)
+                throw new NotSupportedException("Currently only missions with a single Package are supported.");
+            if (generateCriteria.Mission.Packages[0].Flights.Count != 1)
+                throw new NotSupportedException("Currently only missions with a single Flight are supported.");
+
+            //if (!string.IsNullOrWhiteSpace(generateCriteria.PathLogo))
+            //    if (!File.Exists(generateCriteria.PathLogo))
+            //        throw new FileNotFoundException($"Logo Not Found: {generateCriteria.PathLogo}");
 
             foreach (var package in generateCriteria.Mission.Packages)
                 foreach (var flight in package.Flights) //KBs are at a Flight level for now.. maybe in future we would have mission/package levels (but those are just structural for now)
@@ -37,13 +43,6 @@ namespace JAFDTC.Kneeboard.Generate
                     if (templates.IsEmpty())
                         throw new FileNotFoundException($"Template Directory has no files: {templatePath}");
                 }
-
-
-            //restict to what we currently support
-            if (generateCriteria.Mission.Packages.Count != 1)
-                throw new NotSupportedException("Currently only missions with a single Package are supported.");
-            if (generateCriteria.Mission.Packages[0].Flights.Count != 1)
-                throw new NotSupportedException("Currently only missions with a single Flight are supported.");
 
             using var mapper = new Mapper();
             var dict = mapper.Map(generateCriteria);

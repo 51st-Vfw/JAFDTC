@@ -10,6 +10,6 @@ namespace JAFDTC.Kneeboard.Models
         public required Ownship Owner { get; set; }
         public required Mission Mission { get; set; } //set of what we are planning
         public bool? NightMode { get; set; } //tint option.. or just always gen both?
-        public string? PathLogo { get; set; } //from settings for squad or wing logo
+        //public string? PathLogo { get; set; } //from settings for squad or wing logo
     }
 }
