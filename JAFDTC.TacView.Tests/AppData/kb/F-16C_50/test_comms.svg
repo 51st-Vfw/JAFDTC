@@ -1,0 +1,539 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1536px" height="2048px" viewBox="0 0 1536 2048" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="background: #000000;">
+    <!-- Generator: Sketch 61.2 (89653) - https://sketch.com -->
+    <title>51st_SOP_Card_F16</title>
+    <desc>Created with Sketch.</desc>
+    <g id="51st_SOP_Flight_Card_F16" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Background">
+            <rect fill="#141C14" x="0" y="0" width="1536" height="2048"></rect>
+            <rect id="Border" stroke="#32372A" stroke-width="8" x="20" y="20" width="1496" height="2008" rx="12"></rect>
+            <polygon id="Border-Background-Footer" fill="#32372A" transform="translate(768.000000, 2014.000000) scale(1, -1) translate(-768.000000, -2014.000000) " points="24 2002.94737 31 2000 1504 2000 1513 2002.21053 1516 2008.10526 1516 2028 20 2028 20 2008.10526"></polygon>
+            <polygon id="Border-Background-Header" fill="#32372A" points="24 24 31 20 1504 20 1513 23 1516 31 1516 148 20 148 20 31"></polygon>
+            <text id="Footer-R" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="21" font-weight="400" fill="#C0C0C0">
+                <tspan x="1037.222" y="2023">[FOOTER]</tspan>
+            </text>
+            <text id="Header" font-family="HelveticaNeue-Bold, Helvetica Neue" font-size="72" font-weight="bold" fill="#E0E0E0">
+                <tspan x="44" y="111">[HEADER]</tspan>
+            </text>
+            <image id="51st_Fighter_Wing" x="1402" y="37" width="97.2765957" height="96" xlink:href="data:image/png;base64,[LOGO]"></image>
+        </g>
+        <g id="SP" transform="translate(50.000000, 1470.000000)">
+            <g transform="translate(16.000000, 64.000000)">
+                <g id="Template" transform="translate(0.000000, 390.000000)">
+                    <rect id="C4-Border" stroke="#32372A" stroke-width="4" x="850" y="0" width="570" height="48"></rect>
+                    <rect id="C3-Border" stroke="#32372A" stroke-width="4" x="710" y="0" width="140" height="48"></rect>
+                    <rect id="C2-Border" stroke="#32372A" stroke-width="4" x="136" y="0" width="574" height="48"></rect>
+                    <rect id="C1-Border" stroke="#32372A" stroke-width="4" x="0" y="2.84217094e-14" width="136" height="48"></rect>
+                    <text id="C4" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#9B9B9B">
+                        <tspan x="864" y="33">Unassigned</tspan>
+                    </text>
+                    <text id="C3" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#FFFFFF">
+                        <tspan x="761.096" y="33">16</tspan>
+                    </text>
+                    <text id="C2" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#9B9B9B">
+                        <tspan x="150" y="33">Unassigned</tspan>
+                    </text>
+                    <text id="C1" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#FFFFFF">
+                        <tspan x="58.548" y="33">8</tspan>
+                    </text>
+                </g>
+                <g id="Template" transform="translate(0.000000, 342.000000)">
+                    <rect id="C4-Border" stroke="#32372A" stroke-width="4" x="850" y="0" width="570" height="48"></rect>
+                    <rect id="C3-Border" stroke="#32372A" stroke-width="4" x="710" y="0" width="140" height="48"></rect>
+                    <rect id="C2-Border" stroke="#32372A" stroke-width="4" x="136" y="0" width="574" height="48"></rect>
+                    <rect id="C1-Border" stroke="#32372A" stroke-width="4" x="0" y="2.84217094e-14" width="136" height="48"></rect>
+                    <text id="C4" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#9B9B9B">
+                        <tspan x="864" y="33">Unassigned</tspan>
+                    </text>
+                    <text id="C3" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#FFFFFF">
+                        <tspan x="761.096" y="33">15</tspan>
+                    </text>
+                    <text id="C2" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#9B9B9B">
+                        <tspan x="150" y="33">Unassigned</tspan>
+                    </text>
+                    <text id="C1" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#FFFFFF">
+                        <tspan x="58.548" y="33">7</tspan>
+                    </text>
+                </g>
+                <g id="Template" transform="translate(0.000000, 294.000000)">
+                    <rect id="C4-Border" stroke="#32372A" stroke-width="4" x="850" y="0" width="570" height="48"></rect>
+                    <rect id="C3-Border" stroke="#32372A" stroke-width="4" x="710" y="0" width="140" height="48"></rect>
+                    <rect id="C2-Border" stroke="#32372A" stroke-width="4" x="136" y="0" width="574" height="48"></rect>
+                    <rect id="C1-Border" stroke="#32372A" stroke-width="4" x="0" y="2.84217094e-14" width="136" height="48"></rect>
+                    <text id="C4" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#9B9B9B">
+                        <tspan x="864" y="33">Unassigned</tspan>
+                    </text>
+                    <text id="C3" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#FFFFFF">
+                        <tspan x="761.096" y="33">14</tspan>
+                    </text>
+                    <text id="C2" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#9B9B9B">
+                        <tspan x="150" y="33">Unassigned</tspan>
+                    </text>
+                    <text id="C1" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#FFFFFF">
+                        <tspan x="58.548" y="33">6</tspan>
+                    </text>
+                </g>
+                <g id="Template" transform="translate(0.000000, 246.000000)">
+                    <rect id="C4-Border" stroke="#32372A" stroke-width="4" x="850" y="0" width="570" height="48"></rect>
+                    <rect id="C3-Border" stroke="#32372A" stroke-width="4" x="710" y="0" width="140" height="48"></rect>
+                    <rect id="C2-Border" stroke="#32372A" stroke-width="4" x="136" y="0" width="574" height="48"></rect>
+                    <rect id="C1-Border" stroke="#32372A" stroke-width="4" x="0" y="2.84217094e-14" width="136" height="48"></rect>
+                    <text id="C4" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#9B9B9B">
+                        <tspan x="864" y="33">Unassigned</tspan>
+                    </text>
+                    <text id="C3" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#FFFFFF">
+                        <tspan x="761.096" y="33">13</tspan>
+                    </text>
+                    <text id="C2" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#9B9B9B">
+                        <tspan x="150" y="33">Unassigned</tspan>
+                    </text>
+                    <text id="C1" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#FFFFFF">
+                        <tspan x="58.548" y="33">5</tspan>
+                    </text>
+                </g>
+                <g id="Template" transform="translate(0.000000, 198.000000)">
+                    <rect id="C4-Border" stroke="#32372A" stroke-width="4" x="850" y="0" width="570" height="48"></rect>
+                    <rect id="C3-Border" stroke="#32372A" stroke-width="4" x="710" y="0" width="140" height="48"></rect>
+                    <rect id="C2-Border" stroke="#32372A" stroke-width="4" x="136" y="0" width="574" height="48"></rect>
+                    <rect id="C1-Border" stroke="#32372A" stroke-width="4" x="0" y="2.84217094e-14" width="136" height="48"></rect>
+                    <text id="C4" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#9B9B9B">
+                        <tspan x="864" y="33">[STP12_DESC]</tspan>
+                    </text>
+                    <text id="C3" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#FFFFFF">
+                        <tspan x="761.096" y="33">[STP12_NUM]</tspan>
+                    </text>
+                    <text id="C2" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#9B9B9B">
+                        <tspan x="150" y="33">[STP4_DESC]</tspan>
+                    </text>
+                    <text id="C1" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#FFFFFF">
+                        <tspan x="58.548" y="33">[STP4_NUM]</tspan>
+                    </text>
+                </g>
+                <g id="Template" transform="translate(0.000000, 150.000000)">
+                    <rect id="C4-Border" stroke="#32372A" stroke-width="4" x="850" y="0" width="570" height="48"></rect>
+                    <rect id="C3-Border" stroke="#32372A" stroke-width="4" x="710" y="0" width="140" height="48"></rect>
+                    <rect id="C2-Border" stroke="#32372A" stroke-width="4" x="136" y="0" width="574" height="48"></rect>
+                    <rect id="C1-Border" stroke="#32372A" stroke-width="4" x="0" y="2.84217094e-14" width="136" height="48"></rect>
+                    <text id="C4" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#9B9B9B">
+                        <tspan x="864" y="33">[STP11_DESC]</tspan>
+                    </text>
+                    <text id="C3" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#FFFFFF">
+                        <tspan x="761.096" y="33">[STP11_NUM]</tspan>
+                    </text>
+                    <text id="C2" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#9B9B9B">
+                        <tspan x="150" y="33">[STP3_DESC]</tspan>
+                    </text>
+                    <text id="C1" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#FFFFFF">
+                        <tspan x="58.548" y="33">[STP3_NUM]</tspan>
+                    </text>
+                </g>
+                <g id="Template" transform="translate(0.000000, 102.000000)">
+                    <rect id="C4-Border" stroke="#32372A" stroke-width="4" x="850" y="0" width="570" height="48"></rect>
+                    <rect id="C3-Border" stroke="#32372A" stroke-width="4" x="710" y="0" width="140" height="48"></rect>
+                    <rect id="C2-Border" stroke="#32372A" stroke-width="4" x="136" y="0" width="574" height="48"></rect>
+                    <rect id="C1-Border" stroke="#32372A" stroke-width="4" x="0" y="2.84217094e-14" width="136" height="48"></rect>
+                    <text id="C4" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#9B9B9B">
+                        <tspan x="864" y="33">[STP10_DESC]</tspan>
+                    </text>
+                    <text id="C3" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#FFFFFF">
+                        <tspan x="761.096" y="33">[STP10_NUM]</tspan>
+                    </text>
+                    <text id="C2" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#9B9B9B">
+                        <tspan x="150" y="33">[STP2_DESC]</tspan>
+                    </text>
+                    <text id="C1" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#FFFFFF">
+                        <tspan x="58.548" y="33">[STP2_NUM]</tspan>
+                    </text>
+                </g>
+                <g id="Template" transform="translate(0.000000, 54.000000)">
+                    <rect id="C4-Border" stroke="#32372A" stroke-width="4" x="850" y="0" width="570" height="48"></rect>
+                    <rect id="C3-Border" stroke="#32372A" stroke-width="4" x="710" y="0" width="140" height="48"></rect>
+                    <rect id="C2-Border" stroke="#32372A" stroke-width="4" x="136" y="0" width="574" height="48"></rect>
+                    <rect id="C1-Border" stroke="#32372A" stroke-width="4" x="0" y="2.84217094e-14" width="136" height="48"></rect>
+                    <text id="C4" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#9B9B9B">
+                        <tspan x="864" y="33">[STP9_DESC]</tspan>
+                    </text>
+                    <text id="C3" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#FFFFFF">
+                        <tspan x="770.548" y="33">[STP9_NUM]</tspan>
+                    </text>
+                    <text id="C2" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#9B9B9B">
+                        <tspan x="150" y="33">[STP1_DESC]</tspan>
+                    </text>
+                    <text id="C1" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#FFFFFF">
+                        <tspan x="58.548" y="33">[STP1_NUM]</tspan>
+                    </text>
+                </g>
+                <g id="Header">
+                    <rect id="C4-Border" stroke="#32372A" stroke-width="4" fill="#32372A" x="854" y="0" width="566" height="54"></rect>
+                    <rect id="C3-Border" stroke="#32372A" stroke-width="4" fill="#32372A" x="714" y="0" width="132" height="54"></rect>
+                    <rect id="C2-Border" stroke="#32372A" stroke-width="4" fill="#32372A" x="140" y="0" width="566" height="54"></rect>
+                    <rect id="C1-Border" stroke="#32372A" stroke-width="4" fill="#32372A" x="0" y="0" width="132" height="54"></rect>
+                    <text id="C4" font-family="HelveticaNeue-Bold, Helvetica Neue" font-size="36" font-weight="bold" fill="#E0E0E0">
+                        <tspan x="1036.036" y="35">Description</tspan>
+                    </text>
+                    <text id="C3" font-family="HelveticaNeue-Bold, Helvetica Neue" font-size="36" font-weight="bold" fill="#E0E0E0">
+                        <tspan x="756.312" y="35">SP</tspan>
+                    </text>
+                    <text id="C2" font-family="HelveticaNeue-Bold, Helvetica Neue" font-size="36" font-weight="bold" fill="#E0E0E0">
+                        <tspan x="324.036" y="35">Description</tspan>
+                    </text>
+                    <text id="C1" font-family="HelveticaNeue-Bold, Helvetica Neue" font-size="36" font-weight="bold" fill="#E0E0E0">
+                        <tspan x="42.312" y="35">SP</tspan>
+                    </text>
+                </g>
+            </g>
+            <g id="Tag" fill="#FFFFFF" font-size="38">
+                <text id="Steerpoints" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="bold">
+                    <tspan x="42" y="37">Steerpoints</tspan>
+                </text>
+                <text id="❖" font-family="ZapfDingbatsITC, Zapf Dingbats" font-weight="normal">
+                    <tspan x="0" y="39">❖</tspan>
+                </text>
+            </g>
+        </g>
+        <g id="Ladder" transform="translate(50.000000, 344.000000)">
+            <g transform="translate(16.000000, 64.000000)">
+                <g id="Template" transform="translate(0.000000, 992.000000)">
+                    <rect id="C3-Border" stroke="#32372A" stroke-width="4" x="780" y="0" width="640" height="48"></rect>
+                    <rect id="C2-Border" stroke="#32372A" stroke-width="4" x="136" y="0" width="644" height="48"></rect>
+                    <rect id="C1-Border" stroke="#32372A" stroke-width="4" x="0" y="-1.13686838e-13" width="136" height="48"></rect>
+                    <text id="C3" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#FFFFFF">
+                        <tspan x="796" y="33">Guard (VHF)</tspan>
+                    </text>
+                    <text id="C2" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#FFFFFF">
+                        <tspan x="152" y="33">Guard (UHF)</tspan>
+                    </text>
+                    <text id="C1" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#FFFFFF">
+                        <tspan x="49.096" y="33">20</tspan>
+                    </text>
+                </g>
+                <g id="Template" transform="translate(0.000000, 944.000000)">
+                    <rect id="C3-Border" stroke="#32372A" stroke-width="4" x="780" y="0" width="640" height="48"></rect>
+                    <rect id="C2-Border" stroke="#32372A" stroke-width="4" x="136" y="0" width="644" height="48"></rect>
+                    <rect id="C1-Border" stroke="#32372A" stroke-width="4" x="0" y="-5.68434189e-14" width="136" height="48"></rect>
+                    <text id="C3" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#9B9B9B">
+                        <tspan x="796" y="33">Unassigned</tspan>
+                    </text>
+                    <text id="C2" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#9B9B9B">
+                        <tspan x="152" y="33">Unassigned</tspan>
+                    </text>
+                    <text id="C1" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#FFFFFF">
+                        <tspan x="49.096" y="33">19</tspan>
+                    </text>
+                </g>
+                <g id="Template" transform="translate(0.000000, 896.000000)">
+                    <rect id="C3-Border" stroke="#32372A" stroke-width="4" x="780" y="0" width="640" height="48"></rect>
+                    <rect id="C2-Border" stroke="#32372A" stroke-width="4" x="136" y="0" width="644" height="48"></rect>
+                    <rect id="C1-Border" stroke="#32372A" stroke-width="4" x="0" y="0" width="136" height="48"></rect>
+                    <text id="C3" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#9B9B9B">
+                        <tspan x="796" y="33">Unassigned</tspan>
+                    </text>
+                    <text id="C2" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#9B9B9B">
+                        <tspan x="152" y="33">Unassigned</tspan>
+                    </text>
+                    <text id="C1" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#FFFFFF">
+                        <tspan x="49.096" y="33">18</tspan>
+                    </text>
+                </g>
+                <g id="Template" transform="translate(0.000000, 848.000000)">
+                    <rect id="C3-Border" stroke="#32372A" stroke-width="4" x="780" y="0" width="640" height="48"></rect>
+                    <rect id="C2-Border" stroke="#32372A" stroke-width="4" x="136" y="0" width="644" height="48"></rect>
+                    <rect id="C1-Border" stroke="#32372A" stroke-width="4" x="0" y="-1.13686838e-13" width="136" height="48"></rect>
+                    <text id="C3" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#9B9B9B">
+                        <tspan x="796" y="33">Unassigned</tspan>
+                    </text>
+                    <text id="C2" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#9B9B9B">
+                        <tspan x="152" y="33">Unassigned</tspan>
+                    </text>
+                    <text id="C1" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#FFFFFF">
+                        <tspan x="49.096" y="33">17</tspan>
+                    </text>
+                </g>
+                <g id="Template" transform="translate(0.000000, 800.000000)">
+                    <rect id="C3-Border" stroke="#32372A" stroke-width="4" x="780" y="0" width="640" height="48"></rect>
+                    <rect id="C2-Border" stroke="#32372A" stroke-width="4" x="136" y="0" width="644" height="48"></rect>
+                    <rect id="C1-Border" stroke="#32372A" stroke-width="4" x="0" y="-5.68434189e-14" width="136" height="48"></rect>
+                    <text id="C3" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#9B9B9B">
+                        <tspan x="796" y="33">Unassigned</tspan>
+                    </text>
+                    <text id="C2" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#9B9B9B">
+                        <tspan x="152" y="33">Unassigned</tspan>
+                    </text>
+                    <text id="C1" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#FFFFFF">
+                        <tspan x="49.096" y="33">16</tspan>
+                    </text>
+                </g>
+                <g id="Template" transform="translate(0.000000, 752.000000)">
+                    <rect id="C3-Border" stroke="#32372A" stroke-width="4" x="780" y="0" width="640" height="48"></rect>
+                    <rect id="C2-Border" stroke="#32372A" stroke-width="4" x="136" y="0" width="644" height="48"></rect>
+                    <rect id="C1-Border" stroke="#32372A" stroke-width="4" x="0" y="0" width="136" height="48"></rect>
+                    <text id="C3" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#9B9B9B">
+                        <tspan x="796" y="33">Unassigned</tspan>
+                    </text>
+                    <text id="C2" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#9B9B9B">
+                        <tspan x="152" y="33">Unassigned</tspan>
+                    </text>
+                    <text id="C1" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#FFFFFF">
+                        <tspan x="49.096" y="33">15</tspan>
+                    </text>
+                </g>
+                <g id="Template" transform="translate(0.000000, 704.000000)">
+                    <rect id="C3-Border" stroke="#32372A" stroke-width="4" x="780" y="0" width="640" height="48"></rect>
+                    <rect id="C2-Border" stroke="#32372A" stroke-width="4" x="136" y="0" width="644" height="48"></rect>
+                    <rect id="C1-Border" stroke="#32372A" stroke-width="4" x="0" y="-8.52651283e-14" width="136" height="48"></rect>
+                    <text id="C3" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#9B9B9B">
+                        <tspan x="796" y="33">Unassigned</tspan>
+                    </text>
+                    <text id="C2" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#9B9B9B">
+                        <tspan x="152" y="33">Unassigned</tspan>
+                    </text>
+                    <text id="C1" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#FFFFFF">
+                        <tspan x="49.096" y="33">14</tspan>
+                    </text>
+                </g>
+                <g id="Template" transform="translate(0.000000, 656.000000)">
+                    <rect id="C3-Border" stroke="#32372A" stroke-width="4" x="780" y="0" width="640" height="48"></rect>
+                    <rect id="C2-Border" stroke="#32372A" stroke-width="4" x="136" y="0" width="644" height="48"></rect>
+                    <rect id="C1-Border" stroke="#32372A" stroke-width="4" x="0" y="-5.68434189e-14" width="136" height="48"></rect>
+                    <text id="C3" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#9B9B9B">
+                        <tspan x="796" y="33">Unassigned</tspan>
+                    </text>
+                    <text id="C2" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#9B9B9B">
+                        <tspan x="152" y="33">Unassigned</tspan>
+                    </text>
+                    <text id="C1" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#FFFFFF">
+                        <tspan x="49.096" y="33">13</tspan>
+                    </text>
+                </g>
+                <g id="Template" transform="translate(0.000000, 608.000000)">
+                    <rect id="C3-Border" stroke="#32372A" stroke-width="4" x="780" y="0" width="640" height="48"></rect>
+                    <rect id="C2-Border" stroke="#32372A" stroke-width="4" x="136" y="0" width="644" height="48"></rect>
+                    <rect id="C1-Border" stroke="#32372A" stroke-width="4" x="0" y="0" width="136" height="48"></rect>
+                    <text id="C3" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#9B9B9B">
+                        <tspan x="796" y="33">Unassigned</tspan>
+                    </text>
+                    <text id="C2" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#9B9B9B">
+                        <tspan x="152" y="33">Unassigned</tspan>
+                    </text>
+                    <text id="C1" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#FFFFFF">
+                        <tspan x="49.096" y="33">12</tspan>
+                    </text>
+                </g>
+                <g id="Template" transform="translate(0.000000, 560.000000)">
+                    <rect id="C3-Border" stroke="#32372A" stroke-width="4" x="780" y="0" width="640" height="48"></rect>
+                    <rect id="C2-Border" stroke="#32372A" stroke-width="4" x="136" y="0" width="644" height="48"></rect>
+                    <rect id="C1-Border" stroke="#32372A" stroke-width="4" x="0" y="-2.84217094e-14" width="136" height="48"></rect>
+                    <text id="C3" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#9B9B9B">
+                        <tspan x="796" y="33">Unassigned</tspan>
+                    </text>
+                    <text id="C2" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#9B9B9B">
+                        <tspan x="152" y="33">Unassigned</tspan>
+                    </text>
+                    <text id="C1" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#FFFFFF">
+                        <tspan x="49.096" y="33">11</tspan>
+                    </text>
+                </g>
+                <g id="Template" transform="translate(0.000000, 512.000000)">
+                    <rect id="C3-Border" stroke="#32372A" stroke-width="4" x="780" y="0" width="640" height="48"></rect>
+                    <rect id="C2-Border" stroke="#32372A" stroke-width="4" x="136" y="0" width="644" height="48"></rect>
+                    <rect id="C1-Border" stroke="#32372A" stroke-width="4" x="0" y="-5.68434189e-14" width="136" height="48"></rect>
+                    <text id="C3" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#9B9B9B">
+                        <tspan x="796" y="33">Unassigned</tspan>
+                    </text>
+                    <text id="C2" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#9B9B9B">
+                        <tspan x="152" y="33">Unassigned</tspan>
+                    </text>
+                    <text id="C1" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#FFFFFF">
+                        <tspan x="49.096" y="33">10</tspan>
+                    </text>
+                </g>
+                <g id="Template" transform="translate(0.000000, 464.000000)">
+                    <rect id="C3-Border" stroke="#32372A" stroke-width="4" x="780" y="0" width="640" height="48"></rect>
+                    <rect id="C2-Border" stroke="#32372A" stroke-width="4" x="136" y="0" width="644" height="48"></rect>
+                    <rect id="C1-Border" stroke="#32372A" stroke-width="4" x="0" y="0" width="136" height="48"></rect>
+                    <text id="C3" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#FFFFFF">
+                        <tspan x="796" y="33">JTAC/AFAC (VHF, Human) — Various</tspan>
+                    </text>
+                    <text id="C2" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#FFFFFF">
+                        <tspan x="152" y="33">JTAC/AFAC (UHF, Human) — Various</tspan>
+                    </text>
+                    <text id="C1" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#FFFFFF">
+                        <tspan x="58.548" y="33">9</tspan>
+                    </text>
+                </g>
+                <g id="Template" transform="translate(0.000000, 416.000000)">
+                    <rect id="C3-Border" stroke="#32372A" stroke-width="4" x="780" y="0" width="640" height="48"></rect>
+                    <rect id="C2-Border" stroke="#32372A" stroke-width="4" x="136" y="0" width="644" height="48"></rect>
+                    <rect id="C1-Border" stroke="#32372A" stroke-width="4" x="0" y="0" width="136" height="48"></rect>
+                    <text id="C3" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#FFFFFF">
+                        <tspan x="796" y="33">JTAC/AFAC (VHF, AI) — Darknight 1-1</tspan>
+                    </text>
+                    <text id="C2" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#FFFFFF">
+                        <tspan x="152" y="33">JTAC/AFAC (UHF, AI) — Darknight 1-1</tspan>
+                    </text>
+                    <text id="C1" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#FFFFFF">
+                        <tspan x="58.548" y="33">8</tspan>
+                    </text>
+                </g>
+                <g id="Template" transform="translate(0.000000, 368.000000)">
+                    <rect id="C3-Border" stroke="#32372A" stroke-width="4" x="780" y="0" width="640" height="48"></rect>
+                    <rect id="C2-Border" stroke="#32372A" stroke-width="4" x="136" y="0" width="644" height="48"></rect>
+                    <rect id="C1-Border" stroke="#32372A" stroke-width="4" x="0" y="0" width="136" height="48"></rect>
+                    <text id="C3" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#9B9B9B">
+                        <tspan x="796" y="33">Unassigned</tspan>
+                    </text>
+                    <text id="C2" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#FFFFFF">
+                        <tspan x="152" y="33">AAR — Texaco 2-1</tspan>
+                    </text>
+                    <text id="C1" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#FFFFFF">
+                        <tspan x="58.548" y="33">7</tspan>
+                    </text>
+                </g>
+                <g id="Template" transform="translate(0.000000, 320.000000)">
+                    <rect id="C3-Border" stroke="#32372A" stroke-width="4" x="780" y="0" width="640" height="48"></rect>
+                    <rect id="C2-Border" stroke="#32372A" stroke-width="4" x="136" y="0" width="644" height="48"></rect>
+                    <rect id="C1-Border" stroke="#32372A" stroke-width="4" x="0" y="2.84217094e-14" width="136" height="48"></rect>
+                    <text id="C3" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#9B9B9B">
+                        <tspan x="796" y="33">Unassigned</tspan>
+                    </text>
+                    <text id="C2" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#FFFFFF">
+                        <tspan x="152" y="33">AAR — Texaco 1-1</tspan>
+                    </text>
+                    <text id="C1" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#FFFFFF">
+                        <tspan x="58.548" y="33">6</tspan>
+                    </text>
+                </g>
+                <g id="Template" transform="translate(0.000000, 272.000000)">
+                    <rect id="C3-Border" stroke="#32372A" stroke-width="4" x="780" y="0" width="640" height="48"></rect>
+                    <rect id="C2-Border" stroke="#32372A" stroke-width="4" x="136" y="0" width="644" height="48"></rect>
+                    <rect id="C1-Border" stroke="#32372A" stroke-width="4" x="0" y="2.84217094e-14" width="136" height="48"></rect>
+                    <text id="C3" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#9B9B9B">
+                        <tspan x="796" y="33">Unassigned</tspan>
+                    </text>
+                    <text id="C2" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#FFFFFF">
+                        <tspan x="152" y="33">AWACS (AI) — Overlord 1-1</tspan>
+                    </text>
+                    <text id="C1" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#FFFFFF">
+                        <tspan x="58.548" y="33">5</tspan>
+                    </text>
+                </g>
+                <g id="Template" transform="translate(0.000000, 224.000000)">
+                    <rect id="C3-Border" stroke="#32372A" stroke-width="4" x="780" y="0" width="640" height="48"></rect>
+                    <rect id="C2-Border" stroke="#32372A" stroke-width="4" x="136" y="0" width="644" height="48"></rect>
+                    <rect id="C1-Border" stroke="#32372A" stroke-width="4" x="0" y="2.84217094e-14" width="136" height="48"></rect>
+                    <text id="C3" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#FFFFFF">
+                        <tspan x="796" y="33">[COMM2_PRESET4_DESC]</tspan>
+                    </text>
+                    <text id="C2" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#FFFFFF">
+                        <tspan x="152" y="33">[COMM1_PRESET4_DESC]</tspan>
+                    </text>
+                    <text id="C1" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#FFFFFF">
+                        <tspan x="58.548" y="33">4</tspan>
+                    </text>
+                </g>
+                <g id="Template" transform="translate(0.000000, 176.000000)">
+                    <rect id="C3-Border" stroke="#32372A" stroke-width="4" x="780" y="0" width="640" height="48"></rect>
+                    <rect id="C2-Border" stroke="#32372A" stroke-width="4" x="136" y="0" width="644" height="48"></rect>
+                    <rect id="C1-Border" stroke="#32372A" stroke-width="4" x="0" y="5.68434189e-14" width="136" height="48"></rect>
+                    <text id="C3" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#FFFFFF">
+                        <tspan x="796" y="33">[COMM2_PRESET3_DESC]</tspan>
+                    </text>
+                    <text id="C2" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#FFFFFF">
+                        <tspan x="152" y="33">[COMM1_PRESET3_DESC]</tspan>
+                    </text>
+                    <text id="C1" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#FFFFFF">
+                        <tspan x="58.548" y="33">3</tspan>
+                    </text>
+                </g>
+                <g id="Template" transform="translate(0.000000, 128.000000)">
+                    <rect id="C3-Border" stroke="#32372A" stroke-width="4" x="780" y="0" width="640" height="48"></rect>
+                    <rect id="C2-Border" stroke="#32372A" stroke-width="4" x="136" y="0" width="644" height="48"></rect>
+                    <rect id="C1-Border" stroke="#32372A" stroke-width="4" x="0" y="8.52651283e-14" width="136" height="48"></rect>
+                    <text id="C3" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#9B9B9B">
+                        <tspan x="796" y="33">[COMM2_PRESET2_DESC]</tspan>
+                    </text>
+                    <text id="C2" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#FFFFFF">
+                        <tspan x="152" y="33">[COMM1_PRESET2_DESC]</tspan>
+                    </text>
+                    <text id="C1" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#FFFFFF">
+                        <tspan x="58.548" y="33">2</tspan>
+                    </text>
+                </g>
+                <g id="Template" transform="translate(0.000000, 80.000000)">
+                    <rect id="C3-Border" stroke="#32372A" stroke-width="4" x="780" y="0" width="640" height="48"></rect>
+                    <rect id="C2-Border" stroke="#32372A" stroke-width="4" x="136" y="0" width="644" height="48"></rect>
+                    <rect id="C1-Border" stroke="#32372A" stroke-width="4" x="0" y="8.52651283e-14" width="136" height="48"></rect>
+                    <text id="C3" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#FFFFFF">
+                        <tspan x="796" y="33">[COMM2_PRESET1_DESC]</tspan>
+                    </text>
+                    <text id="C2" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#FFFFFF">
+                        <tspan x="152" y="33">[COMM1_PRESET1_DESC]</tspan>
+                    </text>
+                    <text id="C1" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#FFFFFF">
+                        <tspan x="58.548" y="33">1</tspan>
+                    </text>
+                </g>
+                <g id="Header">
+                    <rect id="C3-Border" stroke="#32372A" stroke-width="4" fill="#32372A" x="784" y="0" width="636" height="80"></rect>
+                    <rect id="C2-Border" stroke="#32372A" stroke-width="4" fill="#32372A" x="140" y="0" width="636" height="80"></rect>
+                    <rect id="C1-Border" stroke="#32372A" stroke-width="4" fill="#32372A" x="0" y="0" width="132" height="80"></rect>
+                    <text id="C3b" font-family="HelveticaNeue-MediumItalic, Helvetica Neue" font-size="28" font-style="italic" font-weight="400" fill="#E0E0E0">
+                        <tspan x="970.274" y="71">[COMM2_FREQNAME] — [COMM2_NAME]</tspan>
+                    </text>
+                    <text id="C3a" font-family="HelveticaNeue-Bold, Helvetica Neue" font-size="36" font-weight="bold" fill="#E0E0E0">
+                        <tspan x="936.958" y="35">COMM2 Frequency</tspan>
+                    </text>
+                    <text id="C2b" font-family="HelveticaNeue-MediumItalic, Helvetica Neue" font-size="28" font-style="italic" font-weight="400" fill="#E0E0E0">
+                        <tspan x="324.454" y="71">[COMM1_FREQNAME] — [COMM1_NAME]</tspan>
+                    </text>
+                    <text id="C2a" font-family="HelveticaNeue-Bold, Helvetica Neue" font-size="36" font-weight="bold" fill="#E0E0E0">
+                        <tspan x="292.958" y="35">COMM1 Frequency</tspan>
+                    </text>
+                    <text id="C1" font-family="HelveticaNeue-Bold, Helvetica Neue" font-size="36" font-weight="bold" fill="#E0E0E0">
+                        <tspan x="10.65" y="35">Preset</tspan>
+                    </text>
+                </g>
+            </g>
+            <g id="Tag" fill="#FFFFFF" font-size="38">
+                <text id="COMM-Ladder" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="bold">
+                    <tspan x="42" y="37">COMM Ladder</tspan>
+                </text>
+                <text id="❖" font-family="ZapfDingbatsITC, Zapf Dingbats" font-weight="normal">
+                    <tspan x="0" y="39">❖</tspan>
+                </text>
+            </g>
+        </g>
+        <g id="Overview" transform="translate(50.000000, 162.000000)">
+            <g id="Info" transform="translate(16.000000, 64.000000)">
+                <g id="Row" transform="translate(0.000000, 47.000000)">
+                    <rect id="Info-Bounds" stroke="#32372A" stroke-width="4" x="214" y="0" width="1206" height="48"></rect>
+                    <text id="Info" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#FFFFFF">
+                        <tspan x="228" y="33">2x A120, 2x A9x</tspan>
+                    </text>
+                    <rect id="Item-Bounds" stroke="#32372A" stroke-width="4" x="0" y="0" width="214" height="48"></rect>
+                    <text id="Item" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#FFFFFF">
+                        <tspan x="10" y="33">Loadout</tspan>
+                    </text>
+                </g>
+                <g id="Row">
+                    <rect id="Info-Bounds" stroke="#32372A" stroke-width="4" x="214.002681" y="0" width="1206" height="47.1272727"></rect>
+                    <text id="Info" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#FFFFFF">
+                        <tspan x="228" y="33.8727273">COWBOY 1, 4-ship / SEAD/DEAD SA-10</tspan>
+                    </text>
+                    <rect id="Item-Bounds" stroke="#32372A" stroke-width="4" x="0" y="-3.10055012e-15" width="214" height="47.1272727"></rect>
+                    <text id="Item" font-family="HelveticaNeue-Medium, Helvetica Neue" font-size="34" font-weight="400" fill="#FFFFFF">
+                        <tspan x="10" y="33">Flight / Task</tspan>
+                    </text>
+                </g>
+            </g>
+            <g id="Tag" fill="#FFFFFF" font-size="38">
+                <text id="Overview" font-family="HelveticaNeue-Bold, Helvetica Neue" font-weight="bold">
+                    <tspan x="42" y="37">Overview</tspan>
+                </text>
+                <text id="❖" font-family="ZapfDingbatsITC, Zapf Dingbats" font-weight="normal">
+                    <tspan x="0" y="39">❖</tspan>
+                </text>
+            </g>
+        </g>
+    </g>
+</svg>
