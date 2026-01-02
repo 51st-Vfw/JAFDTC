@@ -221,7 +221,7 @@ namespace JAFDTC.UI.Base
         {
             List<string> allowedTheaters = TheatersForNavpoints(navpts);
 
-            POIFilterSpec filter = new(Settings.LastNavptPOIFilter)
+            POIFilterSpec filter = new()
             {
                 IncludeTypes = PointOfInterestTypeMask.ANY
             };
@@ -238,8 +238,6 @@ namespace JAFDTC.UI.Base
             {
                 filter = filterDialog.Filter;
                 filter.IncludeTypes = PointOfInterestTypeMask.ANY;
-
-                Settings.LastNavptPOIFilter = filter;
 
                 // set common POI properties
                 PointOfInterestType poiType = PointOfInterestType.USER;
