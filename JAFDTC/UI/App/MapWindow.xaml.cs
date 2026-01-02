@@ -2,7 +2,7 @@
 //
 // MapWindow.xaml.cs -- ui c# for map window
 //
-// Copyright(C) 2025 ilominar/raven
+// Copyright(C) 2025-2026 ilominar/raven
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 // Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -1090,6 +1090,8 @@ namespace JAFDTC.UI.App
         private void MapWindow_Closed(object sender, WindowEventArgs args)
         {
             Settings.LastWindowSetupMap = Utilities.BuildWindowSetupString(_windPosnCur, _windSizeCur);
+            uiMap?.ClearMarkers();
+            uiMap?.ClearPaths();
             _mapTileCache?.Dispose();
         }
 
