@@ -20,28 +20,11 @@
 
 using JAFDTC.Models.Core;
 using JAFDTC.Models.CoreApp;
-using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
 namespace JAFDTC.Models
 {
-    /// <summary>
-    /// event arguments for a "configuration saved" event posted when IConfiguration.Save() is called. the InvokedBy
-    /// field identifies the object that invoked the save operation on the configuration.
-    /// </summary>
-    public class ConfigurationSavedEventArgs : EventArgs
-    {
-        public object InvokedBy { get; }
-
-        public IConfiguration Config { get; }
-
-        public string SyncSysTag { get; }
-
-        public ConfigurationSavedEventArgs(object invokedBy, IConfiguration config, string syncSysTag)
-            => (InvokedBy, Config, SyncSysTag) = (invokedBy, config, syncSysTag);
-    }
-
     /// <summary>
     /// an interface to class that represents an avionics configuration for a particular airframe.
     /// </summary>
