@@ -35,7 +35,7 @@ namespace JAFDTC.UI.F16C
             => new("TODO_TAG", "Kneeboards", "Kneeboards", "\xF0E3", typeof(EditSimulatorKboardPage),
                    typeof(F16CEditSimulatorKboardPageHelper));
 
-        public SystemBase GetSystemConfig(IConfiguration config) => ((F16CConfiguration)config).DTE;
+        public SystemBase GetSystemConfig(IConfiguration config) => ((F16CConfiguration)config).Kboard;
 
         public List<ConfigEditorPageInfo> ContentSystems =>
         [

@@ -3,7 +3,7 @@
 // F16CConfiguration.cs -- f-16c airframe configuration
 //
 // Copyright(C) 2021-2023 the-paid-actor & others
-// Copyright(C) 2023-2025 ilominar/raven
+// Copyright(C) 2023-2026 ilominar/raven
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 // Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -88,6 +88,8 @@ namespace JAFDTC.Models.F16C
 
         public SimDTCSystem DTE { get; set; }
 
+        public SimKboardSystem Kboard { get; set; }
+
         [JsonIgnore]
         public override List<string> MergeableSysTagsForDTC =>
         [
@@ -117,6 +119,7 @@ namespace JAFDTC.Models.F16C
             SMS = new SMSSystem();
             STPT = new STPTSystem();
             DTE = new SimDTCSystem();
+            Kboard = new SimKboardSystem();
             ConfigurationUpdated();
         }
 
@@ -137,6 +140,7 @@ namespace JAFDTC.Models.F16C
                 SMS = (SMSSystem)SMS.Clone(),
                 STPT = (STPTSystem)STPT.Clone(),
                 DTE = (SimDTCSystem)DTE.Clone(),
+                Kboard = (SimKboardSystem)Kboard.Clone()
             };
             clone.ResetUID();
             clone.ConfigurationUpdated();
@@ -158,6 +162,7 @@ namespace JAFDTC.Models.F16C
                 case SMSSystem.SystemTag: SMS = otherViper.SMS.Clone() as SMSSystem; break;
                 case STPTSystem.SystemTag: STPT = otherViper.STPT.Clone() as STPTSystem; break;
                 case SimDTCSystem.SystemTag: DTE = otherViper.DTE.Clone() as SimDTCSystem; break;
+                case SimKboardSystem.SystemTag: Kboard = otherViper.Kboard.Clone() as SimKboardSystem; break;
                 default: break;
             }
         }
@@ -287,6 +292,7 @@ namespace JAFDTC.Models.F16C
                 SMSSystem.SystemTag => SMS,
                 STPTSystem.SystemTag => STPT,
                 SimDTCSystem.SystemTag => DTE,
+                SimKboardSystem.SystemTag => Kboard,
                 _ => null,
             };
         }
@@ -321,22 +327,24 @@ namespace JAFDTC.Models.F16C
                 SMSSystem.SystemTag => JsonSerializer.Serialize(SMS, Configuration.JsonOptions),
                 STPTSystem.SystemTag => JsonSerializer.Serialize(STPT, Configuration.JsonOptions),
                 SimDTCSystem.SystemTag => JsonSerializer.Serialize(DTE, Configuration.JsonOptions),
-                _                    => null
+                SimKboardSystem.SystemTag => JsonSerializer.Serialize(Kboard, Configuration.JsonOptions),
+                _ => null
             };
         }
 
         public override void AfterLoadFromJSON()
         {
-            CMDS  ??= new CMDSSystem();
-            DLNK  ??= new DLNKSystem();
-            HARM  ??= new HARMSystem();
-            HTS   ??= new HTSSystem();
-            MFD   ??= new MFDSystem();
-            Misc  ??= new MiscSystem();
-            Radio ??= new RadioSystem();
-            SMS   ??= new SMSSystem();
-            STPT  ??= new STPTSystem();
-            DTE   ??= new SimDTCSystem();
+            CMDS   ??= new CMDSSystem();
+            DLNK   ??= new DLNKSystem();
+            HARM   ??= new HARMSystem();
+            HTS    ??= new HTSSystem();
+            MFD    ??= new MFDSystem();
+            Misc   ??= new MiscSystem();
+            Radio  ??= new RadioSystem();
+            SMS    ??= new SMSSystem();
+            STPT   ??= new STPTSystem();
+            DTE    ??= new SimDTCSystem();
+            Kboard ??= new SimKboardSystem();
 
             // TODO: should parse out version number from version string and compare that as an integer
             // TODO: to allow for "update if version older than x".
@@ -393,6 +401,7 @@ namespace JAFDTC.Models.F16C
                     case STPTSystem.SystemTag: STPT = JsonSerializer.Deserialize<STPTSystem>(json); break;
                     case STPTSystem.STPTListTag: STPT.ImportSerializedNavpoints(json, false); break;
                     case SimDTCSystem.SystemTag: DTE = JsonSerializer.Deserialize<SimDTCSystem>(json); break;
+                    case SimKboardSystem.SystemTag: Kboard = JsonSerializer.Deserialize<SimKboardSystem>(json); break;
                     default: isHandled = false;  break;
                 }
                 if (isHandled)
