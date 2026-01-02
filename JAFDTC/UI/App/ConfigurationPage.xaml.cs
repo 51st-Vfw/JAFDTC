@@ -2,7 +2,7 @@
 //
 // ConfigurationPage.xaml.cs -- ui c# for configuration page that enables editing of some configuration
 //
-// Copyright(C) 2023-2025 ilominar/raven
+// Copyright(C) 2023-2026 ilominar/raven
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 // Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -26,13 +26,11 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
-using Microsoft.Windows.Storage.Pickers;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
-using Windows.Storage;
 using Windows.UI;
 
 namespace JAFDTC.UI.App
@@ -193,11 +191,12 @@ namespace JAFDTC.UI.App
         }
 
         /// <summary>
-        /// close the auxiliary  window with the given tag.
+        /// close an auxiliary window and remove it from the aux window list. passing a null window closes all known
+        /// aux windows.
         /// </summary>
         public void CloseAuxWindows(Window window = null)
         {
-            if (window == null)
+            if ((window == null) && (_auxWindowList.Count > 0))
             {
                 foreach (Window wind in _auxWindowList)
                 {
@@ -206,9 +205,10 @@ namespace JAFDTC.UI.App
                 }
                 _auxWindowList.Clear();
             }
-            else
+            else if (_auxWindowList.Count > 0)
             {
                 window.Closed -= AuxWindow_Closed;
+                window.Close();
                 _auxWindowList.Remove(window);
             }
         }
@@ -497,13 +497,11 @@ namespace JAFDTC.UI.App
         }
 
         /// <summary>
-        /// TODO: document
+        /// on closing an aux window, remove it from the aux window list.
         /// </summary>
         private void AuxWindow_Closed(object sender, WindowEventArgs args)
         {
-            Window window = sender as Window;
-            window.Closed -= AuxWindow_Closed;
-            _auxWindowList.Remove(window);
+            _auxWindowList.Remove(sender as Window);
         }
 
         /// <summary>
