@@ -25,11 +25,6 @@ namespace JAFDTC.Kneeboard.Generate
             public const string PILOT_NAME = "PILOT_*_NAME";
             public const string PILOT_CALLSIGN = "PILOT_*_CALLSIGN";
             public const string PILOT_STN = "PILOT_*_STN";
-            //public const string FLIGHT_PILOT_BOARD = "FLIGHT_*_AIRCRAFT";
-            //public const string FLIGHT_PILOT_TACAN = "FLIGHT_*_AIRCRAFT";
-            //public const string FLIGHT_PILOT_TACANBAND = "FLIGHT_*_AIRCRAFT";
-            //public const string FLIGHT_PILOT_JOKER = "FLIGHT_*_AIRCRAFT";
-            //public const string FLIGHT_PILOT_LASE = "FLIGHT_*_AIRCRAFT";
 
             //since we only are supporting 1 flight right now.. let all pilots, nav points, and comms tied to that first flight...
             public const string COMM_PREFIX = "COMM*_";
@@ -51,6 +46,15 @@ namespace JAFDTC.Kneeboard.Generate
             public const string THREAT_NAME = "THREAT_*_NAME";
             public const string THREAT_TYPE = "THREAT_*_TYPE";
 
+            public const string OWNSHIP_NAME = "OWNSHIP_NAME";
+            public const string OWNSHIP_STN = "OWNSHIP_STN";
+            public const string OWNSHIP_BOARD = "OWNSHIP_BOARD";
+            public const string OWNSHIP_TACAN = "OWNSHIP_TACAN";
+            public const string OWNSHIP_TACANBAND = "OWNSHIP_TACANBAND";
+            public const string OWNSHIP_JOKER = "OWNSHIP_JOKER";
+            public const string OWNSHIP_LASE = "OWNSHIP_LASE";
+            public const string OWNSHIP_COMM = "OWNSHIP_COMM";
+
         }
 
         public static IReadOnlyDictionary<string, string> ToDataDictionary(this GenerateCriteria criteria)
@@ -59,6 +63,7 @@ namespace JAFDTC.Kneeboard.Generate
 
             BuildMisc(result, criteria);
             BuildPackages(result, criteria.Mission);
+            BuildOwnship(result, criteria);
             BuildThreats(result, criteria.Mission);
             BuildAirfields(result, criteria);
             BuildMaps(result, criteria);
@@ -177,6 +182,22 @@ namespace JAFDTC.Kneeboard.Generate
                     }
                 }
             }
+        }
+
+        private static void BuildOwnship(Dictionary<string, string> data, GenerateCriteria criteria)
+        {
+            var owner = criteria.Owner;
+            data.Add(Keys.OWNSHIP_BOARD, Clean(owner.Board, ""));
+            data.Add(Keys.OWNSHIP_JOKER, owner.Joker.HasValue ? owner.Joker.ToString() : "");
+            data.Add(Keys.OWNSHIP_LASE, owner.Lase.HasValue ? owner.Lase.ToString() : "");
+            data.Add(Keys.OWNSHIP_NAME, Clean(owner.Name, ""));
+            data.Add(Keys.OWNSHIP_STN, Clean(owner.STN, ""));
+            data.Add(Keys.OWNSHIP_TACAN, owner.Tacan.HasValue ? owner.Tacan.ToString() : "");
+            data.Add(Keys.OWNSHIP_TACANBAND, Clean(owner.TacanBand?.ToString(), ""));
+
+            if (owner.CommPresets.HasData())
+                foreach (var key in owner.CommPresets.Keys.Order())
+                    data.Add($"OWNSHIP_COMM{key}", owner.CommPresets[key].ToString());
         }
 
         private static void BuildThreats(Dictionary<string, string> data, Mission mission)
