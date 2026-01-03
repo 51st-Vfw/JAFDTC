@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace JAFDTC.Core.Extensions
+﻿namespace JAFDTC.Core.Extensions
 {
     public static class FormatExtension
     {
@@ -35,6 +31,23 @@ namespace JAFDTC.Core.Extensions
             return "33TWN1234567890"; // Dummy MGRS coordinate
         }
 
+        public static string ToShortCallsign(this string? value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                return string.Empty;
+
+            var callsign = string.Concat(value)
+                .Trim()
+                .ToUpper()
+                .Replace("_", "-")
+                .Replace(" ", "-");
+
+            var parts = callsign.Split('-', StringSplitOptions.RemoveEmptyEntries);
+
+            var result = $"{parts[0].First()}{parts[0].Last()}{(parts.Length > 1 ? callsign[parts[0].Length..].ToString() : "")}";
+
+            return result;
+        }
 
     }
 }

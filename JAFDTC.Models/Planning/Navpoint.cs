@@ -21,9 +21,7 @@ namespace JAFDTC.Models.Planning
 {
     public class Navpoint
     {
-        public required double Latitude { get; set; }
-        public required double Longitude { get; set; }
-        public required int Altitude { get; set; }
+        public required Location Location { get; set; }      
         public string? Name { get; set; }
         public double? Speed { get; set; }
         public string? TOT { get; set; }                        // time on target

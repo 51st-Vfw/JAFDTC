@@ -190,33 +190,45 @@ namespace JAFDTC.Tests
                                             [
                                                 new()
                                                 {
-                                                    Altitude = 93,
-                                                    Latitude = 35.401667, //N 35° 24.100’
-                                                    Longitude = 35.950383, //E 035° 57.023’
                                                     Name = "", //see if it hanldes to STP1... Bassel Al-Assad
+                                                    Location = new()
+                                                    {
+                                                        Altitude = "93",
+                                                        Latitude = "N 35° 24.100'",
+                                                        Longitude = "E 035° 57.023'"
+                                                    },
                                                 },
                                                 new()
                                                 {
-                                                    Altitude = 250,
-                                                    Latitude = 35.950383, //N 34° 35.510’
-                                                    Longitude = 35.69915, //E 035° 41.949’
                                                     Name = "IP", //ocean E of Rene
+                                                    Location = new()
+                                                    {
+                                                        Altitude = "250",
+                                                        Latitude = "N 34° 35.510'",
+                                                        Longitude = "E 035° 41.949'"
+                                                    },
                                                 },
                                                 new()
                                                 {
-                                                    Altitude = 16,
-                                                    Latitude = 34.589283, //N 34° 35.357’
-                                                    Longitude = 36.011433, //E 036° 00.686’
                                                     Name = "Target", //Rene Mouawad
                                                     TOS = "15",
-                                                    TOT = "13:01"
+                                                    TOT = "13:01",
+                                                    Location = new()
+                                                    {
+                                                        Altitude = "16",
+                                                        Latitude = "N 34° 35.357'",
+                                                        Longitude = "E 036° 00.686'"
+                                                    },
                                                 },
                                                 new()
                                                 {
-                                                    Altitude = 984,
-                                                    Latitude = 35.118033, //N 35° 07.082'
-                                                    Longitude = 36.712367, //E 036° 42.742'
                                                     Name = null, //Hama airbase see if it matches it/finds it
+                                                    Location = new()
+                                                    {
+                                                        Altitude = "984",
+                                                        Latitude = "N 35° 07.082'",
+                                                        Longitude = "E 036° 42.742'"
+                                                    },
                                                 }
                                             ]
                                         }
@@ -232,18 +244,24 @@ namespace JAFDTC.Tests
                         {
                             Name = "SA-2 Guideline", //at hama airbase...
                             Type = "SAM",
-                            Altitude = 97,
-                            Latitude = 35.118033,
-                            Longitude = 36.712367,
+                            Location = new()
+                            {
+                                Altitude = "97",
+                                Latitude = "N 35° 07.082'",
+                                Longitude = "E 036° 42.742'"
+                            },
                             WEZ = 22.0
                         },
                         new()
                         {
                             Name = "ZSU-22", //at hama airbase...
                             Type = "AAA",
-                            Altitude = 97,
-                            Latitude = 35.118033,
-                            Longitude = 36.712367,
+                            Location = new()
+                            {
+                                Altitude = "97",
+                                Latitude = "N 35° 07.082'",
+                                Longitude = "E 036° 42.742'"
+                            },
                             WEZ = 1.5
                         }
                     ]

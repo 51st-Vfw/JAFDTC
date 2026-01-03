@@ -62,6 +62,7 @@ namespace JAFDTC.Kneeboard.Generate
             {
                 var flight = package.Flights[i];
                 _data.Add(ToKey(Keys.FLIGHT_NAME, i), flight.Name);
+                _data.Add(ToKey(Keys.FLIGHT_NAME_SHORT, i), flight.Name.ToShortCallsign());
                 _data.Add(ToKey(Keys.FLIGHT_AIRCRAFT, i), flight.Aircraft);
 
                 if (flight.Pilots.HasData())
@@ -74,7 +75,9 @@ namespace JAFDTC.Kneeboard.Generate
                         _data.Add(ToKey(Keys.PILOT_DATAID, p), Clean(pilot.DataId, ""));
                         _data.Add(ToKey(Keys.PILOT_SCL, p), Clean(pilot.SCL, ""));
 
-                        _data.Add(ToKey(Keys.PILOT_CALLSIGN, p), $"{flight.Name}_{p + 1}"); //from flight!
+                        var callsign = $"{flight.Name}-{p + 1}"; //from flight + position
+                        _data.Add(ToKey(Keys.PILOT_CALLSIGN, p), callsign);
+                        _data.Add(ToKey(Keys.PILOT_CALLSIGN_SHORT, p), callsign.ToShortCallsign());
 
                         //todo: more if we want...
                     }
@@ -130,12 +133,14 @@ namespace JAFDTC.Kneeboard.Generate
                     var nav = route.NavPoints[np];
 
                     _data.Add(ToKey(routePrefix, Keys.NAV_NUM, np), (np + 1).ToString()); //or allow start 0??
-                    _data.Add(ToKey(routePrefix, Keys.NAV_ALT, np), nav.Altitude.ToString("#"));
+                    _data.Add(ToKey(routePrefix, Keys.NAV_ALT, np), nav.Location.Altitude);
                     _data.Add(ToKey(routePrefix, Keys.NAV_TOS, np), Clean(nav.TOS, ""));
                     _data.Add(ToKey(routePrefix, Keys.NAV_TOT, np), Clean(nav.TOT, ""));
                     _data.Add(ToKey(routePrefix, Keys.NAV_SPEED, np), Clean(nav.Speed?.ToString(), ""));
-                    _data.Add(ToKey(routePrefix, Keys.NAV_COORD, np), "normal".ToDisplay(nav.Latitude, nav.Longitude));
-                    _data.Add(ToKey(routePrefix, Keys.NAV_MGRS, np), 10.ToMGRS(nav.Latitude, nav.Longitude));
+
+                    _data.Add(ToKey(routePrefix, Keys.NAV_COORD, np), $"{nav.Location.Latitude} / {nav.Location.Longitude}");
+                    //_data.Add(ToKey(routePrefix, Keys.NAV_COORD, np), "normal".ToDisplay(nav.Location.Latitude, nav.Location.Longitude));
+                    //_data.Add(ToKey(routePrefix, Keys.NAV_MGRS, np), 10.ToMGRS(nav.Latitude, nav.Longitude));
 
                     var desc = nav.Name;
                     if (string.IsNullOrWhiteSpace(desc)
@@ -225,6 +230,7 @@ namespace JAFDTC.Kneeboard.Generate
                 var threat = mission.Threats[i];
                 _data.Add(ToKey(Keys.THREAT_NAME, i), threat.Name);
                 _data.Add(ToKey(Keys.THREAT_TYPE, i), threat.Type);
+                _data.Add(ToKey(Keys.THREAT_COORD, i), $"{threat.Location.Latitude} / {threat.Location.Longitude}");
 
                 //todo: depends on how we want to use this.. ie Ref'd by STP, general notes distinct list/count by types, etc...
 
