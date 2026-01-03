@@ -2,7 +2,7 @@
 //
 // ISystem.cs -- interface for airframe system configuration class
 //
-// Copyright(C) 2023-2025 ilominar/raven
+// Copyright(C) 2023-2026 ilominar/raven
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 // Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -17,6 +17,7 @@
 //
 // ********************************************************************************************************************
 
+using JAFDTC.Models.Planning;
 using System.Text.Json.Nodes;
 
 namespace JAFDTC.Models
@@ -33,11 +34,18 @@ namespace JAFDTC.Models
         public bool IsDefault { get; }
 
         /// <summary>
-        /// merge the system configuration into a dcs dtc configuration. the dcs dtc configuration is presented
-        /// as a JsonObject for the root of the "data" object in the dtc file that encodes configuration data.
-        /// this method will update the JsonObject and/or its children as necessary to complete the merge.
+        /// returns the json node built by merging data from the system configuration into a dcs dtc configuration.
+        /// the dcs dtc configuration is presented as a JsonObject for the root of the "data" object in the dtc
+        /// file that encodes configuration data. this method will update the JsonObject and/or its children as
+        /// necessary to complete the merge and may update the input in-place.
         /// </summary>
-        public void MergeIntoSimDTC(JsonNode dataRoot);
+        public JsonNode MergeIntoSimDTC(JsonNode dataRoot);
+
+        /// <summary>
+        /// returns the mission created by merging data from the system configuration into a mission plan. this
+        /// method may update the input in-place.
+        /// </summary>
+        public Mission MergeIntoMission(Mission mission);
 
         /// <summary>
         /// reset the setup of the system to avionics defaults.

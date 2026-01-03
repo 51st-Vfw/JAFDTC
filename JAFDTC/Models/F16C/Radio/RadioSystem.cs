@@ -133,11 +133,12 @@ namespace JAFDTC.Models.F16C.Radio
         /// <summary>
         /// merge radio settings into dcs dtc configuration.
         /// </summary>
-        public override void MergeIntoSimDTC(JsonNode dataRoot)
+        public override JsonNode MergeIntoSimDTC(JsonNode dataRoot)
         {
             JsonNode commRoot = dataRoot["COMM"];
             MergeRadioIntoSimDTC(commRoot["COMM1"], Presets[(int)Radios.COMM1]);
             MergeRadioIntoSimDTC(commRoot["COMM2"], Presets[(int)Radios.COMM2]);
+            return dataRoot;
         }
 
         /// <summary>

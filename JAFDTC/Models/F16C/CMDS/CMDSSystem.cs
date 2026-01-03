@@ -192,7 +192,7 @@ namespace JAFDTC.Models.F16C.CMDS
         /// <summary>
         /// merge radio settings into dcs dtc configuration.
         /// </summary>
-        public override void MergeIntoSimDTC(JsonNode dataRoot)
+        public override JsonNode MergeIntoSimDTC(JsonNode dataRoot)
         {
             CMDSSystem dflt = ExplicitDefaults;
             JsonNode cmdsRoot = dataRoot["MPD"]["CMDS"];
@@ -211,6 +211,7 @@ namespace JAFDTC.Models.F16C.CMDS
                 MergeProgramIntoSimDTC(progRoot[$"MAN{i + 1}"]["Chaff"], Programs[i].Chaff, dflt.Programs[i].Chaff);
                 MergeProgramIntoSimDTC(progRoot[$"MAN{i + 1}"]["Flare"], Programs[i].Flare, dflt.Programs[i].Flare);
             }
+            return dataRoot;
         }
 
         /// <summary>

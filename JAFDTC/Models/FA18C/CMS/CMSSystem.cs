@@ -133,7 +133,7 @@ namespace JAFDTC.Models.FA18C.CMS
         /// <summary>
         /// merge cms settings into dcs dtc configuration.
         /// </summary>
-        public override void MergeIntoSimDTC(JsonNode dataRoot)
+        public override JsonNode MergeIntoSimDTC(JsonNode dataRoot)
         {
             CMSSystem dflt = ExplicitDefaults;
             JsonNode cmdsRoot = dataRoot["ALR67"]["CMDS"];
@@ -156,6 +156,7 @@ namespace JAFDTC.Models.FA18C.CMS
                 if (int.TryParse((string.IsNullOrEmpty(prog.FlareQ)) ? progDflt.FlareQ : prog.FlareQ, out int fq))
                     flareRoot["Quantity"] = fq;
             }
+            return dataRoot;
         }
 
         /// <summary>
