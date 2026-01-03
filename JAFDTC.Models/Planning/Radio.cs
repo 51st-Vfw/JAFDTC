@@ -1,6 +1,6 @@
 ﻿// ********************************************************************************************************************
 //
-// flight.cs -- planning model flight information
+// Comm.cs -- planning model radio information
 //
 // Copyright(C) 2026 rage, ilominar/raven
 //
@@ -19,13 +19,10 @@
 
 namespace JAFDTC.Models.Planning
 {
-    public class Flight
+    public class Radio
     {
-        public required string Name { get; set; }        
-        public required string Aircraft { get; set; }
-
-        public required IReadOnlyList<Pilot> Pilots { get; set; }
-        public IReadOnlyList<Radio>? Comms { get; set; }
-        public IReadOnlyList<Route>? Routes { get; set; }
+        public required int RadioId { get; set; }
+        public required string Name { get; set; }
+        public required IReadOnlyList<Comm> Presets { get; set; }
     }
 }
