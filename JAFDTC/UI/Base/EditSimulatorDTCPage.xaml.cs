@@ -180,6 +180,7 @@ namespace JAFDTC.UI.Base
         private void RebuildEnableState()
         {
             Utilities.SetEnableState(uiBtnDelTmplt, (uiComboTemplate.SelectedIndex > 0));
+            Utilities.SetEnableState(uiBtnSetOutput, (EditDTC.MergedSystemTags.Count > 0));
             Utilities.SetEnableState(uiBtnClearOutput, (uiValueOutput.Text.Length > 0));
 
             Utilities.SetEnableState(uiCkbxEnableRebuild, (EditDTC.MergedSystemTags.Count > 0));

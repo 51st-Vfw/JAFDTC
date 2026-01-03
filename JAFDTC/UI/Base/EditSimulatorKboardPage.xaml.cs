@@ -180,6 +180,7 @@ namespace JAFDTC.UI.Base
         private void RebuildEnableState()
         {
             Utilities.SetEnableState(uiBtnDelTmplt, (uiComboTemplate.SelectedIndex > 0));
+            Utilities.SetEnableState(uiBtnSetOutput, (EditKboard.ContentSystemTags.Count > 0));
             Utilities.SetEnableState(uiBtnClearOutput, (uiValueOutput.Text.Length > 0));
 
             Utilities.SetEnableState(uiCkbxEnableRebuild, (EditKboard.ContentSystemTags.Count > 0));
@@ -318,6 +319,7 @@ namespace JAFDTC.UI.Base
                     if (resultPick != null)
                     {
                         UpdateKboardOutputPath(resultPick.Path);
+                        SaveEditStateToConfig();
                         shouldMerge = true;
                     }
                 }
