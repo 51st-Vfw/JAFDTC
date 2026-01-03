@@ -51,7 +51,6 @@ namespace JAFDTC.Tests
                 Name = "",
                 PathOutput = "",
                 PathTemplates = "",
-                Owner = null
             }));
 
             Assert.ThrowsException<ArgumentException>(() => generator.GenerateKneeboards(new()
@@ -60,7 +59,6 @@ namespace JAFDTC.Tests
                 Name = "",
                 PathOutput = "",
                 PathTemplates = "",
-                Owner = null
             }));
 
             Assert.ThrowsException<ArgumentException>(() => generator.GenerateKneeboards(new()
@@ -69,7 +67,6 @@ namespace JAFDTC.Tests
                 Name = "JAF_TEST",
                 PathOutput = "",
                 PathTemplates = "",
-                Owner = null
             }));
 
             Assert.ThrowsException<ArgumentException>(() => generator.GenerateKneeboards(new()
@@ -78,7 +75,6 @@ namespace JAFDTC.Tests
                 Name = "JAF_TEST",
                 PathOutput = "..\\..\\..\\appdata\\kb\\output",
                 PathTemplates = "",
-                Owner = null
             }));
 
         }
@@ -93,6 +89,21 @@ namespace JAFDTC.Tests
                 Mission = new()
                 {
                     Name = "Operation KB",
+                    Owner = new()
+                    {
+                        Name = "Rage",
+                        STN = "67001",
+                        Board = "393",
+                        Joker = 4000,
+                        Lase = 1688,
+                        Tacan = 38,
+                        TacanBand = 'Y',
+                        CommPresets = new Dictionary<int, int>()
+                        {
+                            { 1, 2 }, //UHF preset 2
+                            { 2, 3 }  //VHF preset 3
+                        }
+                    },
                     Packages =
                     [
                         new()
@@ -236,26 +247,11 @@ namespace JAFDTC.Tests
                             WEZ = 1.5
                         }
                     ]
-
                 },
                 Name = $"JAF TEST {DateTime.Now.ToString("yyyyMMddhhmmss")}",
                 PathOutput = "..\\..\\..\\appdata\\kb\\output",
                 PathTemplates = "..\\..\\..\\appdata\\kb\\",
-                Owner = new()
-                {
-                    Name = "Rage",
-                    STN = "67001",
-                    Board = "393",
-                    Joker = 4000,
-                    Lase = 1688,
-                    Tacan = 38,
-                    TacanBand = 'Y',
-                    CommPresets = new Dictionary<int, int>()
-                    {
-                        { 1, 2 }, //UHF preset 2
-                        { 2, 3 }  //VHF preset 3
-                    }
-                },
+                
                 NightMode = false,
                 //PathLogo = "..\\..\\..\\appdata\\kb\\misc\\667logo.png",
             });

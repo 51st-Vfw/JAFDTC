@@ -14,7 +14,7 @@ namespace JAFDTC.Kneeboard.Generate
 
             BuildMisc(criteria);
             BuildPackages(criteria.Mission);
-            BuildOwnship(criteria);
+            BuildOwnship(criteria.Mission);
             BuildThreats(criteria.Mission);
             BuildAirfields(criteria);
             BuildMaps(criteria);
@@ -27,7 +27,7 @@ namespace JAFDTC.Kneeboard.Generate
             var name = Clean(criteria.Mission?.Name, criteria.Name);
 
             _data.Add(Keys.HEADER, name);
-            _data.Add(Keys.FOOTER, $"{name}, by {criteria.Owner?.Name} @ {DateTime.Now.ToString("MM/dd/yyyy")}");
+            _data.Add(Keys.FOOTER, $"{name}, by {criteria.Mission?.Owner?.Name} @ {DateTime.Now.ToString("MM/dd/yyyy")}");
             _data.Add(Keys.THEATER, criteria.Mission?.Theater);
             _data.Add(Keys.NAME, name);
             _data.Add(Keys.NIGHTMODE, criteria.NightMode.GetValueOrDefault(false).ToString());
@@ -162,9 +162,10 @@ namespace JAFDTC.Kneeboard.Generate
             }
         }
 
-        private void BuildOwnship(GenerateCriteria criteria)
+        private void BuildOwnship(Mission mission)
         {
-            var owner = criteria.Owner;
+            var owner = mission.Owner;
+
             _data.Add(Keys.OWNSHIP_BOARD, Clean(owner.Board, ""));
             _data.Add(Keys.OWNSHIP_JOKER, owner.Joker.HasValue ? owner.Joker.ToString() : "");
             _data.Add(Keys.OWNSHIP_LASE, owner.Lase.HasValue ? owner.Lase.ToString() : "");
