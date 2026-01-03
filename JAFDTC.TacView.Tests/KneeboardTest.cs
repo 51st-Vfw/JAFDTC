@@ -121,49 +121,55 @@ namespace JAFDTC.Tests
                                             SCL = "bla2",
                                         }
                                     ],
-                                    Comms = 
+                                    Radios =
                                     [
                                         new ()
                                         {
-                                            CommId = 1,
-                                            Frequency = 251.0,
-                                            Description = "TAC COMMON",
+                                            RadioId = 1,
                                             Name = "AN/ARC-164",
-                                            Modulation = "AM"
+                                            Presets =
+                                            [
+                                                new ()
+                                                {
+                                                    Frequency = 251.0,
+                                                    Description = "TAC COMMON",
+                                                    Modulation = "AM"
+                                                },
+                                                new ()
+                                                {
+                                                    Frequency = 270.75,
+                                                    Description = "OVERLOAD 1-1",
+                                                    Modulation = "AM"
+                                                }                                                
+                                            ]
                                         },
                                         new ()
                                         {
-                                            CommId = 1,
-                                            Frequency = 270.75,
-                                            Description = "OVERLOAD 1-1",
-                                            Name = "AN/ARC-164",
-                                            Modulation = "AM"
-                                        },
-                                        new ()
-                                        {
-                                            CommId = 2,
-                                            Frequency = 138.25,
-                                            Description = "Viper Primary",
+                                            RadioId = 2,
                                             Name = "AN/ARC-210",
-                                            Modulation = "FM"
-                                        },
-                                        new ()
-                                        {
-                                            CommId = 2,
-                                            Frequency = 138.75,
-                                            Description = "Viper Secondary",
-                                            Name = "AN/ARC-210",
-                                            Modulation = "FM"
-                                        },
-                                        new ()
-                                        {
-                                            CommId = 2,
-                                            Frequency = 138.5,
-                                            Description = "Viper AUX",
-                                            Name = "AN/ARC-210",
-                                            Modulation = "FM"
+                                            Presets =
+                                            [
+                                                new ()
+                                                {
+                                                    Frequency = 138.25,
+                                                    Description = "Viper Primary",
+                                                    Modulation = "FM"
+                                                },
+                                                new ()
+                                                {
+                                                    Frequency = 138.75,
+                                                    Description = "Viper Secondary",
+                                                    Modulation = "FM"
+                                                },
+                                                new ()
+                                                {
+                                                    Frequency = 138.5,
+                                                    Description = "Viper AUX",
+                                                    Modulation = "FM"
+                                                }
+                                            ]
                                         }
-                                    ],
+                                    ],                                   
                                     Routes = 
                                     [
                                         new()
