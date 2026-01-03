@@ -118,12 +118,11 @@ https://www.gnu.org/licenses/.
             </GridView.ItemTemplate>
         </GridView>
 
-        <StackPanel Grid.Row="4" Margin="24,0,24,0">
+        <StackPanel Grid.Row="4" Margin="24,-4,24,0">
             <TextBlock Style="{StaticResource TableHeaderTextStyle}"
                        TextWrapping="Wrap">
-                JAFDTC will use the selected systems to provide content for use in the kneeboards constructed from
-                the specified kneeboard templates. If there is no content to fill a kneeboard, it will not be
-                generaged.
+                JAFDTC will use these systems to provide content for use in the kneeboards constructed from
+                the specified templates.
             </TextBlock>
         </StackPanel>
 
@@ -177,7 +176,7 @@ https://www.gnu.org/licenses/.
         </TextBlock>
 
         <CheckBox Grid.Row="9" Tag="EnableRebuild" x:Name="uiCkbxEnableRebuild"
-                  Margin="24,12,24,0" HorizontalAlignment="Left"
+                  Margin="24,6,24,0" HorizontalAlignment="Left"
                   Click="CheckBox_Clicked">
             JAFDTC always rebuilds the generated kneeboards when a system providing content changes
         </CheckBox>
