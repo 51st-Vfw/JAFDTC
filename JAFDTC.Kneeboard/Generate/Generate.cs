@@ -11,8 +11,8 @@ namespace JAFDTC.Kneeboard.Generate
             generateCriteria.PathOutput.Required();
             generateCriteria.PathTemplates.Required();
             generateCriteria.Name.Required();
-            generateCriteria.Owner.Required();
             generateCriteria.Mission.Required();
+            generateCriteria.Mission.Owner.Required();
             generateCriteria.Mission.Packages.Required();
             generateCriteria.Mission.Packages[0].Required();
             generateCriteria.Mission.Packages[0].Flights.Required();
