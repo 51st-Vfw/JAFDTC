@@ -25,7 +25,7 @@ namespace JAFDTC.Models.Planning
         public required string Aircraft { get; set; }
 
         public required IReadOnlyList<Pilot> Pilots { get; set; }
-        public IReadOnlyList<Radio>? Comms { get; set; }
+        public IReadOnlyList<Radio>? Radios { get; set; }
         public IReadOnlyList<Route>? Routes { get; set; }
     }
 }

@@ -85,24 +85,29 @@ namespace JAFDTC.Kneeboard.Generate
             }
         }
 
-        private void BuildComms( Flight flight)
+        private void BuildComms(Flight flight)
         {
-            if (flight.Comms.IsEmpty())
+            if (flight.Radios.IsEmpty())
                 return;
 
-            var radios = flight.Comms.Select(p => p.CommId).Distinct().Order().ToList();
-            foreach (var radioId in radios)
+            foreach (var radio in flight.Radios)
             {
-                var channels = flight.Comms.Where(p => p.CommId == radioId).ToList(); //dont reorder!
-                for (var c = 0; c < channels.Count; c++)
-                {
-                    var channel = channels[c];
-                    var commPrefix = Keys.COMM_PREFIX.Replace("*", channel.CommId.ToString()); //since its denormalized...
+                _data.Add(ToKey(Keys.RADIO_NUM, radio.RadioId, false), radio.RadioId.ToString());
+                _data.Add(ToKey(Keys.RADIO_NAME, radio.RadioId, false), radio.Name);
 
-                    _data.Add(ToKey(commPrefix, Keys.COMM_NUM, c), (c + 1).ToString());
-                    _data.Add(ToKey(commPrefix, Keys.COMM_FREQ, c), channel.Frequency.ToString("{d:#.##}"));
-                    _data.Add(ToKey(commPrefix, Keys.COMM_DESC, c), Clean(channel.Description, "")); //always replace text with Unassigned or blank...?
-                    _data.Add(ToKey(commPrefix, Keys.COMM_MOD, c), Clean(channel.Modulation, ""));
+                var radioPrefix = ToKey(Keys.RADIO_PREFIX, radio.RadioId, false);
+
+                if (radio.Presets.IsEmpty())
+                    continue;
+
+                for (var c = 0; c < radio.Presets.Count; c++)
+                {
+                    var channel = radio.Presets[c];
+
+                    _data.Add(ToKey(radioPrefix, Keys.RADIO_PRESET_NUM, c), (c + 1).ToString());
+                    _data.Add(ToKey(radioPrefix, Keys.RADIO_PRESET_FREQ, c), channel.Frequency.ToString("{d:#.##}"));
+                    _data.Add(ToKey(radioPrefix, Keys.RADIO_PRESET_DESC, c), Clean(channel.Description, ""));
+                    _data.Add(ToKey(radioPrefix, Keys.RADIO_PRESET_MOD, c), Clean(channel.Modulation, ""));
                 }
             }
         }
@@ -265,14 +270,19 @@ namespace JAFDTC.Kneeboard.Generate
              */
         }
 
-        private static string ToKey(string key, int index)
+        private static string ToKey(string key, int position)
         {
-            return key.Replace("*", (index + 1).ToString()).ToUpper();
+            return ToKey(key, position, true);
         }
 
-        private static string ToKey(string prefix, string key, int index)
+        private static string ToKey(string prefix, string key, int position)
         {
-            return prefix + key.Replace("*", (index + 1).ToString()).ToUpper();
+            return prefix + key.Replace("*", (position + 1).ToString()).ToUpper();
+        }
+
+        private static string ToKey(string key, int position, bool isIndex)
+        {
+            return key.Replace("*", (position + (isIndex ? 1: 0)).ToString()).ToUpper();
         }
 
         private static string Clean(string? input, string defaultValue)

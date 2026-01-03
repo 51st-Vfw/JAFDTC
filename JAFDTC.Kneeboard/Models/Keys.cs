@@ -23,19 +23,21 @@
 
         //since we only are supporting 1 flight right now.. let all pilots, nav points, and comms tied to that first flight...
 
-        //public const string COMM_NUM = "COMM_*_NUM"; //may want to list radio number and name...
-        //public const string COMM_NAME = "COMM_*_NAME";
-        public const string COMM_PREFIX = "COMM_*_";
 
-        //COMM PREFIX + this
-        public const string COMM_NUM = "PRESET_*_NUM";
-        public const string COMM_FREQ = "PRESET_*_FREQ";
-        public const string COMM_DESC = "PRESET_*_DESC";
-        public const string COMM_MOD = "PRESET_*_MOD";
+        public const string RADIO_NUM = "RADIO_*_NUM";
+        public const string RADIO_NAME = "RADIO_*_NAME";
+        public const string RADIO_PREFIX = "RADIO_*_";
+        //RADIO_PREFIX + this
+        public const string RADIO_PRESET_NUM = "PRESET_*_NUM";
+        public const string RADIO_PRESET_FREQ = "PRESET_*_FREQ";
+        public const string RADIO_PRESET_DESC = "PRESET_*_DESC";
+        public const string RADIO_PRESET_MOD = "PRESET_*_MOD";
+
 
         public const string ROUTE_NUM = "ROUTE_*_NUM";
         public const string ROUTE_NAME = "ROUTE_*_NAME";
         public const string ROUTE_PREFIX = "ROUTE_*_";
+
 
         //ROUTE PREFIX + this
         public const string NAV_NUM = "NAV_*_NUM";
