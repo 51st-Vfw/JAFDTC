@@ -142,13 +142,15 @@ namespace JAFDTC.Tests
                                             [
                                                 new ()
                                                 {
-                                                    Frequency = 251.0,
+                                                    CommId = 1,
+                                                    Frequency = "251.0",
                                                     Description = "TAC COMMON",
                                                     Modulation = "AM"
                                                 },
                                                 new ()
                                                 {
-                                                    Frequency = 270.75,
+                                                    CommId = 5, //skip some to test
+                                                    Frequency = "270.75",
                                                     Description = "OVERLOAD 1-1",
                                                     Modulation = "AM"
                                                 }                                                
@@ -162,19 +164,22 @@ namespace JAFDTC.Tests
                                             [
                                                 new ()
                                                 {
-                                                    Frequency = 138.25,
+                                                    CommId = 1,
+                                                    Frequency = "138.25",
                                                     Description = "Viper Primary",
                                                     Modulation = "FM"
                                                 },
                                                 new ()
                                                 {
-                                                    Frequency = 138.75,
+                                                    CommId = 2,
+                                                    Frequency = "138.75",
                                                     Description = "Viper Secondary",
                                                     Modulation = "FM"
                                                 },
                                                 new ()
                                                 {
-                                                    Frequency = 138.5,
+                                                    CommId = 3,
+                                                    Frequency = "138.5",
                                                     Description = "Viper AUX",
                                                     Modulation = "FM"
                                                 }
