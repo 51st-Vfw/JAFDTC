@@ -32,11 +32,13 @@ namespace JAFDTC.Kneeboard.Models
 
         //in future should be package prefix...based
         public const string FLIGHT_NAME = "FLIGHT_*_NAME";
+        public const string FLIGHT_NAME_SHORT = "FLIGHT_*_NAME_SHORT";
         public const string FLIGHT_AIRCRAFT = "FLIGHT_*_AIRCRAFT";
 
         //in future should be package/flight prefix...based
         public const string PILOT_NAME = "PILOT_*_NAME";
         public const string PILOT_CALLSIGN = "PILOT_*_CALLSIGN";
+        public const string PILOT_CALLSIGN_SHORT = "PILOT_*_CALLSIGN_SHORT";
         public const string PILOT_DATAID = "PILOT_*_DATAID";
         public const string PILOT_SCL = "PILOT_*_SCL";
 
@@ -72,6 +74,7 @@ namespace JAFDTC.Kneeboard.Models
 
         public const string THREAT_NAME = "THREAT_*_NAME";
         public const string THREAT_TYPE = "THREAT_*_TYPE";
+        public const string THREAT_COORD = "THREAT_*_COORD";
 
         public const string OWNSHIP_NAME = "OWNSHIP_NAME";
         public const string OWNSHIP_STN = "OWNSHIP_STN";
