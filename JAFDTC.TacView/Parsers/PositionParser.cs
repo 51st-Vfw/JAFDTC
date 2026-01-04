@@ -42,8 +42,8 @@ namespace JAFDTC.File.ACMI.Parsers
 
             var pos = new ParsedPosition
             {
-                Longitude = -118 + parts[0].ToCleaDouble(), //lon offset from -118 deg
-                Latitude = 31 + parts[1].ToCleaDouble(), //lat offset from 31 deg
+                Longitude = parts[0].ToCleaDouble(), //lon offset from -118 deg
+                Latitude = parts[1].ToCleaDouble(), //lat offset from 31 deg
                 Altitude = 3.281 * parts[2].ToCleaDouble() //meters to feet
 
                 //others are optional...
@@ -54,6 +54,17 @@ namespace JAFDTC.File.ACMI.Parsers
             };
 
             return pos;
+        }
+
+        public static ParsedPosition AdjustPosition(this ParsedPosition value, double deltaLat, double deltaLon)
+        {
+            if (value == null)
+                return value;
+
+            value.Latitude += deltaLat;
+            value.Longitude += deltaLon;
+
+            return value;
         }
     }
 }
