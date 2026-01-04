@@ -23,6 +23,6 @@ namespace JAFDTC.Models.Planning
     {
         public required int RadioId { get; set; }
         public required string Name { get; set; }
-        public required IReadOnlyList<Comm> Presets { get; set; }
+        public required IReadOnlyList<Preset> Presets { get; set; }
     }
 }

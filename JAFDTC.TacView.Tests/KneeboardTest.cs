@@ -142,14 +142,14 @@ namespace JAFDTC.Tests
                                             [
                                                 new ()
                                                 {
-                                                    CommId = 1,
+                                                    PresetId = 1,
                                                     Frequency = "251.0",
                                                     Description = "TAC COMMON",
                                                     Modulation = "AM"
                                                 },
                                                 new ()
                                                 {
-                                                    CommId = 5, //skip some to test
+                                                    PresetId = 5, //skip some to test
                                                     Frequency = "270.75",
                                                     Description = "OVERLOAD 1-1",
                                                     Modulation = "AM"
@@ -164,21 +164,21 @@ namespace JAFDTC.Tests
                                             [
                                                 new ()
                                                 {
-                                                    CommId = 1,
+                                                    PresetId = 1,
                                                     Frequency = "138.25",
                                                     Description = "Viper Primary",
                                                     Modulation = "FM"
                                                 },
                                                 new ()
                                                 {
-                                                    CommId = 2,
+                                                    PresetId = 2,
                                                     Frequency = "138.75",
                                                     Description = "Viper Secondary",
                                                     Modulation = "FM"
                                                 },
                                                 new ()
                                                 {
-                                                    CommId = 3,
+                                                    PresetId = 3,
                                                     Frequency = "138.5",
                                                     Description = "Viper AUX",
                                                     Modulation = "FM"
@@ -190,11 +190,13 @@ namespace JAFDTC.Tests
                                     [
                                         new()
                                         {
+                                            RouteId = 1,
                                             Name = "Route 1",
                                             NavPoints =
                                             [
                                                 new()
                                                 {
+                                                    NavpointId = 1,
                                                     Name = "", //see if it hanldes to STP1... Bassel Al-Assad
                                                     Location = new()
                                                     {
@@ -205,6 +207,7 @@ namespace JAFDTC.Tests
                                                 },
                                                 new()
                                                 {
+                                                    NavpointId = 2,
                                                     Name = "IP", //ocean E of Rene
                                                     Location = new()
                                                     {
@@ -215,6 +218,7 @@ namespace JAFDTC.Tests
                                                 },
                                                 new()
                                                 {
+                                                    NavpointId = 3,
                                                     Name = "Target", //Rene Mouawad
                                                     TOS = "15",
                                                     TOT = "13:01",
@@ -227,6 +231,7 @@ namespace JAFDTC.Tests
                                                 },
                                                 new()
                                                 {
+                                                    NavpointId = 4,
                                                     Name = null, //Hama airbase see if it matches it/finds it
                                                     Location = new()
                                                     {

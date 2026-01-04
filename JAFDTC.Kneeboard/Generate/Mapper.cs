@@ -117,19 +117,16 @@ namespace JAFDTC.Kneeboard.Generate
                 _data.Add(ToKey(Keys.RADIO_NUM, radio.RadioId, false), radio.RadioId.ToString());
                 _data.Add(ToKey(Keys.RADIO_NAME, radio.RadioId, false), radio.Name);
 
-                var radioPrefix = ToKey(Keys.RADIO_PREFIX, radio.RadioId, false);
-
                 if (radio.Presets.IsEmpty())
                     continue;
 
-                for (var c = 0; c < radio.Presets.Count; c++)
+                var radioPrefix = ToKey(Keys.RADIO_PREFIX, radio.RadioId, false);
+                foreach(var preset in radio.Presets)
                 {
-                    var channel = radio.Presets[c];
-
-                    _data.Add(ToKey(radioPrefix, Keys.RADIO_PRESET_NUM, channel.CommId, false), channel.CommId.ToString());
-                    _data.Add(ToKey(radioPrefix, Keys.RADIO_PRESET_FREQ, channel.CommId, false), channel.Frequency); //.ToString("{d:#.##}")
-                    _data.Add(ToKey(radioPrefix, Keys.RADIO_PRESET_DESC, channel.CommId, false), Clean(channel.Description, ""));
-                    _data.Add(ToKey(radioPrefix, Keys.RADIO_PRESET_MOD, channel.CommId, false), Clean(channel.Modulation, ""));
+                    _data.Add(ToKey(radioPrefix, Keys.RADIO_PRESET_NUM, preset.PresetId, false), preset.PresetId.ToString());
+                    _data.Add(ToKey(radioPrefix, Keys.RADIO_PRESET_FREQ, preset.PresetId, false), preset.Frequency); //.ToString("{d:#.##}")
+                    _data.Add(ToKey(radioPrefix, Keys.RADIO_PRESET_DESC, preset.PresetId, false), Clean(preset.Description, ""));
+                    _data.Add(ToKey(radioPrefix, Keys.RADIO_PRESET_MOD, preset.PresetId, false), Clean(preset.Modulation, ""));
                 }
             }
         }
@@ -139,32 +136,31 @@ namespace JAFDTC.Kneeboard.Generate
             if (flight.Routes.IsEmpty())
                 return;
 
-            for (var r = 0; r < flight.Routes.Count; r++)
+            foreach (var route in flight.Routes)
             {
-                var routePrefix = ToKey(Keys.ROUTE_PREFIX, r);
-                var route = flight.Routes[r];
+                _data.Add(ToKey(Keys.ROUTE_NUM, route.RouteId, false), route.RouteId.ToString());
+                _data.Add(ToKey(Keys.ROUTE_NAME, route.RouteId, false), route.Name);
 
-                _data.Add(ToKey(Keys.ROUTE_NUM, r), (r + 1).ToString());
-                _data.Add(ToKey(Keys.ROUTE_NAME, r), route.Name);
+                if (route.NavPoints.IsEmpty())
+                    continue;
 
-                for (var np = 0; np < route.NavPoints.Count; np++)
+                var routePrefix = ToKey(Keys.ROUTE_PREFIX, route.RouteId, false);
+                foreach (var navpoint in route.NavPoints)
                 {
-                    var nav = route.NavPoints[np];
+                    _data.Add(ToKey(routePrefix, Keys.NAV_NUM, navpoint.NavpointId, false), navpoint.NavpointId.ToString());
+                    _data.Add(ToKey(routePrefix, Keys.NAV_ALT, navpoint.NavpointId, false), navpoint.Location.Altitude);
+                    _data.Add(ToKey(routePrefix, Keys.NAV_TOS, navpoint.NavpointId, false), Clean(navpoint.TOS, ""));
+                    _data.Add(ToKey(routePrefix, Keys.NAV_TOT, navpoint.NavpointId, false), Clean(navpoint.TOT, ""));
+                    _data.Add(ToKey(routePrefix, Keys.NAV_SPEED, navpoint.NavpointId, false), Clean(navpoint.Speed?.ToString(), ""));
 
-                    _data.Add(ToKey(routePrefix, Keys.NAV_NUM, np), (np + 1).ToString()); //or allow start 0??
-                    _data.Add(ToKey(routePrefix, Keys.NAV_ALT, np), nav.Location.Altitude);
-                    _data.Add(ToKey(routePrefix, Keys.NAV_TOS, np), Clean(nav.TOS, ""));
-                    _data.Add(ToKey(routePrefix, Keys.NAV_TOT, np), Clean(nav.TOT, ""));
-                    _data.Add(ToKey(routePrefix, Keys.NAV_SPEED, np), Clean(nav.Speed?.ToString(), ""));
-
-                    _data.Add(ToKey(routePrefix, Keys.NAV_COORD, np), $"{nav.Location.Latitude} / {nav.Location.Longitude}");
+                    _data.Add(ToKey(routePrefix, Keys.NAV_COORD, navpoint.NavpointId, false), $"{navpoint.Location.Latitude} / {navpoint.Location.Longitude}");
                     //_data.Add(ToKey(routePrefix, Keys.NAV_COORD, np), "normal".ToDisplay(nav.Location.Latitude, nav.Location.Longitude));
                     //_data.Add(ToKey(routePrefix, Keys.NAV_MGRS, np), 10.ToMGRS(nav.Latitude, nav.Longitude));
 
-                    var desc = nav.Name;
+                    var desc = navpoint.Name;
                     if (string.IsNullOrWhiteSpace(desc)
-                        || string.Equals(desc, $"STP{np + 1}", StringComparison.OrdinalIgnoreCase)
-                        || string.Equals(desc, $"SP{np + 1}", StringComparison.OrdinalIgnoreCase))
+                        || string.Equals(desc, $"STP{navpoint.NavpointId}", StringComparison.OrdinalIgnoreCase)
+                        || string.Equals(desc, $"SP{navpoint.NavpointId}", StringComparison.OrdinalIgnoreCase))
                     {
                         //todo: attempt to match by location to the POI DB
                         //maybe even import from miz/cf/acmi  group/unit/static
@@ -179,9 +175,9 @@ namespace JAFDTC.Kneeboard.Generate
                         //name = "better name..."
                     }
 
-                    _data.Add(ToKey(routePrefix, Keys.NAV_NAME, np), Clean(nav.Name, $"STP{np + 1}"));
+                    _data.Add(ToKey(routePrefix, Keys.NAV_NAME, navpoint.NavpointId, false), Clean(navpoint.Name, $"STP{navpoint.NavpointId}"));
 
-                    _data.Add(ToKey(routePrefix, Keys.NAV_NOTE, np), "todo nav note"); //things about the STP.. airfield, threats, WEZ, etc...
+                    //_data.Add(ToKey(routePrefix, Keys.NAV_NOTE, navpoint.NavpointId, false), "todo nav note"); //things about the STP.. airfield, threats, WEZ, etc...
                 }
             }
         }
