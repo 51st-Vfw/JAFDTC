@@ -19,6 +19,7 @@
 
 using Svg;
 using System.Drawing.Imaging;
+using System.Text.RegularExpressions;
 
 namespace JAFDTC.Kneeboard.Generate
 {
@@ -58,6 +59,26 @@ namespace JAFDTC.Kneeboard.Generate
 
         private void Assign()
         {
+            foreach (var item in _textItems.Where(p => p?.ID != null && p.ID.Contains(KeyStart) && p.ID.Contains(KeyEnd)))
+            {
+                item.Text = string.Empty; //default
+                if (_data.TryGetValue(item.ID.Replace(KeyStart, ' ').Replace(KeyEnd, ' ').Trim(), out var value))
+                {
+                    _changed = true;
+                    item.Text = value;
+                }
+            }
+
+            foreach (var item in _imageItems.Where(p => p?.ID != null && p.ID.Contains(KeyStart) && p.ID.Contains(KeyEnd)))
+            {
+                item.Href = string.Empty; //default
+                if (_data.TryGetValue(item.ID.Replace(KeyStart, ' ').Replace(KeyEnd, ' ').Trim(), out var value))
+                {
+                    _changed = true;
+                    item.Href = value;
+                }
+            }
+
             foreach (var item in _textItems.Where(p => p?.Text != null && p.Text.Contains(KeyStart) && p.Text.Contains(KeyEnd)))
             {
                 var matches = item.Text.Split(_KeyDelim, StringSplitOptions.RemoveEmptyEntries);
