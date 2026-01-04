@@ -88,21 +88,7 @@ namespace JAFDTC.File.ACMI
 
         internal static double GetTimeMarker(List<string> lines, DateTimeOffset? timeSnippet)
         {
-            // parse ReferenceTime (header "0,ReferenceTime=2025-02-21T11:00:01Z")
-            DateTimeOffset referenceTime = DateTimeOffset.MinValue;
-            var refLine = lines.FirstOrDefault(l => l.StartsWith("0,ReferenceTime=", StringComparison.OrdinalIgnoreCase));
-            if (!string.IsNullOrEmpty(refLine))
-            {
-                var idx = refLine.IndexOf('=');
-                if (idx >= 0)
-                {
-                    var val = refLine.Substring(idx + 1).Trim();
-                    if (!DateTimeOffset.TryParse(val, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal, out referenceTime))
-                    {
-                        referenceTime = DateTimeOffset.MinValue;
-                    }
-                }
-            }
+            DateTimeOffset.TryParse(GetReference(lines, "ReferenceTime"), CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal, out var referenceTime);
 
             // collect all timestamp markers (numeric seconds after ReferenceTime)
             var markers = new List<double>();
@@ -132,9 +118,27 @@ namespace JAFDTC.File.ACMI
             return markers.Max();
         }
 
+        internal static string GetReference(List<string> lines, string key)
+        {
+            var refLine = lines.FirstOrDefault(l => l.StartsWith($"0,{key}=", StringComparison.OrdinalIgnoreCase));
+            if (!string.IsNullOrEmpty(refLine))
+            {
+                var idx = refLine.IndexOf('=');
+                if (idx >= 0)
+                {
+                    var val = refLine.Substring(idx + 1).Trim();
+                    return val;
+                }
+            }
+            return string.Empty;
+        }
+
         internal static IEnumerable<ParsedUnit> GetUnits(List<string> lines, double timeMarker)
         {
             var result = new Dictionary<string, ParsedUnit>(StringComparer.OrdinalIgnoreCase);
+
+            double.TryParse(GetReference(lines, "ReferenceLatitude"), out var deltaLat);
+            double.TryParse(GetReference(lines, "ReferenceLongitude"), out var deltaLon);
 
             foreach (var line in lines) //i HATE event streams...
             {
@@ -154,7 +158,11 @@ namespace JAFDTC.File.ACMI
                 {
                     var unitItem = UnitParser.Parse(line);
                     if (unitItem != null)
+                    {
+                        unitItem.Position = unitItem.Position.AdjustPosition(deltaLat, deltaLon);
                         result[unitItem.Id] = unitItem; //last one wins...
+
+                    }
                 }
                 else if (line.StartsWith("-", StringComparison.Ordinal)) //unit was deleted/killed
                 {
@@ -165,7 +173,7 @@ namespace JAFDTC.File.ACMI
                 {
                     var id = line[..line.IndexOf(',')];
                     if (result.TryGetValue(id, out var u))
-                        u.Position = PositionParser.Parse(line[(id.Length + 1)..].ToCleanValue()) ?? u.Position; //last update wins... if its null (ie didnt move), use the previous position...
+                        u.Position = PositionParser.Parse(line[(id.Length + 1)..].ToCleanValue()).AdjustPosition(deltaLat, deltaLon) ?? u.Position; //last update wins... if its null (ie didnt move), use the previous position...
                 }
             }
 

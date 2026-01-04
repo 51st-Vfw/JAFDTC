@@ -412,7 +412,7 @@ namespace JAFDTC.Models.DCS
             if (_uniqueIDs.ContainsKey(poi.UniqueID))
             {
                 FileManager.Log($"PointOfInterestDbase.AddPointOfInterest(): warning: poi with unique id '{poi.UniqueID}'" +
-                                $" already exists in database; skipping add.");
+                                $" already exists in database ({poi.Name}); skipping add.");
                 return false;
             }
             else if (string.IsNullOrEmpty(poi.Theater))
