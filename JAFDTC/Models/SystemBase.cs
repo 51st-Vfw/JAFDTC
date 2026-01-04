@@ -52,7 +52,7 @@ namespace JAFDTC.Models
 
         public virtual JsonNode MergeIntoSimDTC(JsonNode dataRoot) => dataRoot;
 
-        public virtual Mission MergeIntoMission(Mission mission) => mission;
+        public virtual Mission MergeIntoMission(Mission mission, int indexPackage = 0, int indexFlight = 0) => mission;
 
         // ------------------------------------------------------------------------------------------------------------
         //

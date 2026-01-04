@@ -45,7 +45,7 @@ namespace JAFDTC.Models
         /// returns the mission created by merging data from the system configuration into a mission plan. this
         /// method may update the input in-place.
         /// </summary>
-        public Mission MergeIntoMission(Mission mission);
+        public Mission MergeIntoMission(Mission mission, int indexPackage = 0, int indexFlight = 0);
 
         /// <summary>
         /// reset the setup of the system to avionics defaults.
