@@ -636,11 +636,14 @@ namespace JAFDTC.UI.App
             IReadOnlyList<UnitGroupItem> groups = extractor.Extract(criteria)
                 ?? throw new Exception($"Encountered an error while importing from path\n\n{importSpec.Path}");
 
+            FileManager.Log($"MapWindow:CoreImportMarkers extracted {groups.Count} groups from {importSpec.Path}");
+
             // add the threats to the map control. this includes a marker for each unit if we are not importing
             // only summary information and a marker with a threat ring at the average location of the group
             // for the threat wez (this marker will only have a visible center when we're not showing
             // individual units).
             //
+            int nMarkers = 0;
             foreach (UnitGroupItem group in groups)
             {
 // TODO: what to do on units outside of current theater? ignore? warn and create anyway?
@@ -669,6 +672,7 @@ namespace JAFDTC.UI.App
                         uiMap.AddMarker(type, unit.UniqueID,
                                         new Location(unit.Position.Latitude, unit.Position.Longitude));
                         _mapImportedMarkerDict[unit.UniqueID] = (unit.IsAlive) ? unit.Name : (unit.Name + " [DEAD]");
+                        nMarkers++;
                     }
                 }
                 avgLat /= (double)group.Units.Count;
@@ -681,6 +685,7 @@ namespace JAFDTC.UI.App
                     _mapImportedMarkerDict[group.UniqueID] = threatType + " WEZ";
                 }
             }
+            FileManager.Log($"MapWindow:CoreImportMarkers added {nMarkers} markers to map");
         }
 
         /// <summary>
