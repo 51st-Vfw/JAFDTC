@@ -37,17 +37,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="AppData\kb\output\F-16C_50\**" />
-    <EmbeddedResource Remove="AppData\kb\output\F-16C_50\**" />
-    <None Remove="AppData\kb\output\F-16C_50\**" />
+    <Content Include="AppData\kb\.gitignore" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="AppData\kb\output\.gitignore" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="AppData\kb\output\F-16C_50\" />
+    <Folder Include="AppData\kb\output\" />
   </ItemGroup>
 
 </Project>

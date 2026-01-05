@@ -76,7 +76,7 @@ namespace JAFDTC.Kneeboard.Generate
 
                     foreach (var template in templates)
                     {
-                        var safeFileName = string.Concat($"{generateCriteria.Name}_{Path.GetFileNameWithoutExtension(template)}");
+                        var safeFileName = string.Concat($"{generateCriteria.Name}-{generateCriteria.Mission.Name}-{flight.Name}-{Path.GetFileNameWithoutExtension(template)}").Replace(" ", "-");
                         foreach (var c in Path.GetInvalidFileNameChars())
                             safeFileName = safeFileName.Replace(c, '-');
 
