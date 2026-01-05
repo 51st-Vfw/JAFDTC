@@ -1,6 +1,6 @@
 ﻿// ********************************************************************************************************************
 //
-// Comm.cs -- planning model radio setting
+// Preset.cs -- planning model radio preset setting
 //
 // Copyright(C) 2026 rage, ilominar/raven
 //
