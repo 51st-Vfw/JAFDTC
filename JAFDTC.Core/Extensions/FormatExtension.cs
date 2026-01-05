@@ -1,4 +1,26 @@
-﻿namespace JAFDTC.Core.Extensions
+﻿// ********************************************************************************************************************
+//
+// FormatExtension.cs -- core format extension
+//
+// Copyright(C) 2025-2026 rage
+//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
+// Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
+// option) any later version.
+//
+// This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
+// implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+// for more details.
+//
+// You should have received a copy of the GNU General Public License along with this program.  If not, see
+// <https://www.gnu.org/licenses/>.
+//
+// ********************************************************************************************************************
+
+using JAFDTC.Core.Expressions;
+using System.Text.RegularExpressions;
+
+namespace JAFDTC.Core.Extensions
 {
     public static class FormatExtension
     {
@@ -33,20 +55,21 @@
 
         public static string ToShortCallsign(this string? value)
         {
-            if (string.IsNullOrWhiteSpace(value))
-                return string.Empty;
-
-            var callsign = string.Concat(value)
-                .Trim()
-                .ToUpper()
-                .Replace("_", "-")
-                .Replace(" ", "-");
-
-            var parts = callsign.Split('-', StringSplitOptions.RemoveEmptyEntries);
-
-            var result = $"{parts[0].First()}{parts[0].Last()}{(parts.Length > 1 ? callsign[parts[0].Length..].ToString() : "")}";
-
-            return result;
+            if (!string.IsNullOrWhiteSpace(value))
+            {
+                MatchCollection m = CommonExpressions.CallsignRegex().Matches(value.ToUpper());
+                if ((m.Count == 1) && string.IsNullOrEmpty(m[0].Groups[3].Value.ToString()))
+                    //
+                    // "VENOM1", "VENOM 1", "VENOM-1", etc. --> "VM1"
+                    //
+                    return $"{m[0].Groups[1].ToString().First()}{m[0].Groups[1].ToString().Last()}{m[0].Groups[2]}";
+                else if (m.Count == 1)
+                    //
+                    // "VENOM1-1", "VENOM 1 1", "VENOM 1-1", etc. --> "VM1-1"
+                    //
+                    return $"{m[0].Groups[1].ToString().First()}{m[0].Groups[1].ToString().Last()}{m[0].Groups[2]}-{m[0].Groups[3]}";
+            }
+            return string.Empty;
         }
 
     }
