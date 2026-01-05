@@ -1,6 +1,6 @@
 ﻿// ********************************************************************************************************************
 //
-// Navpoint.cs -- planning model navpoint information
+// Comm.cs -- planning model radio setting
 //
 // Copyright(C) 2026 rage, ilominar/raven
 //
@@ -19,14 +19,11 @@
 
 namespace JAFDTC.Models.Planning
 {
-    public class Navpoint
+    public class Preset
     {
-        public required int NavpointId { get; set; }
-
-        public required Location Location { get; set; }      
-        public string? Name { get; set; }
-        public double? Speed { get; set; }
-        public string? TOT { get; set; }                        // time on target
-        public string? TOS { get; set; }                        // time on station
+        public required int PresetId { get; set; }
+        public required string Frequency { get; set; }
+        public string? Modulation { get; set; }
+        public string? Description { get; set; }
     }
 }
