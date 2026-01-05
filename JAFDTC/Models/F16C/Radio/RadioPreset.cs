@@ -2,7 +2,7 @@
 //
 // RadioPreset.cs -- f-16c radio system preset
 //
-// Copyright(C) 2023 ilominar/raven
+// Copyright(C) 2023-2026 ilominar/raven
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 // Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -23,10 +23,10 @@ using System.Diagnostics;
 namespace JAFDTC.Models.F16C.Radio
 {
     /// <summary>
-    /// radio preset for the viper radio system. use the abstract RadioPresetBase as-is since we don't need any
+    /// radio preset for the viper radio system. use the abstract RadioPresetInfoBase as-is since we don't need any
     /// more than that.
     /// </summary>
-    public class RadioPreset : RadioPresetInfoBase
+    public partial class RadioPreset : RadioPresetInfoBase
     {
     }
 }
