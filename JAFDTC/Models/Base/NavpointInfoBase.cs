@@ -2,7 +2,7 @@
 //
 // NavpointInfoBase.cs -- navigation point information abstract base class
 //
-// Copyright(C) 2023-2024 ilominar/raven
+// Copyright(C) 2023-2026 ilominar/raven
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 // Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -17,6 +17,7 @@
 //
 // ********************************************************************************************************************
 
+using JAFDTC.Models.Planning;
 using JAFDTC.Utilities;
 using System.Diagnostics;
 using System.Text.Json.Serialization;
@@ -196,5 +197,19 @@ namespace JAFDTC.Models.Base
             Lon = null;
             Alt = null;
         }
+
+        /// <summary>
+        /// returns a representation of the navpoint in a planning Navpoint object. subclasses may override this
+        /// method to change the specific format delivered.
+        /// </summary>
+        public virtual Navpoint ToNavpoint()
+            => new() {
+                NavpointId = Number,
+                Name = Name,
+                Location = new() { Latitude = LatUI, Longitude = LonUI, Altitude = Alt },
+                Speed = 0.0,
+                TOT = "",
+                TOS = ""
+            };
     }
 }

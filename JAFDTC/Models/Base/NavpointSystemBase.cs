@@ -18,10 +18,12 @@
 // ********************************************************************************************************************
 
 using JAFDTC.Models.CoreApp;
+using JAFDTC.Models.Planning;
 using JAFDTC.Models.Units;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -70,6 +72,23 @@ namespace JAFDTC.Models.Base
         public override void Reset()
         {
             Points.Clear();
+        }
+
+        /// <summary>
+        /// a representation of the navpoint system in a Route object. subclasses may override this method to change
+        /// the specific format delivered.
+        /// </summary>
+        public virtual Route ToRoute(int id, string name)
+        {
+            List<Navpoint> navpts = [];
+            foreach (NavpointInfoBase navpt in Points.Cast<NavpointInfoBase>())
+                navpts.Add(navpt.ToNavpoint());
+            return new Route()
+            {
+                RouteId = id,
+                Name = name,
+                NavPoints = [.. navpts.OrderBy(p => p.NavpointId) ]
+            };
         }
 
         // ------------------------------------------------------------------------------------------------------------

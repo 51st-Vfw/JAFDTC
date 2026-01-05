@@ -2,7 +2,7 @@
 //
 // RadioSystemBase.cs : radio system abstract base class
 //
-// Copyright(C) 2023-2025 ilominar/raven
+// Copyright(C) 2023-2026 ilominar/raven
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 // Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -17,8 +17,11 @@
 //
 // ********************************************************************************************************************
 
+using JAFDTC.Models.Planning;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Text.Json.Serialization;
 
 namespace JAFDTC.Models.Base
@@ -67,6 +70,29 @@ namespace JAFDTC.Models.Base
         {
             foreach (ObservableCollection<T> list in Presets)
                 list.Clear();
+        }
+
+        /// <summary>
+        /// a representation of the radio system in a list of planning Radio objects. subclasses may override this
+        /// method to change the specific format delivered.
+        /// </summary>
+        public virtual IReadOnlyList<Radio> ToRadioList(IReadOnlyList<string> radioNames)
+        {
+            List<Radio> radios = [ ];
+            int radioID = 1;
+            foreach (ObservableCollection<T> list in Presets)
+            {
+                List<Preset> presets = [ ];
+                foreach (RadioPresetInfoBase preset in list.Cast<RadioPresetInfoBase>())
+                    presets.Add(preset.ToPreset());
+                radios.Add(new Radio()
+                {
+                    Name = radioNames[radioID - 1],
+                    RadioId = radioID++,
+                    Presets = [.. presets.OrderBy(p => p.PresetId) ]
+                });
+            }
+            return radios;
         }
     }
 }
