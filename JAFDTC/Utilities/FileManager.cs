@@ -3,7 +3,7 @@
 // FileManager.cs : file management abstraction layer
 //
 // Copyright(C) 2021-2023 the-paid-actor & others
-// Copyright(C) 2023-2025 ilominar/raven
+// Copyright(C) 2023-2026 ilominar/raven
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 // Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -52,7 +52,7 @@ namespace JAFDTC.Utilities
         //
         // ------------------------------------------------------------------------------------------------------------
 
-        private readonly static string _appDirPath = AppContext.BaseDirectory;
+        private static readonly string _appDirPath = AppContext.BaseDirectory;
 
         private static string _settingsDirPath
             = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "JAFDTC");
@@ -60,7 +60,7 @@ namespace JAFDTC.Utilities
         private static string _commonDirPath
             = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Saved Games\\JAFDTC");
 
-        private static string _mapTileCachePath
+        private static readonly string _mapTileCachePath
             = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
                            "JAFDTC", "MapControlTileCache");
 
@@ -70,7 +70,7 @@ namespace JAFDTC.Utilities
 
         private static StreamWriter _logStream = null;
 
-        private static readonly string[] _sizeSuffixes = { "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB" };
+        private static readonly string[] _sizeSuffixes = [ "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB" ];
 
         // ------------------------------------------------------------------------------------------------------------
         //
@@ -93,9 +93,9 @@ namespace JAFDTC.Utilities
             }
             catch (Exception ex)
             {
-                _settingsDirPath = null;
                 string msg = $"Unable to create settings folder: {_settingsDirPath}. Make sure the path is correct" +
                              $" and that you have appropriate permissions ({ex}).";
+                _settingsDirPath = null;
                 throw new Exception(msg, ex);
             }
 
@@ -570,6 +570,162 @@ namespace JAFDTC.Utilities
             if (!string.IsNullOrEmpty(name))
             {
                 string path = Path.Combine(AirframeDTCTemplateDirPath(airframe), $"{name}.dtc");
+                if (System.IO.File.Exists(path))
+                    System.IO.File.Delete(path);
+            }
+        }
+
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // kneeboard template packagess
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
+        /// <summary>
+        /// returns the path to the airframe-specific or generic kneeboard template directory in the settings
+        /// directory. an airframe of UNKNOWN implies the generic directory.
+        /// </summary>
+        private static string KboardTemplateDirPath(AirframeTypes airframe)
+            => (airframe != AirframeTypes.UNKNOWN) ? AirframeDataDirPath(airframe, "Kneeboards")
+                                                   : Path.Combine(_settingsDirPath, "Kneeboards");
+
+        /// <summary>
+        /// returns true if the kneeboard package template exists as a generic or airframe-specific template,
+        /// false otherwise. a name of "" indicates the default airframe template file and is always unique.
+        /// </summary>
+        public static bool IsUniqueKboardTemplate(AirframeTypes airframe, string name)
+            => (string.IsNullOrEmpty(name) ||
+                (System.IO.File.Exists(Path.Combine(KboardTemplateDirPath(AirframeTypes.UNKNOWN), $"{name}.zip")) ||
+                 System.IO.File.Exists(Path.Combine(KboardTemplateDirPath(airframe), $"{name}.zip"))));
+
+        /// <summary>
+        /// returns true if the .zip file at the given path is a valid template package (no hierarhcy, all files
+        /// are .svg files).
+        /// </summary>
+        public static bool IsValidKboardTemplatePackage(string path)
+        {
+            try
+            {
+                using ZipArchive archive = ZipFile.Open(path, ZipArchiveMode.Read);
+                if (archive.Entries.Count > 0)
+                {
+                    char[] pathChars = [ Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar ];
+                    foreach (ZipArchiveEntry entry in archive.Entries)
+                        if ((entry.FullName.Split(pathChars).Length != 1) ||
+                            (!entry.Name.EndsWith(".svg", StringComparison.OrdinalIgnoreCase)))
+                            return false;
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                Log($"FileManager:IsValidKboardTemplatePackage fails on {path}, {ex}");
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// returns a list of the kneeboard template names for an airframe (including generic templates, but
+        /// excluding the default template) along with the number of generic templates in the list. the
+        /// generic templates always start at the beginning of the list.
+        /// </summary>
+        public static List<string> ListKboardTemplates(AirframeTypes airframe, out int numGeneric)
+        {
+            List<string> list = [ ];
+            string path = KboardTemplateDirPath(AirframeTypes.UNKNOWN);
+            if (Directory.Exists(path))
+                foreach (string srcFile in Directory.GetFiles(path))
+                    if (Path.GetExtension(srcFile).Equals(".zip", StringComparison.OrdinalIgnoreCase))
+                        list.Add(Path.GetFileNameWithoutExtension(srcFile));
+            numGeneric = list.Count;
+
+            path = KboardTemplateDirPath(airframe);
+            if (Directory.Exists(path))
+                foreach (string srcFile in Directory.GetFiles(path))
+                    if (Path.GetExtension(srcFile).Equals(".zip", StringComparison.OrdinalIgnoreCase))
+                        list.Add(Path.GetFileNameWithoutExtension(srcFile));
+            return list;
+        }
+
+        /// <summary>
+        /// import a dcs dtc file into jafdtc as a template file by copying the source template file to the airframe's
+        /// dtc template area. returns the template name, "" on error. this operation will over-write an existing
+        /// template with the same name and create the template directory if it does not yet exist.
+        /// </summary>
+        public static string ImportKboardTemplate(AirframeTypes airframe, string srcPath)
+        {
+            string destPath = KboardTemplateDirPath(airframe);
+            string destName = Path.GetFileNameWithoutExtension(srcPath);
+            try
+            {
+                Directory.CreateDirectory(destPath);
+                System.IO.File.Copy(srcPath, Path.Combine(destPath, $"{destName}.zip"), overwrite: true) ;
+            }
+            catch (Exception ex)
+            {
+                Log($"FileManager:ImportKboardTemplate exception copying {srcPath} to {destPath}, {ex}");
+                destName = "";
+            }
+            return destName;
+        }
+
+        /// <summary>
+        /// returns list of paths to the extracted contents of a kneeboard template package file with the given
+        /// name for the specified airframe, an empty list on error. the name "" indicates the default airframe
+        /// template, by convention. the method checks for a matching generic template if an airframe-specific
+        /// version is not found.
+        /// </summary>
+        public static List<string> LoadKboardTemplate(AirframeTypes airframe, string name)
+        {
+            string srcPath = Path.Combine(_appDirPath, "Data", $"kboard-default-templates.zip");
+            try
+            {
+                if (!string.IsNullOrEmpty(name))
+                {
+                    srcPath = Path.Combine(KboardTemplateDirPath(airframe), $"{name}.zip");
+                    if (!System.IO.File.Exists(srcPath))
+                        srcPath = Path.Combine(KboardTemplateDirPath(AirframeTypes.UNKNOWN), $"{name}.zip");
+                }
+                if (!System.IO.File.Exists(srcPath) || !IsValidKboardTemplatePackage(srcPath))
+                    throw new Exception("template package check fails");
+
+                string tempPath = Path.Combine(Path.GetTempPath(), $"JAFDTC-KBB-{Guid.NewGuid()}");
+                Directory.CreateDirectory(tempPath);
+
+                List<string> paths = [ ];
+                using ZipArchive archive = ZipFile.Open(srcPath, ZipArchiveMode.Read);
+                foreach (ZipArchiveEntry entry in archive.Entries)
+                {
+                    if (entry.Name.EndsWith(".svg", StringComparison.OrdinalIgnoreCase))
+                    {
+                        // ignore the path (FullName), everything in the package should be flat.
+                        //
+                        string destPath = Path.GetFullPath(Path.Combine(tempPath, entry.Name));
+                        entry.ExtractToFile(destPath, overwrite: true);
+                        paths.Add(destPath);
+                        Log($"FileManager:LoadKboardTemplate extracts {destPath}");
+                    }
+                }
+                return paths;
+            }
+            catch (Exception ex)
+            {
+                Log($"FileManager:LoadKboardTemplate exception loading from {srcPath}, {ex}");
+            }
+            return [ ];
+        }
+
+        /// <summary>
+        /// remove the kneeboard template package file with a given name for the specified airframe. operations on
+        /// the default template (name "", by convention) are ignored. an airframe of UNKNOWN deletes the generic
+        /// template.
+        /// </summary>
+        public static void DeleteKboardTemplate(AirframeTypes airframe, string name)
+        {
+            if (!string.IsNullOrEmpty(name))
+            {
+                string destPath = KboardTemplateDirPath(airframe);
+                string path = Path.Combine(destPath, $"{name}.zip");
                 if (System.IO.File.Exists(path))
                     System.IO.File.Delete(path);
             }
