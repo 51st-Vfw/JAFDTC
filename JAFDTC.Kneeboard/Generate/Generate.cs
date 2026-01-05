@@ -50,11 +50,11 @@ namespace JAFDTC.Kneeboard.Generate
             foreach (var package in generateCriteria.Mission.Packages)
                 foreach (var flight in package.Flights) //KBs are at a Flight level for now.. maybe in future we would have mission/package levels (but those are just structural for now)
                 {
-                    var destinationPath = Path.Combine(generateCriteria.PathOutput, flight.Aircraft);
+                    var destinationPath = generateCriteria.PathOutput;
                     if (!Directory.Exists(destinationPath))
                         throw new DirectoryNotFoundException($"KB Destination Directory Not Found: {destinationPath}");
 
-                    var templatePath = Path.Combine(generateCriteria.PathTemplates, flight.Aircraft);
+                    var templatePath = generateCriteria.PathTemplates;
                     if (!Directory.Exists(templatePath))
                         throw new DirectoryNotFoundException($"KB Template Directory Not Found: {templatePath}");
 
@@ -71,7 +71,7 @@ namespace JAFDTC.Kneeboard.Generate
             {
                 foreach(var flight in package.Flights) //KBs are at a Flight level for now.. maybe in future we would have mission/package levels (but those are just structural for now)
                 {
-                    var templatePath = Path.Combine(generateCriteria.PathTemplates, flight.Aircraft);
+                    var templatePath = generateCriteria.PathTemplates;
                     var templates = Directory.GetFiles(templatePath, "*.svg");
 
                     foreach (var template in templates)
@@ -80,7 +80,7 @@ namespace JAFDTC.Kneeboard.Generate
                         foreach (var c in Path.GetInvalidFileNameChars())
                             safeFileName = safeFileName.Replace(c, '-');
 
-                        var destinationPath = Path.Combine(generateCriteria.PathOutput, flight.Aircraft, $"{safeFileName}.png");
+                        var destinationPath = Path.Combine(generateCriteria.PathOutput, $"{safeFileName}.png");
 
                         using (var pkb = new Builder(dict, template, destinationPath))
                             pkb.Build();
