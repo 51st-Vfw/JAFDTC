@@ -38,12 +38,16 @@ namespace JAFDTC.Models
         /// the dcs dtc configuration is presented as a JsonObject for the root of the "data" object in the dtc
         /// file that encodes configuration data. this method will update the JsonObject and/or its children as
         /// necessary to complete the merge and may update the input in-place.
+        /// 
+        /// systems that do not support dcs dtc will return dataRoot unchanged.
         /// </summary>
         public JsonNode MergeIntoSimDTC(JsonNode dataRoot);
 
         /// <summary>
         /// returns the mission created by merging data from the system configuration into a mission plan. this
         /// method may update the input in-place.
+        /// 
+        /// systems that do not support merging into a mission plan will return mission unchanged.
         /// </summary>
         public Mission MergeIntoMission(Mission mission, int indexPackage = 0, int indexFlight = 0);
 

@@ -47,8 +47,8 @@ namespace JAFDTC.Models
         //
         // ------------------------------------------------------------------------------------------------------------
 
-        // base implementations are functionally nops. subclasses for mergable systems should override implementations
-        // as necessary to provide desired functionality.
+        // base implementations of the merge methods are functionally nops. subclasses for mergable systems should
+        // override implementations as necessary to provide desired functionality.
 
         public virtual JsonNode MergeIntoSimDTC(JsonNode dataRoot) => dataRoot;
 
