@@ -1,0 +1,2227 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="1536px"
+   height="2048px"
+   viewBox="0 0 1536 2048"
+   version="1.1"
+   id="svg113"
+   sodipodi:docname="NAV_Kneeboard.svg"
+   inkscape:version="1.4 (86a8ad7, 2024-10-11)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <defs
+     id="defs113" />
+  <sodipodi:namedview
+     id="namedview113"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="0.5"
+     inkscape:cx="669"
+     inkscape:cy="861"
+     inkscape:window-width="1920"
+     inkscape:window-height="1009"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="KBT_Flight_Card" />
+  <!-- Generator: Sketch 61.2 (89653) - https://sketch.com -->
+  <title
+     id="title1">KBT_Flight_Card</title>
+  <desc
+     id="desc1">Created with Sketch.</desc>
+  <g
+     id="KBT_Flight_Card"
+     stroke="none"
+     stroke-width="1"
+     fill="none"
+     fill-rule="evenodd"
+     inkscape:label="NAV_Card">
+    <g
+       id="Background">
+      <rect
+         fill="#E0E0E0"
+         x="0"
+         y="0"
+         width="1536"
+         height="2048"
+         id="rect1"
+         inkscape:label="Background" />
+      <rect
+         id="Border"
+         stroke="#707070"
+         stroke-width="8"
+         x="20"
+         y="20"
+         width="1496"
+         height="2008"
+         rx="12" />
+      <polygon
+         id="Border-Background-Footer"
+         fill="#707070"
+         transform="translate(768.000000, 2014.000000) scale(1, -1) translate(-768.000000, -2014.000000) "
+         points="24 2002.94737 31 2000 1504 2000 1513 2002.21053 1516 2008.10526 1516 2028 20 2028 20 2008.10526" />
+      <polygon
+         id="Border-Background-Header"
+         fill="#707070"
+         points="24 24 31 20 1504 20 1513 23 1516 31 1516 148 20 148 20 31" />
+    </g>
+    <g
+       id="g114"
+       inkscape:label="NAV 1 Content"
+       style="display:inline"
+       transform="translate(0,30)">
+      <g
+         id="g113-0-2-01"
+         inkscape:label="Row"
+         style="display:inline"
+         transform="translate(-0.06274414,950.00001)">
+        <rect
+           id="Border-LL-1-9-7-65"
+           stroke="#707070"
+           stroke-width="2.02588"
+           x="1044.0129"
+           y="227.01294"
+           width="443.974"
+           height="49.974121"
+           inkscape:label="Border-LL" />
+        <rect
+           id="Border-TOT-1-4-6-7"
+           stroke="#707070"
+           stroke-width="2"
+           x="904"
+           y="227"
+           width="140"
+           height="50"
+           inkscape:label="Border-TOT" />
+        <rect
+           id="Border-DESC-1-8-1-5"
+           stroke="#707070"
+           stroke-width="1.97462"
+           x="147.9873"
+           y="226.9873"
+           width="756.02502"
+           height="50.025391"
+           inkscape:label="Border-DESC" />
+        <rect
+           id="Border-NUM-1-8-4-4"
+           stroke="#707070"
+           stroke-width="0.918444"
+           x="47.981674"
+           y="226.98169"
+           width="100.037"
+           height="50.036652"
+           inkscape:label="Border-NUM"
+           style="stroke-width:1.96335;stroke-dasharray:none" />
+        <text
+           id="FIELD:LL-1-2-2-12"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="34px"
+           font-weight="400"
+           fill="#181818"
+           x="827.82831"
+           inkscape:label="FIELD:LL"
+           y="-1.687505"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;display:inline"><tspan
+             x="1051.8281"
+             y="261.3125"
+             id="tspan111-8-2-7-4-3-0"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">[N1.20:CD]</tspan></text>
+        <text
+           id="FIELD:TOT-1-5-2-0"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="34px"
+           font-weight="400"
+           fill="#181818"
+           x="1022.3796"
+           inkscape:label="FIELD:TOT"
+           y="-1.2140038"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;display:inline"><tspan
+             x="973.98871"
+             y="261.78601"
+             id="tspan111-8-1-5-2-1"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle">[N1.20:TT]</tspan></text>
+        <text
+           id="FIELD:DESC-1-1-1-46"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="34px"
+           font-weight="400"
+           fill="#181818"
+           x="-68.171814"
+           inkscape:label="FIELD:DESC"
+           y="-1.6875107"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;display:inline"><tspan
+             x="155.82812"
+             y="261.3125"
+             id="tspan111-8-2-71-6-0"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">[N1.20:N]</tspan></text>
+        <text
+           id="FIELD:NUM-1-1-8-71"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="33.9977px"
+           font-weight="400"
+           fill="#181818"
+           x="141.03983"
+           inkscape:label="FIELD:NUM"
+           y="-1.6858611"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;display:inline;stroke-width:0.999932"
+           transform="scale(0.99993242,1.0000676)"><tspan
+             x="98.006622"
+             y="261.29642"
+             id="tspan111-5-5-7"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;stroke-width:0.999932">[N1.20:I]</tspan></text>
+      </g>
+      <g
+         id="g113-0-2-77"
+         inkscape:label="Row"
+         style="display:inline"
+         transform="translate(-0.06274414,900.00001)">
+        <rect
+           id="Border-LL-1-9-7-73"
+           stroke="#707070"
+           stroke-width="2.02588"
+           x="1044.0129"
+           y="227.01294"
+           width="443.974"
+           height="49.974121"
+           inkscape:label="Border-LL" />
+        <rect
+           id="Border-TOT-1-4-6-3"
+           stroke="#707070"
+           stroke-width="2"
+           x="904"
+           y="227"
+           width="140"
+           height="50"
+           inkscape:label="Border-TOT" />
+        <rect
+           id="Border-DESC-1-8-1-59"
+           stroke="#707070"
+           stroke-width="1.97462"
+           x="147.9873"
+           y="226.9873"
+           width="756.02502"
+           height="50.025391"
+           inkscape:label="Border-DESC" />
+        <rect
+           id="Border-NUM-1-8-4-98"
+           stroke="#707070"
+           stroke-width="0.918444"
+           x="47.981674"
+           y="226.98169"
+           width="100.037"
+           height="50.036652"
+           inkscape:label="Border-NUM"
+           style="stroke-width:1.96335;stroke-dasharray:none" />
+        <text
+           id="FIELD:LL-1-2-2-18"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="34px"
+           font-weight="400"
+           fill="#181818"
+           x="827.82831"
+           inkscape:label="FIELD:LL"
+           y="-1.687505"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;display:inline"><tspan
+             x="1051.8281"
+             y="261.3125"
+             id="tspan111-8-2-7-4-3-26"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">[N1.19:CD]</tspan></text>
+        <text
+           id="FIELD:TOT-1-5-2-6"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="34px"
+           font-weight="400"
+           fill="#181818"
+           x="1022.3796"
+           inkscape:label="FIELD:TOT"
+           y="-1.2140038"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;display:inline"><tspan
+             x="973.98871"
+             y="261.78601"
+             id="tspan111-8-1-5-2-0"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle">[N1.19:TT]</tspan></text>
+        <text
+           id="FIELD:DESC-1-1-1-3"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="34px"
+           font-weight="400"
+           fill="#181818"
+           x="-68.171814"
+           inkscape:label="FIELD:DESC"
+           y="-1.6875107"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;display:inline"><tspan
+             x="155.82812"
+             y="261.3125"
+             id="tspan111-8-2-71-6-8"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">[N1.19:N]</tspan></text>
+        <text
+           id="FIELD:NUM-1-1-8-0"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="33.9977px"
+           font-weight="400"
+           fill="#181818"
+           x="141.03983"
+           inkscape:label="FIELD:NUM"
+           y="-1.6858611"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;display:inline;stroke-width:0.999932"
+           transform="scale(0.99993242,1.0000676)"><tspan
+             x="98.006622"
+             y="261.29642"
+             id="tspan111-5-5-1"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;stroke-width:0.999932">[N1.19:I]</tspan></text>
+      </g>
+      <g
+         id="g113-0-2-2"
+         inkscape:label="Row"
+         style="display:inline"
+         transform="translate(-0.03137207,850.00001)">
+        <rect
+           id="Border-LL-1-9-7-50"
+           stroke="#707070"
+           stroke-width="2.02588"
+           x="1044.0129"
+           y="227.01294"
+           width="443.974"
+           height="49.974121"
+           inkscape:label="Border-LL" />
+        <rect
+           id="Border-TOT-1-4-6-9"
+           stroke="#707070"
+           stroke-width="2"
+           x="904"
+           y="227"
+           width="140"
+           height="50"
+           inkscape:label="Border-TOT" />
+        <rect
+           id="Border-DESC-1-8-1-4"
+           stroke="#707070"
+           stroke-width="1.97462"
+           x="147.9873"
+           y="226.9873"
+           width="756.02502"
+           height="50.025391"
+           inkscape:label="Border-DESC" />
+        <rect
+           id="Border-NUM-1-8-4-7"
+           stroke="#707070"
+           stroke-width="0.918444"
+           x="47.981674"
+           y="226.98169"
+           width="100.037"
+           height="50.036652"
+           inkscape:label="Border-NUM"
+           style="stroke-width:1.96335;stroke-dasharray:none" />
+        <text
+           id="FIELD:LL-1-2-2-8"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="34px"
+           font-weight="400"
+           fill="#181818"
+           x="827.82831"
+           inkscape:label="FIELD:LL"
+           y="-1.687505"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;display:inline"><tspan
+             x="1051.8281"
+             y="261.3125"
+             id="tspan111-8-2-7-4-3-3"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">[N1.18:CD]</tspan></text>
+        <text
+           id="FIELD:TOT-1-5-2-5"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="34px"
+           font-weight="400"
+           fill="#181818"
+           x="1022.3796"
+           inkscape:label="FIELD:TOT"
+           y="-1.2140038"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;display:inline"><tspan
+             x="973.98871"
+             y="261.78601"
+             id="tspan111-8-1-5-2-12"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle">[N1.18:TT]</tspan></text>
+        <text
+           id="FIELD:DESC-1-1-1-01"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="34px"
+           font-weight="400"
+           fill="#181818"
+           x="-68.171814"
+           inkscape:label="FIELD:DESC"
+           y="-1.6875107"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;display:inline"><tspan
+             x="155.82812"
+             y="261.3125"
+             id="tspan111-8-2-71-6-6"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">[N1.18:N]</tspan></text>
+        <text
+           id="FIELD:NUM-1-1-8-40"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="33.9977px"
+           font-weight="400"
+           fill="#181818"
+           x="141.03983"
+           inkscape:label="FIELD:NUM"
+           y="-1.6858611"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;display:inline;stroke-width:0.999932"
+           transform="scale(0.99993242,1.0000676)"><tspan
+             x="98.006622"
+             y="261.29642"
+             id="tspan111-5-5-61"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;stroke-width:0.999932">[N1.18:I]</tspan></text>
+      </g>
+      <g
+         id="g113-0-2-8"
+         inkscape:label="Row"
+         style="display:inline"
+         transform="translate(0,800.00001)">
+        <rect
+           id="Border-LL-1-9-7-98"
+           stroke="#707070"
+           stroke-width="2.02588"
+           x="1044.0129"
+           y="227.01294"
+           width="443.974"
+           height="49.974121"
+           inkscape:label="Border-LL" />
+        <rect
+           id="Border-TOT-1-4-6-41"
+           stroke="#707070"
+           stroke-width="2"
+           x="904"
+           y="227"
+           width="140"
+           height="50"
+           inkscape:label="Border-TOT" />
+        <rect
+           id="Border-DESC-1-8-1-43"
+           stroke="#707070"
+           stroke-width="1.97462"
+           x="147.9873"
+           y="226.9873"
+           width="756.02502"
+           height="50.025391"
+           inkscape:label="Border-DESC" />
+        <rect
+           id="Border-NUM-1-8-4-988"
+           stroke="#707070"
+           stroke-width="0.918444"
+           x="47.981674"
+           y="226.98169"
+           width="100.037"
+           height="50.036652"
+           inkscape:label="Border-NUM"
+           style="stroke-width:1.96335;stroke-dasharray:none" />
+        <text
+           id="FIELD:LL-1-2-2-08"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="34px"
+           font-weight="400"
+           fill="#181818"
+           x="827.82831"
+           inkscape:label="FIELD:LL"
+           y="-1.687505"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;display:inline"><tspan
+             x="1051.8281"
+             y="261.3125"
+             id="tspan111-8-2-7-4-3-77"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">[N1.17:CD]</tspan></text>
+        <text
+           id="FIELD:TOT-1-5-2-83"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="34px"
+           font-weight="400"
+           fill="#181818"
+           x="1022.3796"
+           inkscape:label="FIELD:TOT"
+           y="-1.2140038"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;display:inline"><tspan
+             x="973.98871"
+             y="261.78601"
+             id="tspan111-8-1-5-2-83"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle">[N1.17:TT]</tspan></text>
+        <text
+           id="FIELD:DESC-1-1-1-7"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="34px"
+           font-weight="400"
+           fill="#181818"
+           x="-68.171814"
+           inkscape:label="FIELD:DESC"
+           y="-1.6875107"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;display:inline"><tspan
+             x="155.82812"
+             y="261.3125"
+             id="tspan111-8-2-71-6-1"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">[N1.17:N]</tspan></text>
+        <text
+           id="FIELD:NUM-1-1-8-07"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="33.9977px"
+           font-weight="400"
+           fill="#181818"
+           x="141.03983"
+           inkscape:label="FIELD:NUM"
+           y="-1.6858611"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;display:inline;stroke-width:0.999932"
+           transform="scale(0.99993242,1.0000676)"><tspan
+             x="98.006622"
+             y="261.29642"
+             id="tspan111-5-5-3"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;stroke-width:0.999932">[N1.17:I]</tspan></text>
+      </g>
+      <g
+         id="g113-0-2-4"
+         inkscape:label="Row"
+         style="display:inline"
+         transform="translate(0,750.00001)">
+        <rect
+           id="Border-LL-1-9-7-96"
+           stroke="#707070"
+           stroke-width="2.02588"
+           x="1044.0129"
+           y="227.01294"
+           width="443.974"
+           height="49.974121"
+           inkscape:label="Border-LL" />
+        <rect
+           id="Border-TOT-1-4-6-5"
+           stroke="#707070"
+           stroke-width="2"
+           x="904"
+           y="227"
+           width="140"
+           height="50"
+           inkscape:label="Border-TOT" />
+        <rect
+           id="Border-DESC-1-8-1-10"
+           stroke="#707070"
+           stroke-width="1.97462"
+           x="147.9873"
+           y="226.9873"
+           width="756.02502"
+           height="50.025391"
+           inkscape:label="Border-DESC" />
+        <rect
+           id="Border-NUM-1-8-4-99"
+           stroke="#707070"
+           stroke-width="0.918444"
+           x="47.981674"
+           y="226.98169"
+           width="100.037"
+           height="50.036652"
+           inkscape:label="Border-NUM"
+           style="stroke-width:1.96335;stroke-dasharray:none" />
+        <text
+           id="FIELD:LL-1-2-2-6"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="34px"
+           font-weight="400"
+           fill="#181818"
+           x="827.82831"
+           inkscape:label="FIELD:LL"
+           y="-1.687505"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;display:inline"><tspan
+             x="1051.8281"
+             y="261.3125"
+             id="tspan111-8-2-7-4-3-83"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">[N1.16:CD]</tspan></text>
+        <text
+           id="FIELD:TOT-1-5-2-48"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="34px"
+           font-weight="400"
+           fill="#181818"
+           x="1022.3796"
+           inkscape:label="FIELD:TOT"
+           y="-1.2140038"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;display:inline"><tspan
+             x="973.98871"
+             y="261.78601"
+             id="tspan111-8-1-5-2-49"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle">[N1.16:TT]</tspan></text>
+        <text
+           id="FIELD:DESC-1-1-1-92"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="34px"
+           font-weight="400"
+           fill="#181818"
+           x="-68.171814"
+           inkscape:label="FIELD:DESC"
+           y="-1.6875107"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;display:inline"><tspan
+             x="155.82812"
+             y="261.3125"
+             id="tspan111-8-2-71-6-5"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">[N1.16:N]</tspan></text>
+        <text
+           id="FIELD:NUM-1-1-8-5"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="33.9977px"
+           font-weight="400"
+           fill="#181818"
+           x="141.03983"
+           inkscape:label="FIELD:NUM"
+           y="-1.6858611"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;display:inline;stroke-width:0.999932"
+           transform="scale(0.99993242,1.0000676)"><tspan
+             x="98.006622"
+             y="261.29642"
+             id="tspan111-5-5-33"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;stroke-width:0.999932">[N1.16:I]</tspan></text>
+      </g>
+      <g
+         id="g113-0-2-37"
+         inkscape:label="Row"
+         style="display:inline"
+         transform="translate(0,700.00001)">
+        <rect
+           id="Border-LL-1-9-7-4"
+           stroke="#707070"
+           stroke-width="2.02588"
+           x="1044.0129"
+           y="227.01294"
+           width="443.974"
+           height="49.974121"
+           inkscape:label="Border-LL" />
+        <rect
+           id="Border-TOT-1-4-6-38"
+           stroke="#707070"
+           stroke-width="2"
+           x="904"
+           y="227"
+           width="140"
+           height="50"
+           inkscape:label="Border-TOT" />
+        <rect
+           id="Border-DESC-1-8-1-0"
+           stroke="#707070"
+           stroke-width="1.97462"
+           x="147.9873"
+           y="226.9873"
+           width="756.02502"
+           height="50.025391"
+           inkscape:label="Border-DESC" />
+        <rect
+           id="Border-NUM-1-8-4-8"
+           stroke="#707070"
+           stroke-width="0.918444"
+           x="47.981674"
+           y="226.98169"
+           width="100.037"
+           height="50.036652"
+           inkscape:label="Border-NUM"
+           style="stroke-width:1.96335;stroke-dasharray:none" />
+        <text
+           id="FIELD:LL-1-2-2-80"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="34px"
+           font-weight="400"
+           fill="#181818"
+           x="827.82831"
+           inkscape:label="FIELD:LL"
+           y="-1.687505"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;display:inline"><tspan
+             x="1051.8281"
+             y="261.3125"
+             id="tspan111-8-2-7-4-3-6"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">[N1.15:CD]</tspan></text>
+        <text
+           id="FIELD:TOT-1-5-2-81"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="34px"
+           font-weight="400"
+           fill="#181818"
+           x="1022.3796"
+           inkscape:label="FIELD:TOT"
+           y="-1.2140038"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;display:inline"><tspan
+             x="973.98871"
+             y="261.78601"
+             id="tspan111-8-1-5-2-98"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle">[N1.15:TT]</tspan></text>
+        <text
+           id="FIELD:DESC-1-1-1-97"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="34px"
+           font-weight="400"
+           fill="#181818"
+           x="-68.171814"
+           inkscape:label="FIELD:DESC"
+           y="-1.6875107"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;display:inline"><tspan
+             x="155.82812"
+             y="261.3125"
+             id="tspan111-8-2-71-6-22"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">[N1.15:N]</tspan></text>
+        <text
+           id="FIELD:NUM-1-1-8-8"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="33.9977px"
+           font-weight="400"
+           fill="#181818"
+           x="141.03983"
+           inkscape:label="FIELD:NUM"
+           y="-1.6858611"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;display:inline;stroke-width:0.999932"
+           transform="scale(0.99993242,1.0000676)"><tspan
+             x="98.006622"
+             y="261.29642"
+             id="tspan111-5-5-28"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;stroke-width:0.999932">[N1.15:I]</tspan></text>
+      </g>
+      <g
+         id="g113-0-2-9"
+         inkscape:label="Row"
+         style="display:inline"
+         transform="translate(0,650.00001)">
+        <rect
+           id="Border-LL-1-9-7-0"
+           stroke="#707070"
+           stroke-width="2.02588"
+           x="1044.0129"
+           y="227.01294"
+           width="443.974"
+           height="49.974121"
+           inkscape:label="Border-LL" />
+        <rect
+           id="Border-TOT-1-4-6-78"
+           stroke="#707070"
+           stroke-width="2"
+           x="904"
+           y="227"
+           width="140"
+           height="50"
+           inkscape:label="Border-TOT" />
+        <rect
+           id="Border-DESC-1-8-1-15"
+           stroke="#707070"
+           stroke-width="1.97462"
+           x="147.9873"
+           y="226.9873"
+           width="756.02502"
+           height="50.025391"
+           inkscape:label="Border-DESC" />
+        <rect
+           id="Border-NUM-1-8-4-86"
+           stroke="#707070"
+           stroke-width="0.918444"
+           x="47.981674"
+           y="226.98169"
+           width="100.037"
+           height="50.036652"
+           inkscape:label="Border-NUM"
+           style="stroke-width:1.96335;stroke-dasharray:none" />
+        <text
+           id="FIELD:LL-1-2-2-124"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="34px"
+           font-weight="400"
+           fill="#181818"
+           x="827.82831"
+           inkscape:label="FIELD:LL"
+           y="-1.687505"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;display:inline"><tspan
+             x="1051.8281"
+             y="261.3125"
+             id="tspan111-8-2-7-4-3-25"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">[N1.14:CD]</tspan></text>
+        <text
+           id="FIELD:TOT-1-5-2-86"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="34px"
+           font-weight="400"
+           fill="#181818"
+           x="1022.3796"
+           inkscape:label="FIELD:TOT"
+           y="-1.2140038"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;display:inline"><tspan
+             x="973.98871"
+             y="261.78601"
+             id="tspan111-8-1-5-2-26"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle">[N1.14:TT]</tspan></text>
+        <text
+           id="FIELD:DESC-1-1-1-5"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="34px"
+           font-weight="400"
+           fill="#181818"
+           x="-68.171814"
+           inkscape:label="FIELD:DESC"
+           y="-1.6875107"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;display:inline"><tspan
+             x="155.82812"
+             y="261.3125"
+             id="tspan111-8-2-71-6-39"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">[N1.14:N]</tspan></text>
+        <text
+           id="FIELD:NUM-1-1-8-2"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="33.9977px"
+           font-weight="400"
+           fill="#181818"
+           x="141.03983"
+           inkscape:label="FIELD:NUM"
+           y="-1.6858611"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;display:inline;stroke-width:0.999932"
+           transform="scale(0.99993242,1.0000676)"><tspan
+             x="98.006622"
+             y="261.29642"
+             id="tspan111-5-5-4"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;stroke-width:0.999932">[N1.14:I]</tspan></text>
+      </g>
+      <g
+         id="g113-0-2-61"
+         inkscape:label="Row"
+         style="display:inline"
+         transform="translate(0,600.00001)">
+        <rect
+           id="Border-LL-1-9-7-8"
+           stroke="#707070"
+           stroke-width="2.02588"
+           x="1044.0129"
+           y="227.01294"
+           width="443.974"
+           height="49.974121"
+           inkscape:label="Border-LL" />
+        <rect
+           id="Border-TOT-1-4-6-2"
+           stroke="#707070"
+           stroke-width="2"
+           x="904"
+           y="227"
+           width="140"
+           height="50"
+           inkscape:label="Border-TOT" />
+        <rect
+           id="Border-DESC-1-8-1-11"
+           stroke="#707070"
+           stroke-width="1.97462"
+           x="147.9873"
+           y="226.9873"
+           width="756.02502"
+           height="50.025391"
+           inkscape:label="Border-DESC" />
+        <rect
+           id="Border-NUM-1-8-4-97"
+           stroke="#707070"
+           stroke-width="0.918444"
+           x="47.981674"
+           y="226.98169"
+           width="100.037"
+           height="50.036652"
+           inkscape:label="Border-NUM"
+           style="stroke-width:1.96335;stroke-dasharray:none" />
+        <text
+           id="FIELD:LL-1-2-2-62"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="34px"
+           font-weight="400"
+           fill="#181818"
+           x="827.82831"
+           inkscape:label="FIELD:LL"
+           y="-1.687505"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;display:inline"><tspan
+             x="1051.8281"
+             y="261.3125"
+             id="tspan111-8-2-7-4-3-9"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">[N1.13:CD]</tspan></text>
+        <text
+           id="FIELD:TOT-1-5-2-52"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="34px"
+           font-weight="400"
+           fill="#181818"
+           x="1022.3796"
+           inkscape:label="FIELD:TOT"
+           y="-1.2140038"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;display:inline"><tspan
+             x="973.98871"
+             y="261.78601"
+             id="tspan111-8-1-5-2-00"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle">[N1.13:TT]</tspan></text>
+        <text
+           id="FIELD:DESC-1-1-1-39"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="34px"
+           font-weight="400"
+           fill="#181818"
+           x="-68.171814"
+           inkscape:label="FIELD:DESC"
+           y="-1.6875107"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;display:inline"><tspan
+             x="155.82812"
+             y="261.3125"
+             id="tspan111-8-2-71-6-18"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">[N1.13:N]</tspan></text>
+        <text
+           id="FIELD:NUM-1-1-8-19"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="33.9977px"
+           font-weight="400"
+           fill="#181818"
+           x="141.03983"
+           inkscape:label="FIELD:NUM"
+           y="-1.6858611"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;display:inline;stroke-width:0.999932"
+           transform="scale(0.99993242,1.0000676)"><tspan
+             x="98.006622"
+             y="261.29642"
+             id="tspan111-5-5-5"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;stroke-width:0.999932">[N1.13:I]</tspan></text>
+      </g>
+      <g
+         id="g113-0-2-32"
+         inkscape:label="Row"
+         style="display:inline"
+         transform="translate(0,550.00001)">
+        <rect
+           id="Border-LL-1-9-7-52"
+           stroke="#707070"
+           stroke-width="2.02588"
+           x="1044.0129"
+           y="227.01294"
+           width="443.974"
+           height="49.974121"
+           inkscape:label="Border-LL" />
+        <rect
+           id="Border-TOT-1-4-6-58"
+           stroke="#707070"
+           stroke-width="2"
+           x="904"
+           y="227"
+           width="140"
+           height="50"
+           inkscape:label="Border-TOT" />
+        <rect
+           id="Border-DESC-1-8-1-67"
+           stroke="#707070"
+           stroke-width="1.97462"
+           x="147.9873"
+           y="226.9873"
+           width="756.02502"
+           height="50.025391"
+           inkscape:label="Border-DESC" />
+        <rect
+           id="Border-NUM-1-8-4-72"
+           stroke="#707070"
+           stroke-width="0.918444"
+           x="47.981674"
+           y="226.98169"
+           width="100.037"
+           height="50.036652"
+           inkscape:label="Border-NUM"
+           style="stroke-width:1.96335;stroke-dasharray:none" />
+        <text
+           id="FIELD:LL-1-2-2-29"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="34px"
+           font-weight="400"
+           fill="#181818"
+           x="827.82831"
+           inkscape:label="FIELD:LL"
+           y="-1.687505"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;display:inline"><tspan
+             x="1051.8281"
+             y="261.3125"
+             id="tspan111-8-2-7-4-3-4"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">[N1.12:CD]</tspan></text>
+        <text
+           id="FIELD:TOT-1-5-2-1"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="34px"
+           font-weight="400"
+           fill="#181818"
+           x="1022.3796"
+           inkscape:label="FIELD:TOT"
+           y="-1.2140038"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;display:inline"><tspan
+             x="973.98871"
+             y="261.78601"
+             id="tspan111-8-1-5-2-96"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle">[N1.12:TT]</tspan></text>
+        <text
+           id="FIELD:DESC-1-1-1-98"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="34px"
+           font-weight="400"
+           fill="#181818"
+           x="-68.171814"
+           inkscape:label="FIELD:DESC"
+           y="-1.6875107"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;display:inline"><tspan
+             x="155.82812"
+             y="261.3125"
+             id="tspan111-8-2-71-6-25"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">[N1.12:N]</tspan></text>
+        <text
+           id="FIELD:NUM-1-1-8-54"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="33.9977px"
+           font-weight="400"
+           fill="#181818"
+           x="141.03983"
+           inkscape:label="FIELD:NUM"
+           y="-1.6858611"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;display:inline;stroke-width:0.999932"
+           transform="scale(0.99993242,1.0000676)"><tspan
+             x="98.006622"
+             y="261.29642"
+             id="tspan111-5-5-91"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;stroke-width:0.999932">[N1.12:I]</tspan></text>
+      </g>
+      <g
+         id="g113-0-2-25"
+         inkscape:label="Row"
+         style="display:inline"
+         transform="translate(0,500.00001)">
+        <rect
+           id="Border-LL-1-9-7-08"
+           stroke="#707070"
+           stroke-width="2.02588"
+           x="1044.0129"
+           y="227.01294"
+           width="443.974"
+           height="49.974121"
+           inkscape:label="Border-LL" />
+        <rect
+           id="Border-TOT-1-4-6-39"
+           stroke="#707070"
+           stroke-width="2"
+           x="904"
+           y="227"
+           width="140"
+           height="50"
+           inkscape:label="Border-TOT" />
+        <rect
+           id="Border-DESC-1-8-1-39"
+           stroke="#707070"
+           stroke-width="1.97462"
+           x="147.9873"
+           y="226.9873"
+           width="756.02502"
+           height="50.025391"
+           inkscape:label="Border-DESC" />
+        <rect
+           id="Border-NUM-1-8-4-67"
+           stroke="#707070"
+           stroke-width="0.918444"
+           x="47.981674"
+           y="226.98169"
+           width="100.037"
+           height="50.036652"
+           inkscape:label="Border-NUM"
+           style="stroke-width:1.96335;stroke-dasharray:none" />
+        <text
+           id="FIELD:LL-1-2-2-9"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="34px"
+           font-weight="400"
+           fill="#181818"
+           x="827.82831"
+           inkscape:label="FIELD:LL"
+           y="-1.687505"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;display:inline"><tspan
+             x="1051.8281"
+             y="261.3125"
+             id="tspan111-8-2-7-4-3-97"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">[N1.11:CD]</tspan></text>
+        <text
+           id="FIELD:TOT-1-5-2-69"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="34px"
+           font-weight="400"
+           fill="#181818"
+           x="1022.3796"
+           inkscape:label="FIELD:TOT"
+           y="-1.2140038"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;display:inline"><tspan
+             x="973.98871"
+             y="261.78601"
+             id="tspan111-8-1-5-2-3"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle">[N1.11:TT]</tspan></text>
+        <text
+           id="FIELD:DESC-1-1-1-57"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="34px"
+           font-weight="400"
+           fill="#181818"
+           x="-68.171814"
+           inkscape:label="FIELD:DESC"
+           y="-1.6875107"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;display:inline"><tspan
+             x="155.82812"
+             y="261.3125"
+             id="tspan111-8-2-71-6-66"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">[N1.11:N]</tspan></text>
+        <text
+           id="FIELD:NUM-1-1-8-58"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="33.9977px"
+           font-weight="400"
+           fill="#181818"
+           x="141.03983"
+           inkscape:label="FIELD:NUM"
+           y="-1.6858611"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;display:inline;stroke-width:0.999932"
+           transform="scale(0.99993242,1.0000676)"><tspan
+             x="98.006622"
+             y="261.29642"
+             id="tspan111-5-5-25"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;stroke-width:0.999932">[N1.11:I]</tspan></text>
+      </g>
+      <g
+         id="g113-0-2-44"
+         inkscape:label="Row"
+         style="display:inline"
+         transform="translate(0,450.00001)">
+        <rect
+           id="Border-LL-1-9-7-16"
+           stroke="#707070"
+           stroke-width="2.02588"
+           x="1044.0129"
+           y="227.01294"
+           width="443.974"
+           height="49.974121"
+           inkscape:label="Border-LL" />
+        <rect
+           id="Border-TOT-1-4-6-16"
+           stroke="#707070"
+           stroke-width="2"
+           x="904"
+           y="227"
+           width="140"
+           height="50"
+           inkscape:label="Border-TOT" />
+        <rect
+           id="Border-DESC-1-8-1-33"
+           stroke="#707070"
+           stroke-width="1.97462"
+           x="147.9873"
+           y="226.9873"
+           width="756.02502"
+           height="50.025391"
+           inkscape:label="Border-DESC" />
+        <rect
+           id="Border-NUM-1-8-4-55"
+           stroke="#707070"
+           stroke-width="0.918444"
+           x="47.981674"
+           y="226.98169"
+           width="100.037"
+           height="50.036652"
+           inkscape:label="Border-NUM"
+           style="stroke-width:1.96335;stroke-dasharray:none" />
+        <text
+           id="FIELD:LL-1-2-2-32"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="34px"
+           font-weight="400"
+           fill="#181818"
+           x="827.82831"
+           inkscape:label="FIELD:LL"
+           y="-1.687505"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;display:inline"><tspan
+             x="1051.8281"
+             y="261.3125"
+             id="tspan111-8-2-7-4-3-82"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">[N1.10:CD]</tspan></text>
+        <text
+           id="FIELD:TOT-1-5-2-53"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="34px"
+           font-weight="400"
+           fill="#181818"
+           x="1022.3796"
+           inkscape:label="FIELD:TOT"
+           y="-1.2140038"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;display:inline"><tspan
+             x="973.98871"
+             y="261.78601"
+             id="tspan111-8-1-5-2-61"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle">[N1.10:TT]</tspan></text>
+        <text
+           id="FIELD:DESC-1-1-1-8"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="34px"
+           font-weight="400"
+           fill="#181818"
+           x="-68.171814"
+           inkscape:label="FIELD:DESC"
+           y="-1.6875107"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;display:inline"><tspan
+             x="155.82812"
+             y="261.3125"
+             id="tspan111-8-2-71-6-62"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">[N1.10:N]</tspan></text>
+        <text
+           id="FIELD:NUM-1-1-8-14"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="33.9977px"
+           font-weight="400"
+           fill="#181818"
+           x="141.03983"
+           inkscape:label="FIELD:NUM"
+           y="-1.6858611"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;display:inline;stroke-width:0.999932"
+           transform="scale(0.99993242,1.0000676)"><tspan
+             x="98.006622"
+             y="261.29642"
+             id="tspan111-5-5-62"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;stroke-width:0.999932">[N1.10:I]</tspan></text>
+      </g>
+      <g
+         id="g113-0-2"
+         inkscape:label="Row"
+         style="display:inline"
+         transform="translate(0,400.00001)">
+        <rect
+           id="Border-LL-1-9-7"
+           stroke="#707070"
+           stroke-width="2.02588"
+           x="1044.0129"
+           y="227.01294"
+           width="443.974"
+           height="49.974121"
+           inkscape:label="Border-LL" />
+        <rect
+           id="Border-TOT-1-4-6"
+           stroke="#707070"
+           stroke-width="2"
+           x="904"
+           y="227"
+           width="140"
+           height="50"
+           inkscape:label="Border-TOT" />
+        <rect
+           id="Border-DESC-1-8-1"
+           stroke="#707070"
+           stroke-width="1.97462"
+           x="147.9873"
+           y="226.9873"
+           width="756.02502"
+           height="50.025391"
+           inkscape:label="Border-DESC" />
+        <rect
+           id="Border-NUM-1-8-4"
+           stroke="#707070"
+           stroke-width="0.918444"
+           x="47.981674"
+           y="226.98169"
+           width="100.037"
+           height="50.036652"
+           inkscape:label="Border-NUM"
+           style="stroke-width:1.96335;stroke-dasharray:none" />
+        <text
+           id="FIELD:LL-1-2-2"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="34px"
+           font-weight="400"
+           fill="#181818"
+           x="827.82831"
+           inkscape:label="FIELD:LL"
+           y="-1.687505"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;display:inline"><tspan
+             x="1051.8281"
+             y="261.3125"
+             id="tspan111-8-2-7-4-3"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">[N1.9:CD]</tspan></text>
+        <text
+           id="FIELD:TOT-1-5-2"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="34px"
+           font-weight="400"
+           fill="#181818"
+           x="1022.3796"
+           inkscape:label="FIELD:TOT"
+           y="-1.2140038"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;display:inline"><tspan
+             x="973.98871"
+             y="261.78601"
+             id="tspan111-8-1-5-2"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle">[N1.9:TT]</tspan></text>
+        <text
+           id="FIELD:DESC-1-1-1"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="34px"
+           font-weight="400"
+           fill="#181818"
+           x="-68.171814"
+           inkscape:label="FIELD:DESC"
+           y="-1.6875107"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;display:inline"><tspan
+             x="155.82812"
+             y="261.3125"
+             id="tspan111-8-2-71-6"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">[N1.9:N]</tspan></text>
+        <text
+           id="FIELD:NUM-1-1-8"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="33.9977px"
+           font-weight="400"
+           fill="#181818"
+           x="141.03983"
+           inkscape:label="FIELD:NUM"
+           y="-1.6858611"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;display:inline;stroke-width:0.999932"
+           transform="scale(0.99993242,1.0000676)"><tspan
+             x="98.006622"
+             y="261.29642"
+             id="tspan111-5-5"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;stroke-width:0.999932">[N1.9:I]</tspan></text>
+      </g>
+      <g
+         id="g113-0-2-7"
+         inkscape:label="Row"
+         style="display:inline"
+         transform="translate(0,350.00001)">
+        <rect
+           id="Border-LL-1-9-7-6"
+           stroke="#707070"
+           stroke-width="2.02588"
+           x="1044.0129"
+           y="227.01294"
+           width="443.974"
+           height="49.974121"
+           inkscape:label="Border-LL" />
+        <rect
+           id="Border-TOT-1-4-6-1"
+           stroke="#707070"
+           stroke-width="2"
+           x="904"
+           y="227"
+           width="140"
+           height="50"
+           inkscape:label="Border-TOT" />
+        <rect
+           id="Border-DESC-1-8-1-8"
+           stroke="#707070"
+           stroke-width="1.97462"
+           x="147.9873"
+           y="226.9873"
+           width="756.02502"
+           height="50.025391"
+           inkscape:label="Border-DESC" />
+        <rect
+           id="Border-NUM-1-8-4-9"
+           stroke="#707070"
+           stroke-width="0.918444"
+           x="47.981674"
+           y="226.98169"
+           width="100.037"
+           height="50.036652"
+           inkscape:label="Border-NUM"
+           style="stroke-width:1.96335;stroke-dasharray:none" />
+        <text
+           id="FIELD:LL-1-2-2-2"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="34px"
+           font-weight="400"
+           fill="#181818"
+           x="827.82831"
+           inkscape:label="FIELD:LL"
+           y="-1.687505"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;display:inline"><tspan
+             x="1051.8281"
+             y="261.3125"
+             id="tspan111-8-2-7-4-3-7"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">[N1.8:CD]</tspan></text>
+        <text
+           id="FIELD:TOT-1-5-2-9"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="34px"
+           font-weight="400"
+           fill="#181818"
+           x="1022.3796"
+           inkscape:label="FIELD:TOT"
+           y="-1.2140038"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;display:inline"><tspan
+             x="973.98871"
+             y="261.78601"
+             id="tspan111-8-1-5-2-5"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle">[N1.8:TT]</tspan></text>
+        <text
+           id="FIELD:DESC-1-1-1-4"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="34px"
+           font-weight="400"
+           fill="#181818"
+           x="-68.171814"
+           inkscape:label="FIELD:DESC"
+           y="-1.6875107"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;display:inline"><tspan
+             x="155.82812"
+             y="261.3125"
+             id="tspan111-8-2-71-6-3"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">[N1.8:N]</tspan></text>
+        <text
+           id="FIELD:NUM-1-1-8-1"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="33.9977px"
+           font-weight="400"
+           fill="#181818"
+           x="141.03983"
+           inkscape:label="FIELD:NUM"
+           y="-1.6858611"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;display:inline;stroke-width:0.999932"
+           transform="scale(0.99993242,1.0000676)"><tspan
+             x="98.006622"
+             y="261.29642"
+             id="tspan111-5-5-2"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;stroke-width:0.999932">[N1.8:I]</tspan></text>
+      </g>
+      <g
+         id="g113-0-2-3"
+         inkscape:label="Row"
+         style="display:inline"
+         transform="translate(0,300.00001)">
+        <rect
+           id="Border-LL-1-9-7-3"
+           stroke="#707070"
+           stroke-width="2.02588"
+           x="1044.0129"
+           y="227.01294"
+           width="443.974"
+           height="49.974121"
+           inkscape:label="Border-LL" />
+        <rect
+           id="Border-TOT-1-4-6-4"
+           stroke="#707070"
+           stroke-width="2"
+           x="904"
+           y="227"
+           width="140"
+           height="50"
+           inkscape:label="Border-TOT" />
+        <rect
+           id="Border-DESC-1-8-1-1"
+           stroke="#707070"
+           stroke-width="1.97462"
+           x="147.9873"
+           y="226.9873"
+           width="756.02502"
+           height="50.025391"
+           inkscape:label="Border-DESC" />
+        <rect
+           id="Border-NUM-1-8-4-1"
+           stroke="#707070"
+           stroke-width="0.918444"
+           x="47.981674"
+           y="226.98169"
+           width="100.037"
+           height="50.036652"
+           inkscape:label="Border-NUM"
+           style="stroke-width:1.96335;stroke-dasharray:none" />
+        <text
+           id="FIELD:LL-1-2-2-3"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="34px"
+           font-weight="400"
+           fill="#181818"
+           x="827.82831"
+           inkscape:label="FIELD:LL"
+           y="-1.687505"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;display:inline"><tspan
+             x="1051.8281"
+             y="261.3125"
+             id="tspan111-8-2-7-4-3-8"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">[N1.7:CD]</tspan></text>
+        <text
+           id="FIELD:TOT-1-5-2-7"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="34px"
+           font-weight="400"
+           fill="#181818"
+           x="1022.3796"
+           inkscape:label="FIELD:TOT"
+           y="-1.2140038"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;display:inline"><tspan
+             x="973.98871"
+             y="261.78601"
+             id="tspan111-8-1-5-2-4"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle">[N1.7:TT]</tspan></text>
+        <text
+           id="FIELD:DESC-1-1-1-2"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="34px"
+           font-weight="400"
+           fill="#181818"
+           x="-68.171814"
+           inkscape:label="FIELD:DESC"
+           y="-1.6875107"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;display:inline"><tspan
+             x="155.82812"
+             y="261.3125"
+             id="tspan111-8-2-71-6-7"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">[N1.7:N]</tspan></text>
+        <text
+           id="FIELD:NUM-1-1-8-7"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="33.9977px"
+           font-weight="400"
+           fill="#181818"
+           x="141.03983"
+           inkscape:label="FIELD:NUM"
+           y="-1.6858611"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;display:inline;stroke-width:0.999932"
+           transform="scale(0.99993242,1.0000676)"><tspan
+             x="98.006622"
+             y="261.29642"
+             id="tspan111-5-5-9"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;stroke-width:0.999932">[N1.7:I]</tspan></text>
+      </g>
+      <g
+         id="g113-0-2-31"
+         inkscape:label="Row"
+         style="display:inline"
+         transform="translate(0,250.00001)">
+        <rect
+           id="Border-LL-1-9-7-9"
+           stroke="#707070"
+           stroke-width="2.02588"
+           x="1044.0129"
+           y="227.01294"
+           width="443.974"
+           height="49.974121"
+           inkscape:label="Border-LL" />
+        <rect
+           id="Border-TOT-1-4-6-8"
+           stroke="#707070"
+           stroke-width="2"
+           x="904"
+           y="227"
+           width="140"
+           height="50"
+           inkscape:label="Border-TOT" />
+        <rect
+           id="Border-DESC-1-8-1-6"
+           stroke="#707070"
+           stroke-width="1.97462"
+           x="147.9873"
+           y="226.9873"
+           width="756.02502"
+           height="50.025391"
+           inkscape:label="Border-DESC" />
+        <rect
+           id="Border-NUM-1-8-4-5"
+           stroke="#707070"
+           stroke-width="0.918444"
+           x="47.981674"
+           y="226.98169"
+           width="100.037"
+           height="50.036652"
+           inkscape:label="Border-NUM"
+           style="stroke-width:1.96335;stroke-dasharray:none" />
+        <text
+           id="FIELD:LL-1-2-2-0"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="34px"
+           font-weight="400"
+           fill="#181818"
+           x="827.82831"
+           inkscape:label="FIELD:LL"
+           y="-1.687505"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;display:inline"><tspan
+             x="1051.8281"
+             y="261.3125"
+             id="tspan111-8-2-7-4-3-2"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">[N1.6:CD]</tspan></text>
+        <text
+           id="FIELD:TOT-1-5-2-8"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="34px"
+           font-weight="400"
+           fill="#181818"
+           x="1022.3796"
+           inkscape:label="FIELD:TOT"
+           y="-1.2140038"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;display:inline"><tspan
+             x="973.98871"
+             y="261.78601"
+             id="tspan111-8-1-5-2-6"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle">[N1.6:TT]</tspan></text>
+        <text
+           id="FIELD:DESC-1-1-1-0"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="34px"
+           font-weight="400"
+           fill="#181818"
+           x="-68.171814"
+           inkscape:label="FIELD:DESC"
+           y="-1.6875107"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;display:inline"><tspan
+             x="155.82812"
+             y="261.3125"
+             id="tspan111-8-2-71-6-2"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">[N1.6:N]</tspan></text>
+        <text
+           id="FIELD:NUM-1-1-8-4"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="33.9977px"
+           font-weight="400"
+           fill="#181818"
+           x="141.03983"
+           inkscape:label="FIELD:NUM"
+           y="-1.6858611"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;display:inline;stroke-width:0.999932"
+           transform="scale(0.99993242,1.0000676)"><tspan
+             x="98.006622"
+             y="261.29642"
+             id="tspan111-5-5-8"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;stroke-width:0.999932">[N1.6:I]</tspan></text>
+      </g>
+      <g
+         id="g113-0-2-6"
+         inkscape:label="Row"
+         style="display:inline"
+         transform="translate(-0.0123291,200.00001)">
+        <rect
+           id="Border-LL-1-9-7-5"
+           stroke="#707070"
+           stroke-width="2.02588"
+           x="1044.0129"
+           y="227.01294"
+           width="443.974"
+           height="49.974121"
+           inkscape:label="Border-LL" />
+        <rect
+           id="Border-TOT-1-4-6-0"
+           stroke="#707070"
+           stroke-width="2"
+           x="904"
+           y="227"
+           width="140"
+           height="50"
+           inkscape:label="Border-TOT" />
+        <rect
+           id="Border-DESC-1-8-1-9"
+           stroke="#707070"
+           stroke-width="1.97462"
+           x="147.9873"
+           y="226.9873"
+           width="756.02502"
+           height="50.025391"
+           inkscape:label="Border-DESC" />
+        <rect
+           id="Border-NUM-1-8-4-0"
+           stroke="#707070"
+           stroke-width="0.918444"
+           x="47.981674"
+           y="226.98169"
+           width="100.037"
+           height="50.036652"
+           inkscape:label="Border-NUM"
+           style="stroke-width:1.96335;stroke-dasharray:none" />
+        <text
+           id="FIELD:LL-1-2-2-06"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="34px"
+           font-weight="400"
+           fill="#181818"
+           x="827.82831"
+           inkscape:label="FIELD:LL"
+           y="-1.687505"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;display:inline"><tspan
+             x="1051.8281"
+             y="261.3125"
+             id="tspan111-8-2-7-4-3-1"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">[N1.5:CD]</tspan></text>
+        <text
+           id="FIELD:TOT-1-5-2-3"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="34px"
+           font-weight="400"
+           fill="#181818"
+           x="1022.3796"
+           inkscape:label="FIELD:TOT"
+           y="-1.2140038"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;display:inline"><tspan
+             x="973.98871"
+             y="261.78601"
+             id="tspan111-8-1-5-2-8"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle">[N1.5:TT]</tspan></text>
+        <text
+           id="FIELD:DESC-1-1-1-9"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="34px"
+           font-weight="400"
+           fill="#181818"
+           x="-68.171814"
+           inkscape:label="FIELD:DESC"
+           y="-1.6875107"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;display:inline"><tspan
+             x="155.82812"
+             y="261.3125"
+             id="tspan111-8-2-71-6-34"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">[N1.5:N]</tspan></text>
+        <text
+           id="FIELD:NUM-1-1-8-46"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="33.9977px"
+           font-weight="400"
+           fill="#181818"
+           x="141.03983"
+           inkscape:label="FIELD:NUM"
+           y="-1.6858611"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;display:inline;stroke-width:0.999932"
+           transform="scale(0.99993242,1.0000676)"><tspan
+             x="98.006622"
+             y="261.29642"
+             id="tspan111-5-5-0"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;stroke-width:0.999932">[N1.5:I]</tspan></text>
+      </g>
+      <g
+         id="g113-0-2-66"
+         inkscape:label="Row"
+         style="display:inline"
+         transform="translate(0,150.00001)">
+        <rect
+           id="Border-LL-1-9-7-1"
+           stroke="#707070"
+           stroke-width="2.02588"
+           x="1044.0129"
+           y="227.01294"
+           width="443.974"
+           height="49.974121"
+           inkscape:label="Border-LL" />
+        <rect
+           id="Border-TOT-1-4-6-84"
+           stroke="#707070"
+           stroke-width="2"
+           x="904"
+           y="227"
+           width="140"
+           height="50"
+           inkscape:label="Border-TOT" />
+        <rect
+           id="Border-DESC-1-8-1-96"
+           stroke="#707070"
+           stroke-width="1.97462"
+           x="147.9873"
+           y="226.9873"
+           width="756.02502"
+           height="50.025391"
+           inkscape:label="Border-DESC" />
+        <rect
+           id="Border-NUM-1-8-4-3"
+           stroke="#707070"
+           stroke-width="0.918444"
+           x="47.981674"
+           y="226.98169"
+           width="100.037"
+           height="50.036652"
+           inkscape:label="Border-NUM"
+           style="stroke-width:1.96335;stroke-dasharray:none" />
+        <text
+           id="FIELD:LL-1-2-2-7"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="34px"
+           font-weight="400"
+           fill="#181818"
+           x="827.82831"
+           inkscape:label="FIELD:LL"
+           y="-1.687505"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;display:inline"><tspan
+             x="1051.8281"
+             y="261.3125"
+             id="tspan111-8-2-7-4-3-88"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">[N1.4:CD]</tspan></text>
+        <text
+           id="FIELD:TOT-1-5-2-2"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="34px"
+           font-weight="400"
+           fill="#181818"
+           x="1022.3796"
+           inkscape:label="FIELD:TOT"
+           y="-1.2140038"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;display:inline"><tspan
+             x="973.98871"
+             y="261.78601"
+             id="tspan111-8-1-5-2-9"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle">[N1.4:TT]</tspan></text>
+        <text
+           id="FIELD:DESC-1-1-1-1"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="34px"
+           font-weight="400"
+           fill="#181818"
+           x="-68.171814"
+           inkscape:label="FIELD:DESC"
+           y="-1.6875107"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;display:inline"><tspan
+             x="155.82812"
+             y="261.3125"
+             id="tspan111-8-2-71-6-35"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">[N1.4:N]</tspan></text>
+        <text
+           id="FIELD:NUM-1-1-8-9"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="33.9977px"
+           font-weight="400"
+           fill="#181818"
+           x="141.03983"
+           inkscape:label="FIELD:NUM"
+           y="-1.6858611"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;display:inline;stroke-width:0.999932"
+           transform="scale(0.99993242,1.0000676)"><tspan
+             x="98.006622"
+             y="261.29642"
+             id="tspan111-5-5-84"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;stroke-width:0.999932">[N1.4:I]</tspan></text>
+      </g>
+      <g
+         id="g113-0-2-0"
+         inkscape:label="Row"
+         style="display:inline"
+         transform="translate(0,100.00001)">
+        <rect
+           id="Border-LL-1-9-7-7"
+           stroke="#707070"
+           stroke-width="2.02588"
+           x="1044.0129"
+           y="227.01294"
+           width="443.974"
+           height="49.974121"
+           inkscape:label="Border-LL" />
+        <rect
+           id="Border-TOT-1-4-6-6"
+           stroke="#707070"
+           stroke-width="2"
+           x="904"
+           y="227"
+           width="140"
+           height="50"
+           inkscape:label="Border-TOT" />
+        <rect
+           id="Border-DESC-1-8-1-3"
+           stroke="#707070"
+           stroke-width="1.97462"
+           x="147.9873"
+           y="226.9873"
+           width="756.02502"
+           height="50.025391"
+           inkscape:label="Border-DESC" />
+        <rect
+           id="Border-NUM-1-8-4-6"
+           stroke="#707070"
+           stroke-width="0.918444"
+           x="47.981674"
+           y="226.98169"
+           width="100.037"
+           height="50.036652"
+           inkscape:label="Border-NUM"
+           style="stroke-width:1.96335;stroke-dasharray:none" />
+        <text
+           id="FIELD:LL-1-2-2-1"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="34px"
+           font-weight="400"
+           fill="#181818"
+           x="827.82831"
+           inkscape:label="FIELD:LL"
+           y="-1.687505"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;display:inline"><tspan
+             x="1051.8281"
+             y="261.3125"
+             id="tspan111-8-2-7-4-3-5"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">[N1.3:CD]</tspan></text>
+        <text
+           id="FIELD:TOT-1-5-2-4"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="34px"
+           font-weight="400"
+           fill="#181818"
+           x="1022.3796"
+           inkscape:label="FIELD:TOT"
+           y="-1.2140038"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;display:inline"><tspan
+             x="973.98871"
+             y="261.78601"
+             id="tspan111-8-1-5-2-2"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle">[N1.3:TT]</tspan></text>
+        <text
+           id="FIELD:DESC-1-1-1-09"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="34px"
+           font-weight="400"
+           fill="#181818"
+           x="-68.171814"
+           inkscape:label="FIELD:DESC"
+           y="-1.6875107"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;display:inline"><tspan
+             x="155.82812"
+             y="261.3125"
+             id="tspan111-8-2-71-6-73"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">[N1.3:N]</tspan></text>
+        <text
+           id="FIELD:NUM-1-1-8-72"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="33.9977px"
+           font-weight="400"
+           fill="#181818"
+           x="141.03983"
+           inkscape:label="FIELD:NUM"
+           y="-1.6858611"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;display:inline;stroke-width:0.999932"
+           transform="scale(0.99993242,1.0000676)"><tspan
+             x="98.006622"
+             y="261.29642"
+             id="tspan111-5-5-6"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;stroke-width:0.999932">[N1.3:I]</tspan></text>
+      </g>
+      <g
+         id="g113-0"
+         inkscape:label="Row"
+         style="display:inline"
+         transform="translate(0,50.000005)">
+        <rect
+           id="Border-LL-1-9"
+           stroke="#707070"
+           stroke-width="2.02588"
+           x="1044.0129"
+           y="227.01294"
+           width="443.974"
+           height="49.974121"
+           inkscape:label="Border-LL" />
+        <rect
+           id="Border-TOT-1-4"
+           stroke="#707070"
+           stroke-width="2"
+           x="904"
+           y="227"
+           width="140"
+           height="50"
+           inkscape:label="Border-TOT" />
+        <rect
+           id="Border-DESC-1-8"
+           stroke="#707070"
+           stroke-width="1.97462"
+           x="147.9873"
+           y="226.9873"
+           width="756.02502"
+           height="50.025391"
+           inkscape:label="Border-DESC" />
+        <rect
+           id="Border-NUM-1-8"
+           stroke="#707070"
+           stroke-width="0.918444"
+           x="47.981674"
+           y="226.98169"
+           width="100.037"
+           height="50.036652"
+           inkscape:label="Border-NUM"
+           style="stroke-width:1.96335;stroke-dasharray:none" />
+        <text
+           id="FIELD:LL-1-2"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="34px"
+           font-weight="400"
+           fill="#181818"
+           x="827.82831"
+           inkscape:label="FIELD:LL"
+           y="-1.687505"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;display:inline"><tspan
+             x="1051.8281"
+             y="261.3125"
+             id="tspan111-8-2-7-4"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">[N1.2:CD]</tspan></text>
+        <text
+           id="FIELD:TOT-1-5"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="34px"
+           font-weight="400"
+           fill="#181818"
+           x="1022.3796"
+           inkscape:label="FIELD:TOT"
+           y="-1.2140038"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;display:inline"><tspan
+             x="973.98871"
+             y="261.78601"
+             id="tspan111-8-1-5"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle">[N1.2:TT]</tspan></text>
+        <text
+           id="FIELD:DESC-1-1"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="34px"
+           font-weight="400"
+           fill="#181818"
+           x="-68.171814"
+           inkscape:label="FIELD:DESC"
+           y="-1.6875107"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;display:inline"><tspan
+             x="155.82812"
+             y="261.3125"
+             id="tspan111-8-2-71"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">[N1.2:N]</tspan></text>
+        <text
+           id="FIELD:NUM-1-1"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="33.9977px"
+           font-weight="400"
+           fill="#181818"
+           x="141.03983"
+           inkscape:label="FIELD:NUM"
+           y="-1.6858611"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;display:inline;stroke-width:0.999932"
+           transform="scale(0.99993242,1.0000676)"><tspan
+             x="98.006622"
+             y="261.29642"
+             id="tspan111-5"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;stroke-width:0.999932">[N1.2:I]</tspan></text>
+      </g>
+      <g
+         id="g113"
+         inkscape:label="Row"
+         style="display:inline">
+        <rect
+           id="Border-LL-1"
+           stroke="#707070"
+           stroke-width="2.02588"
+           x="1044.0129"
+           y="227.01294"
+           width="443.974"
+           height="49.974121"
+           inkscape:label="Border-LL" />
+        <rect
+           id="Border-TOT-1"
+           stroke="#707070"
+           stroke-width="2"
+           x="904"
+           y="227"
+           width="140"
+           height="50"
+           inkscape:label="Border-TOT" />
+        <rect
+           id="Border-DESC-1"
+           stroke="#707070"
+           stroke-width="1.97462"
+           x="147.9873"
+           y="226.9873"
+           width="756.02502"
+           height="50.025391"
+           inkscape:label="Border-DESC" />
+        <rect
+           id="Border-NUM-1"
+           stroke="#707070"
+           stroke-width="0.918444"
+           x="47.981674"
+           y="226.98169"
+           width="100.037"
+           height="50.036652"
+           inkscape:label="Border-NUM"
+           style="stroke-width:1.96335;stroke-dasharray:none" />
+        <text
+           id="FIELD:LL-1"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="34px"
+           font-weight="400"
+           fill="#181818"
+           x="827.82831"
+           inkscape:label="FIELD:LL"
+           y="-1.687505"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;display:inline"><tspan
+             x="1051.8281"
+             y="261.3125"
+             id="tspan111-8-2-7"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">[N1.1:CD]</tspan></text>
+        <text
+           id="FIELD:TOT-1"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="34px"
+           font-weight="400"
+           fill="#181818"
+           x="1022.3796"
+           inkscape:label="FIELD:TOT"
+           y="-1.2140038"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;display:inline"><tspan
+             x="973.98871"
+             y="261.78601"
+             id="tspan111-8-1"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle">[N1.1:TT]</tspan></text>
+        <text
+           id="FIELD:DESC-1"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="34px"
+           font-weight="400"
+           fill="#181818"
+           x="-68.171814"
+           inkscape:label="FIELD:DESC"
+           y="-1.6875107"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;display:inline"><tspan
+             x="155.82812"
+             y="261.3125"
+             id="tspan111-8-2"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">[N1.1:N]</tspan></text>
+        <text
+           id="FIELD:NUM-1"
+           font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+           font-size="33.9977px"
+           font-weight="400"
+           fill="#181818"
+           x="141.03983"
+           inkscape:label="FIELD:NUM"
+           y="-1.6858611"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;display:inline;stroke-width:0.999932"
+           transform="scale(0.99993242,1.0000676)"><tspan
+             x="98.006622"
+             y="261.29642"
+             id="tspan111"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;stroke-width:0.999932">[N1.1:I]</tspan></text>
+      </g>
+    </g>
+    <g
+       id="Mission-Data"
+       transform="translate(48,178)"
+       inkscape:label="NAV 1">
+      <rect
+         id="Mission-Data-Border"
+         stroke="#707070"
+         stroke-width="2"
+         fill="#707070"
+         x="0"
+         y="0"
+         width="1440"
+         height="78" />
+      <text
+         font-family="HelveticaNeue-Bold, 'Helvetica Neue'"
+         font-size="36px"
+         font-weight="bold"
+         fill="#e0e0e0"
+         id="text90-7-3-3-1"
+         x="753.35168"
+         y="32.179661"
+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:24px;font-family:Arial;-inkscape-font-specification:'Arial, Italic';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;fill:#e0e0e0"
+         inkscape:label="LL"><tspan
+           x="1217.1035"
+           y="69.179688"
+           id="tspan90-5-4-2-1"
+           style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:24px;font-family:Arial;-inkscape-font-specification:'Arial, Italic';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle">LAT / LON</tspan></text>
+      <text
+         font-family="HelveticaNeue-Bold, 'Helvetica Neue'"
+         font-size="36px"
+         font-weight="bold"
+         fill="#e0e0e0"
+         id="text90-7-3-32"
+         x="460.80859"
+         y="32.179691"
+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:24px;font-family:Arial;-inkscape-font-specification:'Arial, Italic';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;fill:#e0e0e0"
+         inkscape:label="TOT"><tspan
+           x="924.56055"
+           y="69.179688"
+           id="tspan90-5-4-5"
+           style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:24px;font-family:Arial;-inkscape-font-specification:'Arial, Italic';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle">TOT</tspan></text>
+      <text
+         font-family="HelveticaNeue-Bold, 'Helvetica Neue'"
+         font-size="36px"
+         font-weight="bold"
+         fill="#e0e0e0"
+         id="text90-7-3-3"
+         x="14.001989"
+         y="32.179676"
+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:24px;font-family:Arial;-inkscape-font-specification:'Arial, Italic';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;fill:#e0e0e0"
+         inkscape:label="Desc"><tspan
+           x="477.75391"
+           y="69.179688"
+           id="tspan90-5-4-2"
+           style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:24px;font-family:Arial;-inkscape-font-specification:'Arial, Italic';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle">Name / Description</tspan></text>
+      <text
+         font-family="HelveticaNeue-Bold, 'Helvetica Neue'"
+         font-size="36px"
+         font-weight="bold"
+         fill="#e0e0e0"
+         id="text90-7"
+         x="-413.28842"
+         y="32.472649"
+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:24px;font-family:Arial;-inkscape-font-specification:'Arial, Italic';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle;fill:#e0e0e0"
+         inkscape:label="Num"><tspan
+           x="50.463551"
+           y="69.472656"
+           id="tspan90-5"
+           style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:24px;font-family:Arial;-inkscape-font-specification:'Arial, Italic';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle">#</tspan></text>
+      <text
+         font-family="HelveticaNeue-Bold, 'Helvetica Neue'"
+         font-size="36px"
+         font-weight="bold"
+         fill="#e0e0e0"
+         id="text90"
+         x="256.75198"
+         y="-0.79101509"
+         style="font-weight:bold;font-size:36px;font-family:HelveticaNeue-Bold, 'Helvetica Neue';text-align:center;text-anchor:middle;fill:#e0e0e0"
+         inkscape:label="Header"><tspan
+           x="720.50397"
+           y="36.208984"
+           id="tspan90"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:36px;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:center;text-anchor:middle">NAVIGATION – [N1.0:D]</tspan></text>
+    </g>
+    <text
+       id="FIELD:Footer"
+       font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+       font-size="21px"
+       font-weight="400"
+       fill="#e0e0e0"
+       x="481.87805"
+       y="-0.70092976"
+       style="font-weight:400;font-size:21px;font-family:HelveticaNeue-Medium, 'Helvetica Neue';text-align:end;text-anchor:end;fill:#e0e0e0"
+       inkscape:label="FIELD:Footer"><tspan
+         x="1488.61"
+         y="2022.2988"
+         id="tspan112"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:21px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:end;text-anchor:end">[FOOTER]</tspan></text>
+    <text
+       id="FIELD:Theater"
+       font-family="HelveticaNeue-Medium, 'Helvetica Neue'"
+       font-size="21px"
+       font-weight="400"
+       fill="#e0e0e0"
+       x="-1052.3419"
+       y="-0.96748924"
+       style="font-weight:400;font-size:21px;font-family:HelveticaNeue-Medium, 'Helvetica Neue';text-align:start;text-anchor:start;fill:#e0e0e0"
+       inkscape:label="FIELD:Theater"><tspan
+         x="45.487999"
+         y="2022.0322"
+         id="tspan112-9"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:21px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:start;text-anchor:start">[THEATER]</tspan></text>
+    <text
+       id="FIELD:Header"
+       font-family="HelveticaNeue-Bold, 'Helvetica Neue'"
+       font-size="72px"
+       font-weight="bold"
+       fill="#e0e0e0"
+       style="font-weight:bold;font-size:72px;font-family:HelveticaNeue-Bold, 'Helvetica Neue';fill:#e0e0e0"
+       inkscape:label="FIELD:Header"><tspan
+         x="48"
+         y="111"
+         id="tspan113"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:72px;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">[F1.0:NS] [NAME] NAV Card</tspan></text>
+    <rect
+       id="NIGHT_TINT"
+       fill-opacity="0.4"
+       fill="#31510e"
+       x="0"
+       y="0"
+       width="1536"
+       height="2048"
+       style="display:inline"
+       inkscape:label="NIGHT_TINT" />
+  </g>
+  <metadata
+     id="metadata113">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:title>KBT_Flight_Card</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+</svg>
