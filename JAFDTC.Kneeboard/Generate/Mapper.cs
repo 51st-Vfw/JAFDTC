@@ -121,12 +121,13 @@ namespace JAFDTC.Kneeboard.Generate
                     continue;
 
                 var radioPrefix = ToKey(Keys.RADIO_PREFIX, radio.RadioId, false);
-                foreach(var preset in radio.Presets)
+                for (int i = 1; i <= radio.Presets.Count; i++)
                 {
-                    _data.Add(ToKey(radioPrefix, Keys.RADIO_PRESET_NUM, preset.PresetId, false), preset.PresetId.ToString());
-                    _data.Add(ToKey(radioPrefix, Keys.RADIO_PRESET_FREQ, preset.PresetId, false), preset.Frequency); //.ToString("{d:#.##}")
-                    _data.Add(ToKey(radioPrefix, Keys.RADIO_PRESET_DESC, preset.PresetId, false), Clean(preset.Description, ""));
-                    _data.Add(ToKey(radioPrefix, Keys.RADIO_PRESET_MOD, preset.PresetId, false), Clean(preset.Modulation, ""));
+                    var preset = radio.Presets[i - 1];
+                    _data.Add(ToKey(radioPrefix, Keys.RADIO_PRESET_NUM, i, false), preset.PresetId.ToString());
+                    _data.Add(ToKey(radioPrefix, Keys.RADIO_PRESET_FREQ, i, false), preset.Frequency); //.ToString("{d:#.##}")
+                    _data.Add(ToKey(radioPrefix, Keys.RADIO_PRESET_DESC, i, false), Clean(preset.Description, ""));
+                    _data.Add(ToKey(radioPrefix, Keys.RADIO_PRESET_MOD, i, false), Clean(preset.Modulation, ""));
                 }
             }
         }
@@ -145,15 +146,16 @@ namespace JAFDTC.Kneeboard.Generate
                     continue;
 
                 var routePrefix = ToKey(Keys.ROUTE_PREFIX, route.RouteId, false);
-                foreach (var navpoint in route.NavPoints)
+                for (int i = 1; i <= route.NavPoints.Count; i++)
                 {
-                    _data.Add(ToKey(routePrefix, Keys.NAV_NUM, navpoint.NavpointId, false), navpoint.NavpointId.ToString());
-                    _data.Add(ToKey(routePrefix, Keys.NAV_ALT, navpoint.NavpointId, false), navpoint.Location.Altitude);
-                    _data.Add(ToKey(routePrefix, Keys.NAV_TOS, navpoint.NavpointId, false), Clean(navpoint.TOS, ""));
-                    _data.Add(ToKey(routePrefix, Keys.NAV_TOT, navpoint.NavpointId, false), Clean(navpoint.TOT, ""));
-                    _data.Add(ToKey(routePrefix, Keys.NAV_SPEED, navpoint.NavpointId, false), Clean(navpoint.Speed?.ToString(), ""));
+                    var navpoint = route.NavPoints[i - 1];
+                    _data.Add(ToKey(routePrefix, Keys.NAV_NUM, i, false), navpoint.NavpointId.ToString());
+                    _data.Add(ToKey(routePrefix, Keys.NAV_ALT, i, false), navpoint.Location.Altitude);
+                    _data.Add(ToKey(routePrefix, Keys.NAV_TOS, i, false), Clean(navpoint.TOS, ""));
+                    _data.Add(ToKey(routePrefix, Keys.NAV_TOT, i, false), Clean(navpoint.TOT, ""));
+                    _data.Add(ToKey(routePrefix, Keys.NAV_SPEED, i, false), Clean(navpoint.Speed?.ToString(), ""));
 
-                    _data.Add(ToKey(routePrefix, Keys.NAV_COORD, navpoint.NavpointId, false), $"{navpoint.Location.Latitude} / {navpoint.Location.Longitude}");
+                    _data.Add(ToKey(routePrefix, Keys.NAV_COORD, i, false), $"{navpoint.Location.Latitude}  {navpoint.Location.Longitude}");
                     //_data.Add(ToKey(routePrefix, Keys.NAV_COORD, np), "normal".ToDisplay(nav.Location.Latitude, nav.Location.Longitude));
                     //_data.Add(ToKey(routePrefix, Keys.NAV_MGRS, np), 10.ToMGRS(nav.Latitude, nav.Longitude));
 
