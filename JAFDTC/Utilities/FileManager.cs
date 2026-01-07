@@ -736,7 +736,9 @@ namespace JAFDTC.Utilities
                 using ZipArchive archive = ZipFile.Open(srcPath, ZipArchiveMode.Read);
                 foreach (ZipArchiveEntry entry in archive.Entries)
                     if (entry.FullName.EndsWith(".svg", StringComparison.OrdinalIgnoreCase) &&
-                        ((extract == null) || (extract.Contains(Path.GetFileNameWithoutExtension(entry.Name)))))
+                        ((extract == null) ||
+                         (extract.Count == 0) ||
+                         (extract.Contains(Path.GetFileNameWithoutExtension(entry.Name)))))
                     {
                         // ignore the path (FullName), everything in the package should be flat.
                         //
