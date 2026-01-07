@@ -58,7 +58,7 @@ namespace JAFDTC.Models.F16C.Upload
 
             AddExecFunction("NOP", [ "==== CMDSBuilder:Build()" ]);
 
-            if (_cfg.IsMergedToDTC(CMDSSystem.SystemTag))
+            if (_cfg.DTE.MergedSystemTags.Contains(CMDSSystem.SystemTag))
                 return;
 
             AirframeDevice ufc = _aircraft.GetDevice("UFC");

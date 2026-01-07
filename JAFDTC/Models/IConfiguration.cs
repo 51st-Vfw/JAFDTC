@@ -106,11 +106,6 @@ namespace JAFDTC.Models
         public List<string> MergeableSysTags { get; }
 
         /// <summary>
-        /// returns a list of tags (kneeboard names) for use when merging kneeboards.
-        /// </summary>
-        public List<string> MergeTagsKneeboard { get; }
-
-        /// <summary>
         /// provides an instance of an upload agent object that implements IUploadAgent. this object handles creating
         /// a command set that will set up the jet (according to the configuration) and uploading it to the jet.
         /// </summary>
@@ -210,11 +205,6 @@ namespace JAFDTC.Models
         public bool IsDefault(string systemTag);
 
         /// <summary>
-        /// returns true if the system with specified tag is merged into dcs dtc configuration, false otherwise.
-        /// </summary>
-        public bool IsMergedToDTC(string systemTag);
-
-        /// <summary>
         /// update a system in this configuration to match the system in a target configuration. this method creates
         /// a deep copy of the system.
         /// </summary>
@@ -259,7 +249,7 @@ namespace JAFDTC.Models
         /// this should do nothing (and indicate success) if the dte configuration is default or dte is not
         /// supported. returns true on success, false on error.
         /// 
-        /// this method typically uses the protected ConfigurationBase:SaveMergedSimDTC() method.
+        /// this method typically invokes the protected ConfigurationBase:SaveMergedSimDTC(...) method.
         /// </summary>
         public bool SaveMergedSimDTC();
 
@@ -268,7 +258,7 @@ namespace JAFDTC.Models
         /// should do nothing (and indicate success) if the kneeboard configuration is default or kneeboards are
         /// not supported. returns true on success, false on error.
         /// 
-        /// this method typically uses the protected ConfigurationBase:SaveMergedboards() method.
+        /// this method typically invokes the protected ConfigurationBase:SaveMergedboards(...) method.
         /// </summary>
         public bool SaveMergedKboards();
 

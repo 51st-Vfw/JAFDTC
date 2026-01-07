@@ -100,8 +100,6 @@ namespace JAFDTC.Models.F16C
             CMDSSystem.SystemTag
         ];
 
-        public override List<string> MergeTagsKneeboard => [.. Kboard.KneeboardTags ];
-
         [JsonIgnore]
         public override IUploadAgent UploadAgent => new F16CUploadAgent(this);
 
@@ -302,8 +300,6 @@ namespace JAFDTC.Models.F16C
             };
         }
 
-        public override bool IsMergedToDTC(string systemTag) => DTE.MergedSystemTags.Contains(systemTag);
-
         public override void ConfigurationUpdated()
         {
             F16CConfigurationEditor editor = new(this);
@@ -361,12 +357,9 @@ namespace JAFDTC.Models.F16C
             ConfigurationUpdated();
         }
 
-        public override bool SaveMergedSimDTC()
-            => (DTE.IsDefault) || SaveMergedSimDTC(DTE.Template, DTE.OutputPath);
+        public override bool SaveMergedSimDTC() => (DTE.IsDefault) || SaveMergedSimDTC(DTE);
 
-        public override bool SaveMergedKboards()
-            => (Kboard.IsDefault) || SaveMergedKboards(Kboard.Template, Kboard.OutputPath,
-                                                       Kboard.EnableNightValue, Kboard.EnableSVGValue);
+        public override bool SaveMergedKboards() => (Kboard.IsDefault) || SaveMergedKboards(Kboard);
 
         public override void AfterSystemEditorCompletes(string systemTag)
         {

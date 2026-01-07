@@ -50,7 +50,7 @@ namespace JAFDTC.Models.FA18C.Upload
 
             AddExecFunction("NOP", [ "==== CMSBuilder:Build()" ]);
 
-            if (_cfg.IsMergedToDTC(CMSSystem.SystemTag))
+            if (_cfg.MUMI.MergedSystemTags.Contains(CMSSystem.SystemTag))
                 return;
 
             AirframeDevice lddi = _aircraft.GetDevice("LDDI");

@@ -22,6 +22,7 @@ using JAFDTC.Kneeboard.Generate;
 using JAFDTC.Kneeboard.Models;
 using JAFDTC.Models.A10C;
 using JAFDTC.Models.AV8B;
+using JAFDTC.Models.Base;
 using JAFDTC.Models.Core;
 using JAFDTC.Models.CoreApp;
 using JAFDTC.Models.F14AB;
@@ -43,6 +44,7 @@ using System.Text.Json.Serialization;
 using System.Threading;
 
 using static JAFDTC.Models.IConfiguration;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace JAFDTC.Models
 {
@@ -186,9 +188,6 @@ namespace JAFDTC.Models
         public virtual List<string> MergeableSysTags => [ ];
 
         [JsonIgnore]
-        public virtual List<string> MergeTagsKneeboard => [ ];
-
-        [JsonIgnore]
         public virtual IUploadAgent UploadAgent { get; }
 
         // ---- properties, private
@@ -242,12 +241,12 @@ namespace JAFDTC.Models
         /// merge configuration into the dcs dtc json "data" object and return the updated object. this method may
         /// update the object in-place.
         /// </summary>
-        protected virtual JsonNode MergeConfigToSimDTC(JsonNode dataRoot)
+        protected virtual JsonNode MergeConfigToSimDTC(JsonNode dataRoot, CoreSimDTCSystem dtcSys)
         {
             foreach (string tag in MergeableSysTags)
             {
                 ISystem system = SystemForTag(tag);
-                if (IsMergedToDTC(tag) && !system.IsDefault)
+                if (dtcSys.MergedSystemTags.Contains(tag) && !system.IsDefault)
                     dataRoot = system.MergeIntoSimDTC(dataRoot);
             }
             return dataRoot;
@@ -279,27 +278,27 @@ namespace JAFDTC.Models
         /// merging the configuration of mergable systems into the base template. returns true on success, false on
         /// failure.
         /// </summary>
-        protected bool SaveMergedSimDTC(string template, string outputPath)
+        protected bool SaveMergedSimDTC(CoreSimDTCSystem dtcSys)
         {
-            if (!string.IsNullOrEmpty(outputPath))
+            if (!string.IsNullOrEmpty(dtcSys.OutputPath))
             {
                 try
                 {
-                    string name = Path.GetFileNameWithoutExtension(outputPath);
-                    string json = FileManager.LoadDTCTemplate(Airframe, template)
-                        ?? throw new Exception($"Cannot load DTC template {template}");
+                    string name = Path.GetFileNameWithoutExtension(dtcSys.OutputPath);
+                    string json = FileManager.LoadDTCTemplate(Airframe, dtcSys.Template)
+                        ?? throw new Exception($"Cannot load DTC template {dtcSys.Template}");
                     JsonNode dom = JsonNode.Parse(json)
-                        ?? throw new Exception($"Cannot parse DTC template {template}");
+                        ?? throw new Exception($"Cannot parse DTC template {dtcSys.Template}");
 
                     dom["name"] = name;
-                    dom["data"] = MergeConfigToSimDTC(dom["data"]);
+                    dom["data"] = MergeConfigToSimDTC(dom["data"], dtcSys);
                     dom["data"]["name"] = name;
 
                     json = dom.ToJsonString(Globals.JSONOptions)
                         ?? throw new Exception($"Cannot create DTC file");
-                    FileManager.WriteFile(outputPath, json);
+                    FileManager.WriteFile(dtcSys.OutputPath, json);
 
-                    FileManager.Log($"Successfully merged \"{Name}\" into {outputPath}");
+                    FileManager.Log($"Successfully merged \"{Name}\" into {dtcSys.OutputPath}");
                 }
                 catch (Exception ex)
                 {
@@ -314,9 +313,9 @@ namespace JAFDTC.Models
         /// merge data from the configuration into kneeboard template(s) to build a set of kneeboards at the output
         /// path. returns true on success, false on failure.
         /// </summary>
-        protected bool SaveMergedKboards(string template, string outputPath, bool isNight, bool isSVG)
+        protected bool SaveMergedKboards(CoreKboardSystem kbSys)
         {
-            if (!string.IsNullOrEmpty(outputPath))
+            if (!string.IsNullOrEmpty(kbSys.OutputPath))
             {
                 try
                 {
@@ -351,7 +350,8 @@ namespace JAFDTC.Models
                     // unpack the template .zip capturing the .svg files in a temp directory we can point the
                     // builder at below. only build the kneeboards the user is asking to generate.
                     //
-                    List<string> paths = FileManager.ExtractKBTemplatePackage(Airframe, template, MergeTagsKneeboard);
+                    List<string> paths = FileManager.ExtractKBTemplatePackage(Airframe, kbSys.Template,
+                                                                              [.. kbSys.KneeboardTags ]);
                     if (paths.Count == 0)
                         throw new Exception("LoadKboardTemplate returns no templates");
 
@@ -362,10 +362,10 @@ namespace JAFDTC.Models
                     GenerateCriteria criteria = new()
                     {
                         PathTemplates = Path.GetDirectoryName(paths[0]),
-                        PathOutput = outputPath,
+                        PathOutput = kbSys.OutputPath,
                         Mission = mission,
-                        IsNightMode = isNight,
-                        IsSVGMode = isSVG
+                        IsNightMode = kbSys.EnableNightValue,
+                        IsSVGMode = kbSys.EnableSVGValue
                     };
                     IReadOnlyList<string> kbPaths = builder.GenerateKneeboards(criteria);
                     foreach (string path in kbPaths)
@@ -431,10 +431,6 @@ namespace JAFDTC.Models
             ISystem system = SystemForTag(systemTag);
             return system == null || system.IsDefault;
         }
-
-        public virtual bool IsMergedToDTC(string systemTag) => false;
-
-        public virtual bool IsMergedToKboards(string systemTag) => false;
 
         public void LinkSystemTo(string systemTag, IConfiguration linkedConfig)
         {

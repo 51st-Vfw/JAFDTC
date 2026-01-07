@@ -66,7 +66,7 @@ namespace JAFDTC.Models.FA18C.Upload
 
             AirframeDevice ufc = _aircraft.GetDevice("UFC");
 
-            if (!_cfg.IsMergedToDTC(RadioSystem.SystemTag))
+            if (!_cfg.MUMI.MergedSystemTags.Contains(RadioSystem.SystemTag))
             {
                 BuildRadio(ufc, 1, _cfg.Radio.Presets[(int)Radio.Radios.COMM1], _cfg.Radio.COMM1DefaultTuning);
                 BuildRadio(ufc, 2, _cfg.Radio.Presets[(int)Radio.Radios.COMM2], _cfg.Radio.COMM2DefaultTuning);

@@ -137,8 +137,6 @@ namespace JAFDTC.Models.FA18C
             };
         }
 
-        public override bool IsMergedToDTC(string systemTag) => MUMI.MergedSystemTags.Contains(systemTag);
-
         public override void ConfigurationUpdated()
         {
             FA18CConfigurationEditor editor = new(this);

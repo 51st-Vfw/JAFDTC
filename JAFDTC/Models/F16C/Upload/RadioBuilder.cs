@@ -73,7 +73,7 @@ namespace JAFDTC.Models.F16C.Upload
             if (isGuardMonitor)
                 AddAction(ufc, "SEQ");
 
-            if (!_cfg.IsMergedToDTC(RadioSystem.SystemTag))
+            if (!_cfg.DTE.MergedSystemTags.Contains(RadioSystem.SystemTag))
             {
                 AddActions(ufc, [ "DOWN", "DOWN" ]);
 
