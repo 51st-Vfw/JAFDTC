@@ -51,12 +51,12 @@ namespace JAFDTC.UI.Base
         /// update the edit state for dtc from the configuration. the update will perform a deep copy of the
         /// data from the configuration.
         /// </summary>
-        public void CopyConfigToEdit(IConfiguration config, SimDTCSystem editDTC);
+        public void CopyConfigToEdit(IConfiguration config, CoreSimDTCSystem editDTC);
 
         /// <summary>
         /// update the configuration dtc from the edit state. the update will perform a deep copy of the
         /// data from the configuration.
         /// </summary>
-        public void CopyEditToConfig(SimDTCSystem editDTC, IConfiguration config);
+        public void CopyEditToConfig(CoreSimDTCSystem editDTC, IConfiguration config);
     }
 }

@@ -28,7 +28,9 @@ namespace JAFDTC.Models.Base
 {
     /// <summary>
     /// class to capture the settings of the kneeboard generation "system". this serves as a helper to build
-    /// kneeboards from system setups. this system is airframe-agnostic
+    /// kneeboards from system setups.
+    /// 
+    /// this system is airframe-agnostic and should not be subclassed.
     /// </summary>
     public partial class CoreKboardSystem : SystemBase
     {

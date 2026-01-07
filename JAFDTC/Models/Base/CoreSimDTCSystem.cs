@@ -1,6 +1,6 @@
 ﻿// ********************************************************************************************************************
 //
-// SimDTCSystem.cs : simulator dtc system
+// CoreSimDTCSystem.cs : simulator dtc system
 //
 // Copyright(C) 2025 ilominar/raven
 //
@@ -28,9 +28,11 @@ namespace JAFDTC.Models.Base
 {
     /// <summary>
     /// class to capture the settings of the DTC "system". this serves as a helper to integrate JAFDTC system settings
-    /// with settings from the built-in DTC in DCS. this system is airframe-agnostic
+    /// with settings from the built-in DTC in DCS.
+    /// 
+    /// this system is airframe-agnostic and should not be subclassed.
     /// </summary>
-    public partial class SimDTCSystem : SystemBase
+    public partial class CoreSimDTCSystem : SystemBase
     {
         public const string SystemTag = "JAFDTC:Generic:DTC";
 
@@ -96,7 +98,7 @@ namespace JAFDTC.Models.Base
         //
         // ------------------------------------------------------------------------------------------------------------
 
-        public SimDTCSystem()
+        public CoreSimDTCSystem()
         {
             Template = "";
             OutputPath = "";
@@ -105,7 +107,7 @@ namespace JAFDTC.Models.Base
             MergedSystemTags = [ ];
         }
 
-        public SimDTCSystem(SimDTCSystem other)
+        public CoreSimDTCSystem(CoreSimDTCSystem other)
         {
             Template = new(other.Template);
             OutputPath = new(other.OutputPath);
@@ -114,7 +116,7 @@ namespace JAFDTC.Models.Base
             MergedSystemTags = [ ];
         }
 
-        public virtual object Clone() => new SimDTCSystem(this);
+        public virtual object Clone() => new CoreSimDTCSystem(this);
 
         // ------------------------------------------------------------------------------------------------------------
         //

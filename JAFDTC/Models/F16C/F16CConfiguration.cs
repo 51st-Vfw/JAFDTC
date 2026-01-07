@@ -87,7 +87,7 @@ namespace JAFDTC.Models.F16C
 
         public STPTSystem STPT { get; set; }
 
-        public SimDTCSystem DTE { get; set; }
+        public CoreSimDTCSystem DTE { get; set; }
 
         public CoreKboardSystem Kboard { get; set; }
 
@@ -123,7 +123,7 @@ namespace JAFDTC.Models.F16C
             Radio = new RadioSystem();
             SMS = new SMSSystem();
             STPT = new STPTSystem();
-            DTE = new SimDTCSystem();
+            DTE = new CoreSimDTCSystem();
             Kboard = new CoreKboardSystem();
             ConfigurationUpdated();
         }
@@ -144,7 +144,7 @@ namespace JAFDTC.Models.F16C
                 Radio = (RadioSystem)Radio.Clone(),
                 SMS = (SMSSystem)SMS.Clone(),
                 STPT = (STPTSystem)STPT.Clone(),
-                DTE = (SimDTCSystem)DTE.Clone(),
+                DTE = (CoreSimDTCSystem)DTE.Clone(),
                 Kboard = (CoreKboardSystem)Kboard.Clone()
             };
             clone.ResetUID();
@@ -166,7 +166,7 @@ namespace JAFDTC.Models.F16C
                 case RadioSystem.SystemTag: Radio = otherViper.Radio.Clone() as RadioSystem; break;
                 case SMSSystem.SystemTag: SMS = otherViper.SMS.Clone() as SMSSystem; break;
                 case STPTSystem.SystemTag: STPT = otherViper.STPT.Clone() as STPTSystem; break;
-                case SimDTCSystem.SystemTag: DTE = otherViper.DTE.Clone() as SimDTCSystem; break;
+                case CoreSimDTCSystem.SystemTag: DTE = otherViper.DTE.Clone() as CoreSimDTCSystem; break;
                 case CoreKboardSystem.SystemTag: Kboard = otherViper.Kboard.Clone() as CoreKboardSystem; break;
                 default: break;
             }
@@ -296,7 +296,7 @@ namespace JAFDTC.Models.F16C
                 RadioSystem.SystemTag => Radio,
                 SMSSystem.SystemTag => SMS,
                 STPTSystem.SystemTag => STPT,
-                SimDTCSystem.SystemTag => DTE,
+                CoreSimDTCSystem.SystemTag => DTE,
                 CoreKboardSystem.SystemTag => Kboard,
                 _ => null,
             };
@@ -331,7 +331,7 @@ namespace JAFDTC.Models.F16C
                 RadioSystem.SystemTag => JsonSerializer.Serialize(Radio, ConfigurationBase.JsonOptions),
                 SMSSystem.SystemTag => JsonSerializer.Serialize(SMS, ConfigurationBase.JsonOptions),
                 STPTSystem.SystemTag => JsonSerializer.Serialize(STPT, ConfigurationBase.JsonOptions),
-                SimDTCSystem.SystemTag => JsonSerializer.Serialize(DTE, ConfigurationBase.JsonOptions),
+                CoreSimDTCSystem.SystemTag => JsonSerializer.Serialize(DTE, ConfigurationBase.JsonOptions),
                 CoreKboardSystem.SystemTag => JsonSerializer.Serialize(Kboard, ConfigurationBase.JsonOptions),
                 _ => null
             };
@@ -348,7 +348,7 @@ namespace JAFDTC.Models.F16C
             Radio  ??= new RadioSystem();
             SMS    ??= new SMSSystem();
             STPT   ??= new STPTSystem();
-            DTE    ??= new SimDTCSystem();
+            DTE    ??= new CoreSimDTCSystem();
             Kboard ??= new CoreKboardSystem();
 
             // TODO: should parse out version number from version string and compare that as an integer
@@ -424,7 +424,7 @@ namespace JAFDTC.Models.F16C
                     case SMSSystem.SystemTag: SMS = JsonSerializer.Deserialize<SMSSystem>(json); break;
                     case STPTSystem.SystemTag: STPT = JsonSerializer.Deserialize<STPTSystem>(json); break;
                     case STPTSystem.STPTListTag: STPT.ImportSerializedNavpoints(json, false); break;
-                    case SimDTCSystem.SystemTag: DTE = JsonSerializer.Deserialize<SimDTCSystem>(json); break;
+                    case CoreSimDTCSystem.SystemTag: DTE = JsonSerializer.Deserialize<CoreSimDTCSystem>(json); break;
                     case CoreKboardSystem.SystemTag: Kboard = JsonSerializer.Deserialize<CoreKboardSystem>(json); break;
                     default: isHandled = false;  break;
                 }

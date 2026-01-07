@@ -57,7 +57,7 @@ namespace JAFDTC.Models.FA18C
 
         public WYPTSystem WYPT { get; set; }
 
-        public SimDTCSystem MUMI { get; set; }
+        public CoreSimDTCSystem MUMI { get; set; }
 
         [JsonIgnore]
         public override List<string> MergeableSysTags =>
@@ -82,7 +82,7 @@ namespace JAFDTC.Models.FA18C
             PP = new PPSystem();
             Radio = new RadioSystem();
             WYPT = new WYPTSystem();
-            MUMI = new SimDTCSystem();
+            MUMI = new CoreSimDTCSystem();
             ConfigurationUpdated();
         }
 
@@ -97,7 +97,7 @@ namespace JAFDTC.Models.FA18C
                 PP = (PPSystem)PP.Clone(),
                 Radio = (RadioSystem)Radio.Clone(),
                 WYPT = (WYPTSystem)WYPT.Clone(),
-                MUMI = (SimDTCSystem)MUMI.Clone()
+                MUMI = (CoreSimDTCSystem)MUMI.Clone()
             };
             clone.ResetUID();
             clone.ConfigurationUpdated();
@@ -113,7 +113,7 @@ namespace JAFDTC.Models.FA18C
                 case PPSystem.SystemTag: PP = otherHornet.PP.Clone() as PPSystem; break;
                 case RadioSystem.SystemTag: Radio = otherHornet.Radio.Clone() as RadioSystem; break;
                 case WYPTSystem.SystemTag: WYPT = otherHornet.WYPT.Clone() as WYPTSystem; break;
-                case SimDTCSystem.SystemTag: MUMI = otherHornet.MUMI.Clone() as SimDTCSystem; break;
+                case CoreSimDTCSystem.SystemTag: MUMI = otherHornet.MUMI.Clone() as CoreSimDTCSystem; break;
                 default: break;
             }
         }
@@ -132,7 +132,7 @@ namespace JAFDTC.Models.FA18C
                 PPSystem.SystemTag => PP,
                 RadioSystem.SystemTag => Radio,
                 WYPTSystem.SystemTag => WYPT,
-                SimDTCSystem.SystemTag => MUMI,
+                CoreSimDTCSystem.SystemTag => MUMI,
                 _ => null,
             };
         }
@@ -161,7 +161,7 @@ namespace JAFDTC.Models.FA18C
                 PPSystem.SystemTag => JsonSerializer.Serialize(PP, ConfigurationBase.JsonOptions),
                 RadioSystem.SystemTag => JsonSerializer.Serialize(Radio, ConfigurationBase.JsonOptions),
                 WYPTSystem.SystemTag => JsonSerializer.Serialize(WYPT, ConfigurationBase.JsonOptions),
-                SimDTCSystem.SystemTag => JsonSerializer.Serialize(MUMI, ConfigurationBase.JsonOptions),
+                CoreSimDTCSystem.SystemTag => JsonSerializer.Serialize(MUMI, ConfigurationBase.JsonOptions),
                 _ => null
             };
         }
@@ -172,7 +172,7 @@ namespace JAFDTC.Models.FA18C
             PP ??= new PPSystem();
             Radio ??= new RadioSystem();
             WYPT ??= new WYPTSystem();
-            MUMI ??= new SimDTCSystem();
+            MUMI ??= new CoreSimDTCSystem();
 
             // TODO: if the version number is older than current, may need to update object
             Version = _versionCfg;
@@ -188,7 +188,7 @@ namespace JAFDTC.Models.FA18C
                                               (cboardTag == PPSystem.SystemTag) ||
                                               (cboardTag == RadioSystem.SystemTag) ||
                                               (cboardTag == WYPTSystem.SystemTag) ||
-                                              (cboardTag == SimDTCSystem.SystemTag)))));
+                                              (cboardTag == CoreSimDTCSystem.SystemTag)))));
         }
 
         public override bool Deserialize(string systemTag, string json)
@@ -203,7 +203,7 @@ namespace JAFDTC.Models.FA18C
                     case PPSystem.SystemTag: PP = JsonSerializer.Deserialize<PPSystem>(json); break;
                     case RadioSystem.SystemTag: Radio = JsonSerializer.Deserialize<RadioSystem>(json); break;
                     case WYPTSystem.SystemTag: WYPT = JsonSerializer.Deserialize<WYPTSystem>(json); break;
-                    case SimDTCSystem.SystemTag: MUMI = JsonSerializer.Deserialize<SimDTCSystem>(json); break;
+                    case CoreSimDTCSystem.SystemTag: MUMI = JsonSerializer.Deserialize<CoreSimDTCSystem>(json); break;
                     default: isHandled = false; break;
                 }
                 if (isHandled)

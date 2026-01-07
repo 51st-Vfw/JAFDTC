@@ -33,7 +33,7 @@ namespace JAFDTC.UI.FA18C
     internal class FA18CEditSimulatorDTCPageHelper : IEditSimulatorDTCPageHelper
     {
         public static ConfigEditorPageInfo PageInfo
-            => new(SimDTCSystem.SystemTag, "DCS DTC Tape", "DCS DTC", "\xE77C", typeof(EditSimulatorDTCPage),
+            => new(CoreSimDTCSystem.SystemTag, "DCS DTC Tape", "DCS DTC", "\xE77C", typeof(EditSimulatorDTCPage),
                    typeof(FA18CEditSimulatorDTCPageHelper));
 
         public SystemBase GetSystemConfig(IConfiguration config) => ((FA18CConfiguration)config).MUMI;
@@ -57,7 +57,7 @@ namespace JAFDTC.UI.FA18C
         /// update the edit state for dtc from the configuration. the update will perform a deep copy of
         /// the data from the configuration.
         /// </summary>
-        public void CopyConfigToEdit(IConfiguration config, SimDTCSystem editDTC)
+        public void CopyConfigToEdit(IConfiguration config, CoreSimDTCSystem editDTC)
         {
             editDTC.Template = new(((FA18CConfiguration)config).MUMI.Template);
             editDTC.OutputPath = new(((FA18CConfiguration)config).MUMI.OutputPath);
@@ -71,7 +71,7 @@ namespace JAFDTC.UI.FA18C
         /// update the configuration dtc from the edit state. the update will perform a deep copy of the
         /// data from the configuration.
         /// </summary>
-        public void CopyEditToConfig(SimDTCSystem editDTC, IConfiguration config)
+        public void CopyEditToConfig(CoreSimDTCSystem editDTC, IConfiguration config)
         {
             ((FA18CConfiguration)config).MUMI.Template = new(editDTC.Template);
             ((FA18CConfiguration)config).MUMI.OutputPath = new(editDTC.OutputPath);

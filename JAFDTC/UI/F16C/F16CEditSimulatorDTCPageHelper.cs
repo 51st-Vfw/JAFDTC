@@ -33,7 +33,7 @@ namespace JAFDTC.UI.F16C
     internal class F16CEditSimulatorDTCPageHelper : IEditSimulatorDTCPageHelper
     {
         public static ConfigEditorPageInfo PageInfo
-            => new(SimDTCSystem.SystemTag, "DCS DTC Tape", "DCS DTC", "\xE77C", typeof(EditSimulatorDTCPage),
+            => new(CoreSimDTCSystem.SystemTag, "DCS DTC Tape", "DCS DTC", "\xE77C", typeof(EditSimulatorDTCPage),
                    typeof(F16CEditSimulatorDTCPageHelper));
 
         public SystemBase GetSystemConfig(IConfiguration config) => ((F16CConfiguration)config).DTE;
@@ -57,7 +57,7 @@ namespace JAFDTC.UI.F16C
         /// update the edit state for dtc from the configuration. the update will perform a deep copy of
         /// the data from the configuration.
         /// </summary>
-        public void CopyConfigToEdit(IConfiguration config, SimDTCSystem editDTC)
+        public void CopyConfigToEdit(IConfiguration config, CoreSimDTCSystem editDTC)
         {
             editDTC.Template = new(((F16CConfiguration)config).DTE.Template);
             editDTC.OutputPath = new(((F16CConfiguration)config).DTE.OutputPath);
@@ -72,7 +72,7 @@ namespace JAFDTC.UI.F16C
         /// update the configuration dtc from the edit state. the update will perform a deep copy of the
         /// data from the configuration.
         /// </summary>
-        public void CopyEditToConfig(SimDTCSystem editDTC, IConfiguration config)
+        public void CopyEditToConfig(CoreSimDTCSystem editDTC, IConfiguration config)
         {
             ((F16CConfiguration)config).DTE.Template = new(editDTC.Template);
             ((F16CConfiguration)config).DTE.OutputPath = new(editDTC.OutputPath);

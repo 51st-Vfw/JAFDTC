@@ -52,7 +52,7 @@ namespace JAFDTC.UI.Base
 
         protected override SystemBase SystemConfig => PageHelper.GetSystemConfig(Config);
 
-        protected override string SystemTag => SimDTCSystem.SystemTag;
+        protected override string SystemTag => CoreSimDTCSystem.SystemTag;
 
         protected override string SystemName => "DCS DTC Tape";
 
@@ -62,7 +62,7 @@ namespace JAFDTC.UI.Base
 
         private IEditSimulatorDTCPageHelper PageHelper { get; set;  }
 
-        private readonly SimDTCSystem EditDTC;
+        private readonly CoreSimDTCSystem EditDTC;
 
         // ------------------------------------------------------------------------------------------------------------
         //
@@ -106,7 +106,7 @@ namespace JAFDTC.UI.Base
             {
                 PageHelper.CopyEditToConfig(EditDTC, Config);
                 CopyAllSettings(SettingLocation.Edit, SettingLocation.Config, true);
-                Config.Save(this, SimDTCSystem.SystemTag);
+                Config.Save(this, CoreSimDTCSystem.SystemTag);
             }
             UpdateUIFromEditState();
         }
