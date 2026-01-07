@@ -107,7 +107,7 @@ https://www.gnu.org/licenses/.
                                     <ColumnDefinition Width="Auto"/>
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
-                                <FontIcon Grid.Column="0" Margin="0,4,12,0"
+                                <FontIcon Grid.Column="0" Margin="0,0,12,0"
                                           FontFamily="Segoe Fluent Icons"
                                           FontSize="20"
                                           Glyph="{x:Bind Glyph}"/>
