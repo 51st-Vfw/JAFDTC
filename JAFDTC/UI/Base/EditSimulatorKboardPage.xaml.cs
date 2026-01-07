@@ -71,7 +71,7 @@ namespace JAFDTC.UI.Base
 
         protected override SystemBase SystemConfig => PageHelper.GetSystemConfig(Config);
 
-        protected override string SystemTag => SimKboardSystem.SystemTag;
+        protected override string SystemTag => CoreKboardSystem.SystemTag;
 
         protected override string SystemName => "Kneeboards";
 
@@ -81,7 +81,7 @@ namespace JAFDTC.UI.Base
 
         private IEditSimulatorKboardPageHelper PageHelper { get; set; }
 
-        private readonly SimKboardSystem EditKboard;
+        private readonly CoreKboardSystem EditKboard;
 
         private readonly ObservableCollection<SystemGridItem> GridItems;
 

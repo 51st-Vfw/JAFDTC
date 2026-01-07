@@ -52,12 +52,12 @@ namespace JAFDTC.UI.Base
         /// update the edit state for dtc from the configuration. the update will perform a deep copy of the
         /// data from the configuration.
         /// </summary>
-        public void CopyConfigToEdit(IConfiguration config, SimKboardSystem editKboard);
+        public void CopyConfigToEdit(IConfiguration config, CoreKboardSystem editKboard);
 
         /// <summary>
         /// update the configuration dtc from the edit state. the update will perform a deep copy of the
         /// data from the configuration.
         /// </summary>
-        public void CopyEditToConfig(SimKboardSystem editKboard, IConfiguration config);
+        public void CopyEditToConfig(CoreKboardSystem editKboard, IConfiguration config);
     }
 }

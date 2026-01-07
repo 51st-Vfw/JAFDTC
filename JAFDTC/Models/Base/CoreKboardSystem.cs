@@ -1,6 +1,6 @@
 ﻿// ********************************************************************************************************************
 //
-// SimKboardSystem.cs : simulator kneeboard system
+// CoreKboardSystem.cs : core kneeboard system
 //
 // Copyright(C) 2026 ilominar/raven
 //
@@ -30,7 +30,7 @@ namespace JAFDTC.Models.Base
     /// class to capture the settings of the kneeboard generation "system". this serves as a helper to build
     /// kneeboards from system setups. this system is airframe-agnostic
     /// </summary>
-    public partial class SimKboardSystem : SystemBase
+    public partial class CoreKboardSystem : SystemBase
     {
         public const string SystemTag = "JAFDTC:Generic:Kboard";
 
@@ -107,7 +107,7 @@ namespace JAFDTC.Models.Base
         //
         // ------------------------------------------------------------------------------------------------------------
 
-        public SimKboardSystem()
+        public CoreKboardSystem()
         {
             Template = "";
             OutputPath = "";
@@ -117,7 +117,7 @@ namespace JAFDTC.Models.Base
             KneeboardTags = [ ];
         }
 
-        public SimKboardSystem(SimKboardSystem other)
+        public CoreKboardSystem(CoreKboardSystem other)
         {
             Template = new(other.Template);
             OutputPath = new(other.OutputPath);
@@ -127,7 +127,7 @@ namespace JAFDTC.Models.Base
             KneeboardTags = [ ];
         }
 
-        public virtual object Clone() => new SimKboardSystem(this);
+        public virtual object Clone() => new CoreKboardSystem(this);
 
         // ------------------------------------------------------------------------------------------------------------
         //

@@ -32,7 +32,7 @@ namespace JAFDTC.UI.F16C
     internal class F16CEditSimulatorKboardPageHelper : IEditSimulatorKboardPageHelper
     {
         public static ConfigEditorPageInfo PageInfo
-            => new(SimKboardSystem.SystemTag, "Kneeboards", "Kneeboards", "\xF0E3", typeof(EditSimulatorKboardPage),
+            => new(CoreKboardSystem.SystemTag, "Kneeboards", "Kneeboards", "\xF0E3", typeof(EditSimulatorKboardPage),
                    typeof(F16CEditSimulatorKboardPageHelper));
 
         public SystemBase GetSystemConfig(IConfiguration config) => ((F16CConfiguration)config).Kboard;
@@ -49,7 +49,7 @@ namespace JAFDTC.UI.F16C
             ((F16CConfiguration)config).Kboard.ValidateForAirframe(config.Airframe);
         }
 
-        public void CopyConfigToEdit(IConfiguration config, SimKboardSystem editKboard)
+        public void CopyConfigToEdit(IConfiguration config, CoreKboardSystem editKboard)
         {
             editKboard.Template = new(((F16CConfiguration)config).Kboard.Template);
             editKboard.OutputPath = new(((F16CConfiguration)config).Kboard.OutputPath);
@@ -60,7 +60,7 @@ namespace JAFDTC.UI.F16C
             editKboard.EnableSVG = new(((F16CConfiguration)config).Kboard.EnableSVG);
         }
 
-        public void CopyEditToConfig(SimKboardSystem editKboard, IConfiguration config)
+        public void CopyEditToConfig(CoreKboardSystem editKboard, IConfiguration config)
         {
             ((F16CConfiguration)config).Kboard.Template = new(editKboard.Template);
             ((F16CConfiguration)config).Kboard.OutputPath = new(editKboard.OutputPath);

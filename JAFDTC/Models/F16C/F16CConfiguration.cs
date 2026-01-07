@@ -39,7 +39,6 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Windows.Graphics.Printing.PrintSupport;
 
 namespace JAFDTC.Models.F16C
 {
@@ -90,7 +89,7 @@ namespace JAFDTC.Models.F16C
 
         public SimDTCSystem DTE { get; set; }
 
-        public SimKboardSystem Kboard { get; set; }
+        public CoreKboardSystem Kboard { get; set; }
 
         [JsonIgnore]
         public override List<string> MergeableSysTags =>
@@ -125,7 +124,7 @@ namespace JAFDTC.Models.F16C
             SMS = new SMSSystem();
             STPT = new STPTSystem();
             DTE = new SimDTCSystem();
-            Kboard = new SimKboardSystem();
+            Kboard = new CoreKboardSystem();
             ConfigurationUpdated();
         }
 
@@ -146,7 +145,7 @@ namespace JAFDTC.Models.F16C
                 SMS = (SMSSystem)SMS.Clone(),
                 STPT = (STPTSystem)STPT.Clone(),
                 DTE = (SimDTCSystem)DTE.Clone(),
-                Kboard = (SimKboardSystem)Kboard.Clone()
+                Kboard = (CoreKboardSystem)Kboard.Clone()
             };
             clone.ResetUID();
             clone.ConfigurationUpdated();
@@ -168,7 +167,7 @@ namespace JAFDTC.Models.F16C
                 case SMSSystem.SystemTag: SMS = otherViper.SMS.Clone() as SMSSystem; break;
                 case STPTSystem.SystemTag: STPT = otherViper.STPT.Clone() as STPTSystem; break;
                 case SimDTCSystem.SystemTag: DTE = otherViper.DTE.Clone() as SimDTCSystem; break;
-                case SimKboardSystem.SystemTag: Kboard = otherViper.Kboard.Clone() as SimKboardSystem; break;
+                case CoreKboardSystem.SystemTag: Kboard = otherViper.Kboard.Clone() as CoreKboardSystem; break;
                 default: break;
             }
         }
@@ -298,7 +297,7 @@ namespace JAFDTC.Models.F16C
                 SMSSystem.SystemTag => SMS,
                 STPTSystem.SystemTag => STPT,
                 SimDTCSystem.SystemTag => DTE,
-                SimKboardSystem.SystemTag => Kboard,
+                CoreKboardSystem.SystemTag => Kboard,
                 _ => null,
             };
         }
@@ -333,7 +332,7 @@ namespace JAFDTC.Models.F16C
                 SMSSystem.SystemTag => JsonSerializer.Serialize(SMS, ConfigurationBase.JsonOptions),
                 STPTSystem.SystemTag => JsonSerializer.Serialize(STPT, ConfigurationBase.JsonOptions),
                 SimDTCSystem.SystemTag => JsonSerializer.Serialize(DTE, ConfigurationBase.JsonOptions),
-                SimKboardSystem.SystemTag => JsonSerializer.Serialize(Kboard, ConfigurationBase.JsonOptions),
+                CoreKboardSystem.SystemTag => JsonSerializer.Serialize(Kboard, ConfigurationBase.JsonOptions),
                 _ => null
             };
         }
@@ -350,7 +349,7 @@ namespace JAFDTC.Models.F16C
             SMS    ??= new SMSSystem();
             STPT   ??= new STPTSystem();
             DTE    ??= new SimDTCSystem();
-            Kboard ??= new SimKboardSystem();
+            Kboard ??= new CoreKboardSystem();
 
             // TODO: should parse out version number from version string and compare that as an integer
             // TODO: to allow for "update if version older than x".
@@ -426,7 +425,7 @@ namespace JAFDTC.Models.F16C
                     case STPTSystem.SystemTag: STPT = JsonSerializer.Deserialize<STPTSystem>(json); break;
                     case STPTSystem.STPTListTag: STPT.ImportSerializedNavpoints(json, false); break;
                     case SimDTCSystem.SystemTag: DTE = JsonSerializer.Deserialize<SimDTCSystem>(json); break;
-                    case SimKboardSystem.SystemTag: Kboard = JsonSerializer.Deserialize<SimKboardSystem>(json); break;
+                    case CoreKboardSystem.SystemTag: Kboard = JsonSerializer.Deserialize<CoreKboardSystem>(json); break;
                     default: isHandled = false;  break;
                 }
                 if (isHandled)
