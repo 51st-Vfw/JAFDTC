@@ -38,6 +38,8 @@ using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using Windows.Graphics.Printing.PrintSupport;
 
 namespace JAFDTC.Models.F16C
 {
@@ -91,11 +93,15 @@ namespace JAFDTC.Models.F16C
         public SimKboardSystem Kboard { get; set; }
 
         [JsonIgnore]
-        public override List<string> MergeableSysTagsForDTC =>
+        public override List<string> MergeableSysTags =>
         [
+            MiscSystem.SystemTag,
+            STPTSystem.SystemTag,
             RadioSystem.SystemTag,
             CMDSSystem.SystemTag
         ];
+
+        public override List<string> MergeTagsKneeboard => [.. Kboard.KneeboardTags ];
 
         [JsonIgnore]
         public override IUploadAgent UploadAgent => new F16CUploadAgent(this);
@@ -348,6 +354,7 @@ namespace JAFDTC.Models.F16C
 
             // TODO: should parse out version number from version string and compare that as an integer
             // TODO: to allow for "update if version older than x".
+
             if (Version == _versionCfg_10)
                 SMS.UpdateFrom10to11();
             Version = _versionCfg;
@@ -356,14 +363,32 @@ namespace JAFDTC.Models.F16C
         }
 
         public override bool SaveMergedSimDTC()
-        {
-            return (DTE.IsDefault) ? true : SaveMergedSimDTC(DTE.Template, DTE.OutputPath);
-        }
+            => (DTE.IsDefault) || SaveMergedSimDTC(DTE.Template, DTE.OutputPath);
+
+        public override bool SaveMergedKboards()
+            => (Kboard.IsDefault) || SaveMergedKboards(Kboard.Template, Kboard.OutputPath,
+                                                       Kboard.EnableNightValue, Kboard.EnableSVGValue);
 
         public override void AfterSystemEditorCompletes(string systemTag)
         {
-            if (!DTE.IsDefault && DTE.EnableRebuildValue && MergeableSysTagsForDTC.Contains(systemTag))
-                SaveMergedSimDTC();
+            if (MergeableSysTags.Contains(systemTag))
+            {
+                // kick off a lambda to asynchronously handle any merges. the lambda will operate on a clone of the
+                // configuration and must hold the configuration merge mutex to avoid any problems.
+                //
+                F16CConfiguration mergeCfg = (F16CConfiguration)Clone();
+                Task.Run(() =>
+                {
+                    if (mergeCfg.MergeMutexAcquire())
+                    {
+                        if (!mergeCfg.DTE.IsDefault && mergeCfg.DTE.EnableRebuildValue)
+                            mergeCfg.SaveMergedSimDTC();
+                        if (!mergeCfg.Kboard.IsDefault && mergeCfg.Kboard.EnableRebuildValue)
+                            mergeCfg.SaveMergedKboards();
+                        mergeCfg.MergeMutexRelease();
+                    }
+                });
+            }
         }
 
         public override bool CanAcceptPasteForSystem(string cboardTag, string systemTag = null)

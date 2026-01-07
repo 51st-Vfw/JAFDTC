@@ -56,7 +56,7 @@ namespace JAFDTC.Models.Base
             set => SetProperty(ref _outputPath, value, null);
         }
 
-        public ObservableCollection<string> ContentSystemTags { get; set; }
+        public ObservableCollection<string> KneeboardTags { get; set; }
 
         private string _enableRebuild;
         public string EnableRebuild
@@ -65,11 +65,18 @@ namespace JAFDTC.Models.Base
             set => ValidateAndSetBoolProp(value, ref _enableRebuild);
         }
 
-        private string _enableOneConfig;
-        public string EnableOneConfig
+        private string _enableNight;
+        public string EnableNight
         {
-            get => _enableOneConfig;
-            set => ValidateAndSetBoolProp(value, ref _enableOneConfig);
+            get => _enableNight;
+            set => ValidateAndSetBoolProp(value, ref _enableNight);
+        }
+
+        private string _enableSVG;
+        public string EnableSVG
+        {
+            get => _enableSVG;
+            set => ValidateAndSetBoolProp(value, ref _enableSVG);
         }
 
         /// <summary>
@@ -78,9 +85,10 @@ namespace JAFDTC.Models.Base
         [JsonIgnore]
         public override bool IsDefault => ((Template.Length == 0) &&
                                            (OutputPath.Length == 0) &&
-                                           (ContentSystemTags.Count == 0) &&
+                                           (KneeboardTags.Count == 0) &&
                                            (EnableRebuildValue == false) &&
-                                           (EnableOneConfigValue == false));
+                                           (EnableNightValue == false) &&
+                                           (EnableSVGValue == false));
 
         // ---- following accessors get the current value (default or non-default) for various properties
 
@@ -88,7 +96,10 @@ namespace JAFDTC.Models.Base
         public bool EnableRebuildValue => !string.IsNullOrEmpty(EnableRebuild) && bool.Parse(EnableRebuild);
 
         [JsonIgnore]
-        public bool EnableOneConfigValue => !string.IsNullOrEmpty(EnableOneConfig) && bool.Parse(EnableOneConfig);
+        public bool EnableNightValue => !string.IsNullOrEmpty(EnableNight) && bool.Parse(EnableNight);
+
+        [JsonIgnore]
+        public bool EnableSVGValue => !string.IsNullOrEmpty(EnableSVG) && bool.Parse(EnableSVG);
 
         // ------------------------------------------------------------------------------------------------------------
         //
@@ -101,8 +112,9 @@ namespace JAFDTC.Models.Base
             Template = "";
             OutputPath = "";
             EnableRebuild = false.ToString();
-            EnableOneConfig = false.ToString();
-            ContentSystemTags = [ ];
+            EnableNight = false.ToString();
+            EnableSVG = false.ToString();
+            KneeboardTags = [ ];
         }
 
         public SimKboardSystem(SimKboardSystem other)
@@ -110,8 +122,9 @@ namespace JAFDTC.Models.Base
             Template = new(other.Template);
             OutputPath = new(other.OutputPath);
             EnableRebuild = new(other.EnableRebuild);
-            EnableOneConfig = new(other.EnableOneConfig);
-            ContentSystemTags = [ ];
+            EnableNight = new(other.EnableNight);
+            EnableSVG = new(other.EnableSVG);
+            KneeboardTags = [ ];
         }
 
         public virtual object Clone() => new SimKboardSystem(this);
@@ -127,7 +140,7 @@ namespace JAFDTC.Models.Base
         /// </summary>
         public void ValidateForAirframe(AirframeTypes airframe)
         {
-            if (!FileManager.IsValidDTCTemplate(airframe, Template))
+            if (!FileManager.IsUniqueKBTemplatePackage(airframe, Template))
                 Template = "";
             if (!string.IsNullOrEmpty(OutputPath))
             {
@@ -145,8 +158,9 @@ namespace JAFDTC.Models.Base
             Template = "";
             OutputPath = "";
             EnableRebuild = false.ToString();
-            EnableOneConfig = false.ToString();
-            ContentSystemTags.Clear();
+            EnableSVG = false.ToString();
+            EnableNight = false.ToString();
+            KneeboardTags.Clear();
         }
     }
 }

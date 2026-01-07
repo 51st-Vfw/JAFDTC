@@ -18,6 +18,8 @@
 //
 // ********************************************************************************************************************
 
+using JAFDTC.Kneeboard.Generate;
+using JAFDTC.Kneeboard.Models;
 using JAFDTC.Models.A10C;
 using JAFDTC.Models.AV8B;
 using JAFDTC.Models.Core;
@@ -27,6 +29,7 @@ using JAFDTC.Models.F15E;
 using JAFDTC.Models.F16C;
 using JAFDTC.Models.FA18C;
 using JAFDTC.Models.M2000C;
+using JAFDTC.Models.Planning;
 using JAFDTC.Utilities;
 using System;
 using System.Collections.Generic;
@@ -37,6 +40,7 @@ using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
+using System.Threading;
 
 using static JAFDTC.Models.IConfiguration;
 
@@ -167,13 +171,22 @@ namespace JAFDTC.Models
             }
         }
 
-        // ---- properties, computed
+        // ---- properties, virtual
 
         [JsonIgnore]
-        public virtual List<string> MergeableSysTagsForDTC => [ ];
+        public virtual List<string> MergeableSysTags => [ ];
+
+        [JsonIgnore]
+        public virtual List<string> MergeTagsKneeboard => [ ];
 
         [JsonIgnore]
         public virtual IUploadAgent UploadAgent { get; }
+
+        // ---- properties, private
+
+        private const string JAFDTCConfigMergeMutexName = "JAFDTC_ConfigMergeMutex";
+
+        private static readonly Mutex MutexJAFDTC = new(false, JAFDTCConfigMergeMutexName);
 
         // ------------------------------------------------------------------------------------------------------------
         //
@@ -186,7 +199,7 @@ namespace JAFDTC.Models
                              Dictionary<string, string> linkedSysMap)
             => (Version, Airframe, UID, Name, LinkedSysMap) = (version, airframe, uid, name, linkedSysMap);
 
-        // NOTE: when cloning, derived classes should call ResetUID() on the clone prior to returning it.
+        // NOTE: when cloning, derived classes must call ResetUID() on the clone prior to returning the new instance.
         //
         public abstract IConfiguration Clone();
 
@@ -212,6 +225,154 @@ namespace JAFDTC.Models
 
         // ------------------------------------------------------------------------------------------------------------
         //
+        // system merge support, virtual methods
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
+        /// <summary>
+        /// merge configuration into the dcs dtc json "data" object and return the updated object. this method may
+        /// update the object in-place.
+        /// </summary>
+        protected virtual JsonNode MergeConfigToSimDTC(JsonNode dataRoot)
+        {
+            foreach (string tag in MergeableSysTags)
+            {
+                ISystem system = SystemForTag(tag);
+                if (IsMergedToDTC(tag) && !system.IsDefault)
+                    dataRoot = system.MergeIntoSimDTC(dataRoot);
+            }
+            return dataRoot;
+        }
+
+        /// <summary>
+        /// merge configuration into the planning mission data structure and return the updated mission. this method
+        /// may update mission in-place.
+        /// </summary>
+        protected virtual Mission MergeConfigToMission(Mission mission)
+        {
+            foreach (string tag in MergeableSysTags)
+            {
+                ISystem system = SystemForTag(tag);
+                if (!system.IsDefault)
+                    mission = system.MergeIntoMission(mission);
+            }
+            return mission;
+        }
+
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // system merge support
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
+        /// <summary>
+        /// persist the merged configuration into the dcs dtc file at the output path. the dcs dtc file is built by
+        /// merging the configuration of mergable systems into the base template. returns true on success, false on
+        /// failure.
+        /// </summary>
+        protected bool SaveMergedSimDTC(string template, string outputPath)
+        {
+            if (!string.IsNullOrEmpty(outputPath))
+            {
+                try
+                {
+                    string name = Path.GetFileNameWithoutExtension(outputPath);
+                    string json = FileManager.LoadDTCTemplate(Airframe, template)
+                        ?? throw new Exception($"Cannot load DTC template {template}");
+                    JsonNode dom = JsonNode.Parse(json)
+                        ?? throw new Exception($"Cannot parse DTC template {template}");
+
+                    dom["name"] = name;
+                    dom["data"] = MergeConfigToSimDTC(dom["data"]);
+                    dom["data"]["name"] = name;
+
+                    json = dom.ToJsonString(Globals.JSONOptions)
+                        ?? throw new Exception($"Cannot create DTC file");
+                    FileManager.WriteFile(outputPath, json);
+
+                    FileManager.Log($"Successfully merged \"{Name}\" into {outputPath}");
+                }
+                catch (Exception ex)
+                {
+                    FileManager.Log($"Configuration:SaveMergedSimDTC exception {ex}");
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// merge data from the configuration into kneeboard template(s) to build a set of kneeboards at the output
+        /// path. returns true on success, false on failure.
+        /// </summary>
+        protected bool SaveMergedKboards(string template, string outputPath, bool isNight, bool isSVG)
+        {
+            if (!string.IsNullOrEmpty(outputPath))
+            {
+                try
+                {
+                    // build mission data from the information in the configuration, starting from a skeleton plan.
+                    // add a single pilot to flights which did not build out pilots during the merge pass.
+                    //
+                    Mission mission = MergeConfigToMission(new()
+                    {
+                        Name = "Untitled",
+                        Theater = "Unknown",
+                        Owner = new Ownship() {
+                            Name = Settings.Callsign
+                        },
+                        Packages = [
+                            new Package() {
+                                Name = "Alpha",
+                                Flights = [
+                                    new Flight() {
+                                        Name = "VENOM1",
+                                        Aircraft = Globals.AirframeDTCTypes[Airframe],
+                                        Pilots = [ ]
+                                    }
+                                ]
+                            }
+                        ]
+                    });
+                    foreach (Package package in mission.Packages)
+                        foreach (Flight flight in package.Flights)
+                            if (flight.Pilots.Count == 0)
+                                flight.Pilots = [ new Pilot() { Name = Settings.Callsign, IsLead = true } ];
+
+                    // unpack the template .zip capturing the .svg files in a temp directory we can point the
+                    // builder at below. only build the kneeboards the user is asking to generate.
+                    //
+                    List<string> paths = FileManager.ExtractKBTemplatePackage(Airframe, template, MergeTagsKneeboard);
+                    if (paths.Count == 0)
+                        throw new Exception("LoadKboardTemplate returns no templates");
+
+                    // create the kneeboard builder, build criteria, and let it do the thing. dump the created
+                    // paths to the log for posterity.
+                    //
+                    Generate builder = new();
+                    GenerateCriteria criteria = new()
+                    {
+                        PathTemplates = Path.GetDirectoryName(paths[0]),
+                        PathOutput = outputPath,
+                        Mission = mission,
+                        IsNightMode = isNight,
+                        IsSVGMode = isSVG
+                    };
+                    IReadOnlyList<string> kbPaths = builder.GenerateKneeboards(criteria);
+                    foreach (string path in kbPaths)
+                        FileManager.Log($"Successfully generated kneeboard {path}");
+                }
+                catch (Exception ex)
+                {
+                    FileManager.Log($"Configuration:SaveMergedSimKboards exception {ex}");
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        // ------------------------------------------------------------------------------------------------------------
+        //
         // IConfiguration methods
         //
         // ------------------------------------------------------------------------------------------------------------
@@ -219,6 +380,19 @@ namespace JAFDTC.Models
         public void ResetUID()
         {
             UID = Guid.NewGuid().ToString();
+        }
+
+        public bool MergeMutexAcquire()
+        {
+            bool haveMutex = MutexJAFDTC.WaitOne(100);
+            if (!haveMutex)
+                FileManager.Log("ConfigurationBase:MergeMutexAcquire cannot acquire mutex");
+            return haveMutex;
+        }
+
+        public void MergeMutexRelease()
+        {
+            MutexJAFDTC.ReleaseMutex();
         }
 
         public void Sanitize(bool isResetUID = false)
@@ -251,6 +425,8 @@ namespace JAFDTC.Models
 
         public virtual bool IsMergedToDTC(string systemTag) => false;
 
+        public virtual bool IsMergedToKboards(string systemTag) => false;
+
         public void LinkSystemTo(string systemTag, IConfiguration linkedConfig)
         {
             LinkedSysMap ??= [ ];
@@ -280,43 +456,9 @@ namespace JAFDTC.Models
             OnConfigurationSaved(invokedBy, syncSysTag);
         }
 
-        public virtual bool SaveMergedSimDTC() => false;
+        public virtual bool SaveMergedSimDTC() => true;
 
-        public bool SaveMergedSimDTC(string template, string outputPath)
-        {
-            if (!string.IsNullOrEmpty(outputPath))
-            {
-                string name = Path.GetFileNameWithoutExtension(outputPath);
-                try
-                {
-                    string json = FileManager.LoadDTCTemplate(Airframe, template)
-                        ?? throw new Exception($"Cannot load DTC template {template}");
-                    JsonNode dom = JsonNode.Parse(json)
-                        ?? throw new Exception($"Cannot parse DTC template {template}");
-
-                    dom["name"] = name;
-                    dom["data"]["name"] = name;
-                    foreach (string tag in MergeableSysTagsForDTC)
-                    {
-                        ISystem system = SystemForTag(tag);
-                        if (!system.IsDefault && IsMergedToDTC(tag))
-                            system.MergeIntoSimDTC(dom["data"]);
-                    }
-
-                    json = dom.ToJsonString(Globals.JSONOptions)
-                        ?? throw new Exception($"Cannot create DTC file");
-                    FileManager.WriteFile(outputPath, json);
-
-                    FileManager.Log($"Successfully merged \"{Name}\" into {outputPath}");
-                }
-                catch (Exception ex)
-                {
-                    FileManager.Log($"Configuration:SaveMergedSimDTC exception {ex}");
-                    return false;
-                }
-            }
-            return true;
-        }
+        public virtual bool SaveMergedKboards() => true;
 
         public string SystemLinkedTo(string systemTag)
         {

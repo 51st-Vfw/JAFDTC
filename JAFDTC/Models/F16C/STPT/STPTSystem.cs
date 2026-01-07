@@ -3,7 +3,7 @@
 // STPTSystem.cs -- f-16c steerpoint system configuration
 //
 // Copyright(C) 2021-2023 the-paid-actor & others
-// Copyright(C) 2023-2025 ilominar/raven
+// Copyright(C) 2023-2026 ilominar/raven
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 // Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -20,12 +20,14 @@
 
 using JAFDTC.Models.Base;
 using JAFDTC.Models.Core;
+using JAFDTC.Models.Planning;
 using JAFDTC.Models.Units;
 using JAFDTC.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 
@@ -95,7 +97,7 @@ namespace JAFDTC.Models.F16C.STPT
         // ------------------------------------------------------------------------------------------------------------
 
         /// <summary>
-        /// use the haversine formula to figure out great circle distance between two steerpoints.  as we're doing
+        /// use the haversine formula to figure out great circle distance between two steerpoints. as we're doing
         /// this assuming a perfect sphere. returns the distance as a string in the given format (either feet or
         /// nautical miles).
         /// 
@@ -121,8 +123,7 @@ namespace JAFDTC.Models.F16C.STPT
         }
 
         /// <summary>
-        /// return the initial bearing for a great circle route between two steerpoints. returns the bearing as a
-        /// string.
+        /// return the initial bearing for a great circle route between two steerpoints as a string.
         /// 
         /// NOTE: this computation is not exact as it assumes a perfect sphere while dcs doesn't.
         /// </summary>
@@ -143,7 +144,7 @@ namespace JAFDTC.Models.F16C.STPT
         }
 
         /// <summary>
-        /// TODO: document
+        /// return altitude difference between two steerpoints as a string.
         /// </summary>
         private static string StptDeltaElev(SteerpointInfo stptA, SteerpointInfo stptB)
         {
@@ -155,9 +156,44 @@ namespace JAFDTC.Models.F16C.STPT
 
         // ------------------------------------------------------------------------------------------------------------
         //
+        // ISystem overrides
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
+        /// <summary>
+        /// returns the mission created by merging data from the system configuration into a mission plan. this
+        /// method may update the input in-place.
+        /// </summary>
+        public override Mission MergeIntoMission(Mission mission, int indexPackage = 0, int indexFlight = 0)
+        {
+            List<string> theaters = ConsensusTheaters();
+            mission.Theater = (theaters.Count == 1) ? theaters[0] : "Unknown";
+            mission.Packages[indexPackage].Flights[indexFlight].Routes = [ ToRoute(1, "A") ];
+            return mission;
+        }
+
+        // ------------------------------------------------------------------------------------------------------------
+        //
         // NavpointSystemBase overrides
         //
         // ------------------------------------------------------------------------------------------------------------
+
+        /// <summary>
+        /// a representation of the navpoint system in a Route object. subclasses may override this method to change
+        /// the specific format delivered.
+        /// </summary>
+        public override Route ToRoute(int id, string name)
+        {
+            List<Navpoint> stpts = [];
+            foreach (SteerpointInfo stpt in Points.Cast<SteerpointInfo>())
+                stpts.Add(stpt.ToNavpoint());
+            return new Route()
+            {
+                RouteId = id,
+                Name = name,
+                NavPoints = stpts
+            };
+        }
 
         public override void AddNavpointsFromPositionList(IReadOnlyList<UnitPositionItem> posnList)
         {

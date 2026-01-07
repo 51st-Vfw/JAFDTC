@@ -19,6 +19,7 @@
 
 using JAFDTC.Models;
 using JAFDTC.Models.Base;
+using JAFDTC.Models.Core;
 using JAFDTC.UI.App;
 using JAFDTC.Utilities;
 using Microsoft.UI.Xaml;
@@ -29,6 +30,7 @@ using Microsoft.Windows.Storage.Pickers;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
@@ -41,6 +43,24 @@ namespace JAFDTC.UI.Base
     /// </summary>
     public sealed partial class EditSimulatorKboardPage : SystemEditorPageBase
     {
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // private classes
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
+        /// <summary>
+        /// item object for the template selection combo box.
+        /// </summary>
+        private sealed class TemplateComboItem(string templateName, string displayName, string prefix)
+        {
+            public string TemplateName { get; } = templateName;
+            public string DisplayName { get; } = displayName;
+            public string Prefix { get; } = prefix;
+
+            public override string ToString() => $"{Prefix}{DisplayName}";
+        }
+
         // ------------------------------------------------------------------------------------------------------------
         //
         // properties
@@ -63,6 +83,8 @@ namespace JAFDTC.UI.Base
 
         private readonly SimKboardSystem EditKboard;
 
+        private readonly ObservableCollection<SystemGridItem> GridItems;
+
         // ------------------------------------------------------------------------------------------------------------
         //
         // construction
@@ -75,6 +97,9 @@ namespace JAFDTC.UI.Base
 
             InitializeComponent();
             InitializeBase(EditKboard, null, uiCtlLinkResetBtns, null);
+
+            GridItems = [ ];
+            uiGridSystemItems.ItemsSource = GridItems;
         }
 
         // ------------------------------------------------------------------------------------------------------------
@@ -154,15 +179,21 @@ namespace JAFDTC.UI.Base
         /// </summary>
         private void RebuildTemplateList()
         {
-// TODO: change this
-            List<string> templates = FileManager.ListDTCTemplates(Config.Airframe);
+            List<string> templates = FileManager.ListKBTemplatePackages(Config.Airframe, out int numGeneric);
+            List<string> airframeTemplates = templates[numGeneric..];
+            templates = templates[..numGeneric];
             templates.Sort();
+            airframeTemplates.Sort();
 
             uiComboTemplate.Items.Clear();
-            uiComboTemplate.Items.Add($"Default {Globals.AirframeNames[Config.Airframe]} kneeboard template package");
+            uiComboTemplate.Items.Add(new TemplateComboItem("", "Default kneeboard template package", ""));
             foreach (string template in templates)
-                uiComboTemplate.Items.Add(template);
+                uiComboTemplate.Items.Add(new TemplateComboItem(template, template, ""));
+            string prefix = $"{Globals.AirframeShortNames[Config.Airframe]} – ";
+            foreach (string template in airframeTemplates)
+                uiComboTemplate.Items.Add(new TemplateComboItem(template, template, prefix));
 
+            templates.AddRange(airframeTemplates);
             int selIndex = 0;
             if (!string.IsNullOrEmpty(EditKboard.Template))
                 foreach (string template in templates)
@@ -175,16 +206,48 @@ namespace JAFDTC.UI.Base
         }
 
         /// <summary>
+        /// rebuild the kneeboard list from the selected template and update the items grid.
+        /// </summary>
+        private void RebuildKneeboardList(bool isResetSelection = false)
+        {
+            List<string> kboards = FileManager.ListKBTemplates(Config.Airframe, EditKboard.Template);
+            if (kboards.Count == 0)
+                kboards = FileManager.ListKBTemplates(AirframeTypes.UNKNOWN, EditKboard.Template);
+            if (isResetSelection)
+            {
+                EditKboard.KneeboardTags.Clear();
+                foreach (string kb in kboards)
+                    EditKboard.KneeboardTags.Add(kb);
+                SaveEditStateToConfig();
+            }
+            else
+            {
+                List<string> selected = [.. EditKboard.KneeboardTags ];
+                foreach (string kb in selected)
+                    if (!kboards.Contains(kb))
+                    {
+                        EditKboard.KneeboardTags.Clear();
+                        SaveEditStateToConfig();
+                        break;
+                    }
+            }
+            GridItems.Clear();
+            foreach (string kb in kboards)
+                GridItems.Add(new(kb, "\xF0E3", kb.Replace("_", " "), EditKboard.KneeboardTags.Contains(kb)));
+        }
+
+        /// <summary>
         /// rebuild the enable state of the buttons in the ui based on current configuration setup.
         /// </summary>
         private void RebuildEnableState()
         {
             Utilities.SetEnableState(uiBtnDelTmplt, (uiComboTemplate.SelectedIndex > 0));
-            Utilities.SetEnableState(uiBtnSetOutput, (EditKboard.ContentSystemTags.Count > 0));
+            Utilities.SetEnableState(uiBtnSetOutput, (EditKboard.KneeboardTags.Count > 0));
             Utilities.SetEnableState(uiBtnClearOutput, (uiValueOutput.Text.Length > 0));
 
-            Utilities.SetEnableState(uiCkbxEnableRebuild, (EditKboard.ContentSystemTags.Count > 0));
-            Utilities.SetEnableState(uiCkbxEnableLoad, true);
+            Utilities.SetEnableState(uiCkbxEnableRebuild, (EditKboard.KneeboardTags.Count > 0));
+            Utilities.SetEnableState(uiCkbxEnableNight, true);
+            Utilities.SetEnableState(uiCkbxEnableSVG, true);
         }
 
         /// <summary>
@@ -197,11 +260,12 @@ namespace JAFDTC.UI.Base
         }
 
         /// <summary>
-        /// reset to defaults. uncheck all of the systems buttons.
+        /// reset to defaults. check all of the systems buttons.
         /// </summary>
         protected override void ResetConfigToDefault()
         {
             SystemConfig.Reset();
+            CopyConfigToEditState();
             //
             // HACK: can't get the bindings to work for some reason, have to do this the brute force way...
             //
@@ -229,7 +293,7 @@ namespace JAFDTC.UI.Base
         {
             FileOpenPicker picker = new((Application.Current as JAFDTC.App).Window.AppWindow.Id)
             {
-                CommitButtonText = "Add Template",
+                CommitButtonText = "Add Template Package",
                 SuggestedStartLocation = PickerLocationId.Desktop,
                 ViewMode = PickerViewMode.List
             };
@@ -241,25 +305,41 @@ namespace JAFDTC.UI.Base
                 string name = Path.GetFileNameWithoutExtension(resultPick.Path);
                 try
                 {
-// TODO: scan files in zip looking to see if it's all .svg files
-                    if (false)
+                    if (!FileManager.IsValidKBTemplatePackage(resultPick.Path))
                         throw new Exception($"The file “{Path.GetFileName(resultPick.Path)}” is not suitable for a" +
-                                            $" kneeboard template package as it includes files other than .svg files.");
+                                            $" kneeboard template package as it is not a .zip archive that includes" +
+                                            $" only .svg files.");
 
-                    ContentDialogResult result = ContentDialogResult.Primary;
-                    if (FileManager.IsValidDTCTemplate(Config.Airframe, name))
+                    ContentDialogResult result = await Utilities.Message2BDialog(Content.XamlRoot,
+                        "Import Destination",
+                        $"Would you like to import the kneeboard template pacakge “{name}” as a generic template (for" +
+                        $" use with any airframe) or a template specific to the {Globals.AirframeNames[Config.Airframe]}?",
+                        $"Generic",
+                        $"{Globals.AirframeNames[Config.Airframe]}");
+
+                    AirframeTypes type = (result == ContentDialogResult.None) ? Config.Airframe : AirframeTypes.UNKNOWN;
+
+                    result = ContentDialogResult.Primary;
+                    if (FileManager.IsUniqueKBTemplatePackage(Config.Airframe, name))
                     {
                         result = await Utilities.Message2BDialog(Content.XamlRoot,
-                            "Template Exists",
-                            $"There is already a kneeboard template package with the name “{name}”. Would you like to replace it?",
+                            "Template Package Exists",
+                            $"There is already either a generic or a airframe-specific kneeboard template package" +
+                            $" with the name “{name}”. Would you like to replace it?",
                             "Replace"
                         );
+                        if (result == ContentDialogResult.Primary)
+                        {
+                            FileManager.DeleteKBTemplatePackage(Config.Airframe, name);
+                            FileManager.DeleteKBTemplatePackage(AirframeTypes.UNKNOWN, name);
+                        }
                     }
                     if (result == ContentDialogResult.Primary)
                     {
-// TODO: update call
-                        FileManager.ImportDTCTemplate(Config.Airframe, resultPick.Path);
-                        RebuildTemplateList();
+                        FileManager.ExtractKBTemplatePackage(type, resultPick.Path);
+                        EditKboard.Template = name;
+                        SaveEditStateToConfig();
+                        RebuildKneeboardList();
                     }
                 }
                 catch (Exception ex)
@@ -281,19 +361,21 @@ namespace JAFDTC.UI.Base
         {
             if (uiComboTemplate.SelectedIndex > 0)
             {
-                string name = uiComboTemplate.SelectedItem as string;
+                TemplateComboItem item = uiComboTemplate.SelectedItem as TemplateComboItem;
                 ContentDialogResult result = await Utilities.Message2BDialog(Content.XamlRoot,
                     "Delete Kneeboard Template Package",
-                    $"Are you sure you want to delete the kneeboard template package “{name}”?",
+                    $"Are you sure you want to delete the kneeboard template package “{item.DisplayName}”?" +
+                    $" This action cannot be undone.",
                     "Cancel",
-                    "Delete"
+                    "Delete Template Package"
                 );
                 if (result == ContentDialogResult.None)
                 {
-// TODO: update call
-                    FileManager.DeleteDTCTemplate(Config.Airframe, name);
+                    FileManager.DeleteKBTemplatePackage(Config.Airframe, item.TemplateName);
+                    FileManager.DeleteKBTemplatePackage(AirframeTypes.UNKNOWN, item.TemplateName);
                     EditKboard.Template = "";
                     SaveEditStateToConfig();
+                    RebuildKneeboardList();
                 }
             }
         }
@@ -339,16 +421,17 @@ namespace JAFDTC.UI.Base
             {
                 try
                 {
-// TODO: change this...
-//                    Config.SaveMergedSimDTC(EditKboard.Template, EditKboard.OutputPath);
-                    await Utilities.Message1BDialog(Content.XamlRoot, "Kneeboards Built",
-                                                    $"Successfully generated kneeboards to the directory\n\n" +
+                    Config.SaveMergedKboards();
+                    string format = (EditKboard.EnableSVGValue) ? "SVG" : "PNG";
+                    await Utilities.Message1BDialog(Content.XamlRoot, "Kneeboards Created",
+                                                    $"Successfully saved kneeboards in {format} format in the directory\n\n" +
                                                     $"{EditKboard.OutputPath}");
                 }
                 catch (Exception ex)
                 {
                     FileManager.Log($"EditSimulatorDTCPage:BtnSetOutput_Click exception {ex}");
-                    await Utilities.Message1BDialog(Content.XamlRoot, "Kneeboard Build Failed", $"Windows says you can thank {ex}");
+                    await Utilities.Message1BDialog(Content.XamlRoot, "Kneeboard Creation Failed",
+                                                    $"Windows says you can thank {ex}");
                 }
             }
         }
@@ -367,12 +450,12 @@ namespace JAFDTC.UI.Base
         private void BtnSystemItem_Click(object sender, RoutedEventArgs args)
         {
             ToggleButton tbtn = (ToggleButton)sender;
-            if ((tbtn.IsChecked == true) && !EditKboard.ContentSystemTags.Contains(tbtn.Tag.ToString()))
-                EditKboard.ContentSystemTags.Add(tbtn.Tag.ToString());
-            else if ((tbtn.IsChecked == false) && EditKboard.ContentSystemTags.Contains((string)tbtn.Tag.ToString()))
-                EditKboard.ContentSystemTags.Remove(tbtn.Tag.ToString());
+            if ((tbtn.IsChecked == true) && !EditKboard.KneeboardTags.Contains(tbtn.Tag.ToString()))
+                EditKboard.KneeboardTags.Add(tbtn.Tag.ToString());
+            else if ((tbtn.IsChecked == false) && EditKboard.KneeboardTags.Contains((string)tbtn.Tag.ToString()))
+                EditKboard.KneeboardTags.Remove(tbtn.Tag.ToString());
 
-            if (EditKboard.ContentSystemTags.Count == 0)
+            if (EditKboard.KneeboardTags.Count == 0)
             {
                 EditKboard.EnableRebuild = bool.FalseString;
                 uiCkbxEnableRebuild.IsChecked = false;
@@ -388,11 +471,12 @@ namespace JAFDTC.UI.Base
         /// </summary>
         private void ComboTemplate_SelectionChanged(object sender, RoutedEventArgs args)
         {
-            if (!IsUIRebuilding)
+            if (!IsUIRebuilding && (uiComboTemplate.SelectedItem != null))
             {
-                string template = (uiComboTemplate.SelectedIndex > 0) ? uiComboTemplate.SelectedItem.ToString() : "";
-                EditKboard.Template = template;
+                TemplateComboItem item = uiComboTemplate.SelectedItem as TemplateComboItem;
+                EditKboard.Template = item.TemplateName;
                 SaveEditStateToConfig();
+                RebuildKneeboardList(true);
             }
         }
 
@@ -419,10 +503,7 @@ namespace JAFDTC.UI.Base
 
             CopyConfigToEditState();
 
-            ObservableCollection<SystemGridItem> items = [];
-            foreach (ConfigEditorPageInfo info in PageHelper.ContentSystems)
-                items.Add(new SystemGridItem(info.Tag, info.Glyph, info.Label, EditKboard.ContentSystemTags.Contains(info.Tag)));
-            uiGridSystemItems.ItemsSource = items;
+            RebuildKneeboardList();
         }
     }
 }

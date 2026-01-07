@@ -32,7 +32,7 @@ namespace JAFDTC.UI.F16C
     internal class F16CEditSimulatorKboardPageHelper : IEditSimulatorKboardPageHelper
     {
         public static ConfigEditorPageInfo PageInfo
-            => new("TODO_TAG", "Kneeboards", "Kneeboards", "\xF0E3", typeof(EditSimulatorKboardPage),
+            => new(SimKboardSystem.SystemTag, "Kneeboards", "Kneeboards", "\xF0E3", typeof(EditSimulatorKboardPage),
                    typeof(F16CEditSimulatorKboardPageHelper));
 
         public SystemBase GetSystemConfig(IConfiguration config) => ((F16CConfiguration)config).Kboard;
@@ -46,15 +46,29 @@ namespace JAFDTC.UI.F16C
 
         public void ValidateKboardSystem(IConfiguration config)
         {
-//            ((F16CConfiguration)config).DTE.ValidateForAirframe(config.Airframe);
+            ((F16CConfiguration)config).Kboard.ValidateForAirframe(config.Airframe);
         }
 
         public void CopyConfigToEdit(IConfiguration config, SimKboardSystem editKboard)
         {
+            editKboard.Template = new(((F16CConfiguration)config).Kboard.Template);
+            editKboard.OutputPath = new(((F16CConfiguration)config).Kboard.OutputPath);
+            editKboard.KneeboardTags = [ ];
+            foreach (string tag in ((F16CConfiguration)config).Kboard.KneeboardTags)
+                editKboard.KneeboardTags.Add(tag);
+            editKboard.EnableRebuild = new(((F16CConfiguration)config).Kboard.EnableRebuild);
+            editKboard.EnableSVG = new(((F16CConfiguration)config).Kboard.EnableSVG);
         }
 
         public void CopyEditToConfig(SimKboardSystem editKboard, IConfiguration config)
         {
+            ((F16CConfiguration)config).Kboard.Template = new(editKboard.Template);
+            ((F16CConfiguration)config).Kboard.OutputPath = new(editKboard.OutputPath);
+            ((F16CConfiguration)config).Kboard.KneeboardTags = [ ];
+            foreach (string tag in editKboard.KneeboardTags)
+                ((F16CConfiguration)config).Kboard.KneeboardTags.Add(tag);
+            ((F16CConfiguration)config).Kboard.EnableRebuild = new(editKboard.EnableRebuild);
+            ((F16CConfiguration)config).Kboard.EnableSVG = new(editKboard.EnableSVG);
         }
     }
 }

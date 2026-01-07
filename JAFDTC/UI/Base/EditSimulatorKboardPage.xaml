@@ -91,7 +91,7 @@ https://www.gnu.org/licenses/.
         <!-- merged systems grid -->
         <TextBlock Grid.Row="2" Margin="12,12,12,0"
                    Style="{StaticResource EditorTitleTextBlockStyle}">
-            Content to Include:
+            Kneeboards to Generate:
         </TextBlock>
         <GridView Grid.Row="3" x:Name="uiGridSystemItems"
                   Margin="12,12,12,0" HorizontalAlignment="Center"
@@ -106,7 +106,7 @@ https://www.gnu.org/licenses/.
                                     <ColumnDefinition Width="Auto"/>
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
-                                <FontIcon Grid.Column="0" Margin="0,4,12,0"
+                                <FontIcon Grid.Column="0" Margin="0,0,12,0"
                                           FontFamily="Segoe Fluent Icons"
                                           FontSize="20"
                                           Glyph="{x:Bind Glyph}"/>
@@ -118,20 +118,12 @@ https://www.gnu.org/licenses/.
             </GridView.ItemTemplate>
         </GridView>
 
-        <StackPanel Grid.Row="4" Margin="24,-4,24,0">
-            <TextBlock Style="{StaticResource TableHeaderTextStyle}"
-                       TextWrapping="Wrap">
-                JAFDTC will use these systems to provide content for use in the kneeboards constructed from
-                the specified templates.
-            </TextBlock>
-        </StackPanel>
-
         <!-- output -->
-        <TextBlock Grid.Row="5" Margin="12,12,12,0"
+        <TextBlock Grid.Row="4" Margin="12,-2,12,0"
                    Style="{StaticResource EditorTitleTextBlockStyle}">
             Location to Save Kneeboards:
         </TextBlock>
-        <Grid Grid.Row="6" Margin="24,0,12,0">
+        <Grid Grid.Row="5" Margin="24,0,12,0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
@@ -160,7 +152,7 @@ https://www.gnu.org/licenses/.
             </Button>
         </Grid>
 
-        <StackPanel Grid.Row="7" Margin="24,12,24,0">
+        <StackPanel Grid.Row="6" Margin="24,12,24,0">
             <TextBlock Style="{StaticResource TableHeaderTextStyle}"
                        TextWrapping="Wrap">
                 Specifies the path to save the generated kneeboards at, typically in saved games directory for DCS.
@@ -170,21 +162,25 @@ https://www.gnu.org/licenses/.
         </StackPanel>
 
         <!-- behavior -->
-        <TextBlock Grid.Row="8" Margin="12,12,12,0"
+        <TextBlock Grid.Row="7" Margin="12,12,12,0"
                    Style="{StaticResource EditorTitleTextBlockStyle}">
             Behaviors:
         </TextBlock>
 
-        <CheckBox Grid.Row="9" Tag="EnableRebuild" x:Name="uiCkbxEnableRebuild"
+        <CheckBox Grid.Row="8" Tag="EnableRebuild" x:Name="uiCkbxEnableRebuild"
                   Margin="24,6,24,0" HorizontalAlignment="Left"
                   Click="CheckBox_Clicked">
             JAFDTC always rebuilds the generated kneeboards when a system providing content changes
         </CheckBox>
-
-        <CheckBox Grid.Row="10" Tag="EnableOneConfig" x:Name="uiCkbxEnableLoad"
+        <CheckBox Grid.Row="9" Tag="EnableNight" x:Name="uiCkbxEnableNight"
                   Margin="24,0,24,0" HorizontalAlignment="Left"
                   Click="CheckBox_Clicked">
-            JAFDTC only saves kneeboards for a single configuration to the output location
+            Generate kneeboards in night mode (when available in the template)
+        </CheckBox>
+        <CheckBox Grid.Row="10" Tag="EnableSVG" x:Name="uiCkbxEnableSVG"
+                  Margin="24,0,24,0" HorizontalAlignment="Left"
+                  Click="CheckBox_Clicked">
+            Generate kneeboards in SVG format to allow additional editing outside JAFDTC
         </CheckBox>
 
         <!--

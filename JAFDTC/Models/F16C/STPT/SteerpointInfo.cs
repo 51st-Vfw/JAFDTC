@@ -3,7 +3,7 @@
 // SteerpointInfo.cs -- f-16c steerpoint base information
 //
 // Copyright(C) 2021-2023 the-paid-actor & others
-// Copyright(C) 2023-2025 ilominar/raven
+// Copyright(C) 2023-2026 ilominar/raven
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 // Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -19,6 +19,7 @@
 // ********************************************************************************************************************
 
 using JAFDTC.Models.Base;
+using JAFDTC.Models.Planning;
 using JAFDTC.Utilities;
 using System.Diagnostics;
 using System.Text.Json.Serialization;
@@ -212,5 +213,20 @@ namespace JAFDTC.Models.F16C.STPT
             LatUI = null;
             LonUI = null;
         }
+
+        /// <summary>
+        /// returns a representation of the navpoint in a planning Navpoint object. subclasses may override this
+        /// method to change the specific format delivered.
+        /// </summary>
+        public override Navpoint ToNavpoint()
+            => new()
+            {
+                NavpointId = Number,
+                Name = Name,
+                Location = new() { Latitude = LatUI, Longitude = LonUI, Altitude = Alt },
+                Speed = 0.0,
+                TOT = TOS,      // NOTE: viper TOS is "time on steerpoint" (TOT in Navpoint), not "time on station"
+                TOS = ""
+            };
     }
 }

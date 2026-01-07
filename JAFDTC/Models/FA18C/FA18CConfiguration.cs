@@ -60,7 +60,7 @@ namespace JAFDTC.Models.FA18C
         public SimDTCSystem MUMI { get; set; }
 
         [JsonIgnore]
-        public override List<string> MergeableSysTagsForDTC =>
+        public override List<string> MergeableSysTags =>
         [
             RadioSystem.SystemTag,
             CMSSystem.SystemTag

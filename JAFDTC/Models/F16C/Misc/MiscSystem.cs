@@ -3,7 +3,7 @@
 // MiscSystem.cs -- f-16c miscellaneous system
 //
 // Copyright(C) 2021-2023 the-paid-actor & others
-// Copyright(C) 2023-2025 ilominar/raven
+// Copyright(C) 2023-2026 ilominar/raven
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 // Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -18,6 +18,7 @@
 //
 // ********************************************************************************************************************
 
+using JAFDTC.Models.Planning;
 using System.Diagnostics;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
@@ -59,7 +60,7 @@ namespace JAFDTC.Models.F16C.Misc
     /// ISystem object to persist the miscellaneous system settings for the viper. this includes setup for the
     /// tacan, bingo, alow, bullseye, ils, laser, and jhmcs systems in the jet.
     /// </summary>
-    public class MiscSystem : SystemBase
+    public partial class MiscSystem : SystemBase
     {
         public const string SystemTag = "JAFDTC:F16C:MISC";
 
@@ -323,7 +324,7 @@ namespace JAFDTC.Models.F16C.Misc
 
         // ---- following properties are synthesized
 
-        // returns a MFDSystem with the fields populated with the actual default values (note that usually the value
+        // returns a MiscSystem with the fields populated with the actual default values (note that usually the value
         // "" implies default).
         //
         // defaults are as of DCS v2.9.0.47168.
@@ -421,6 +422,7 @@ namespace JAFDTC.Models.F16C.Misc
             get => (TACANBands)int.Parse((string.IsNullOrEmpty(TACANBand)) ? ExplicitDefaults.TACANBand : TACANBand);
         }
 
+        [JsonIgnore]
         public TACANModes TACANModeValue
         {
             get => (TACANModes)int.Parse((string.IsNullOrEmpty(TACANMode)) ? ExplicitDefaults.TACANMode : TACANMode);
@@ -491,8 +493,24 @@ namespace JAFDTC.Models.F16C.Misc
         //
         // ------------------------------------------------------------------------------------------------------------
 
-        // reset the instance to defaults (by definition, field value of "" implies default).
-        //
+        /// <summary>
+        /// returns the mission created by merging data from the system configuration into a mission plan. this
+        /// method may update the input in-place.
+        /// </summary>
+        public override Mission MergeIntoMission(Mission mission, int indexPackage = 0, int indexFlight = 0)
+        {
+            mission.Owner.Tacan = int.Parse((!string.IsNullOrEmpty(TACANChannel)) ? TACANChannel
+                                                                                  : ExplicitDefaults.TACANChannel);
+            mission.Owner.TacanBand = (TACANBandValue.ToString())[0];
+            mission.Owner.Joker = int.Parse((!string.IsNullOrEmpty(Bingo)) ? Bingo : ExplicitDefaults.Bingo);
+            mission.Owner.Lase = int.Parse((!string.IsNullOrEmpty(LaserTGPCode)) ? LaserTGPCode
+                                                                                 : ExplicitDefaults.LaserTGPCode);
+            return mission;
+        }
+
+        /// <summary>
+        /// reset the instance to defaults (by definition, field value of "" implies default).
+        /// </summary>
         public override void Reset()
         {
             Bingo = "";

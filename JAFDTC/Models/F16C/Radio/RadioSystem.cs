@@ -3,7 +3,7 @@
 // RadioSystem.cs -- f-16c radio system
 //
 // Copyright(C) 2021-2023 the-paid-actor & others
-// Copyright(C) 2023-2025 ilominar/raven
+// Copyright(C) 2023-2026 ilominar/raven
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 // Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -19,7 +19,9 @@
 // ********************************************************************************************************************
 
 using JAFDTC.Models.Base;
+using JAFDTC.Models.Planning;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Text.Json.Nodes;
@@ -35,7 +37,7 @@ namespace JAFDTC.Models.F16C.Radio
     /// <summary>
     /// TODO: document
     /// </summary>
-    public class RadioSystem : RadioSystemBase<RadioPreset>, ISystem
+    public partial class RadioSystem : RadioSystemBase<RadioPreset>, ISystem
     {
         public const string SystemTag = "JAFDTC:F16C:RADIO";
 
@@ -75,11 +77,11 @@ namespace JAFDTC.Models.F16C.Radio
 
         public RadioSystem()
         {
-            Presets = new ObservableCollection<ObservableCollection<RadioPreset>>
-            {
-                new(),
-                new()
-            };
+            Presets =
+            [
+                [ ],
+                [ ]
+            ];
             IsCOMM1MonitorGuard = false;
             COMM1DefaultTuning = "";
             COMM2DefaultTuning = "";
@@ -87,10 +89,10 @@ namespace JAFDTC.Models.F16C.Radio
 
         public RadioSystem(RadioSystem other)
         {
-            Presets = new ObservableCollection<ObservableCollection<RadioPreset>>();
+            Presets = [ ];
             foreach (ObservableCollection<RadioPreset> radio in other.Presets)
             {
-                ObservableCollection<RadioPreset> newPresets = new();
+                ObservableCollection<RadioPreset> newPresets = [ ];
                 foreach (RadioPreset preset in radio)
                 {
                     RadioPreset newPreset = new()
@@ -139,6 +141,17 @@ namespace JAFDTC.Models.F16C.Radio
             MergeRadioIntoSimDTC(commRoot["COMM1"], Presets[(int)Radios.COMM1]);
             MergeRadioIntoSimDTC(commRoot["COMM2"], Presets[(int)Radios.COMM2]);
             return dataRoot;
+        }
+
+        /// <summary>
+        /// returns the mission created by merging data from the system configuration into a mission plan. this
+        /// method may update the input in-place.
+        /// </summary>
+        public override Mission MergeIntoMission(Mission mission, int indexPackage = 0, int indexFlight = 0)
+        {
+            IReadOnlyList<string> radioNames = [ "AN/ARC-164 (PRI UHF)", "AN/ARC-222 (AUX VHF)" ];
+            mission.Packages[indexPackage].Flights[indexFlight].Radios = ToRadioList(radioNames);
+            return mission;
         }
 
         /// <summary>

@@ -100,10 +100,15 @@ namespace JAFDTC.Models
         public MapImportSpec LastMapMarkerImport { get; set; }
 
         /// <summary>
-        /// return a list of system tags for systems that can be merged wth a dcs dtc.
+        /// returns list of system tags for all systems that can be merged to build a dcs dtc tape or kneeboard.
         /// </summary>
         [JsonIgnore]
-        public List<string> MergeableSysTagsForDTC { get; }
+        public List<string> MergeableSysTags { get; }
+
+        /// <summary>
+        /// returns a list of tags (kneeboard names) for use when merging kneeboards.
+        /// </summary>
+        public List<string> MergeTagsKneeboard { get; }
 
         /// <summary>
         /// provides an instance of an upload agent object that implements IUploadAgent. this object handles creating
@@ -150,6 +155,18 @@ namespace JAFDTC.Models
         /// the uid of the configuration clone is unique.
         /// </summary>
         public IConfiguration Clone();
+
+        /// <summary>
+        /// acquire the configuration merge mutex. this mutex should be held before backgrounding any configuration
+        /// merge operations via SaveMergedSimDTC or SaveMergedKboards.
+        /// </summary>
+        public bool MergeMutexAcquire();
+
+        /// <summary>
+        /// release the configuration merge mutex. this mutex should be released after the merge finishes when
+        /// holding the merge mutex.
+        /// </summary>
+        public void MergeMutexRelease();
 
         /// <summary>
         /// sanatize a configuration instance by clearing UID, Filename, IsFavorite, LinkedSysMap, LastSystemEdited
@@ -239,16 +256,21 @@ namespace JAFDTC.Models
 
         /// <summary>
         /// persist the merged configuration into the dcs dtc file according to internal dte system configuration.
-        /// this should do nothing if the dte configuration is default. returns true on success, false on error.
+        /// this should do nothing (and indicate success) if the dte configuration is default or dte is not
+        /// supported. returns true on success, false on error.
+        /// 
+        /// this method typically uses the protected ConfigurationBase:SaveMergedSimDTC() method.
         /// </summary>
         public bool SaveMergedSimDTC();
 
         /// <summary>
-        /// persist the merged configuration into the dcs dtc file at the output path. the dcs dtc file is built by
-        /// merging the configuration of mergable systems into the base template. returns true on success, false on
-        /// failure.
+        /// persist the merged configuration into kneeboards according to internal system configuration. this
+        /// should do nothing (and indicate success) if the kneeboard configuration is default or kneeboards are
+        /// not supported. returns true on success, false on error.
+        /// 
+        /// this method typically uses the protected ConfigurationBase:SaveMergedboards() method.
         /// </summary>
-        public bool SaveMergedSimDTC(string template, string outputPath);
+        public bool SaveMergedKboards();
 
         /// <summary>
         /// updates the UpdatesInfoTextUI, UpdatesIconsUI, and UpdatesIconBadgesUI properties in response to an update
