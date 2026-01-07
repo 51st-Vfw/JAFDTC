@@ -769,7 +769,7 @@ elevation (tags are optional). Once you do so, the buttons in the editor change 
 
 When DCS is available, coordinates (latitude, longitude, and elevation) can be captured from
 DCS and filled in using the DCS pin button in the POI editor. See
-[TODO]()
+[TODO](#capturing-coordinates-from-dcs)
 for more information on capturing location information from DCS.
 
 ### Exporting Points of Interest
@@ -827,7 +827,7 @@ interest location to fall within a DCS theater.
 JAFDTC provides a *Threat* database that contains sizes of weapon engagement zones for various
 (primarily surface-to-air) DCS units. This database is used to help proivde threat information
 for display on
-[map windows](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/Common_Elements.md#navigation-system-editors).
+[map windows](#map-window).
 
 As
 [described earlier](#threats)
@@ -989,9 +989,52 @@ database are added.
 
 ## Map Window
 
-TODO
+JAFDTC provides a map window to show geographic information such as navigation routes and
+threat locations on a scrollable map. In some situations, this window can be used for tasks
+like editing a set of steerpoints or campaign points of interest. The map window is typically
+opened for a specific task using a command on a command bar (for example, the map command on
+a navigation system editor). Additional information can be found in the interface discussions
+in the
+[*Common Elements Guide*](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/Common_Elements.md)
+and
+[airframe guides](#what-now).
+
 
 ![](images/uguide_map_ui.png)
+
+Working from top to bottom, the primary components of this page include,
+
+1. [***Command Bar & Zoom Control***](#map-command-bar)
+   &ndash; Defines operations you can apply to elements in the map window.
+2. [***Map***](#map-view)
+   &ndash; Shows the map overlaid with various elements.
+3. [***Map Status Bar***](#map-status-bar)
+   &ndash; Shows status information on current pointer location and selected map element.
+
+The reaminder of this section discusses each of these elements in more detail.
+
+### Map Command Bar
+
+The command bar in area (1) provides commands you can apply to elements on the map list
+[*Threat List*](#threat-list),
+
+![](images/uguide_map_command.png)
+
+The command bar includes the following commands,
+
+- **Add** &ndash; Adds a new marker to the map (future feature).
+- **Edit** &ndash; Opens the selected marker in the appropriate editor if an editor is available.
+- **Delete** &ndash; Deletes the selected marker if it can be deleted.
+- **Import Threats** &ndash; Import temporary markers from a `.acmi` or `.miz` file.
+- **Clear Threats** &ndash; Clear all temporary markers previously imported with the import command.
+- **Filter Markers** &ndash; TODO.
+- **Settings** &ndash; Manages settings for the map window.
+
+To the right of the command bar is a zoom control that allows you to change the zoom level of
+the map displayed in area (2). You can also zoom using the mouse wheel as described
+[below](#map-view).
+
+### Map View
 
 double click centers map
 
@@ -1001,21 +1044,20 @@ click off marker drags map
 
 right click yardstick
 
-![](images/uguide_map_command.png)
+Adding navpoints
 
-The command bar includes the following commands,
-
-- **Add** &ndash; Adds a new marker to the map (WIP).
-- **Edit** &ndash; Opens the selected marker in the appropriate editor if an editor is available.
-- **Delete** &ndash; Deletes the selected marker if it can be deleted.
-- **Import** &ndash; Import temporary markers from a file (WIP).
-- **Settings** &ndash; Manages settings for the map window.
+### Map Status Bar
 
 TODO
 
+### Importing &amp; Managing Threats
+
+TODO
+
+### Filtering Map Elements
+
 ![](images/uguide_map_filter_ui.png)
 
-Adding navpoints
 
 ## Capturing Coordinates from DCS
 
