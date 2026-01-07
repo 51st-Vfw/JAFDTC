@@ -583,26 +583,41 @@ namespace JAFDTC.Utilities
 
         /// <summary>
         /// returns the path to the airframe-specific or generic kneeboard template directory in the settings
-        /// directory. an airframe of UNKNOWN implies the generic directory.
+        /// directory. specifying an airframe of UNKNOWN returns the generic directory.
         /// </summary>
-        private static string KboardTemplateDirPath(AirframeTypes airframe)
+        private static string KBTemplatePackageDirPath(AirframeTypes airframe)
             => (airframe != AirframeTypes.UNKNOWN) ? AirframeDataDirPath(airframe, "Kneeboards")
                                                    : Path.Combine(_settingsDirPath, "Kneeboards");
 
         /// <summary>
-        /// returns true if the kneeboard package template exists as a generic or airframe-specific template,
-        /// false otherwise. a name of "" indicates the default airframe template file and is always unique.
+        /// returns the path to the kneeboard template package.
         /// </summary>
-        public static bool IsUniqueKboardTemplate(AirframeTypes airframe, string name)
-            => (string.IsNullOrEmpty(name) ||
-                (System.IO.File.Exists(Path.Combine(KboardTemplateDirPath(AirframeTypes.UNKNOWN), $"{name}.zip")) ||
-                 System.IO.File.Exists(Path.Combine(KboardTemplateDirPath(airframe), $"{name}.zip"))));
+        private static string KBTemplatePackagePath(AirframeTypes airframe, string name)
+        {
+            string path = Path.Combine(_appDirPath, "Data", $"kb-default-templates.zip");
+            if (!string.IsNullOrEmpty(name))
+            {
+                path = Path.Combine(KBTemplatePackageDirPath(airframe), $"{name}.zip");
+                if (!System.IO.File.Exists(path))
+                    path = Path.Combine(KBTemplatePackageDirPath(AirframeTypes.UNKNOWN), $"{name}.zip");
+            }
+            return path;
+        }
 
         /// <summary>
-        /// returns true if the .zip file at the given path is a valid template package (no hierarhcy, all files
-        /// are .svg files).
+        /// returns true if the kneeboard package template currently exists as a generic or airframe-specific
+        /// template, false otherwise. a name of "" indicates the default template file and is always unique.
         /// </summary>
-        public static bool IsValidKboardTemplatePackage(string path)
+        public static bool IsUniqueKBTemplatePackage(AirframeTypes airframe, string name)
+            => (string.IsNullOrEmpty(name) ||
+                (System.IO.File.Exists(Path.Combine(KBTemplatePackageDirPath(AirframeTypes.UNKNOWN), $"{name}.zip")) ||
+                 System.IO.File.Exists(Path.Combine(KBTemplatePackageDirPath(airframe), $"{name}.zip"))));
+
+        /// <summary>
+        /// returns true if the .zip file at the given path is a valid template package. to be valid, the .zip file
+        /// should have no hierarhcy and only contain .svg files.
+        /// </summary>
+        public static bool IsValidKBTemplatePackage(string path)
         {
             try
             {
@@ -612,34 +627,34 @@ namespace JAFDTC.Utilities
                     char[] pathChars = [ Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar ];
                     foreach (ZipArchiveEntry entry in archive.Entries)
                         if ((entry.FullName.Split(pathChars).Length != 1) ||
-                            (!entry.Name.EndsWith(".svg", StringComparison.OrdinalIgnoreCase)))
+                            (!entry.FullName.EndsWith(".svg", StringComparison.OrdinalIgnoreCase)))
                             return false;
                     return true;
                 }
             }
             catch (Exception ex)
             {
-                Log($"FileManager:IsValidKboardTemplatePackage fails on {path}, {ex}");
+                Log($"FileManager:IsValidKBTemplatePackage fails on {path}, {ex}");
             }
             return false;
         }
 
         /// <summary>
         /// returns a list of the kneeboard template names for an airframe (including generic templates, but
-        /// excluding the default template) along with the number of generic templates in the list. the
-        /// generic templates always start at the beginning of the list.
+        /// excluding the default template) along with the number of generic templates in the list. generic
+        /// templates are always placed at the beginning of the list.
         /// </summary>
-        public static List<string> ListKboardTemplates(AirframeTypes airframe, out int numGeneric)
+        public static List<string> ListKBTemplatePackages(AirframeTypes airframe, out int numGeneric)
         {
             List<string> list = [ ];
-            string path = KboardTemplateDirPath(AirframeTypes.UNKNOWN);
+            string path = KBTemplatePackageDirPath(AirframeTypes.UNKNOWN);
             if (Directory.Exists(path))
                 foreach (string srcFile in Directory.GetFiles(path))
                     if (Path.GetExtension(srcFile).Equals(".zip", StringComparison.OrdinalIgnoreCase))
                         list.Add(Path.GetFileNameWithoutExtension(srcFile));
             numGeneric = list.Count;
 
-            path = KboardTemplateDirPath(airframe);
+            path = KBTemplatePackageDirPath(airframe);
             if (Directory.Exists(path))
                 foreach (string srcFile in Directory.GetFiles(path))
                     if (Path.GetExtension(srcFile).Equals(".zip", StringComparison.OrdinalIgnoreCase))
@@ -648,13 +663,14 @@ namespace JAFDTC.Utilities
         }
 
         /// <summary>
-        /// import a dcs dtc file into jafdtc as a template file by copying the source template file to the airframe's
-        /// dtc template area. returns the template name, "" on error. this operation will over-write an existing
-        /// template with the same name and create the template directory if it does not yet exist.
+        /// import a kneeboard template package file into jafdtc by copying the source template file to the
+        /// generic or airframe template area. returns the template name, "" on error. this operation will
+        /// over-write an existing template with the same name and create the template directory if it does
+        /// not yet exist.
         /// </summary>
-        public static string ImportKboardTemplate(AirframeTypes airframe, string srcPath)
+        public static string ImportKBTemplatePackage(AirframeTypes airframe, string srcPath)
         {
-            string destPath = KboardTemplateDirPath(airframe);
+            string destPath = KBTemplatePackageDirPath(airframe);
             string destName = Path.GetFileNameWithoutExtension(srcPath);
             try
             {
@@ -663,71 +679,99 @@ namespace JAFDTC.Utilities
             }
             catch (Exception ex)
             {
-                Log($"FileManager:ImportKboardTemplate exception copying {srcPath} to {destPath}, {ex}");
+                Log($"FileManager:ImportKBTemplatePackage exception copying {srcPath} to {destPath}, {ex}");
                 destName = "";
             }
             return destName;
         }
 
         /// <summary>
-        /// returns list of paths to the extracted contents of a kneeboard template package file with the given
-        /// name for the specified airframe, an empty list on error. the name "" indicates the default airframe
-        /// template, by convention. the method checks for a matching generic template if an airframe-specific
-        /// version is not found.
+        /// returns list of templates present in a template package, an empty list on error.
         /// </summary>
-        public static List<string> LoadKboardTemplate(AirframeTypes airframe, string name)
+        public static List<string> ListKBTemplates(AirframeTypes airframe, string name)
         {
-            string srcPath = Path.Combine(_appDirPath, "Data", $"kboard-default-templates.zip");
+            List<string> templates = [];
+            string srcPath = KBTemplatePackagePath(airframe, name);
             try
             {
-                if (!string.IsNullOrEmpty(name))
-                {
-                    srcPath = Path.Combine(KboardTemplateDirPath(airframe), $"{name}.zip");
-                    if (!System.IO.File.Exists(srcPath))
-                        srcPath = Path.Combine(KboardTemplateDirPath(AirframeTypes.UNKNOWN), $"{name}.zip");
-                }
-                if (!System.IO.File.Exists(srcPath) || !IsValidKboardTemplatePackage(srcPath))
+                if (!IsValidKBTemplatePackage(srcPath))
+                    throw new Exception("template package check fails");
+
+                using ZipArchive archive = ZipFile.Open(srcPath, ZipArchiveMode.Read);
+                foreach (ZipArchiveEntry entry in archive.Entries)
+                    if (entry.FullName.EndsWith(".svg", StringComparison.OrdinalIgnoreCase))
+                    {
+                        // ignore the path (FullName), everything in the package should be flat.
+                        //
+                        templates.Add(Path.GetFileNameWithoutExtension(entry.Name));
+                    }
+            }
+            catch (Exception ex)
+            {
+                Log($"FileManager:ListKBTemplates exception loading from {srcPath}, {ex}");
+            }
+            return templates;
+        }
+
+        /// <summary>
+        /// returns list of paths to the extracted contents of a kneeboard template package file with the given
+        /// name for the specified airframe, an empty list on error. an airframe of UNKNOWN selects a generic
+        /// template package while the name "" indicates the default template, by convention. the method checks
+        /// for a matching generic template if an airframe-specific version is not found. if the extract list is
+        /// non-null, only those kneeboards appearing in the list are extracted.
+        /// </summary>
+        public static List<string> ExtractKBTemplatePackage(AirframeTypes airframe, string name,
+                                                            List<string> extract = null)
+        {
+            List<string> paths = [];
+            string srcPath = KBTemplatePackagePath(airframe, name);
+            try
+            {
+                if (!IsValidKBTemplatePackage(srcPath))
                     throw new Exception("template package check fails");
 
                 string tempPath = Path.Combine(Path.GetTempPath(), $"JAFDTC-KBB-{Guid.NewGuid()}");
                 Directory.CreateDirectory(tempPath);
 
-                List<string> paths = [ ];
                 using ZipArchive archive = ZipFile.Open(srcPath, ZipArchiveMode.Read);
                 foreach (ZipArchiveEntry entry in archive.Entries)
-                {
-                    if (entry.Name.EndsWith(".svg", StringComparison.OrdinalIgnoreCase))
+                    if (entry.FullName.EndsWith(".svg", StringComparison.OrdinalIgnoreCase) &&
+                        ((extract == null) || (extract.Contains(Path.GetFileNameWithoutExtension(entry.Name)))))
                     {
                         // ignore the path (FullName), everything in the package should be flat.
                         //
                         string destPath = Path.GetFullPath(Path.Combine(tempPath, entry.Name));
                         entry.ExtractToFile(destPath, overwrite: true);
                         paths.Add(destPath);
-                        Log($"FileManager:LoadKboardTemplate extracts {destPath}");
+                        Log($"FileManager:ExtractKBTemplatePackage extracts {destPath}");
                     }
-                }
-                return paths;
             }
             catch (Exception ex)
             {
-                Log($"FileManager:LoadKboardTemplate exception loading from {srcPath}, {ex}");
+                Log($"FileManager:ExtractKBTemplatePackage exception loading from {srcPath}, {ex}");
             }
-            return [ ];
+            return paths;
         }
 
         /// <summary>
-        /// remove the kneeboard template package file with a given name for the specified airframe. operations on
-        /// the default template (name "", by convention) are ignored. an airframe of UNKNOWN deletes the generic
-        /// template.
+        /// remove the kneeboard template package file with a given name for the specified airframe (an UNKNOWN
+        /// airframe deletes the generic template with the given name). operations on the default template (name
+        /// "", by convention) are ignored.
         /// </summary>
-        public static void DeleteKboardTemplate(AirframeTypes airframe, string name)
+        public static void DeleteKBTemplatePackage(AirframeTypes airframe, string name)
         {
             if (!string.IsNullOrEmpty(name))
             {
-                string destPath = KboardTemplateDirPath(airframe);
-                string path = Path.Combine(destPath, $"{name}.zip");
-                if (System.IO.File.Exists(path))
-                    System.IO.File.Delete(path);
+                string path = Path.Combine(KBTemplatePackageDirPath(airframe), $"{name}.zip");
+                try
+                {
+                    if (System.IO.File.Exists(path))
+                        System.IO.File.Delete(path);
+                }
+                catch (Exception ex)
+                {
+                    Log($"FileManager:DeleteKBTemplatePackage exception deleting {path}, {ex}");
+                }
             }
         }
 
