@@ -2,7 +2,7 @@
 //
 // NavpointSystemBase.cs -- navigation point system abstract base class
 //
-// Copyright(C) 2023-2025 ilominar/raven
+// Copyright(C) 2023-2026 ilominar/raven
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 // Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -17,7 +17,7 @@
 //
 // ********************************************************************************************************************
 
-using JAFDTC.Models.CoreApp;
+using JAFDTC.Models.DCS;
 using JAFDTC.Models.Planning;
 using JAFDTC.Models.Units;
 using System;
@@ -219,6 +219,26 @@ namespace JAFDTC.Models.Base
         public virtual void Delete(T navpt)
         {
             Points.Remove(navpt);
+        }
+
+        /// <summary>
+        /// return the list of "consensus" theaters for the navigation points in the nav system. a "consensus
+        /// theater" is a theater that all navpoints in the system lie within.
+        /// </summary>
+        /// <returns></returns>
+        public List<string> ConsensusTheaters()
+        {
+            Dictionary<string, int> mapTheater = [];
+            foreach (T navpt in Points)
+                foreach (string theater in Theater.TheatersForCoords(navpt.Lat, navpt.Lon))
+                    mapTheater[theater] = mapTheater.GetValueOrDefault(theater, 0) + 1;
+
+            List<string> consensusTheaters = [];
+            foreach (string theater in mapTheater.Keys)
+                if (mapTheater[theater] == Points.Count)
+                    consensusTheaters.Add(theater);
+
+            return consensusTheaters;
         }
     }
 }
