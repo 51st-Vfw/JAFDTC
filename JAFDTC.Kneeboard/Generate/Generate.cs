@@ -29,7 +29,6 @@ namespace JAFDTC.Kneeboard.Generate
             generateCriteria.Required();
             generateCriteria.PathOutput.Required();
             generateCriteria.PathTemplates.Required();
-            generateCriteria.Name.Required();
             generateCriteria.Mission.Required();
             generateCriteria.Mission.Owner.Required();
             generateCriteria.Mission.Packages.Required();
@@ -76,14 +75,18 @@ namespace JAFDTC.Kneeboard.Generate
 
                     foreach (var template in templates)
                     {
-                        var safeFileName = string.Concat($"{generateCriteria.Name}-{generateCriteria.Mission.Name}-{flight.Name}-{Path.GetFileNameWithoutExtension(template)}").Replace(" ", "-");
+                        var fltName = (!string.IsNullOrEmpty(flight.Name)) ? flight.Name.ToShortCallsign() : "None";
+                        var msnName = (!string.IsNullOrEmpty(generateCriteria.Mission.Name)) ? generateCriteria.Mission.Name
+                                                                                             : "Untitled";
+                        var safeFileName = string.Concat($"{fltName}_{msnName}_{Path.GetFileNameWithoutExtension(template)}").Replace(" ", "_");
                         foreach (var c in Path.GetInvalidFileNameChars())
-                            safeFileName = safeFileName.Replace(c, '-');
+                            safeFileName = safeFileName.Replace(c, '_');
 
                         var destinationPath = Path.Combine(generateCriteria.PathOutput, $"{safeFileName}.png");
 
                         using (var pkb = new Builder(dict, template, destinationPath))
-                            pkb.Build();
+                            pkb.Build(generateCriteria.IsNightMode.GetValueOrDefault(false),
+                                      generateCriteria.IsSVGMode.GetValueOrDefault(true));
 
                         result.Add(destinationPath);
                     }

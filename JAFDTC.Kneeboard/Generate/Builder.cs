@@ -19,66 +19,43 @@
 
 using Svg;
 using System.Drawing.Imaging;
-using System.Text.RegularExpressions;
 
 namespace JAFDTC.Kneeboard.Generate
 {
     internal class Builder(IReadOnlyDictionary<string, string> _data, string _templateFilePath, string _destinationFilePath) : IDisposable
     {
+        // TODO: consider dumping key start/end markers
         private const char KeyStart = '[';
         private const char KeyEnd = ']';
 
         private static readonly char[] _KeyDelim = [KeyStart, KeyEnd];
 
-        private SvgDocument _svgDocument;
+        private SvgDocument? _svgDocument;
         private List<SvgTextSpan> _textItems;
         private List<SvgImage> _imageItems;
+        private List<SvgRectangle> _rectItems;
         private bool _changed;
 
-        public void Build()
+        public void Build(bool isNightMode, bool isSVGMode)
         {
             LoadKB();
             Assign();
-            Save();
+            TintKneeboard(isNightMode);
+            Save(isSVGMode);
         }
 
         private void LoadKB()
         {
             _svgDocument = SvgDocument.Open(_templateFilePath);
 
-            _textItems = _svgDocument
-                .Descendants()
-                .OfType<SvgTextSpan>()
-                .ToList();
-
-            _imageItems = _svgDocument
-               .Descendants()
-               .OfType<SvgImage>()
-               .ToList();
+            _textItems = [.. _svgDocument.Descendants().OfType<SvgTextSpan>() ];
+            _imageItems = [.. _svgDocument.Descendants().OfType<SvgImage>() ];
+            _rectItems = [.. _svgDocument.Descendants().OfType<SvgRectangle>() ];
         }
 
         private void Assign()
         {
-            foreach (var item in _textItems.Where(p => p?.ID != null && p.ID.Contains(KeyStart) && p.ID.Contains(KeyEnd)))
-            {
-                item.Text = string.Empty; //default
-                if (_data.TryGetValue(item.ID.Replace(KeyStart, ' ').Replace(KeyEnd, ' ').Trim(), out var value))
-                {
-                    _changed = true;
-                    item.Text = value;
-                }
-            }
-
-            foreach (var item in _imageItems.Where(p => p?.ID != null && p.ID.Contains(KeyStart) && p.ID.Contains(KeyEnd)))
-            {
-                item.Href = string.Empty; //default
-                if (_data.TryGetValue(item.ID.Replace(KeyStart, ' ').Replace(KeyEnd, ' ').Trim(), out var value))
-                {
-                    _changed = true;
-                    item.Href = value;
-                }
-            }
-
+            // TODO: consider regex here...
             foreach (var item in _textItems.Where(p => p?.Text != null && p.Text.Contains(KeyStart) && p.Text.Contains(KeyEnd)))
             {
                 var matches = item.Text.Split(_KeyDelim, StringSplitOptions.RemoveEmptyEntries);
@@ -93,6 +70,7 @@ namespace JAFDTC.Kneeboard.Generate
                         item.Text = item.Text.Replace(ToMatch(match), string.Empty, StringComparison.OrdinalIgnoreCase); //or default parsed data...
             }
 
+#if POSSIBLY_IMPLEMENT_LATER
             foreach (var item in _imageItems.Where(p => p?.Href != null && p.Href.Contains(KeyStart) && p.Href.Contains(KeyEnd)))
             {
                 var matches = item.Href.Split(_KeyDelim, StringSplitOptions.RemoveEmptyEntries);
@@ -105,19 +83,33 @@ namespace JAFDTC.Kneeboard.Generate
                     else
                         item.Href = item.Href.Replace(ToMatch(match), string.Empty, StringComparison.OrdinalIgnoreCase); //or default parsed data...
             }
+#endif
         }
 
-        private void Save()
+        private void TintKneeboard(bool isNight)
         {
+            foreach (var item in _rectItems.Where(p => p.ID.Contains(Models.Keys.NIGHT_TINT)))
+                item.Opacity = (isNight) ? item.Opacity : (float) 0.0;
+        }
+
+        private void Save(bool isSVGMode)
+        {
+            if (isSVGMode)
+                _destinationFilePath = Path.ChangeExtension(_destinationFilePath, ".svg");
+
             if (File.Exists(_destinationFilePath))
                 File.Delete(_destinationFilePath);
 
-            if (!_changed)
-                return;
-
-            using var stream = new MemoryStream();
-            using var bitmap = _svgDocument.Draw();
-            bitmap.Save(_destinationFilePath, ImageFormat.Png);
+            if (_changed && !isSVGMode && (_svgDocument != null))
+            {
+                using var stream = new MemoryStream();
+                using var bitmap = _svgDocument.Draw();
+                bitmap.Save(_destinationFilePath, ImageFormat.Png);
+            }
+            else if (_changed && (_svgDocument != null))
+            {
+                _svgDocument.Write(_destinationFilePath);
+            }
         }
 
         private static string ToMatch(string value)

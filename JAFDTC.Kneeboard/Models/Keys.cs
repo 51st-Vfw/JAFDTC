@@ -1,6 +1,6 @@
 ﻿// ********************************************************************************************************************
 //
-// Keys.cs -- substution keys
+// Keys.cs -- substution keys for kneeboard builder
 //
 // Copyright(C) 2026 rage
 //
@@ -21,56 +21,77 @@ namespace JAFDTC.Kneeboard.Models
 {
     internal static class Keys
     {
+        // NOTE: this key appears in the id of a rect element from a template .svg file. the opacity of this
+        // NOTE: element is forced to 0.0 if the kneeboard is not being generated in night mode.
+
+        public const string NIGHT_TINT = "NIGHT_TINT";
+
+        // NOTE: key values are assumed to be strings unless otherwise noted. these keys are found in a textSpan
+        // NOTE: element from a template .svg file and replaced according to the mission setup.
+
+        // ---- global keys
+
+        // TODO: header and name are kinda redundant. remove one?
+        public const string NAME = "NAME";
         public const string HEADER = "HEADER";
         public const string FOOTER = "FOOTER";
         public const string THEATER = "THEATER";
-        public const string NAME = "NAME";
-        public const string NIGHTMODE = "NIGHTMODE";
-        //public const string LOGO = "LOGO";
 
-        public const string PACKAGE_NAME = "PACKAGE_*_NAME";
+        // ---- package keys
 
-        //in future should be package prefix...based
-        public const string FLIGHT_NAME = "FLIGHT_*_NAME";
-        public const string FLIGHT_NAME_SHORT = "FLIGHT_*_NAME_SHORT";
-        public const string FLIGHT_AIRCRAFT = "FLIGHT_*_AIRCRAFT";
+        // TODO: currently support only single package per mission
+        public const string PACKAGE_NAME = "PK*.0:N";
 
-        //in future should be package/flight prefix...based
-        public const string PILOT_NAME = "PILOT_*_NAME";
-        public const string PILOT_CALLSIGN = "PILOT_*_CALLSIGN";
-        public const string PILOT_CALLSIGN_SHORT = "PILOT_*_CALLSIGN_SHORT";
-        public const string PILOT_DATAID = "PILOT_*_DATAID";
-        public const string PILOT_SCL = "PILOT_*_SCL";
+        // ---- flight keys
 
-        //since we only are supporting 1 flight right now.. let all pilots, nav points, and comms tied to that first flight...
+        // TODO: currently support only single flight per package
+        public const string FLIGHT_NAME = "F*.0:N";                             // "VENOM1"
+        public const string FLIGHT_NAME_SHORT = "F*.0:NS";                      // "VM1"
+        public const string FLIGHT_AIRCRAFT = "F*.0:A";                         // "F-16C"
 
+        // TODO: since we only are supporting 1 flight all pilots, nav points, and comms tied to first flight...
 
-        public const string RADIO_NUM = "RADIO_*_NUM";
-        public const string RADIO_NAME = "RADIO_*_NAME";
-        public const string RADIO_PREFIX = "RADIO_*_";
-        //RADIO_PREFIX + this
-        public const string RADIO_PRESET_NUM = "PRESET_*_NUM";
-        public const string RADIO_PRESET_FREQ = "PRESET_*_FREQ";
-        public const string RADIO_PRESET_DESC = "PRESET_*_DESC";
-        public const string RADIO_PRESET_MOD = "PRESET_*_MOD";
+        // NOTE: generally assume kneeboards are going to be ~flight-based so there is no need for package/flight
+        // NOTE: prefixes here. radios and navigation fits this model. for pilots, we can use callsigns to denote
+        // NOTE: different packages/flights in event you want a kneeboard with, for example, all viper pilots in
+        // NOTE: package.
 
+        // ---- pilot keys
 
-        public const string ROUTE_NUM = "ROUTE_*_NUM";
-        public const string ROUTE_NAME = "ROUTE_*_NAME";
-        public const string ROUTE_PREFIX = "ROUTE_*_";
+        public const string PILOT_NAME = "P*.0:N";
+        public const string PILOT_CALLSIGN = "P*.0:C";                          // "VENOM1-1"
+        public const string PILOT_CALLSIGN_SHORT = "P*.0:CS";                   // "VM11"
+        public const string PILOT_DATAID = "P*.0:DI";                           // string identifier (eg, viper tndl)
+        public const string PILOT_SCL = "P*.0:SC";                              // string stores configuration
 
+        // ---- communications keys
 
-        //ROUTE PREFIX + this
-        public const string NAV_NUM = "NAV_*_NUM";
-        public const string NAV_NAME = "NAV_*_NAME";
-        public const string NAV_NOTE = "NAV_*_NOTE";
-        public const string NAV_ALT = "NAV_*_ALT";
-        public const string NAV_TOS = "NAV_*_TOS";
-        public const string NAV_TOT = "NAV_*_TOT";
-        public const string NAV_SPEED = "NAV_*_SPEED";
-        public const string NAV_COORD = "NAV_*_COORD";
-        public const string NAV_MGRS = "NAV_*_MGRS";
+        public const string RADIO_NUM = "R*.0:I";                               // integer on [1, N]
+        public const string RADIO_NAME = "R*.0:N";                              // "AN/ARC-210"
+        public const string RADIO_PREFIX = "R*.";
+        // RADIO_PREFIX + this
+        public const string RADIO_PRESET_NUM = "*:I";                           // integer on [1, N]
+        public const string RADIO_PRESET_FREQ = "*:F";
+        public const string RADIO_PRESET_DESC = "*:D";
+        public const string RADIO_PRESET_MOD = "*:M";                           // "AM"
 
+        // ---- navigation keys
+
+        public const string ROUTE_NUM = "N*.0:I";                               // integer on [1, N]
+        public const string ROUTE_NAME = "N*.0:D";
+        public const string ROUTE_PREFIX = "N*.";
+        // ROUTE_PREFIX + this
+        public const string NAV_NUM = "*:I";                                    // integer on [1, N]
+        public const string NAV_NAME = "*:N";
+        public const string NAV_NOTE = "*:NT";
+        public const string NAV_ALT = "*:A";                                    // integer
+        public const string NAV_TOS = "*:TS";                                   // "00:00:00"
+        public const string NAV_TOT = "*:TT";                                   // "00:00:00"
+        public const string NAV_SPEED = "*:SP";
+        public const string NAV_COORD = "*:CD";                                 // lat/lon in avionics format
+        public const string NAV_MGRS = "*:MG";                                  // mgrs in avionics format
+
+        // TODO: WIP
 
         public const string THREAT_NAME = "THREAT_*_NAME";
         public const string THREAT_TYPE = "THREAT_*_TYPE";

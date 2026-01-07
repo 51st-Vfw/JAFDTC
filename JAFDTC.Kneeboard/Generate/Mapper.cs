@@ -43,13 +43,14 @@ namespace JAFDTC.Kneeboard.Generate
 
         private void BuildMisc(GenerateCriteria criteria)
         {
-            var name = Clean(criteria.Mission?.Name, criteria.Name);
+            var name = Clean(criteria.Mission?.Name, "Untitled");
+            var theater = Clean(criteria.Mission?.Theater, "Unknown");
+            var creator = Clean(criteria.Mission?.Owner?.Name, "Reaper");
 
             _data.Add(Keys.HEADER, name);
-            _data.Add(Keys.FOOTER, $"{name}, by {criteria.Mission?.Owner?.Name} @ {DateTime.Now.ToString("MM/dd/yyyy")}");
-            _data.Add(Keys.THEATER, criteria.Mission?.Theater);
+            _data.Add(Keys.FOOTER, $"{name}, by {creator} @ {DateTime.Now:MM/dd/yyyy}");
+            _data.Add(Keys.THEATER, theater);
             _data.Add(Keys.NAME, name);
-            _data.Add(Keys.NIGHTMODE, criteria.NightMode.GetValueOrDefault(false).ToString());
 
             //if (!string.IsNullOrWhiteSpace(criteria.PathLogo))
             //{
