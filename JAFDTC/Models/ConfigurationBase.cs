@@ -1,6 +1,6 @@
 ﻿// ********************************************************************************************************************
 //
-// Configuration.cs -- abstract base class for airframe configuration
+// ConfigurationBase.cs -- abstract base class for airframe configuration
 //
 // Copyright(C) 2021-2023 the-paid-actor & others
 // Copyright(C) 2023-2026 ilominar/raven
@@ -47,10 +47,19 @@ using static JAFDTC.Models.IConfiguration;
 namespace JAFDTC.Models
 {
     /// <summary>
-    /// TODO: document
+    /// abstract base class for an object that carries configuration information for an airframe. derived classes
+    /// must provide implementations for a number of abstract methods (too many to fit in this margin).
     /// </summary>
-    public abstract class Configuration : IConfiguration, INotifyPropertyChanged
+    public abstract class ConfigurationBase : IConfiguration, INotifyPropertyChanged
     {
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // constants
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
+        // default options when serializing configurations/systems to json.
+        //
         public static readonly JsonSerializerOptions JsonOptions = new() { WriteIndented = true };
 
         // ------------------------------------------------------------------------------------------------------------
@@ -195,8 +204,8 @@ namespace JAFDTC.Models
         // ------------------------------------------------------------------------------------------------------------
 
         [JsonConstructor]
-        public Configuration(string version, AirframeTypes airframe, string uid, string name,
-                             Dictionary<string, string> linkedSysMap)
+        public ConfigurationBase(string version, AirframeTypes airframe, string uid, string name,
+                                 Dictionary<string, string> linkedSysMap)
             => (Version, Airframe, UID, Name, LinkedSysMap) = (version, airframe, uid, name, linkedSysMap);
 
         // NOTE: when cloning, derived classes must call ResetUID() on the clone prior to returning the new instance.

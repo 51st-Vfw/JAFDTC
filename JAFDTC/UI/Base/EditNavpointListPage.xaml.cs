@@ -277,7 +277,7 @@ namespace JAFDTC.UI.Base
         private void CmdCopy_Click(object sender, RoutedEventArgs args)
         {
             General.DataToClipboard(PageHelper.SystemInfo.NavptListTag,
-                                    JsonSerializer.Serialize(uiNavptListView.SelectedItems, Configuration.JsonOptions));
+                                    JsonSerializer.Serialize(uiNavptListView.SelectedItems, ConfigurationBase.JsonOptions));
         }
 
         /// <summary>

@@ -2,7 +2,7 @@
 //
 // ConfigurationListModel.cs -- model for a list of configurations for a particualr airframe.
 //
-// Copyright(C) 2023-2025 ilominar/raven
+// Copyright(C) 2023-2026 ilominar/raven
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 // Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -173,7 +173,7 @@ namespace JAFDTC.Models
         /// </summary>
         public IConfiguration Create(AirframeTypes airframe, string name)
         {
-            IConfiguration config = Configuration.Factory(airframe, name);
+            IConfiguration config = ConfigurationBase.Factory(airframe, name);
             config.ConfigurationSaved += ConfigurationSavedHandler;
             config.Save(this);
             Configs.Add(config);

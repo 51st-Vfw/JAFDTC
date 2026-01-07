@@ -3,7 +3,7 @@
 // F15EConfiguration.cs -- f-15e airframe configuration
 //
 // Copyright(C) 2021-2023 the-paid-actor & others
-// Copyright(C) 2023-2025 ilominar/raven
+// Copyright(C) 2023-2026 ilominar/raven
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 // Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -39,7 +39,7 @@ namespace JAFDTC.Models.F15E
     /// up. this object is serialized to/from json when persisting configurations. configuration supports navigation,
     /// radio, and miscellaneous systems.
     /// </summary>
-    public class F15EConfiguration : Configuration
+    public class F15EConfiguration : ConfigurationBase
     {
         private const string _versionCfg = "F15E-1.0";          // current version
 
@@ -177,12 +177,12 @@ namespace JAFDTC.Models.F15E
         {
             return systemTag switch
             {
-                null => JsonSerializer.Serialize(this, Configuration.JsonOptions),
-                MiscSystem.SystemTag => JsonSerializer.Serialize(Misc, Configuration.JsonOptions),
-                MPDSystem.SystemTag => JsonSerializer.Serialize(MPD, Configuration.JsonOptions),
-                RadioSystem.SystemTag => JsonSerializer.Serialize(Radio, Configuration.JsonOptions),
-                STPTSystem.SystemTag => JsonSerializer.Serialize(STPT, Configuration.JsonOptions),
-                UFCSystem.SystemTag => JsonSerializer.Serialize(UFC, Configuration.JsonOptions),
+                null => JsonSerializer.Serialize(this, ConfigurationBase.JsonOptions),
+                MiscSystem.SystemTag => JsonSerializer.Serialize(Misc, ConfigurationBase.JsonOptions),
+                MPDSystem.SystemTag => JsonSerializer.Serialize(MPD, ConfigurationBase.JsonOptions),
+                RadioSystem.SystemTag => JsonSerializer.Serialize(Radio, ConfigurationBase.JsonOptions),
+                STPTSystem.SystemTag => JsonSerializer.Serialize(STPT, ConfigurationBase.JsonOptions),
+                UFCSystem.SystemTag => JsonSerializer.Serialize(UFC, ConfigurationBase.JsonOptions),
                 _ => null
             };
         }

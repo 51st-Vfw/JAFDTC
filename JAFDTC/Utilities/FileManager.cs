@@ -405,7 +405,7 @@ namespace JAFDTC.Utilities
                 foreach (var file in files)
                 {
                     var json = System.IO.File.ReadAllText(file);
-                    IConfiguration config = Configuration.FactoryJSON(airframe, json);
+                    IConfiguration config = ConfigurationBase.FactoryJSON(airframe, json);
                     if (config != null)
                     {
                         dict.Add(file, config);
@@ -435,7 +435,7 @@ namespace JAFDTC.Utilities
                 int? airframe = (int?)dom["Airframe"];
                 if (airframe != null)
                 {
-                    IConfiguration config = Configuration.FactoryJSON((AirframeTypes)airframe, json);
+                    IConfiguration config = ConfigurationBase.FactoryJSON((AirframeTypes)airframe, json);
                     config.Sanitize();
                     return config;
                 }
@@ -852,7 +852,7 @@ namespace JAFDTC.Utilities
 
             try
             {
-                string data = $"<{typeof(T).Name}> " + JsonSerializer.Serialize<List<T>>(dbFilter, Configuration.JsonOptions);
+                string data = $"<{typeof(T).Name}> " + JsonSerializer.Serialize<List<T>>(dbFilter, ConfigurationBase.JsonOptions);
                 WriteFile(path, data);
                 return true;
             }
@@ -900,7 +900,7 @@ namespace JAFDTC.Utilities
             path = Path.Combine(path, name);
             try
             {
-                string json = JsonSerializer.Serialize<List<T>>(dbFilter, Configuration.JsonOptions);
+                string json = JsonSerializer.Serialize<List<T>>(dbFilter, ConfigurationBase.JsonOptions);
                 WriteFile(path, json);
                 return true;
             }

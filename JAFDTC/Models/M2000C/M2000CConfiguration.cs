@@ -2,7 +2,7 @@
 //
 // M2000CConfiguration.cs -- m-2000c airframe configuration
 //
-// Copyright(C) 2023-2025 ilominar/raven
+// Copyright(C) 2023-2026 ilominar/raven
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 // Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -34,7 +34,7 @@ namespace JAFDTC.Models.M2000C
     /// up. this object is serialized to/from json when persisting configurations. configuration supports navigation
     /// system.
     /// </summary>
-    class M2000CConfiguration : Configuration
+    class M2000CConfiguration : ConfigurationBase
     {
         private const string _versionCfg = "M2000C-1.0";        // current version
 
@@ -121,8 +121,8 @@ namespace JAFDTC.Models.M2000C
         {
             return systemTag switch
             {
-                null => JsonSerializer.Serialize(this, Configuration.JsonOptions),
-                WYPTSystem.SystemTag => JsonSerializer.Serialize(WYPT, Configuration.JsonOptions),
+                null => JsonSerializer.Serialize(this, ConfigurationBase.JsonOptions),
+                WYPTSystem.SystemTag => JsonSerializer.Serialize(WYPT, ConfigurationBase.JsonOptions),
                 _ => null
             };
         }

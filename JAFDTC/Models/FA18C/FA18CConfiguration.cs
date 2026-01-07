@@ -39,7 +39,7 @@ namespace JAFDTC.Models.FA18C
     /// up. this object is serialized to/from json when persisting configurations. configuration supports navigation,
     /// countermeasure, and radio systems.
     /// </summary>
-    public partial class FA18CConfiguration : Configuration
+    public partial class FA18CConfiguration : ConfigurationBase
     {
         private const string _versionCfg = "FA18C-1.0";         // current version
 
@@ -156,12 +156,12 @@ namespace JAFDTC.Models.FA18C
         {
             return systemTag switch
             {
-                null => JsonSerializer.Serialize(this, Configuration.JsonOptions),
-                CMSSystem.SystemTag => JsonSerializer.Serialize(CMS, Configuration.JsonOptions),
-                PPSystem.SystemTag => JsonSerializer.Serialize(PP, Configuration.JsonOptions),
-                RadioSystem.SystemTag => JsonSerializer.Serialize(Radio, Configuration.JsonOptions),
-                WYPTSystem.SystemTag => JsonSerializer.Serialize(WYPT, Configuration.JsonOptions),
-                SimDTCSystem.SystemTag => JsonSerializer.Serialize(MUMI, Configuration.JsonOptions),
+                null => JsonSerializer.Serialize(this, ConfigurationBase.JsonOptions),
+                CMSSystem.SystemTag => JsonSerializer.Serialize(CMS, ConfigurationBase.JsonOptions),
+                PPSystem.SystemTag => JsonSerializer.Serialize(PP, ConfigurationBase.JsonOptions),
+                RadioSystem.SystemTag => JsonSerializer.Serialize(Radio, ConfigurationBase.JsonOptions),
+                WYPTSystem.SystemTag => JsonSerializer.Serialize(WYPT, ConfigurationBase.JsonOptions),
+                SimDTCSystem.SystemTag => JsonSerializer.Serialize(MUMI, ConfigurationBase.JsonOptions),
                 _ => null
             };
         }

@@ -48,7 +48,7 @@ namespace JAFDTC.Models.F16C
     /// up. this object is serialized to/from json when persisting configurations. configuration supports navigation,
     /// countermeasure, datalink, harm, hts, mfd, radio, and miscellaneous systems.
     /// </summary>
-    public partial class F16CConfiguration : Configuration
+    public partial class F16CConfiguration : ConfigurationBase
     {
         private const string _versionCfg = "F16C-1.1";          // current version
 
@@ -322,18 +322,18 @@ namespace JAFDTC.Models.F16C
         {
             return systemTag switch
             {
-                null                 => JsonSerializer.Serialize(this, Configuration.JsonOptions),
-                CMDSSystem.SystemTag => JsonSerializer.Serialize(CMDS, Configuration.JsonOptions),
-                DLNKSystem.SystemTag => JsonSerializer.Serialize(DLNK, Configuration.JsonOptions),
-                HARMSystem.SystemTag => JsonSerializer.Serialize(HARM, Configuration.JsonOptions),
-                HTSSystem.SystemTag  => JsonSerializer.Serialize(HTS, Configuration.JsonOptions),
-                MFDSystem.SystemTag  => JsonSerializer.Serialize(MFD, Configuration.JsonOptions),
-                MiscSystem.SystemTag => JsonSerializer.Serialize(Misc, Configuration.JsonOptions),
-                RadioSystem.SystemTag => JsonSerializer.Serialize(Radio, Configuration.JsonOptions),
-                SMSSystem.SystemTag => JsonSerializer.Serialize(SMS, Configuration.JsonOptions),
-                STPTSystem.SystemTag => JsonSerializer.Serialize(STPT, Configuration.JsonOptions),
-                SimDTCSystem.SystemTag => JsonSerializer.Serialize(DTE, Configuration.JsonOptions),
-                SimKboardSystem.SystemTag => JsonSerializer.Serialize(Kboard, Configuration.JsonOptions),
+                null                 => JsonSerializer.Serialize(this, ConfigurationBase.JsonOptions),
+                CMDSSystem.SystemTag => JsonSerializer.Serialize(CMDS, ConfigurationBase.JsonOptions),
+                DLNKSystem.SystemTag => JsonSerializer.Serialize(DLNK, ConfigurationBase.JsonOptions),
+                HARMSystem.SystemTag => JsonSerializer.Serialize(HARM, ConfigurationBase.JsonOptions),
+                HTSSystem.SystemTag  => JsonSerializer.Serialize(HTS, ConfigurationBase.JsonOptions),
+                MFDSystem.SystemTag  => JsonSerializer.Serialize(MFD, ConfigurationBase.JsonOptions),
+                MiscSystem.SystemTag => JsonSerializer.Serialize(Misc, ConfigurationBase.JsonOptions),
+                RadioSystem.SystemTag => JsonSerializer.Serialize(Radio, ConfigurationBase.JsonOptions),
+                SMSSystem.SystemTag => JsonSerializer.Serialize(SMS, ConfigurationBase.JsonOptions),
+                STPTSystem.SystemTag => JsonSerializer.Serialize(STPT, ConfigurationBase.JsonOptions),
+                SimDTCSystem.SystemTag => JsonSerializer.Serialize(DTE, ConfigurationBase.JsonOptions),
+                SimKboardSystem.SystemTag => JsonSerializer.Serialize(Kboard, ConfigurationBase.JsonOptions),
                 _ => null
             };
         }

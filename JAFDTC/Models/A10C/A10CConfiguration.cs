@@ -2,7 +2,7 @@
 //
 // A10CConfiguration.cs -- a-10c airframe configuration
 //
-// Copyright(C) 2023-2025 ilominar/raven, JAFDTC contributors
+// Copyright(C) 2023-2026 ilominar/raven, JAFDTC contributors
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 // Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -40,7 +40,7 @@ namespace JAFDTC.Models.A10C
     /// up. this object is serialized to/from json when persisting configurations. configuration supports navigation
     /// system.
     /// </summary>
-    public class A10CConfiguration : Configuration
+    public class A10CConfiguration : ConfigurationBase
     {
         private const string _versionCfg = "A10C-1.0";          // current version
 
@@ -169,15 +169,15 @@ namespace JAFDTC.Models.A10C
         {
             return systemTag switch
             {
-                null => JsonSerializer.Serialize(this, Configuration.JsonOptions),
-                DSMSSystem.SystemTag => JsonSerializer.Serialize(DSMS, Configuration.JsonOptions),
-                HMCSSystem.SystemTag => JsonSerializer.Serialize(HMCS, Configuration.JsonOptions),
-                IFFCCSystem.SystemTag => JsonSerializer.Serialize(IFFCC, Configuration.JsonOptions),
-                MiscSystem.SystemTag => JsonSerializer.Serialize(Misc, Configuration.JsonOptions),
-                RadioSystem.SystemTag => JsonSerializer.Serialize(Radio, Configuration.JsonOptions),
-                TADSystem.SystemTag => JsonSerializer.Serialize(TAD, Configuration.JsonOptions),
-                TGPSystem.SystemTag => JsonSerializer.Serialize(TGP, Configuration.JsonOptions),
-                WYPTSystem.SystemTag => JsonSerializer.Serialize(WYPT, Configuration.JsonOptions),
+                null => JsonSerializer.Serialize(this, ConfigurationBase.JsonOptions),
+                DSMSSystem.SystemTag => JsonSerializer.Serialize(DSMS, ConfigurationBase.JsonOptions),
+                HMCSSystem.SystemTag => JsonSerializer.Serialize(HMCS, ConfigurationBase.JsonOptions),
+                IFFCCSystem.SystemTag => JsonSerializer.Serialize(IFFCC, ConfigurationBase.JsonOptions),
+                MiscSystem.SystemTag => JsonSerializer.Serialize(Misc, ConfigurationBase.JsonOptions),
+                RadioSystem.SystemTag => JsonSerializer.Serialize(Radio, ConfigurationBase.JsonOptions),
+                TADSystem.SystemTag => JsonSerializer.Serialize(TAD, ConfigurationBase.JsonOptions),
+                TGPSystem.SystemTag => JsonSerializer.Serialize(TGP, ConfigurationBase.JsonOptions),
+                WYPTSystem.SystemTag => JsonSerializer.Serialize(WYPT, ConfigurationBase.JsonOptions),
                 _ => null
             };
         }

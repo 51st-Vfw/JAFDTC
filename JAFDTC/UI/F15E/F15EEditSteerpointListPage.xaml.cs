@@ -2,7 +2,7 @@
 //
 // F15EEditSteerpointListPage.xaml.cs : ui c# for mudhen steerpoint list editor page
 //
-// Copyright(C) 2023-2024 ilominar/raven
+// Copyright(C) 2023-2026 ilominar/raven
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 // Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -282,7 +282,7 @@ namespace JAFDTC.UI.F15E
         private void CmdCopy_Click(object sender, RoutedEventArgs args)
         {
             General.DataToClipboard(STPTSystem.STPTListTag,
-                                    JsonSerializer.Serialize(uiStptListView.SelectedItems, Configuration.JsonOptions));
+                                    JsonSerializer.Serialize(uiStptListView.SelectedItems, ConfigurationBase.JsonOptions));
         }
 
         /// <summary>

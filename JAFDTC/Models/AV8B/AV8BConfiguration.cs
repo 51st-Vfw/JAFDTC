@@ -2,7 +2,7 @@
 //
 // AV8BConfiguration.cs -- av-8b airframe configuration
 //
-// Copyright(C) 2023-2025 ilominar/raven
+// Copyright(C) 2023-2026 ilominar/raven
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 // Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -34,7 +34,7 @@ namespace JAFDTC.Models.AV8B
     /// up. this object is serialized to/from json when persisting configurations. configuration supports navigation
     /// system.
     /// </summary>
-    public class AV8BConfiguration : Configuration
+    public class AV8BConfiguration : ConfigurationBase
     {
         private const string _versionCfg = "AV8B-1.0";          // current version
 
@@ -121,8 +121,8 @@ namespace JAFDTC.Models.AV8B
         {
             return systemTag switch
             {
-                null => JsonSerializer.Serialize(this, Configuration.JsonOptions),
-                WYPTSystem.SystemTag => JsonSerializer.Serialize(WYPT, Configuration.JsonOptions),
+                null => JsonSerializer.Serialize(this, ConfigurationBase.JsonOptions),
+                WYPTSystem.SystemTag => JsonSerializer.Serialize(WYPT, ConfigurationBase.JsonOptions),
                 _ => null
             };
         }

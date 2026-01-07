@@ -298,7 +298,7 @@ namespace JAFDTC.UI.F16C
         private void CmdCopy_Click(object sender, RoutedEventArgs args)
         {
             General.DataToClipboard(STPTSystem.STPTListTag,
-                                    JsonSerializer.Serialize(uiStptListView.SelectedItems, Configuration.JsonOptions));
+                                    JsonSerializer.Serialize(uiStptListView.SelectedItems, ConfigurationBase.JsonOptions));
         }
 
         /// <summary>
