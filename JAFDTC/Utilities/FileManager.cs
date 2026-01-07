@@ -852,7 +852,7 @@ namespace JAFDTC.Utilities
 
             try
             {
-                string data = $"<{typeof(T).Name}> " + JsonSerializer.Serialize<List<T>>(dbFilter, ConfigurationBase.JsonOptions);
+                string data = $"<{typeof(T).Name}> " + JsonSerializer.Serialize<List<T>>(dbFilter, Globals.JSONOptions);
                 WriteFile(path, data);
                 return true;
             }
@@ -900,7 +900,7 @@ namespace JAFDTC.Utilities
             path = Path.Combine(path, name);
             try
             {
-                string json = JsonSerializer.Serialize<List<T>>(dbFilter, ConfigurationBase.JsonOptions);
+                string json = JsonSerializer.Serialize<List<T>>(dbFilter, Globals.JSONOptions);
                 WriteFile(path, json);
                 return true;
             }
