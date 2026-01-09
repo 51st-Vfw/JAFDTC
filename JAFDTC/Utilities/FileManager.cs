@@ -26,6 +26,7 @@ using JAFDTC.Models;
 using JAFDTC.Models.A10C;
 using JAFDTC.Models.Core;
 using JAFDTC.Models.F16C;
+using JAFDTC.Models.Pilots;
 using JAFDTC.Models.POI;
 using JAFDTC.Models.Threats;
 using System;
@@ -920,6 +921,33 @@ namespace JAFDTC.Utilities
             string path = Path.Combine(Path.Combine(_settingsDirPath, "Dbase"), name);
             if (System.IO.File.Exists(path))
                 System.IO.File.Delete(path);
+        }
+
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // pilot database
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
+        private const string PilotDbaseFilename = "jafdtc-pilots.json";
+
+        /// <summary>
+        /// return a list of pilots in the database. this list is built from a user database file..
+        /// </summary>
+        public static IReadOnlyList<Pilot> LoadPilotDbase()
+        {
+// TODO: move LoadPilotDbase to IReadOnlyList to remove [.. ] wrapper
+            return [.. LoadUserDbase<Pilot>(PilotDbaseFilename) ];
+        }
+
+        /// <summary>
+        /// saves pilots to the user pilott database. database is persisted as a list of Pilot instances. returns
+        /// true on success, false otherwise.
+        /// </summary>
+        public static bool SavePilotDbase(IReadOnlyList<Pilot> pilots)
+        {
+// TODO: move SaveUserDbase to IReadOnlyList to remove [.. ] wrapper
+            return SaveUserDbase<Pilot>(PilotDbaseFilename, [.. pilots ]);
         }
 
         // ------------------------------------------------------------------------------------------------------------

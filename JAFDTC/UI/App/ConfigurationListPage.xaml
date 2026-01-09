@@ -69,7 +69,7 @@ https://www.gnu.org/licenses/.
                       VerticalAlignment="Center"
                       SelectionChanged="BarComboAirframe_SelectionChanged"
                       ToolTipService.ToolTip="Select Airframe Type">
-                <!-- Tag is enum JAFDTC.AirframeTypes -->
+                <!-- Tag is enum JAFDTC.Models.Core.AirframeTypes -->
                 <ComboBox.Items>
                     <TextBlock Text="A-10C Warthog" Tag="1"/>
                     <!--
@@ -129,6 +129,9 @@ https://www.gnu.org/licenses/.
                 </AppBarButton>
 
                 <CommandBar.SecondaryCommands>
+                    <AppBarButton Label="Pilots" Click="CmdPilots_Click">
+                        <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE77B;"/>
+                    </AppBarButton>
                     <AppBarButton Label="Points of Interest" Click="CmdPoI_Click">
                         <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xECAF;"/>
                     </AppBarButton>

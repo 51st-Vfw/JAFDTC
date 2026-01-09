@@ -256,6 +256,7 @@ namespace JAFDTC.UI.F16C
         /// </summary>
         private async void PDbBtnExport_Click(object sender, RoutedEventArgs e)
         {
+#if NOPE
             // NOTE: the interaction model is a bit wonky here as we can't nest dialogs
 
             bool? isSuccess = await ExchangeViperPilotUIHelper.ExportFile(null, [.. Pilots ], null);
@@ -272,6 +273,7 @@ namespace JAFDTC.UI.F16C
                 StatusMessage = "Unable to export the pilots to the specified database file.";
                 Hide();
             }
+#endif
         }
 
         // ------------------------------------------------------------------------------------------------------------

@@ -2,7 +2,7 @@
 //
 // ExchangeViperPilotUIHelper.cs : helper class for viper pilot exchange (import/export) ui
 //
-// Copyright(C) 2025 ilominar/raven
+// Copyright(C) 2025-2026 ilominar/raven
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 // Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -17,8 +17,8 @@
 //
 // ********************************************************************************************************************
 
-using JAFDTC.Models.F16C;
-using JAFDTC.Models.F16C.DLNK;
+using JAFDTC.Models.DCS;
+using JAFDTC.Models.Pilots;
 using JAFDTC.Utilities;
 using Microsoft.UI.Xaml;
 using System.Collections.Generic;
@@ -41,17 +41,16 @@ namespace JAFDTC.UI.Base
         // ------------------------------------------------------------------------------------------------------------
 
         /// <summary>
-        /// export a viper pilot database to a path and inform the user of the results. if path is null, prompts the
-        /// user for a file location via a FileSavePicker. returns null on cancel, true on success, and false on
-        /// failure.
+        /// export a pilot database to a path and inform the user of the results. if path is null, prompts the user
+        /// for a file location via a FileSavePicker. returns null on cancel, true on success, and false on failure.
         /// 
         /// user interaction (with the exceptoin of pickters) is disabled if xaml root is null.
         /// </summary>
-        public static async Task<bool?> ExportFile(XamlRoot root, List<ViperDriver> dbase, string path = null)
+        public static async Task<bool?> ExportFile(XamlRoot root, List<Pilot> dbase, string path = null)
         {
             // Debug.Assert((root != null) || (path != null));
 
-            path ??= await SavePickerUI("Export Viper Pilots", "Viper Pilots", "JAFDTC Db", ".jafdtc_db");
+            path ??= await SavePickerUI("Export Pilots", "JAFDTC Pilots", "JAFDTC Db", ".jafdtc_db");
             if (path != null)
             {
                 bool isSuccess = false;
@@ -75,9 +74,9 @@ namespace JAFDTC.UI.Base
         // ------------------------------------------------------------------------------------------------------------
 
         /// <summary>
-        /// import a viper pilot database from a path and inform the user of the results. if path is null, prompts
-        /// prompts the user for a file location via a FileOpenPicker. returns null on cancel, true on success, and
-        /// false on failure.
+        /// import a pilot database from a path and inform the user of the results. if path is null, prompts prompts
+        /// the user for a file location via a FileOpenPicker. returns null on cancel, true on success, and false on
+        /// failure.
         ///
         /// user interaction (with the exception of pickers) is disabled if xaml root is null.
         /// </summary>
@@ -85,15 +84,21 @@ namespace JAFDTC.UI.Base
         {
             // Debug.Assert((root != null) || (path != null));
 
-            path ??= await OpenPickerUI("Import Viper Pilots", [ ".jafdtc_db" ]);
+            path ??= await OpenPickerUI("Import Pilots", [ ".jafdtc_db" ]);
             if ((path != null) && (Path.GetExtension(path.ToLower()) == ".jafdtc_db"))
             {
                 bool isSuccess = false;
                 string msg = null;
-                List<ViperDriver> importDb = FileManager.LoadSharableDbase<ViperDriver>(path);
+                List<Pilot> importDb = FileManager.LoadSharableDbase<Pilot>(path);
                 if (importDb.Count > 0)
                 {
-                    F16CPilotsDbase.UpdateDbase(importDb);
+                    foreach (Pilot pilot in importDb)
+                    {
+                        if (PilotDbase.Instance.Find(pilot.UniqueID) != null)
+                            PilotDbase.Instance.RemovePilot(pilot, false);
+                        PilotDbase.Instance.AddPilot(pilot, false);
+                    }
+                    PilotDbase.Instance.Save();
                     string what = (importDb.Count > 1) ? "pilots" : "pilot";
                     msg = $"Imported {importDb.Count} {what} from from the database file:\n\n{path}";
                     isSuccess = true;
