@@ -79,7 +79,7 @@ namespace JAFDTC.UI.Base
 
         // ---- internal properties
 
-        private IEditSimulatorKboardPageHelper PageHelper { get; set; }
+        private IEditCoreKboardPageHelper PageHelper { get; set; }
 
         private readonly CoreKboardSystem EditKboard;
 
@@ -495,7 +495,7 @@ namespace JAFDTC.UI.Base
         protected override void OnNavigatedTo(NavigationEventArgs args)
         {
             ConfigEditorPageNavArgs navArgs = (ConfigEditorPageNavArgs)args.Parameter;
-            PageHelper = (IEditSimulatorKboardPageHelper)Activator.CreateInstance(navArgs.EditorHelperType);
+            PageHelper = (IEditCoreKboardPageHelper)Activator.CreateInstance(navArgs.EditorHelperType);
 
             base.OnNavigatedTo(args);
 

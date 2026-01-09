@@ -60,7 +60,7 @@ namespace JAFDTC.UI.Base
 
         // ---- internal properties
 
-        private IEditSimulatorDTCPageHelper PageHelper { get; set;  }
+        private IEditCoreSimDTCPageHelper PageHelper { get; set;  }
 
         private readonly CoreSimDTCSystem EditDTC;
 
@@ -412,7 +412,7 @@ namespace JAFDTC.UI.Base
         protected override void OnNavigatedTo(NavigationEventArgs args)
         {
             ConfigEditorPageNavArgs navArgs = (ConfigEditorPageNavArgs)args.Parameter;
-            PageHelper = (IEditSimulatorDTCPageHelper)Activator.CreateInstance(navArgs.EditorHelperType);
+            PageHelper = (IEditCoreSimDTCPageHelper)Activator.CreateInstance(navArgs.EditorHelperType);
 
             base.OnNavigatedTo(args);
 

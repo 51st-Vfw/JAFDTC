@@ -1,6 +1,6 @@
 ﻿// ********************************************************************************************************************
 //
-// IEditSimulatorDTCPageHelper.cs : interface for EditSimulatorDTCPage helper classes
+// IEditCoreSimDTCPageHelper.cs : interface for EditSimulatorDTCPage helper classes
 //
 // Copyright(C) 2025 ilominar/raven
 //
@@ -26,10 +26,10 @@ using System.Collections.ObjectModel;
 namespace JAFDTC.UI.Base
 {
     /// <summary>
-    /// interface for the EditSimulatorDTCPage ui page helper class responsible for specializing the
-    /// EditSimulatorDTCPage base behavior for a specific airframe.
+    /// interface for the EditCoreSimuDTCPage ui page helper class responsible for specializing the
+    /// EditCoreSimDTCPage base behavior for a specific airframe.
     /// </summary>
-    public interface IEditSimulatorDTCPageHelper
+    public interface IEditCoreSimDTCPageHelper
     {
         /// <summary>
         /// return the system to configure from the overall configuration.
