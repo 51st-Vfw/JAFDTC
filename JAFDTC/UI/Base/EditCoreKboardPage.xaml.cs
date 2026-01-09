@@ -39,7 +39,7 @@ namespace JAFDTC.UI.Base
 {
     /// <summary>
     /// page to edit kneeboard builder fields. this is a general-purpose class that is instatiated in combination
-    /// a IEditSimulatorKboardPageHelper class to provide airframe-specific specialization.
+    /// with an IEditCoreKboardPageHelper class to provide airframe-specific specialization.
     /// </summary>
     public sealed partial class EditCoreKboardPage : SystemEditorPageBase
     {

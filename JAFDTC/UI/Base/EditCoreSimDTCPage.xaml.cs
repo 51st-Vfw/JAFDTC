@@ -38,7 +38,7 @@ namespace JAFDTC.UI.Base
 {
     /// <summary>
     /// page to edit dcs dtc integration fields. this is a general-purpose class that is instatiated in combination
-    /// a IEditSimulatorDTCPageHelper class to provide airframe-specific specialization.
+    /// with an IEditCoreSimDTCPageHelper class to provide airframe-specific specialization.
     /// </summary>
     public sealed partial class EditCoreSimDTCPage : SystemEditorPageBase
     {
