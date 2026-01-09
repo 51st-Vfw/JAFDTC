@@ -2,7 +2,7 @@
 //
 // F16CEditDLNKPage.xaml.cs : ui c# for viper data link editor page
 //
-// Copyright(C) 2023-2025 ilominar/raven
+// Copyright(C) 2023-2026 ilominar/raven
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 // Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -19,8 +19,11 @@
 
 using CommunityToolkit.WinUI;
 using JAFDTC.Models;
+using JAFDTC.Models.Core;
+using JAFDTC.Models.DCS;
 using JAFDTC.Models.F16C;
 using JAFDTC.Models.F16C.DLNK;
+using JAFDTC.Models.Pilots;
 using JAFDTC.UI.App;
 using JAFDTC.Utilities;
 using Microsoft.UI.Dispatching;
@@ -100,7 +103,7 @@ namespace JAFDTC.UI.F16C
 
         private bool IsRebuildingUI { get; set; }
 
-        private List<ViperDriver> PilotDbase { get; set; }
+        private IReadOnlyList<Pilot> ViperPilots { get; set; }
 
         // ---- read-only properties
 
@@ -132,13 +135,16 @@ namespace JAFDTC.UI.F16C
             IsRebuildPending = false;
             IsRebuildingUI = false;
 
-            PilotDbase = F16CPilotsDbase.LoadDbase();
-            PilotDbase.Sort((x, y) => x.Name.CompareTo(y.Name));
+            PilotDbaseQuery query = new()
+            {
+                Airframes = [ AirframeTypes.F16C ]
+            };
+            ViperPilots = PilotDbase.Instance.Find(query, true);
             OwnshipDriverUID = "<unknown>";
-            foreach (ViperDriver driver in PilotDbase)
+            foreach (Pilot driver in ViperPilots)
                 if (driver.Name == Settings.Callsign)
                 {
-                    OwnshipDriverUID = driver.UID;
+                    OwnshipDriverUID = driver.UniqueID;
                     break;
                 }
 
@@ -331,11 +337,11 @@ namespace JAFDTC.UI.F16C
         /// <summary>
         /// find the pilot in the pilot database by uid. returns the ViperDriver instance on success, null if not found.
         /// </summary>
-        private ViperDriver FindPilotByUID(string UID)
+        private Pilot FindPilotByUID(string UID)
         {
             // TODO: maybe optimize; but honestly, pilot list is likely short so prolly not worth the effort...
-            foreach (ViperDriver pilot in PilotDbase)
-                if (pilot.UID.Equals(UID))
+            foreach (Pilot pilot in ViperPilots)
+                if (pilot.UniqueID.Equals(UID))
                     return pilot;
             return null;
         }
@@ -351,13 +357,13 @@ namespace JAFDTC.UI.F16C
         /// current callsign from the settings getting a bullet-prefix. the stack panel tag is set to the uid of the
         /// pilot. a pilot of null builds a panel with an empty name and "0" tag.
         /// </summary>
-        private static StackPanel BuildPilotItemStackPanel(ViperDriver pilot)
+        private static StackPanel BuildPilotItemStackPanel(Pilot pilot)
         {
             bool isOwnship = ((pilot != null) && (pilot.Name == Settings.Callsign));
             StackPanel itemPanel = new()
             {
                 Orientation = Orientation.Horizontal,
-                Tag = (pilot != null) ? pilot.UID : "0",
+                Tag = (pilot != null) ? pilot.UniqueID : "0",
             };
             FontIcon itemIcon = new()
             {
@@ -384,8 +390,8 @@ namespace JAFDTC.UI.F16C
         private List<StackPanel> BuildCallsignComboItems()
         {
             List<StackPanel> pilotItems = [ BuildPilotItemStackPanel(null) ];
-            for (int i = 0; i < PilotDbase.Count; i++)
-                pilotItems.Add(BuildPilotItemStackPanel(PilotDbase[i]));
+            for (int i = 0; i < ViperPilots.Count; i++)
+                pilotItems.Add(BuildPilotItemStackPanel(ViperPilots[i]));
             return pilotItems;
         }
 
@@ -397,8 +403,8 @@ namespace JAFDTC.UI.F16C
         {
             IsRebuildingUI = true;
             Dictionary<string, int> uidToIndexMap = [ ];
-            for (int i = 0; i < PilotDbase.Count; i++)
-                uidToIndexMap[PilotDbase[i].UID] = i + 1;
+            for (int i = 0; i < ViperPilots.Count; i++)
+                uidToIndexMap[ViperPilots[i].UniqueID] = i + 1;
 
             for (int i = 0; i < EditDLNK.TeamMembers.Length; i++)
             {
@@ -713,7 +719,7 @@ namespace JAFDTC.UI.F16C
             ComboBox comboBox = (ComboBox)sender;
             int index = int.Parse((string)comboBox.Tag);
             StackPanel item = (StackPanel)comboBox.SelectedItem;
-            ViperDriver pilot = FindPilotByUID((string)item.Tag);
+            Pilot pilot = FindPilotByUID((string)item.Tag);
 
             bool isOldOwnByCallsign = (OwnshipDriverUID == EditDLNK.TeamMembers[index].DriverUID);
             bool isNewOwnByCallsign = false;
@@ -721,11 +727,11 @@ namespace JAFDTC.UI.F16C
             int curPilotIndex = -1;
             if (pilot != null)
             {
-                isNewOwnByCallsign = (OwnshipDriverUID == pilot.UID);
+                isNewOwnByCallsign = (OwnshipDriverUID == pilot.UniqueID);
                 for (int i = 0; i < _tableCallsignComboList.Count; i++)
                 {
                     StackPanel otherItem = (StackPanel)_tableCallsignComboList[i].SelectedItem;
-                    if ((i != index) && (otherItem != null) && otherItem.Tag.Equals(pilot.UID))
+                    if ((i != index) && (otherItem != null) && otherItem.Tag.Equals(pilot.UniqueID))
                     {
                         curPilotIndex = i;
                         break;
@@ -761,8 +767,8 @@ namespace JAFDTC.UI.F16C
                     //
                     RebuildEnableState();
                     EditDLNK.TeamMembers[index].TDOA = isCurTDOA;
-                    EditDLNK.TeamMembers[index].TNDL = pilot.TNDL;
-                    EditDLNK.TeamMembers[index].DriverUID = pilot.UID;
+                    EditDLNK.TeamMembers[index].TNDL = pilot.AvionicsID;
+                    EditDLNK.TeamMembers[index].DriverUID = pilot.UniqueID;
                     CopyEditToConfig(true);
                 }
             }
@@ -791,8 +797,8 @@ namespace JAFDTC.UI.F16C
                 RebuildEnableState();
                 EditDLNK.Ownship = (index + 1).ToString();
                 EditDLNK.TeamMembers[index].TDOA = true;
-                EditDLNK.TeamMembers[index].TNDL = pilot.TNDL;
-                EditDLNK.TeamMembers[index].DriverUID = pilot.UID;
+                EditDLNK.TeamMembers[index].TNDL = pilot.AvionicsID;
+                EditDLNK.TeamMembers[index].DriverUID = pilot.UniqueID;
                 CopyEditToConfig(true);
             }
             else if (isOldOwnByCallsign)
@@ -806,8 +812,8 @@ namespace JAFDTC.UI.F16C
                 RebuildEnableState();
                 EditDLNK.Ownship = "";
                 EditDLNK.TeamMembers[index].TDOA = false;
-                EditDLNK.TeamMembers[index].TNDL = (pilot != null) ? pilot.TNDL : "";
-                EditDLNK.TeamMembers[index].DriverUID = (pilot != null) ? pilot.UID : "";
+                EditDLNK.TeamMembers[index].TNDL = (pilot != null) ? pilot.AvionicsID : "";
+                EditDLNK.TeamMembers[index].DriverUID = (pilot != null) ? pilot.UniqueID : "";
                 CopyEditToConfig(true);
             }
         }
@@ -862,15 +868,6 @@ namespace JAFDTC.UI.F16C
         }
 
         /// <summary>
-        /// on aux command invoked, update the state of the editor based on the command.
-        /// </summary>
-        private void AuxCommandInvokedHandler(object sender, ConfigAuxCommandInfo args)
-        {
-            PilotDbase = F16CPilotsDbase.LoadDbase();
-            RebuildCallsignCombos();
-        }
-
-        /// <summary>
         /// on navigating to this page, set up internal and ui state.
         /// </summary>
         protected override void OnNavigatedTo(NavigationEventArgs args)
@@ -878,7 +875,6 @@ namespace JAFDTC.UI.F16C
             NavArgs = (ConfigEditorPageNavArgs)args.Parameter;
             Config = (F16CConfiguration)NavArgs.Config;
 
-            NavArgs.ConfigPage.AuxCommandInvoked += AuxCommandInvokedHandler;
             Config.ConfigurationSaved += ConfigurationSavedHandler;
 
             Utilities.BuildSystemLinkLists(NavArgs.UIDtoConfigMap, Config.UID, DLNKSystem.SystemTag,
@@ -898,7 +894,6 @@ namespace JAFDTC.UI.F16C
         /// </summary>
         protected override void OnNavigatedFrom(NavigationEventArgs args)
         {
-            NavArgs.ConfigPage.AuxCommandInvoked -= AuxCommandInvokedHandler;
             Config.ConfigurationSaved -= ConfigurationSavedHandler;
 
             base.OnNavigatedFrom(args);

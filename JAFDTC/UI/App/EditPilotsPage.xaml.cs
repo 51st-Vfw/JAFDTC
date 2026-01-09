@@ -227,7 +227,7 @@ namespace JAFDTC.UI.App
         /// </summary>
         private TextBlock GetComboItemForAirframe()
         {
-            foreach (TextBlock block in uiComboAirframe.Items)
+            foreach (TextBlock block in uiComboAirframe.Items.Cast<TextBlock>())
                 if ((AirframeTypes)(int.Parse(block.Tag as string)) == EditPilot.Airframe)
                     return block;
             return uiComboAirframe.Items[0] as TextBlock;
@@ -415,7 +415,7 @@ namespace JAFDTC.UI.App
         /// </summary>
         private async void CmdImport_Click(object sender, RoutedEventArgs args)
         {
-            bool? isSuccess = await ExchangeViperPilotUIHelper.ImportFile(Content.XamlRoot);
+            bool? isSuccess = await ExchangePilotUIHelper.ImportFile(Content.XamlRoot);
             if (isSuccess == true)
             {
                 RebuildPilotList();
@@ -433,10 +433,10 @@ namespace JAFDTC.UI.App
             if (uiPilotListView.SelectedItems.Count == 0)
                 pilots = [.. PilotDbase.Instance.Find() ];
             else
-                foreach (PilotListItem item in uiPilotListView.SelectedItems)
+                foreach (PilotListItem item in uiPilotListView.SelectedItems.Cast<PilotListItem>())
                     pilots.Add(item.Pilot);
 
-            bool? isSuccess = await ExchangeViperPilotUIHelper.ExportFile(Content.XamlRoot, pilots);
+            bool? isSuccess = await ExchangePilotUIHelper.ExportFile(Content.XamlRoot, pilots);
             if (isSuccess == true)
             {
                 RebuildPilotList();
@@ -625,8 +625,7 @@ namespace JAFDTC.UI.App
 
             base.OnNavigatedTo(args);
 
-// TODO: need to fix this event
-            (Application.Current as JAFDTC.App).Window.POIDbFileActivation += Window_FileActivation;
+            (Application.Current as JAFDTC.App).Window.PilotDbFileActivation += Window_FileActivation;
         }
 
         /// <summary>
@@ -634,8 +633,7 @@ namespace JAFDTC.UI.App
         /// </summary>
         protected override void OnNavigatedFrom(NavigationEventArgs args)
         {
-// TODO: need to fix this event
-            (Application.Current as JAFDTC.App).Window.POIDbFileActivation -= Window_FileActivation;
+            (Application.Current as JAFDTC.App).Window.PilotDbFileActivation -= Window_FileActivation;
 
             base.OnNavigatedFrom(args);
         }

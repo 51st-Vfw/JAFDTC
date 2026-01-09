@@ -2,7 +2,7 @@
 //
 // F16CConfigurationEditor.cs : supports editors for the f16c configuration
 //
-// Copyright(C) 2023-2025 ilominar/raven
+// Copyright(C) 2023-2026 ilominar/raven
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 // Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -75,7 +75,6 @@ namespace JAFDTC.UI.F16C
         // ------------------------------------------------------------------------------------------------------------
 
         public override ObservableCollection<ConfigEditorPageInfo> ConfigEditorPageInfo() => _configEditorPageInfo;
-
 
         public F16CConfigurationEditor(IConfiguration config) => (Config) = (config);
     }

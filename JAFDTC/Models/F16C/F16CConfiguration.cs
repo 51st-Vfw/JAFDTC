@@ -20,6 +20,7 @@
 
 using JAFDTC.Models.Base;
 using JAFDTC.Models.Core;
+using JAFDTC.Models.DCS;
 using JAFDTC.Models.F16C.CMDS;
 using JAFDTC.Models.F16C.DLNK;
 using JAFDTC.Models.F16C.HARM;
@@ -29,6 +30,7 @@ using JAFDTC.Models.F16C.Misc;
 using JAFDTC.Models.F16C.Radio;
 using JAFDTC.Models.F16C.SMS;
 using JAFDTC.Models.F16C.STPT;
+using JAFDTC.Models.Pilots;
 using JAFDTC.UI.F16C;
 using JAFDTC.Utilities;
 using System;
@@ -218,15 +220,20 @@ namespace JAFDTC.Models.F16C
         {
             Dictionary<string, string> roleInfo = ParseRole(role);
 
+            PilotDbaseQuery query = new()
+            {
+                Airframes = [ AirframeTypes.F16C ]
+            };
+
             // determine ownship flight/element number. we will check (in order): (1) value in config, (2) value
             // inferred from position of pilot matching callsign from settings in team list, or (3) value from
             // role specification string. later over-rides earlier, so (3) is selected if both (2) and (3) exist.
             //
             string myUid = null;
-            foreach (ViperDriver driver in F16CPilotsDbase.LoadDbase())
+            foreach (Pilot driver in PilotDbase.Instance.Find(query))
                 if (driver.Name == Settings.Callsign)
                 {
-                    myUid = driver.UID;
+                    myUid = driver.UniqueID;
                     break;
                 }
             string feNum = DLNK.OwnshipFENumber;

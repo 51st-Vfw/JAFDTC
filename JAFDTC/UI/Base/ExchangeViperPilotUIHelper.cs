@@ -1,6 +1,6 @@
 ﻿// ********************************************************************************************************************
 //
-// ExchangeViperPilotUIHelper.cs : helper class for viper pilot exchange (import/export) ui
+// ExchangePilotUIHelper.cs : helper class for viper pilot exchange (import/export) ui
 //
 // Copyright(C) 2025-2026 ilominar/raven
 //
@@ -32,7 +32,7 @@ namespace JAFDTC.UI.Base
     /// helper class to provide a number of static support functions for use in the user interface around exchanging
     /// viper driver database files.
     /// </summary>
-    public partial class ExchangeViperPilotUIHelper : ExchangeUIHelperBase
+    public partial class ExchangePilotUIHelper : ExchangeUIHelperBase
     {
         // ------------------------------------------------------------------------------------------------------------
         //
