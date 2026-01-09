@@ -27,12 +27,12 @@ using System.Collections.Generic;
 namespace JAFDTC.UI.F16C
 {
     /// <summary>
-    /// helper class for airframe-specific customizations on EditSimulatorKboardPage.
+    /// helper class for airframe-specific customizations on EditCoreKboardPage.
     /// </summary>
     internal class F16CEditSimulatorKboardPageHelper : IEditSimulatorKboardPageHelper
     {
         public static ConfigEditorPageInfo PageInfo
-            => new(CoreKboardSystem.SystemTag, "Kneeboards", "Kneeboards", "\xF0E3", typeof(EditSimulatorKboardPage),
+            => new(CoreKboardSystem.SystemTag, "Kneeboards", "Kneeboards", "\xF0E3", typeof(EditCoreKboardPage),
                    typeof(F16CEditSimulatorKboardPageHelper));
 
         public SystemBase GetSystemConfig(IConfiguration config) => ((F16CConfiguration)config).Kboard;

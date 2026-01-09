@@ -2,7 +2,7 @@
 <!--
 **********************************************************************************************************************
     
-EditSimulatorKboardPage.xaml : ui xaml for general kneeboard builder editor page
+EditCoreKboardPage.xaml : ui xaml for general kneeboard builder editor page
 
 Copyright(C) 2026 ilominar/raven
 
@@ -19,7 +19,7 @@ https://www.gnu.org/licenses/.
 **********************************************************************************************************************
 -->
 <ui_base:SystemEditorPageBase
-    x:Class="JAFDTC.UI.Base.EditSimulatorKboardPage"
+    x:Class="JAFDTC.UI.Base.EditCoreKboardPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:JAFDTC.UI.Base"

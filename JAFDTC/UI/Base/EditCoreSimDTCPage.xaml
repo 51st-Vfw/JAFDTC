@@ -2,7 +2,7 @@
 <!--
 **********************************************************************************************************************
     
-EditSimulatorDTC.xaml : ui xaml for general dte/dtc setup editor page
+EditCoreSimDTCPage.xaml : ui xaml for general dte/dtc setup editor page
 
 Copyright(C) 2023-2026 ilominar/raven
 
@@ -19,7 +19,7 @@ https://www.gnu.org/licenses/.
 **********************************************************************************************************************
 -->
 <ui_base:SystemEditorPageBase
-    x:Class="JAFDTC.UI.Base.EditSimulatorDTCPage"
+    x:Class="JAFDTC.UI.Base.EditCoreSimDTCPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:JAFDTC.UI.Base"

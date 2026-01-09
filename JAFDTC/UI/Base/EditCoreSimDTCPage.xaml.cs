@@ -1,6 +1,6 @@
 // ********************************************************************************************************************
 //
-// EditSimulatorDTCPage.cs : ui c# for for general dte/dtc setup editor page
+// EditCoreSimDTCPage.cs : ui c# for for general dte/dtc setup editor page
 //
 // Copyright(C) 2025-2026 ilominar/raven
 //
@@ -40,7 +40,7 @@ namespace JAFDTC.UI.Base
     /// page to edit dcs dtc integration fields. this is a general-purpose class that is instatiated in combination
     /// a IEditSimulatorDTCPageHelper class to provide airframe-specific specialization.
     /// </summary>
-    public sealed partial class EditSimulatorDTCPage : SystemEditorPageBase
+    public sealed partial class EditCoreSimDTCPage : SystemEditorPageBase
     {
         // ------------------------------------------------------------------------------------------------------------
         //
@@ -70,7 +70,7 @@ namespace JAFDTC.UI.Base
         //
         // ------------------------------------------------------------------------------------------------------------
 
-        public EditSimulatorDTCPage()
+        public EditCoreSimDTCPage()
         {
             EditDTC = new();
 

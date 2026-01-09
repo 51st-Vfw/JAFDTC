@@ -33,7 +33,7 @@ namespace JAFDTC.UI.FA18C
     internal class FA18CEditSimulatorDTCPageHelper : IEditSimulatorDTCPageHelper
     {
         public static ConfigEditorPageInfo PageInfo
-            => new(CoreSimDTCSystem.SystemTag, "DCS DTC Tape", "DCS DTC", "\xE77C", typeof(EditSimulatorDTCPage),
+            => new(CoreSimDTCSystem.SystemTag, "DCS DTC Tape", "DCS DTC", "\xE77C", typeof(EditCoreSimDTCPage),
                    typeof(FA18CEditSimulatorDTCPageHelper));
 
         public SystemBase GetSystemConfig(IConfiguration config) => ((FA18CConfiguration)config).MUMI;

@@ -1,6 +1,6 @@
 // ********************************************************************************************************************
 //
-// EditSimulatorKboardPage.cs : ui c# for for general kneeboard builder editor page
+// EditCoreKboardPage.cs : ui c# for for general kneeboard builder editor page
 //
 // Copyright(C) 2026 ilominar/raven
 //
@@ -41,7 +41,7 @@ namespace JAFDTC.UI.Base
     /// page to edit kneeboard builder fields. this is a general-purpose class that is instatiated in combination
     /// a IEditSimulatorKboardPageHelper class to provide airframe-specific specialization.
     /// </summary>
-    public sealed partial class EditSimulatorKboardPage : SystemEditorPageBase
+    public sealed partial class EditCoreKboardPage : SystemEditorPageBase
     {
         // ------------------------------------------------------------------------------------------------------------
         //
@@ -91,7 +91,7 @@ namespace JAFDTC.UI.Base
         //
         // ------------------------------------------------------------------------------------------------------------
 
-        public EditSimulatorKboardPage()
+        public EditCoreKboardPage()
         {
             EditKboard = new();
 

@@ -93,7 +93,6 @@
     <None Remove="UI\Base\EditNavpointListPage.xaml" />
     <None Remove="UI\Base\EditNavpointPage.xaml" />
     <None Remove="UI\Base\EditRadioPage.xaml" />
-    <None Remove="UI\Base\EditSimulatorKboardPage.xaml" />
     <None Remove="UI\BlankPage1.xaml" />
     <None Remove="UI\Controls\LinkResetBtnsControl.xaml" />
     <None Remove="UI\F15E\F15EEditMiscPage.xaml" />
@@ -270,7 +269,7 @@
     <Page Update="UI\App\EditPilotsPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Update="UI\Base\EditSimulatorKboardPage.xaml">
+    <Page Update="UI\Base\EditCoreKboardPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Update="UI\App\EditThreatsFilterDialog.xaml">
@@ -300,7 +299,7 @@
     <Page Update="UI\App\MapWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Update="UI\Base\EditSimulatorDTCPage.xaml">
+    <Page Update="UI\Base\EditCoreSimDTCPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Update="UI\F16C\F16CEditSMSPage.xaml">
