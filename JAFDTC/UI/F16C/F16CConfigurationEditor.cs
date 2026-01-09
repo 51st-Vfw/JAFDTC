@@ -18,13 +18,7 @@
 // ********************************************************************************************************************
 
 using JAFDTC.Models;
-using JAFDTC.Models.F16C;
-using JAFDTC.Models.F16C.DLNK;
 using JAFDTC.UI.App;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 
@@ -74,11 +68,6 @@ namespace JAFDTC.UI.F16C
             F16CEditSimulatorKboardPageHelper.PageInfo,
         ];
 
-        private static readonly ObservableCollection<ConfigAuxCommandInfo> _configAuxCmdInfo =
-        [
-            new("PDb", "Edit Pilot Database", Glyphs.PILOT_DB)
-        ];
-
         // ------------------------------------------------------------------------------------------------------------
         //
         // ConfigurationEditor methods
@@ -87,48 +76,7 @@ namespace JAFDTC.UI.F16C
 
         public override ObservableCollection<ConfigEditorPageInfo> ConfigEditorPageInfo() => _configEditorPageInfo;
 
-        public override ObservableCollection<ConfigAuxCommandInfo> ConfigAuxCommandInfo() => _configAuxCmdInfo;
 
         public F16CConfigurationEditor(IConfiguration config) => (Config) = (config);
-
-        public override bool HandleAuxCommand(ConfigurationPage configPage, ConfigAuxCommandInfo cmd)
-        {
-            if (cmd.Tag == "PDb")
-                RunPilotDbEditorUI(configPage.Content.XamlRoot, configPage, cmd);
-            return false;
-        }
-
-        // ------------------------------------------------------------------------------------------------------------
-        //
-        // aux command methods
-        //
-        // ------------------------------------------------------------------------------------------------------------
-
-        /// <summary>
-        /// run the ui for the pilot dbase editor until the user dismisses it.
-        /// </summary>
-        public static async void RunPilotDbEditorUI(XamlRoot root, ConfigurationPage configPage, ConfigAuxCommandInfo cmd)
-        {
-            List<ViperDriver> pilotDbase = F16CPilotsDbase.LoadDbase();
-            F16CPilotDbaseDialog dialog = new(root, pilotDbase);
-            while (true)
-            {
-                ContentDialogResult result = await dialog.ShowAsync();
-                if (!string.IsNullOrEmpty(dialog.StatusTitle))
-                {
-                    await Utilities.Message1BDialog(root, dialog.StatusTitle, dialog.StatusMessage);
-                }
-                else
-                {
-                    if (result == ContentDialogResult.Primary)
-                    {
-                        pilotDbase = [.. dialog.Pilots ];
-                        F16CPilotsDbase.UpdateDbase(pilotDbase);
-                        configPage.RaiseAuxCommandInvoked(cmd);
-                    }
-                    break;
-                }
-            }
-        }
     }
 }
