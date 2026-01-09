@@ -18,6 +18,7 @@
 // ********************************************************************************************************************
 
 using JAFDTC.Models.Core;
+using JAFDTC.Models.CoreApp;
 using JAFDTC.Models.DCS;
 using JAFDTC.Models.Pilots;
 using JAFDTC.UI.Base;
@@ -156,11 +157,13 @@ namespace JAFDTC.UI.App
 
         private PilotDetails EditPilot { get; set; }
 
+        private PilotFilterSpec PilotFilter { get; set; }
+
         private bool IsRebuildPending { get; set; }
 
         // ---- constructed properties
 
-        private bool IsFiltered => false; // ((FilterThreat != null) && !FilterThreat.IsDefault);
+        private bool IsFiltered => ((PilotFilter != null) && !PilotFilter.IsDefault);
 
         private bool IsEditorStateImpliesAdd
         {
@@ -200,6 +203,8 @@ namespace JAFDTC.UI.App
 
         public EditPilotsPage()
         {
+            PilotFilter = new(Settings.LastPilotFilter);
+
             InitializeComponent();
 
             CurPilotItems = [ ];
@@ -237,11 +242,16 @@ namespace JAFDTC.UI.App
         /// return a list of pilots matching the current filter configuration with a name that containst the provided
         /// name fragment.
         /// </summary>
-        private static IReadOnlyList<Pilot> GetPilotsMatchingFilter(string name = null)
+        private IReadOnlyList<Pilot> GetPilotsMatchingFilter(string name = null)
         {
+            AirframeTypes[] airframes = null;
+            if (PilotFilter.Airframe != AirframeTypes.UNKNOWN)
+            {
+                airframes = [ PilotFilter.Airframe ];
+            }
             PilotDbaseQuery query = new()
             {
-                Airframes = null,
+                Airframes = airframes,
                 Name = name,
                 BoardNumber = null
             };
@@ -354,32 +364,30 @@ namespace JAFDTC.UI.App
         /// </summary>
         private async void CmdFilter_Click(object sender, RoutedEventArgs args)
         {
-#if TODO_IMPLEMENT
             AppBarToggleButton button = (AppBarToggleButton)sender;
             if (button.IsChecked != IsFiltered)
                 button.IsChecked = IsFiltered;
 
-            PoIFilterDialog filterDialog = new(POIFilter)
+            PilotFilterDialog filterDialog = new(PilotFilter)
             {
                 XamlRoot = Content.XamlRoot,
-                Title = $"Point of Interest Database Filter"
+                Title = $"Pilot Database Filter"
             };
             ContentDialogResult result = await filterDialog.ShowAsync(ContentDialogPlacement.Popup);
             if (result == ContentDialogResult.Primary)
-                POIFilter = new(filterDialog.Filter);
+                PilotFilter = new(filterDialog.Filter);
             else if (result == ContentDialogResult.Secondary)
-                POIFilter = new();
+                PilotFilter = new();
             else
                 return;                                         // EXIT: cancelled, no change...
 
             button.IsChecked = IsFiltered;
 
-            Settings.LastPOIFilter = POIFilter;
+            Settings.LastPilotFilter = PilotFilter;
 
-            uiPoIListView.SelectedItems.Clear();
-            RebuildPoIList();
+            uiPilotListView.SelectedItems.Clear();
+            RebuildPilotList();
             RebuildInterfaceState();
-#endif
         }
 
         /// <summary>
