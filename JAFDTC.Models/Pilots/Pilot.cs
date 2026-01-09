@@ -18,6 +18,7 @@
 // ********************************************************************************************************************
 
 using JAFDTC.Models.Core;
+using System.Text.Json.Serialization;
 
 namespace JAFDTC.Models.Pilots
 {
@@ -34,6 +35,7 @@ namespace JAFDTC.Models.Pilots
 
         // unique ID is always airframe + name, case-insensitive.
         //
-        public string UniqueID => $"{Airframe}:{Name.ToLower()}";
+        [JsonIgnore]
+        public string UniqueID => $"{Airframe}:{Name.ToLower()}".Replace(" ", "_");
     }
 }
