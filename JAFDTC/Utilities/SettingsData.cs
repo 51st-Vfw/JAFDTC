@@ -60,6 +60,8 @@ namespace JAFDTC.Utilities
 
         public string LastConfigFilenameSelection { get; set; }
 
+        public PilotFilterSpec LastPilotFilter { get; set; }
+
         public ThreatFilterSpec LastThreatFilter { get; set; }
 
         public POIFilterSpec LastNavptPOIFilter { get; set; }
@@ -116,6 +118,7 @@ namespace JAFDTC.Utilities
             LastAirframeSelection = 0;
             LastConfigFilenameSelection = "";
 
+            LastPilotFilter = new();
             LastThreatFilter = new();
             LastNavptPOIFilter = new();
             LastPOIFilter = new();

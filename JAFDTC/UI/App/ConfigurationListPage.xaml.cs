@@ -629,7 +629,21 @@ namespace JAFDTC.UI.App
         }
 
         /// <summary>
-        /// points of interest command: navigate to the points of interest editor page to edit pois.
+        /// pilots dbase command: navigate to the pilot editor page to edit pilots.
+        /// </summary>
+        private void CmdPilots_Click(object sender, RoutedEventArgs args)
+        {
+            if (!IsNavPending)
+            {
+                IsNavPending = true;
+                MainWindow mainWindow = (MainWindow)(Application.Current as JAFDTC.App)?.Window;
+                mainWindow.SetConfigFilterBoxVisibility(Visibility.Collapsed);
+                Frame.Navigate(typeof(EditPilotsPage), null, new DrillInNavigationTransitionInfo());
+            }
+        }
+
+        /// <summary>
+        /// points of interest dbase command: navigate to the points of interest editor page to edit pois.
         /// </summary>
         private void CmdPoI_Click(object sender, RoutedEventArgs args)
         {

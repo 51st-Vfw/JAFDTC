@@ -1,8 +1,8 @@
 ﻿// ********************************************************************************************************************
 //
-// F16CPilotsDbase.cs -- F-16C pilot database.
+// PilotFilterSpec.cs -- pilot filter specification
 //
-// Copyright(C) 2024 ilominar/raven
+// Copyright(C) 2025 ilominar/raven
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 // Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -17,40 +17,44 @@
 //
 // ********************************************************************************************************************
 
-using JAFDTC.Models.F16C.DLNK;
-using JAFDTC.Utilities;
-using System.Collections.Generic;
+using JAFDTC.Models.Core;
+using System.Text.Json.Serialization;
 
-namespace JAFDTC.Models.F16C
+namespace JAFDTC.Models.CoreApp
 {
     /// <summary>
-    /// model for the viper pilot database stored in the user database area. this database carries entries that are
-    /// serialized ViperDriver instances.
+    /// captures parameters for the filters that can be applied to points of interest.
     /// </summary>
-    public class F16CPilotsDbase
+    public sealed class PilotFilterSpec
     {
-        public readonly static string PilotDbFilename = "jafdtc-pilots-f16c.json";
-
         // ------------------------------------------------------------------------------------------------------------
         //
-        // methods
+        // properties
         //
         // ------------------------------------------------------------------------------------------------------------
 
-        /// <summary>
-        /// load the viper pilot database from the standard user location and return it.
-        /// </summary>
-        public static List<ViperDriver> LoadDbase()
-        {
-            return FileManager.LoadUserDbase<ViperDriver>(PilotDbFilename);
-        }
+        // ---- public properties
 
-        /// <summary>
-        /// update the viper pilot database to match the specified value. returns true on success, false on failure. 
-        /// </summary>
-        public static bool UpdateDbase(List<ViperDriver> newDb)
-        {
-            return FileManager.SaveUserDbase<ViperDriver>(F16CPilotsDbase.PilotDbFilename, newDb);
-        }
+        public AirframeTypes Airframe { get; set; }
+
+        // ---- constructed properties
+
+        [JsonIgnore]
+        public bool IsDefault => (Airframe == AirframeTypes.UNKNOWN);
+
+        [JsonIgnore]
+        public static PilotFilterSpec Default => new();
+
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // construction
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
+        public PilotFilterSpec() => (Airframe) = (AirframeTypes.UNKNOWN);
+
+        public PilotFilterSpec(AirframeTypes airframe) => (Airframe) = (airframe);
+
+        public PilotFilterSpec(PilotFilterSpec src) => (Airframe) = (src.Airframe);
     }
 }

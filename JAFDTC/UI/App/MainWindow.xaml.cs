@@ -2,7 +2,7 @@
 //
 // MainWindow.xaml.cs -- ui c# for main window
 //
-// Copyright(C) 2023-2025 ilominar/raven
+// Copyright(C) 2023-2026 ilominar/raven
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 // Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -18,8 +18,8 @@
 // ********************************************************************************************************************
 
 using JAFDTC.Models.DCS;
-using JAFDTC.Models.F16C.DLNK;
 using JAFDTC.Models.POI;
+using JAFDTC.Models.Pilots;
 using JAFDTC.UI.Base;
 using JAFDTC.Utilities;
 using Microsoft.UI.Windowing;
@@ -32,7 +32,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Net.Http;
-using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Windows.Graphics;
@@ -125,7 +124,7 @@ namespace JAFDTC.UI.App
 
         // ---- events
 
-        public event EventHandler<FileActivationEventArgs> ViperDbFileActivation;
+        public event EventHandler<FileActivationEventArgs> PilotDbFileActivation;
         public event EventHandler<FileActivationEventArgs> POIDbFileActivation;
 
         // ---- public properties
@@ -320,15 +319,15 @@ namespace JAFDTC.UI.App
                 // the activation. otherwise, we will handle them here.
 
                 string type = FileManager.GetSharableDbaseType(path);
-                if ((type == typeof(ViperDriver).Name) && (ViperDbFileActivation?.GetInvocationList().Length > 0))
+                if ((type == typeof(Pilot).Name) && (PilotDbFileActivation?.GetInvocationList().Length > 0))
                 {
                     FileActivationEventArgs args = new(path, null);
-                    ViperDbFileActivation?.Invoke(this, args);
+                    PilotDbFileActivation?.Invoke(this, args);
                     isSuccess = args.IsReportSuccess;
                 }
-                else if (type == typeof(ViperDriver).Name)
+                else if (type == typeof(Pilot).Name)
                 {
-                    isSuccess = await ExchangeViperPilotUIHelper.ImportFile(root, path);
+                    isSuccess = await ExchangePilotUIHelper.ImportFile(root, path);
                 }
                 else if ((type == typeof(PointOfInterest).Name) && (POIDbFileActivation?.GetInvocationList().Length > 0))
                 {

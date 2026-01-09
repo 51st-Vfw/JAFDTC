@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+**********************************************************************************************************************
+    
+EditPointsOfInterestPage.xaml : ui xaml point of interest editor
+
+Copyright(C) 2023-2025 ilominar/raven
+
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
+Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
+option) any later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
+implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+for more details.
+You should have received a copy of the GNU General Public License along with this program.  If not, see
+https://www.gnu.org/licenses/.
+
+    {ThemeResource SystemAccentColor}
+    
+**********************************************************************************************************************
+-->
+<Page
+    x:Class="JAFDTC.UI.App.EditPilotsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:JAFDTC.UI.App"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Page.Resources>
+
+        <!-- brush for error fields. -->
+        <SolidColorBrush x:Key="ErrorFieldBorderBrush" Color="DarkRed"/>
+        <SolidColorBrush x:Key="ErrorFieldBackgroundBrush" Color="PaleVioletRed"/>
+
+    </Page.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!--
+        ===============================================================================================================
+        row 0 : header row
+        ===============================================================================================================
+        -->
+        <StackPanel Grid.Row="0" Margin="8,4,8,4"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Left" VerticalAlignment="Center">
+
+            <!-- Style="{StaticResource NavigationBackButtonSmallStyle}" -->
+
+            <AppBarButton Margin="0,2,0,0" Height="48" x:Name="uiHdrBtnBack"
+                          VerticalAlignment="Center"
+                          IsEnabled="True"
+                          Click="HdrBtnBack_Click"
+                          ToolTipService.ToolTip="Return to Configuration List">
+                <SymbolIcon Symbol="Back"/>
+            </AppBarButton>
+            <TextBlock Margin="4,0,0,4" x:Name="uiHdrTxtPageName"
+                       VerticalAlignment="Center"
+                       FontSize="20"
+                       FontWeight="SemiBold">
+                Pilots
+            </TextBlock>
+        </StackPanel>
+
+        <!--
+        ===============================================================================================================
+        row 1 : controls
+        ===============================================================================================================
+        -->
+        <Grid Grid.Row="1"
+              HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- pilot search box -->
+            <AutoSuggestBox Grid.Column="0" Width="325" x:Name="uiPilotNameFilterBox"
+                            VerticalAlignment="Center"
+                            PlaceholderText="Filter pilots by name"
+                            QueryIcon="Find"
+                            TextChanged="PilotNameFilterBox_TextChanged"
+                            QuerySubmitted="PilotNameFilterBox_QuerySubmitted"/>
+
+            <!-- command bar -->
+            <CommandBar Grid.Column="1" Margin="6,0,0,0"
+                        HorizontalAlignment="Left" VerticalAlignment="Center">
+                <AppBarToggleButton x:Name="uiBarBtnFilter" Label="Filter Pilots"
+                                    Click="CmdFilter_Click"
+                                    ToolTipService.ToolTip="Set filter to apply to pilots">
+                    <AppBarToggleButton.Icon>
+                        <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE71C;"/>
+                    </AppBarToggleButton.Icon>
+                </AppBarToggleButton>
+                <AppBarSeparator/>
+                <AppBarButton x:Name="uiBarBtnDelete" Icon="Delete" Label="Delete"
+                              Click="CmdDelete_Click"
+                              ToolTipService.ToolTip="Delete selected pilot"/>
+                <AppBarSeparator/>
+                <AppBarButton x:Name="uiBarBtnImport" Icon="Download" Label="Import"
+                              Click="CmdImport_Click"
+                              ToolTipService.ToolTip="Import points of interest from file"/>
+                <AppBarButton x:Name="uiBarBtnExport" Icon="Upload" Label="Export"
+                              Click="CmdExport_Click"
+                              ToolTipService.ToolTip="Export points of interest to file"/>
+            </CommandBar>
+        </Grid>
+
+        <!--
+        ===============================================================================================================
+        row 2 : list and header
+        ===============================================================================================================
+        -->
+        <Grid Grid.Row="2" Margin="0,6,0,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Grid Grid.Row="0" Margin="16,0,12,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="24"/>
+                    <ColumnDefinition Width="200"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="200"/>
+                    <ColumnDefinition Width="200"/>
+                </Grid.ColumnDefinitions>
+                <!-- colum 0 has no header for -->
+                <TextBlock Grid.Column="1" Margin="0,0,0,0"
+                           HorizontalTextAlignment="Center"
+                           Style="{StaticResource TableHeaderTextStyle}"
+                           Text="Airframe"/>
+                <TextBlock Grid.Column="2" Margin="6,0,0,0"
+                           HorizontalTextAlignment="Left"
+                           Style="{StaticResource TableHeaderTextStyle}"
+                           Text="Pilot Callsign"/>
+                <TextBlock Grid.Column="3" Margin="6,0,0,0"
+                           HorizontalTextAlignment="Center"
+                           Style="{StaticResource TableHeaderTextStyle}"
+                           Text="Board Number"/>
+                <TextBlock Grid.Column="4" Margin="6,0,0,0"
+                           HorizontalTextAlignment="Center"
+                           Style="{StaticResource TableHeaderTextStyle}"
+                           Text="Avionics Identifier"/>
+            </Grid>
+
+            <ListView Grid.Row="1" x:Name="uiPilotListView"
+                      SelectionMode="Extended"
+                      SelectionChanged="PilotListView_SelectionChanged"
+                      RightTapped="PilotListView_RightTapped"
+                      ItemsSource="{x:Bind CurPilotItems}">
+                <ListView.Resources>
+                    <MenuFlyout x:Name="uiPilotListCtxMenuFlyout">
+                        <MenuFlyout.Items>
+                            <MenuFlyoutItem Text="Export..." Icon="Upload" Click="CmdExport_Click"/>
+                            <MenuFlyoutSeparator/>
+                            <MenuFlyoutItem Text="Delete" Icon="Delete" Click="CmdDelete_Click"/>
+                        </MenuFlyout.Items>
+                    </MenuFlyout>
+                </ListView.Resources>
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="local:PilotListItem">
+                        <Grid Margin="6">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="24"/>
+                                <ColumnDefinition Width="200"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="200"/>
+                                <ColumnDefinition Width="200"/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Grid.Column="0"
+                                       VerticalAlignment="Center"
+                                       HorizontalTextAlignment="Center"
+                                       FontFamily="Segoe Fluent Icons"
+                                       Text="{x:Bind Glyph}"/>
+                            <TextBlock Grid.Column="1"
+                                       VerticalAlignment="Center"
+                                       HorizontalTextAlignment="Center"
+                                       Text="{x:Bind AirframeUI}"/>
+                            <TextBlock Grid.Column="2" Margin="6,0,0,0"
+                                       VerticalAlignment="Center"
+                                       HorizontalTextAlignment="Left"
+                                       Text="{x:Bind Pilot.Name}"/>
+                            <TextBlock Grid.Column="3" Margin="6,0,0,0"
+                                       VerticalAlignment="Center"
+                                       HorizontalTextAlignment="Center"
+                                       Text="{x:Bind BoardNumberUI}"/>
+                            <TextBlock Grid.Column="4" Margin="6,0,0,0"
+                                       VerticalAlignment="Center"
+                                       HorizontalTextAlignment="Center"
+                                       Text="{x:Bind AvionicsIDUI}"/>
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Grid>
+
+        <!--
+        ===============================================================================================================
+        row 3 : Editor
+        ===============================================================================================================
+        -->
+        <Grid Grid.Row="3" Margin="24,12,24,16">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="180"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="125"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- editor top row
+            -->
+            <TextBlock Grid.Row="0" Grid.Column="0" Margin="16,12,0,0"
+                       VerticalAlignment="Center"
+                       Text="Airframe"/>
+            <ComboBox Grid.Row="0" Grid.Column="1" Margin="12,12,0,0" x:Name="uiComboAirframe"
+                      VerticalAlignment="Center"
+                      HorizontalAlignment="Stretch"
+                      SelectionChanged="Combo_SelectionChanged"
+                      SelectedIndex="{x:Bind EditPilot.AirframeUI, Mode=TwoWay}">
+                <!-- Tag is enum JAFDTC.Models.Core.AirframeTypes -->
+                <ComboBox.Items>
+                    <TextBlock Text="Other Airframes" Tag="0"/>
+                    <TextBlock Text="A-10C Warthog" Tag="1"/>
+                    <TextBlock Text="AV-8B Harrier" Tag="3"/>
+                    <TextBlock Text="F-14A/B Tomcat" Tag="8"/>
+                    <TextBlock Text="F-15E Strike Eagle" Tag="4"/>
+                    <TextBlock Text="F-16C Viper" Tag="5"/>
+                    <TextBlock Text="F/A-18C Hornet" Tag="6"/>
+                    <TextBlock Text="Mirage 2000C" Tag="7"/>
+                </ComboBox.Items>
+            </ComboBox>
+            <TextBlock Grid.Row="0" Grid.Column="2" Margin="16,12,0,0"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Right"
+                       Text="Pilot Callsign"/>
+            <TextBox Grid.Row="0" Grid.Column="3" Margin="12,12,0,0" x:Name="uiTextPilotName"
+                     VerticalAlignment="Center"
+                     HorizontalAlignment="Stretch"
+                     TextChanged="PilotTextBox_TextChanged"
+                     LostFocus="PilotTextBox_LostFocus"
+                     Text="{x:Bind EditPilot.Name, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
+            <Button Grid.Row="0" Grid.Column="5" Margin="36,12,0,0" x:Name="uiPilotBtnAdd"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Stretch"
+                    Click="PilotBtnAdd_Click">
+                <TextBlock x:Name="uiPilotTextBtnAdd">
+                    Update
+                </TextBlock>
+            </Button>
+
+            <!-- editor bottom row
+            
+            TextChanged="ThreatTextBox_TextChanged"
+LostFocus="ThreatTextBox_LostFocus"
+Text="{x:Bind EditThreat.TypeDCS, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+            
+            
+            
+                         PlaceholderText = "0.00"
+                         MaxLength="6"
+                         TextChanged="ThreatTextBox_TextChanged"
+                         LostFocus="ThreatTextBox_LostFocus"
+                         Text="{x:Bind EditThreat.RadiusWEZ, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+            
+            -->
+            <TextBlock Grid.Row="1" Grid.Column="2" Margin="24,12,0,0"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Right"
+                       Text="Board Number"/>
+            <Grid Grid.Row="1" Grid.Column="3" Margin="12,12,0,0"
+                  HorizontalAlignment="Stretch">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <TextBox Grid.Column="0" Margin="0,0,0,0" x:Name="uiTextPilotBoardNum"
+                         VerticalAlignment="Center"
+                         HorizontalAlignment="Stretch"
+                         TextChanged="PilotTextBox_TextChanged"
+                         LostFocus="PilotTextBox_LostFocus"
+                         Text="{x:Bind EditPilot.BoardNumber, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
+                <TextBlock Grid.Column="1" Margin="24,0,0,0"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Right"
+                           Text="Avionics ID"/>
+                <TextBox Grid.Column="3" Margin="12,0,0,0" x:Name="uiTextPilotAvionicsID"
+                         VerticalAlignment="Center"
+                         HorizontalAlignment="Stretch"
+                         TextChanged="PilotTextBox_TextChanged"
+                         LostFocus="PilotTextBox_LostFocus"
+                         Text="{x:Bind EditPilot.AvionicsID, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
+            </Grid>
+            <Button Grid.Row="1" Grid.Column="5" Margin="36,12,0,0" x:Name="uiPilotBtnClear"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Stretch"
+                    Click="PilotBtnClear_Click">
+                <TextBlock x:Name="uiPilotTextBtnClear">
+                    Clear
+                </TextBlock>
+            </Button>
+        </Grid>
+
+    </Grid>
+</Page>

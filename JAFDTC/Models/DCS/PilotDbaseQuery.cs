@@ -1,8 +1,8 @@
 ﻿// ********************************************************************************************************************
 //
-// ViperDriver.cs -- f-16c datalink system pilot information
+// PilotDbaseQuery.cs -- pilot database query model
 //
-// Copyright(C) 2023 ilominar/raven
+// Copyright(C) 2026 ilominar/raven
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 // Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -17,22 +17,15 @@
 //
 // ********************************************************************************************************************
 
-using JAFDTC.Utilities;
-using System;
+using JAFDTC.Models.Core;
 
-namespace JAFDTC.Models.F16C.DLNK
+namespace JAFDTC.Models.DCS
 {
-    /// <summary>
-    /// TODO: document
-    /// </summary>
-    public class ViperDriver : BindableObject
+    public class PilotDbaseQuery
     {
-        public string UID { get; set; }                         // unique id
-
-        public string Name { get; set; }                        // name, unique (case-insensitive)
-
-        public string TNDL { get; set; }                        // datalink tndl value
-
-        public ViperDriver() => (UID, Name, TNDL) = (Guid.NewGuid().ToString(), "", "");
+        public AirframeTypes[]? Airframes;      // airframe(s); null => any
+        public string? Name;                    // name, partial match, case insensitive; null => any
+        public string? ExactName;               // name, full match, case insensitive; null => any
+        public string? BoardNumber;             // board num, partial match, case insensitive; null => any
     }
 }

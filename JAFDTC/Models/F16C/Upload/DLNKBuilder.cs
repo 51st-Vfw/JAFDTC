@@ -2,7 +2,7 @@
 //
 // DLNKBuilder.cs -- f-16c dlnk command builder
 //
-// Copyright(C) 2023-2025 ilominar/raven
+// Copyright(C) 2023-2026 ilominar/raven
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 // Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -17,8 +17,10 @@
 //
 // ********************************************************************************************************************
 
+using JAFDTC.Models.Core;
 using JAFDTC.Models.DCS;
 using JAFDTC.Models.F16C.DLNK;
+using JAFDTC.Models.Pilots;
 using JAFDTC.Utilities;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -126,11 +128,17 @@ namespace JAFDTC.Models.F16C.Upload
         private string InferOwnship()
         {
             if (!string.IsNullOrEmpty(Settings.Callsign))
-                foreach (ViperDriver driver in F16CPilotsDbase.LoadDbase())
+            {
+                PilotDbaseQuery query = new()
+                {
+                    Airframes = [ AirframeTypes.F16C ]
+                };
+                foreach (Pilot driver in PilotDbase.Instance.Find(query))
                     if (driver.Name == Settings.Callsign)
                         for (int j = 0; j < _cfg.DLNK.TeamMembers.Length; j++)
-                            if (driver.UID == _cfg.DLNK.TeamMembers[j].DriverUID)
+                            if (driver.UniqueID == _cfg.DLNK.TeamMembers[j].DriverUID)
                                 return (j + 1).ToString();
+            }
             return _cfg.DLNK.Ownship;
         }
     }

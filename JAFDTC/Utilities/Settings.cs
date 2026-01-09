@@ -213,6 +213,19 @@ namespace JAFDTC.Utilities
             }
         }
 
+        public static PilotFilterSpec LastPilotFilter
+        {
+            get => _currentSettings.LastPilotFilter;
+            set
+            {
+                if (_currentSettings.LastPilotFilter != value)
+                {
+                    _currentSettings.LastPilotFilter = value;
+                    FileManager.WriteSettings(_currentSettings);
+                }
+            }
+        }
+
         public static ThreatFilterSpec LastThreatFilter
         {
             get => _currentSettings.LastThreatFilter;

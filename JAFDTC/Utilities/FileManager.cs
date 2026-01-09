@@ -26,6 +26,7 @@ using JAFDTC.Models;
 using JAFDTC.Models.A10C;
 using JAFDTC.Models.Core;
 using JAFDTC.Models.F16C;
+using JAFDTC.Models.Pilots;
 using JAFDTC.Models.POI;
 using JAFDTC.Models.Threats;
 using System;
@@ -54,11 +55,13 @@ namespace JAFDTC.Utilities
 
         private static readonly string _appDirPath = AppContext.BaseDirectory;
 
-        private static string _settingsDirPath
+        private static readonly string _settingsDirPath
             = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "JAFDTC");
 
+#if TODO_IMPLEMENT
         private static string _commonDirPath
             = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Saved Games\\JAFDTC");
+#endif
 
         private static readonly string _mapTileCachePath
             = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
@@ -95,7 +98,7 @@ namespace JAFDTC.Utilities
             {
                 string msg = $"Unable to create settings folder: {_settingsDirPath}. Make sure the path is correct" +
                              $" and that you have appropriate permissions ({ex}).";
-                _settingsDirPath = null;
+                _settingsPath = null;
                 throw new Exception(msg, ex);
             }
 
@@ -112,12 +115,13 @@ namespace JAFDTC.Utilities
             }
             catch (Exception ex)
             {
-                _settingsDirPath = null;
+                _logStream = null;
                 string msg = $"Unable to create log file: {_logPath} ({ex}).";
                 throw new Exception(msg, ex);
             }
 #endif
 
+#if TODO_IMPLEMENT
             if (Directory.Exists(_commonDirPath))
             {
                 FileManager.Log($"Common directory {_commonDirPath} is available.");
@@ -127,6 +131,7 @@ namespace JAFDTC.Utilities
                 FileManager.Log($"Common directory {_commonDirPath} is not available.");
                 _commonDirPath = null;
             }
+#endif
         }
 
         /// <summary>
@@ -283,33 +288,36 @@ namespace JAFDTC.Utilities
         public static SettingsData ReadSettings()
         {
             SettingsData settings = null;
-            string json;
-            try
+            if (!string.IsNullOrEmpty(_settingsPath))
             {
-                json = ReadFile(_settingsPath);
-            }
-            catch (Exception ex)
-            {
-                json = null;
-                FileManager.Log($"Settings:ReadSettings settings not found, attempting to create new file, exception {ex}");
-            }
-            try
-            {
-                if (json == null)
+                string json;
+                try
+                {
+                    json = ReadFile(_settingsPath);
+                }
+                catch (Exception ex)
+                {
+                    json = null;
+                    FileManager.Log($"Settings:ReadSettings settings not found, attempting to create new file, exception {ex}");
+                }
+                try
+                {
+                    if (json == null)
+                    {
+                        settings = new SettingsData();
+                        WriteSettings(settings);
+                        json = ReadFile(_settingsPath);
+                        FileManager.Log($"Created new settings");
+                    }
+                    if (json != null)
+                        settings = JsonSerializer.Deserialize<SettingsData>(json);
+                    FileManager.Log($"Loaded settings from {_settingsPath}");
+                }
+                catch (Exception ex)
                 {
                     settings = new SettingsData();
-                    WriteSettings(settings);
-                    json = ReadFile(_settingsPath);
-                    FileManager.Log($"Created new settings");
+                    FileManager.Log($"Settings:ReadSettings unable to create empty settings, exception {ex}");
                 }
-                if (json != null)
-                    settings = JsonSerializer.Deserialize<SettingsData>(json);
-                FileManager.Log($"Loaded settings from {_settingsPath}");
-            }
-            catch (Exception ex)
-            {
-                settings = new SettingsData();
-                FileManager.Log($"Settings:ReadSettings unable to create empty settings, exception {ex}");
             }
             return settings;
         }
@@ -319,14 +327,17 @@ namespace JAFDTC.Utilities
         /// </summary>
         public static void WriteSettings(SettingsData settings)
         {
-            try
+            if (!string.IsNullOrEmpty(_settingsPath))
             {
-                string json = JsonSerializer.Serialize(settings, Globals.JSONOptions);
-                WriteFile(_settingsPath, json);
-            }
-            catch (Exception ex)
-            {
-                FileManager.Log($"Settings:WriteSettings failed, exception {ex}");
+                try
+                {
+                    string json = JsonSerializer.Serialize(settings, Globals.JSONOptions);
+                    WriteFile(_settingsPath, json);
+                }
+                catch (Exception ex)
+                {
+                    FileManager.Log($"Settings:WriteSettings failed, exception {ex}");
+                }
             }
         }
 
@@ -920,6 +931,33 @@ namespace JAFDTC.Utilities
             string path = Path.Combine(Path.Combine(_settingsDirPath, "Dbase"), name);
             if (System.IO.File.Exists(path))
                 System.IO.File.Delete(path);
+        }
+
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // pilot database
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
+        private const string PilotDbaseFilename = "jafdtc-pilots.json";
+
+        /// <summary>
+        /// return a list of pilots in the database. this list is built from a user database file..
+        /// </summary>
+        public static IReadOnlyList<Pilot> LoadPilotDbase()
+        {
+// TODO: move LoadPilotDbase to IReadOnlyList to remove [.. ] wrapper
+            return [.. LoadUserDbase<Pilot>(PilotDbaseFilename) ];
+        }
+
+        /// <summary>
+        /// saves pilots to the user pilott database. database is persisted as a list of Pilot instances. returns
+        /// true on success, false otherwise.
+        /// </summary>
+        public static bool SavePilotDbase(IReadOnlyList<Pilot> pilots)
+        {
+// TODO: move SaveUserDbase to IReadOnlyList to remove [.. ] wrapper
+            return SaveUserDbase<Pilot>(PilotDbaseFilename, [.. pilots ]);
         }
 
         // ------------------------------------------------------------------------------------------------------------
