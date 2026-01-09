@@ -64,8 +64,8 @@ namespace JAFDTC.UI.F16C
             F16CEditHTSPage.PageInfo,
             F16CEditDLNKPage.PageInfo,
             F16CEditMiscPage.PageInfo,
-            F16CEditSimulatorDTCPageHelper.PageInfo,
-            F16CEditSimulatorKboardPageHelper.PageInfo,
+            F16CEditCoreSimDTCPageHelper.PageInfo,
+            F16CEditCoreKboardPageHelper.PageInfo,
         ];
 
         // ------------------------------------------------------------------------------------------------------------

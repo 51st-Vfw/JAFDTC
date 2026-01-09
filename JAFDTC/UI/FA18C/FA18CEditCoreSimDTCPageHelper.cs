@@ -1,6 +1,6 @@
 ﻿// ********************************************************************************************************************
 //
-// FA18CEditSimulatorDTCPageHelper.cs : hornet specialization for EditSimulatorDTCPage
+// FA18CEditCoreSimDTCPageHelper.cs : hornet specialization for EditCoreSimDTCPage
 //
 // Copyright(C) 2025-2026 ilominar/raven
 //
@@ -30,11 +30,11 @@ namespace JAFDTC.UI.FA18C
     /// <summary>
     /// TODO: document
     /// </summary>
-    internal class FA18CEditSimulatorDTCPageHelper : IEditCoreSimDTCPageHelper
+    internal class FA18CEditCoreSimDTCPageHelper : IEditCoreSimDTCPageHelper
     {
         public static ConfigEditorPageInfo PageInfo
             => new(CoreSimDTCSystem.SystemTag, "DCS DTC Tape", "DCS DTC", "\xE77C", typeof(EditCoreSimDTCPage),
-                   typeof(FA18CEditSimulatorDTCPageHelper));
+                   typeof(FA18CEditCoreSimDTCPageHelper));
 
         public SystemBase GetSystemConfig(IConfiguration config) => ((FA18CConfiguration)config).MUMI;
 

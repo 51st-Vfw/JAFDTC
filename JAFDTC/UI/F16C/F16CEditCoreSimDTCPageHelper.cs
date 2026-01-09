@@ -1,6 +1,6 @@
 ﻿// ********************************************************************************************************************
 //
-// F16CEditSimulatorDTCPageHelper.cs : viper specialization for EditSimulatorDTCPage
+// F16CEditCoreSimDTCPageHelper.cs : viper specialization for EditCoreSimDTCPage
 //
 // Copyright(C) 2025-2026 ilominar/raven
 //
@@ -30,11 +30,11 @@ namespace JAFDTC.UI.F16C
     /// <summary>
     /// TODO: document
     /// </summary>
-    internal class F16CEditSimulatorDTCPageHelper : IEditCoreSimDTCPageHelper
+    internal class F16CEditCoreSimDTCPageHelper : IEditCoreSimDTCPageHelper
     {
         public static ConfigEditorPageInfo PageInfo
             => new(CoreSimDTCSystem.SystemTag, "DCS DTC Tape", "DCS DTC", "\xE77C", typeof(EditCoreSimDTCPage),
-                   typeof(F16CEditSimulatorDTCPageHelper));
+                   typeof(F16CEditCoreSimDTCPageHelper));
 
         public SystemBase GetSystemConfig(IConfiguration config) => ((F16CConfiguration)config).DTE;
 
