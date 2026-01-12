@@ -29,16 +29,15 @@ namespace JAFDTC.UI.F16C
     /// </summary>
     public class Glyphs
     {
-        public const string CMDS = "\xEA18";
-        public const string DLNK = "\xE716";
+        public const string CMDS = UI.Glyphs.Countermeasures;
+        public const string DLNK = UI.Glyphs.Pilots;
         public const string HARM = "\xE701";
         public const string HTS = "\xF272";
-        public const string MFD = "\xE950";
-        public const string MISC = "\xE8B7";
-        public const string RADIO = "\xE704";
-        public const string SMS = "\xEBD2";
-        public const string STPT = "\xE707";
-        public const string PILOT_DB = "\xE77B";
+        public const string MFD = UI.Glyphs.Displays;
+        public const string MISC = UI.Glyphs.Miscellaneous;
+        public const string RADIO = UI.Glyphs.Radio;
+        public const string SMS = UI.Glyphs.Munitions;
+        public const string STPT = UI.Glyphs.Navigation;
     }
 
     /// <summary>
@@ -55,6 +54,7 @@ namespace JAFDTC.UI.F16C
 
         private static readonly ObservableCollection<ConfigEditorPageInfo> _configEditorPageInfo =
         [
+            F16CEditCoreMissionPageHelper.PageInfo,
             F16CEditSteerpointListPage.PageInfo,
             F16CEditMFDPage.PageInfo,
             F16CEditRadioPageHelper.PageInfo,

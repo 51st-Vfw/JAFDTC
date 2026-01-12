@@ -93,9 +93,12 @@ namespace JAFDTC.Models.F16C
 
         public CoreKboardSystem Kboard { get; set; }
 
+        public CoreMissionSystem Mission { get; set; }
+
         [JsonIgnore]
         public override List<string> MergeableSysTags =>
         [
+            CoreMissionSystem.SystemTag,
             MiscSystem.SystemTag,
             STPTSystem.SystemTag,
             RadioSystem.SystemTag,
@@ -125,6 +128,7 @@ namespace JAFDTC.Models.F16C
             STPT = new STPTSystem();
             DTE = new CoreSimDTCSystem();
             Kboard = new CoreKboardSystem();
+            Mission = new CoreMissionSystem();
             ConfigurationUpdated();
         }
 
@@ -145,7 +149,8 @@ namespace JAFDTC.Models.F16C
                 SMS = (SMSSystem)SMS.Clone(),
                 STPT = (STPTSystem)STPT.Clone(),
                 DTE = (CoreSimDTCSystem)DTE.Clone(),
-                Kboard = (CoreKboardSystem)Kboard.Clone()
+                Kboard = (CoreKboardSystem)Kboard.Clone(),
+                Mission = (CoreMissionSystem)Mission.Clone()
             };
             clone.ResetUID();
             clone.ConfigurationUpdated();
@@ -168,6 +173,7 @@ namespace JAFDTC.Models.F16C
                 case STPTSystem.SystemTag: STPT = otherViper.STPT.Clone() as STPTSystem; break;
                 case CoreSimDTCSystem.SystemTag: DTE = otherViper.DTE.Clone() as CoreSimDTCSystem; break;
                 case CoreKboardSystem.SystemTag: Kboard = otherViper.Kboard.Clone() as CoreKboardSystem; break;
+                case CoreMissionSystem.SystemTag: Mission = otherViper.Mission.Clone() as CoreMissionSystem; break;
                 default: break;
             }
         }
@@ -303,6 +309,7 @@ namespace JAFDTC.Models.F16C
                 STPTSystem.SystemTag => STPT,
                 CoreSimDTCSystem.SystemTag => DTE,
                 CoreKboardSystem.SystemTag => Kboard,
+                CoreMissionSystem.SystemTag => Mission,
                 _ => null,
             };
         }
@@ -336,23 +343,25 @@ namespace JAFDTC.Models.F16C
                 STPTSystem.SystemTag => JsonSerializer.Serialize(STPT, ConfigurationBase.JsonOptions),
                 CoreSimDTCSystem.SystemTag => JsonSerializer.Serialize(DTE, ConfigurationBase.JsonOptions),
                 CoreKboardSystem.SystemTag => JsonSerializer.Serialize(Kboard, ConfigurationBase.JsonOptions),
+                CoreMissionSystem.SystemTag => JsonSerializer.Serialize(Mission, ConfigurationBase.JsonOptions),
                 _ => null
             };
         }
 
         public override void AfterLoadFromJSON()
         {
-            CMDS   ??= new CMDSSystem();
-            DLNK   ??= new DLNKSystem();
-            HARM   ??= new HARMSystem();
-            HTS    ??= new HTSSystem();
-            MFD    ??= new MFDSystem();
-            Misc   ??= new MiscSystem();
-            Radio  ??= new RadioSystem();
-            SMS    ??= new SMSSystem();
-            STPT   ??= new STPTSystem();
-            DTE    ??= new CoreSimDTCSystem();
-            Kboard ??= new CoreKboardSystem();
+            CMDS    ??= new CMDSSystem();
+            DLNK    ??= new DLNKSystem();
+            HARM    ??= new HARMSystem();
+            HTS     ??= new HTSSystem();
+            MFD     ??= new MFDSystem();
+            Misc    ??= new MiscSystem();
+            Radio   ??= new RadioSystem();
+            SMS     ??= new SMSSystem();
+            STPT    ??= new STPTSystem();
+            DTE     ??= new CoreSimDTCSystem();
+            Kboard  ??= new CoreKboardSystem();
+            Mission ??= new CoreMissionSystem();
 
             // TODO: should parse out version number from version string and compare that as an integer
             // TODO: to allow for "update if version older than x".
@@ -426,6 +435,7 @@ namespace JAFDTC.Models.F16C
                     case STPTSystem.STPTListTag: STPT.ImportSerializedNavpoints(json, false); break;
                     case CoreSimDTCSystem.SystemTag: DTE = JsonSerializer.Deserialize<CoreSimDTCSystem>(json); break;
                     case CoreKboardSystem.SystemTag: Kboard = JsonSerializer.Deserialize<CoreKboardSystem>(json); break;
+                    case CoreMissionSystem.SystemTag: Mission = JsonSerializer.Deserialize<CoreMissionSystem>(json); break;
                     default: isHandled = false;  break;
                 }
                 if (isHandled)
