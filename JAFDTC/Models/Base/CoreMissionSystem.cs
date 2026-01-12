@@ -187,6 +187,7 @@ namespace JAFDTC.Models.Base
                         Name = pilot.Name,
                         Position = i,
                         DataId = pilot.AvionicsID,
+                        Board = pilot.BoardNumber,
                         SCL = Loadouts[i],
                     });
                 }

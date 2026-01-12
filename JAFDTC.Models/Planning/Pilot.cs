@@ -26,8 +26,8 @@ namespace JAFDTC.Models.Planning
 
         public string? DataId { get; set; }                     // avionics identifier (eg, Viper TNDL)
         public string? SCL { get; set; }                        // aircraft loadout string
+        public string? Board { get; set; }                      // aircraft board number
 
-        //public string? Board { get; set; }
         //public int? Tacan { get; set; }
         //public char? TacanBand { get; set; }
         //public int? Joker { get; set; }
