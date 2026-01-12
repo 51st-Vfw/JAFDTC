@@ -2,7 +2,7 @@
 //
 // ConfigurationEditor.cs : abstract base class for a configuration editor
 //
-// Copyright(C) 2023-2025 ilominar/raven
+// Copyright(C) 2023-2026 ilominar/raven
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 // Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -20,12 +20,10 @@
 using JAFDTC.Models;
 using JAFDTC.Models.Core;
 using JAFDTC.UI.A10C;
-using JAFDTC.UI.AV8B;
 using JAFDTC.UI.F14AB;
 using JAFDTC.UI.F16C;
 using JAFDTC.UI.F15E;
 using JAFDTC.UI.FA18C;
-using JAFDTC.UI.M2000C;
 using JAFDTC.UI.App;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -113,13 +111,10 @@ namespace JAFDTC.UI
             return config.Airframe switch
             {
                 AirframeTypes.A10C => new A10CConfigurationEditor(config),
-                AirframeTypes.AH64D => null,
-                AirframeTypes.AV8B => new AV8BConfigurationEditor(config),
                 AirframeTypes.F14AB => new F14ABConfigurationEditor(config),
                 AirframeTypes.F16C => new F16CConfigurationEditor(config),
                 AirframeTypes.F15E => new F15EConfigurationEditor(config),
                 AirframeTypes.FA18C => new FA18CConfigurationEditor(config),
-                AirframeTypes.M2000C => new M2000CConfigurationEditor(config),
                 _ => null,
             };
         }

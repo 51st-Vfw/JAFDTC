@@ -30,11 +30,9 @@ namespace JAFDTC
             [AirframeTypes.UNKNOWN] = "",
             [AirframeTypes.A10C] = "A-10C Warthog",
             [AirframeTypes.AH64D] = "AH-64D Apache",
-            [AirframeTypes.AV8B] = "AV-8B Harrier",
             [AirframeTypes.F15E] = "F-15E Strike Eagle",
             [AirframeTypes.F16C] = "F-16C Viper",
             [AirframeTypes.FA18C] = "F/A-18C Hornet",
-            [AirframeTypes.M2000C] = "Mirage 2000C",
             [AirframeTypes.F14AB] = "F-14A/B Tomcat"
         };
 
@@ -43,11 +41,9 @@ namespace JAFDTC
             [AirframeTypes.UNKNOWN] = "",
             [AirframeTypes.A10C] = "A-10C",
             [AirframeTypes.AH64D] = "AH-64D",
-            [AirframeTypes.AV8B] = "AV-8B",
             [AirframeTypes.F15E] = "F-15E",
             [AirframeTypes.F16C] = "F-16C",
             [AirframeTypes.FA18C] = "F/A-18C",
-            [AirframeTypes.M2000C] = "M2000C",
             [AirframeTypes.F14AB] = "F-14A/B"
         };
 
@@ -56,11 +52,9 @@ namespace JAFDTC
             [AirframeTypes.UNKNOWN] = "",
             [AirframeTypes.A10C] = "",
             [AirframeTypes.AH64D] = "",
-            [AirframeTypes.AV8B] = "",
             [AirframeTypes.F15E] = "",
             [AirframeTypes.F16C] = "F-16C_50",
             [AirframeTypes.FA18C] = "FA-18C_hornet",
-            [AirframeTypes.M2000C] = "",
             [AirframeTypes.F14AB] = ""
         };
 
