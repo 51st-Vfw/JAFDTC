@@ -2,7 +2,7 @@
 //
 // TeamMember.cs -- f-16c datalink system team member information
 //
-// Copyright(C) 2023-2025 ilominar/raven
+// Copyright(C) 2023-2026 ilominar/raven
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 // Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -24,7 +24,8 @@ using System.Text.Json.Serialization;
 namespace JAFDTC.Models.F16C.DLNK
 {
     /// <summary>
-    /// TODO: document
+    /// information on a team member in the tndl table from the data link avionics. the object contains a uid to
+    /// optionally link the entry back to a pilot in the pilot database.
     /// </summary>
     public partial class TeamMember : BindableObject
     {
@@ -34,14 +35,14 @@ namespace JAFDTC.Models.F16C.DLNK
         //
         // ------------------------------------------------------------------------------------------------------------
 
-        private bool _tdoa;
+        private bool _tdoa;                                     // enable tdoa mode
         public bool TDOA
         {
             get => _tdoa;
             set => SetProperty(ref _tdoa, value);
         }
 
-        private string _tndl;
+        private string _tndl;                                   // tndl value (5-digit, octal)
         public string TNDL
         {
             get => _tndl;
@@ -52,14 +53,14 @@ namespace JAFDTC.Models.F16C.DLNK
             }
         }
 
-        private string _driverUID;
+        private string _driverUID;                              // optional pilot uid, empty string => unknown pilot
         public string DriverUID
         {
             get => _driverUID;
             set => SetProperty(ref _driverUID, value);
         }
 
-        // ---- TODO
+        // ---- constructed properties
 
         // returns true if the instance indicates a default setup (all fields are ""), false otherwise.
         //
