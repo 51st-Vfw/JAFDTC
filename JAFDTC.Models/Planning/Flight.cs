@@ -25,6 +25,7 @@ namespace JAFDTC.Models.Planning
         public required string Aircraft { get; set; }           // aircraft type (eg, "F-16C Viper")
         public required IReadOnlyList<Pilot> Pilots { get; set; }       // list of pilots in flight
 
+        public string? Tasking { get; set; }                    // tasking for flight
         public IReadOnlyList<Radio>? Radios { get; set; }       // radio setup for flight
         public IReadOnlyList<Route>? Routes { get; set; }       // navigation setup for flight
     }
