@@ -2,7 +2,7 @@
 //
 // App.xaml.cs -- ui c# for main application
 //
-// Copyright(C) 2023-2025 ilominar/raven
+// Copyright(C) 2023-2026 ilominar/raven
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 // Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -962,6 +962,7 @@ namespace JAFDTC
             if (args.WindowActivationState == WindowActivationState.Deactivated)
             {
                 CheckDCSTimer?.Stop();
+                CheckDCSTimer = null;
             }
             else
             {
@@ -971,10 +972,14 @@ namespace JAFDTC
         }
 
         /// <summary>
-        /// window closed: flag the app as shutting down so interested parties can take appropriate action.
+        /// window closed: flag the app as shutting down so interested parties can take appropriate action and stop
+        /// the dcs state check timer as we no longer need to monitor dcs.
         /// </summary>
         private void MainWindow_Closed(object sender, WindowEventArgs args)
         {
+            CheckDCSTimer?.Stop();
+            CheckDCSTimer = null;
+
             IsAppShuttingDown = true;
         }
     }
