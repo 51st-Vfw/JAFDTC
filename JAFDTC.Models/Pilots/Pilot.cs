@@ -28,14 +28,16 @@ namespace JAFDTC.Models.Pilots
     /// </summary>
     public class Pilot
     {
-        public required string Name { get; set; }
-        public required AirframeTypes Airframe { get; set; }
-        public string? BoardNumber { get; set; }
-        public string? AvionicsID { get; set; }
+        public string Name { get; set; }                        // name or callsign
+        public AirframeTypes Airframe { get; set; }             // airframe type, UNKNOWN => invalid pilot
+        public string? BoardNumber { get; set; }                // aircraft board number
+        public string? AvionicsID { get; set; }                 // avionics identifier (eg, viper TNDL)
 
         // unique ID is always airframe + name, case-insensitive.
         //
         [JsonIgnore]
         public string UniqueID => $"{Airframe}:{Name.ToLower()}".Replace(" ", "_");
+
+        public Pilot() => (Name, Airframe, BoardNumber,  AvionicsID) = ("", AirframeTypes.UNKNOWN, "", "");
     }
 }

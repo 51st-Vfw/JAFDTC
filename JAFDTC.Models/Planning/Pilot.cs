@@ -21,10 +21,12 @@ namespace JAFDTC.Models.Planning
 {
     public class Pilot
     {
-        public required string Name { get; set; }
-        public required bool IsLead { get; set; }
-        public string? DataId { get; set; }
-        public string? SCL { get; set; }
+        public required string Name { get; set; }               // pilot name or callsign (eg, "Raven")
+        public required int Position { get; set; }              // position in flight (1 => lead)
+
+        public string? DataId { get; set; }                     // avionics identifier (eg, Viper TNDL)
+        public string? SCL { get; set; }                        // aircraft loadout string
+
         //public string? Board { get; set; }
         //public int? Tacan { get; set; }
         //public char? TacanBand { get; set; }

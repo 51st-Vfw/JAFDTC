@@ -21,9 +21,10 @@ namespace JAFDTC.Models.Planning
 {
     public class Preset
     {
-        public required int PresetId { get; set; }
-        public required string Frequency { get; set; }
-        public string? Modulation { get; set; }
-        public string? Description { get; set; }
+        public required int PresetId { get; set; }              // preset number
+        public required string Frequency { get; set; }          // frequency in avionics format (eg, "123.000")
+
+        public string? Modulation { get; set; }                 // modulation (eg, "AM")
+        public string? Description { get; set; }                // description of preset
     }
 }
