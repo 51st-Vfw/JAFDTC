@@ -352,12 +352,10 @@ namespace JAFDTC
                 {
                     ["A10C"] = AirframeTypes.A10C,
                     ["AH64D"] = AirframeTypes.AH64D,
-                    ["AV8B"] = AirframeTypes.AV8B,
                     ["F14AB"] = AirframeTypes.F14AB,
                     ["F15E"] = AirframeTypes.F15E,
                     ["F16CM"] = AirframeTypes.F16C,
                     ["FA18C"] = AirframeTypes.FA18C,
-                    ["M2000C"] = AirframeTypes.M2000C,
                 };
 
                 this.UnhandledException += (sender, args) =>

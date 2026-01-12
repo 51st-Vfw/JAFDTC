@@ -152,12 +152,12 @@ namespace JAFDTC.Utilities
             {
                 AirframeTypes.A10C => Path.Combine(_settingsDirPath, dataType, "A10C"),
                 AirframeTypes.AH64D => Path.Combine(_settingsDirPath, dataType, "AH64D"),
-                AirframeTypes.AV8B => Path.Combine(_settingsDirPath, dataType, "AV8B"),
+                AirframeTypes.AV8B_LEGACY => Path.Combine(_settingsDirPath, dataType, "AV8B"),
                 AirframeTypes.F14AB => Path.Combine(_settingsDirPath, dataType, "F14AB"),
                 AirframeTypes.F15E => Path.Combine(_settingsDirPath, dataType, "F15E"),
                 AirframeTypes.F16C => Path.Combine(_settingsDirPath, dataType, "F16C"),
                 AirframeTypes.FA18C => Path.Combine(_settingsDirPath, dataType, "FA18C"),
-                AirframeTypes.M2000C => Path.Combine(_settingsDirPath, dataType, "M2000C"),
+                AirframeTypes.M2000C_LEGACY => Path.Combine(_settingsDirPath, dataType, "M2000C"),
                 _ => Path.Combine(_settingsDirPath, dataType, "Other"),
             };
         }

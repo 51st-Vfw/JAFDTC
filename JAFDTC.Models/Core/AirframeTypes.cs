@@ -2,7 +2,7 @@
 //
 // CoalitionType.cs : jafdtc airframe type
 //
-// Copyright(C) 2023-2025 ilominar/raven
+// Copyright(C) 2023-2026 ilominar/raven
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 // Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -23,12 +23,12 @@ namespace JAFDTC.Models.Core
     {
         UNKNOWN = 0,
         A10C = 1,
-        AH64D = 2,
-        AV8B = 3,
+        AH64D = 2,                      // TODO: consider supporting
+        AV8B_LEGACY = 3,                // NOTE: no longer supported
         F15E = 4,
         F16C = 5,
         FA18C = 6,
-        M2000C = 7,
+        M2000C_LEGACY = 7,              // NOTE: no longer supported
         F14AB = 8
     }
 }
