@@ -30,7 +30,15 @@ namespace JAFDTC.Models.F16C.DLNK
     /// </summary>
     public partial class DLNKSystem : SystemBase
     {
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // constants
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
         public const string SystemTag = "JAFDTC:F16C:DLNK";
+
+        public const int NUM_SLOTS_IN_TEAM = 8;
 
         // ------------------------------------------------------------------------------------------------------------
         //
@@ -138,7 +146,7 @@ namespace JAFDTC.Models.F16C.DLNK
             OwnshipFENumber = "";
             IsFillEmptyTNDL = false;
             FillEmptyTNDL = "";
-            TeamMembers = new TeamMember[8];
+            TeamMembers = new TeamMember[NUM_SLOTS_IN_TEAM];
             for (int i = 0; i < TeamMembers.Length; i++)
                 TeamMembers[i] = new TeamMember();
         }
@@ -151,7 +159,7 @@ namespace JAFDTC.Models.F16C.DLNK
             OwnshipFENumber = other.OwnshipFENumber;
             IsFillEmptyTNDL = other.IsFillEmptyTNDL;
             FillEmptyTNDL = other.FillEmptyTNDL;
-            TeamMembers = new TeamMember[8];
+            TeamMembers = new TeamMember[NUM_SLOTS_IN_TEAM];
             for (int i = 0; i < TeamMembers.Length; i++)
                 TeamMembers[i] = new TeamMember(other.TeamMembers[i]);
         }
