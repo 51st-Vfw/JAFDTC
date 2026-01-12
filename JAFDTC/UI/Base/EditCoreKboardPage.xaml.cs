@@ -1,8 +1,8 @@
 // ********************************************************************************************************************
 //
-// EditSimulatorDTCPage.cs : ui c# for for general dte/dtc setup editor page
+// EditCoreKboardPage.cs : ui c# for for general kneeboard builder editor page
 //
-// Copyright(C) 2025-2026 ilominar/raven
+// Copyright(C) 2026 ilominar/raven
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 // Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -19,6 +19,7 @@
 
 using JAFDTC.Models;
 using JAFDTC.Models.Base;
+using JAFDTC.Models.Core;
 using JAFDTC.UI.App;
 using JAFDTC.Utilities;
 using Microsoft.UI.Xaml;
@@ -27,9 +28,9 @@ using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Navigation;
 using Microsoft.Windows.Storage.Pickers;
 using System;
-using System.Collections.ObjectModel;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
@@ -37,11 +38,29 @@ using System.Text.Json;
 namespace JAFDTC.UI.Base
 {
     /// <summary>
-    /// page to edit dcs dtc integration fields. this is a general-purpose class that is instatiated in combination
-    /// a IEditSimulatorDTCPageHelper class to provide airframe-specific specialization.
+    /// page to edit kneeboard builder fields. this is a general-purpose class that is instatiated in combination
+    /// with an IEditCoreKboardPageHelper class to provide airframe-specific specialization.
     /// </summary>
-    public sealed partial class EditSimulatorDTCPage : SystemEditorPageBase
+    public sealed partial class EditCoreKboardPage : SystemEditorPageBase
     {
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // private classes
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
+        /// <summary>
+        /// item object for the template selection combo box.
+        /// </summary>
+        private sealed class TemplateComboItem(string templateName, string displayName, string prefix)
+        {
+            public string TemplateName { get; } = templateName;
+            public string DisplayName { get; } = displayName;
+            public string Prefix { get; } = prefix;
+
+            public override string ToString() => $"{Prefix}{DisplayName}";
+        }
+
         // ------------------------------------------------------------------------------------------------------------
         //
         // properties
@@ -52,17 +71,19 @@ namespace JAFDTC.UI.Base
 
         protected override SystemBase SystemConfig => PageHelper.GetSystemConfig(Config);
 
-        protected override string SystemTag => CoreSimDTCSystem.SystemTag;
+        protected override string SystemTag => CoreKboardSystem.SystemTag;
 
-        protected override string SystemName => "DCS DTC Tape";
+        protected override string SystemName => "Kneeboards";
 
-        protected override bool IsPageStateDefault => EditDTC.IsDefault;
+        protected override bool IsPageStateDefault => EditKboard.IsDefault;
 
         // ---- internal properties
 
-        private IEditSimulatorDTCPageHelper PageHelper { get; set;  }
+        private IEditCoreKboardPageHelper PageHelper { get; set; }
 
-        private readonly CoreSimDTCSystem EditDTC;
+        private readonly CoreKboardSystem EditKboard;
+
+        private readonly ObservableCollection<SystemGridItem> GridItems;
 
         // ------------------------------------------------------------------------------------------------------------
         //
@@ -70,12 +91,15 @@ namespace JAFDTC.UI.Base
         //
         // ------------------------------------------------------------------------------------------------------------
 
-        public EditSimulatorDTCPage()
+        public EditCoreKboardPage()
         {
-            EditDTC = new();
+            EditKboard = new();
 
             InitializeComponent();
-            InitializeBase(EditDTC, null, uiCtlLinkResetBtns, null);
+            InitializeBase(EditKboard, null, uiCtlLinkResetBtns, null);
+
+            GridItems = [ ];
+            uiGridSystemItems.ItemsSource = GridItems;
         }
 
         // ------------------------------------------------------------------------------------------------------------
@@ -85,28 +109,28 @@ namespace JAFDTC.UI.Base
         // ------------------------------------------------------------------------------------------------------------
 
         /// <summary>
-        /// marshall data between the dtc configuration and our local dtc state.
+        /// marshall data between the kneeboard configuration and our local kneeboard state.
         /// </summary>
         protected override void CopyConfigToEditState()
         {
             if (EditState != null)
             {
-                PageHelper.CopyConfigToEdit(Config, EditDTC);
+                PageHelper.CopyConfigToEdit(Config, EditKboard);
                 CopyAllSettings(SettingLocation.Config, SettingLocation.Edit);
             }
             UpdateUIFromEditState();
         }
 
         /// <summary>
-        /// marshall data between our local dtc state and the dtc configuration.
+        /// marshall data between our local kneeboard state and the kneeboard configuration.
         /// </summary>
         protected override void SaveEditStateToConfig()
         {
             if ((EditState != null) && !IsUIRebuilding)
             {
-                PageHelper.CopyEditToConfig(EditDTC, Config);
+                PageHelper.CopyEditToConfig(EditKboard, Config);
                 CopyAllSettings(SettingLocation.Edit, SettingLocation.Config, true);
-                Config.Save(this, CoreSimDTCSystem.SystemTag);
+                Config.Save(this, SystemTag);
             }
             UpdateUIFromEditState();
         }
@@ -118,15 +142,15 @@ namespace JAFDTC.UI.Base
         // ------------------------------------------------------------------------------------------------------------
 
         /// <summary>
-        /// update the dtc output path if it is changing from what is stored in our local dtc state. if the path is
-        /// changing and the old path is valid, ask if the luser wants to delete the old path.
+        /// update the dtc output path if it is changing from what is stored in our local kneeboard state. if the path
+        /// is changing and the old path is valid, ask if the luser wants to delete the old path.
         /// </summary>
-        private async void UpdateDTCOutputPath(string newPath)
+        private async void UpdateKboardOutputPath(string newPath)
         {
-            string oldPath = EditDTC.OutputPath;
-            if (EditDTC.OutputPath != newPath)
+            string oldPath = EditKboard.OutputPath;
+            if (EditKboard.OutputPath != newPath)
             {
-                EditDTC.OutputPath = newPath;
+                EditKboard.OutputPath = newPath;
                 SaveEditStateToConfig();
             }
             if ((oldPath.Length > 0) && (newPath != oldPath) && System.IO.File.Exists(oldPath))
@@ -144,7 +168,7 @@ namespace JAFDTC.UI.Base
                 }
                 catch (Exception ex)
                 {
-                    FileManager.Log($"EditSimulatorDTCPage:UpdateDTCOutputPath exception {ex}");
+                    FileManager.Log($"EditSimulatorKboardPage:UpdateKboardOutputPath exception {ex}");
                 }
             }
         }
@@ -155,23 +179,61 @@ namespace JAFDTC.UI.Base
         /// </summary>
         private void RebuildTemplateList()
         {
-            List<string> templates = FileManager.ListDTCTemplates(Config.Airframe);
+            List<string> templates = FileManager.ListKBTemplatePackages(Config.Airframe, out int numGeneric);
+            List<string> airframeTemplates = templates[numGeneric..];
+            templates = templates[..numGeneric];
             templates.Sort();
+            airframeTemplates.Sort();
 
             uiComboTemplate.Items.Clear();
-            uiComboTemplate.Items.Add($"Default {Globals.AirframeNames[Config.Airframe]} DTC template");
+            uiComboTemplate.Items.Add(new TemplateComboItem("", "Default kneeboard template package", ""));
             foreach (string template in templates)
-                uiComboTemplate.Items.Add(template);
+                uiComboTemplate.Items.Add(new TemplateComboItem(template, template, ""));
+            string prefix = $"{Globals.AirframeShortNames[Config.Airframe]} – ";
+            foreach (string template in airframeTemplates)
+                uiComboTemplate.Items.Add(new TemplateComboItem(template, template, prefix));
 
+            templates.AddRange(airframeTemplates);
             int selIndex = 0;
-            if (!string.IsNullOrEmpty(EditDTC.Template))
+            if (!string.IsNullOrEmpty(EditKboard.Template))
                 foreach (string template in templates)
                 {
                     selIndex++;
-                    if (template == EditDTC.Template)
+                    if (template == EditKboard.Template)
                         break;
                 }
             uiComboTemplate.SelectedIndex = selIndex;
+        }
+
+        /// <summary>
+        /// rebuild the kneeboard list from the selected template and update the items grid.
+        /// </summary>
+        private void RebuildKneeboardList(bool isResetSelection = false)
+        {
+            List<string> kboards = FileManager.ListKBTemplates(Config.Airframe, EditKboard.Template);
+            if (kboards.Count == 0)
+                kboards = FileManager.ListKBTemplates(AirframeTypes.UNKNOWN, EditKboard.Template);
+            if (isResetSelection)
+            {
+                EditKboard.KneeboardTags.Clear();
+                foreach (string kb in kboards)
+                    EditKboard.KneeboardTags.Add(kb);
+                SaveEditStateToConfig();
+            }
+            else
+            {
+                List<string> selected = [.. EditKboard.KneeboardTags ];
+                foreach (string kb in selected)
+                    if (!kboards.Contains(kb))
+                    {
+                        EditKboard.KneeboardTags.Clear();
+                        SaveEditStateToConfig();
+                        break;
+                    }
+            }
+            GridItems.Clear();
+            foreach (string kb in kboards)
+                GridItems.Add(new(kb, "\xF0E3", kb.Replace("_", " "), EditKboard.KneeboardTags.Contains(kb)));
         }
 
         /// <summary>
@@ -180,11 +242,12 @@ namespace JAFDTC.UI.Base
         private void RebuildEnableState()
         {
             Utilities.SetEnableState(uiBtnDelTmplt, (uiComboTemplate.SelectedIndex > 0));
-            Utilities.SetEnableState(uiBtnSetOutput, (EditDTC.MergedSystemTags.Count > 0));
+            Utilities.SetEnableState(uiBtnSetOutput, (EditKboard.KneeboardTags.Count > 0));
             Utilities.SetEnableState(uiBtnClearOutput, (uiValueOutput.Text.Length > 0));
 
-            Utilities.SetEnableState(uiCkbxEnableRebuild, (EditDTC.MergedSystemTags.Count > 0));
-            Utilities.SetEnableState(uiCkbxEnableLoad, true);
+            Utilities.SetEnableState(uiCkbxEnableRebuild, (EditKboard.KneeboardTags.Count > 0));
+            Utilities.SetEnableState(uiCkbxEnableNight, true);
+            Utilities.SetEnableState(uiCkbxEnableSVG, true);
         }
 
         /// <summary>
@@ -197,11 +260,12 @@ namespace JAFDTC.UI.Base
         }
 
         /// <summary>
-        /// reset to defaults. uncheck all of the systems buttons.
+        /// reset to defaults. check all of the systems buttons.
         /// </summary>
         protected override void ResetConfigToDefault()
         {
             SystemConfig.Reset();
+            CopyConfigToEditState();
             //
             // HACK: can't get the bindings to work for some reason, have to do this the brute force way...
             //
@@ -229,12 +293,11 @@ namespace JAFDTC.UI.Base
         {
             FileOpenPicker picker = new((Application.Current as JAFDTC.App).Window.AppWindow.Id)
             {
-                // SettingsIdentifier = "JAFDTC_ImportDTC",
-                CommitButtonText = "Add Template",
+                CommitButtonText = "Add Template Package",
                 SuggestedStartLocation = PickerLocationId.Desktop,
                 ViewMode = PickerViewMode.List
             };
-            picker.FileTypeFilter.Add(".dtc");
+            picker.FileTypeFilter.Add(".zip");
 
             PickFileResult resultPick = await picker.PickSingleFileAsync();
             if (resultPick != null)
@@ -242,58 +305,77 @@ namespace JAFDTC.UI.Base
                 string name = Path.GetFileNameWithoutExtension(resultPick.Path);
                 try
                 {
-                    string json = FileManager.ReadFile(resultPick.Path);
-                    using (JsonDocument data = JsonDocument.Parse(json))
-                        if (data.RootElement.GetProperty("type").ToString() != Globals.AirframeDTCTypes[Config.Airframe])
-                            throw new Exception($"The template “{name}” is not suitable for use as a DTC" +
-                                                $" template for the {Globals.AirframeShortNames[Config.Airframe]}.");
+                    if (!FileManager.IsValidKBTemplatePackage(resultPick.Path))
+                        throw new Exception($"The file “{Path.GetFileName(resultPick.Path)}” is not suitable for a" +
+                                            $" kneeboard template package as it is not a .zip archive that includes" +
+                                            $" only .svg files.");
 
-                    ContentDialogResult result = ContentDialogResult.Primary;
-                    if (FileManager.IsValidDTCTemplate(Config.Airframe, name))
+                    ContentDialogResult result = await Utilities.Message2BDialog(Content.XamlRoot,
+                        "Import Destination",
+                        $"Would you like to import the kneeboard template pacakge “{name}” as a generic template (for" +
+                        $" use with any airframe) or a template specific to the {Globals.AirframeNames[Config.Airframe]}?",
+                        $"Generic",
+                        $"{Globals.AirframeNames[Config.Airframe]}");
+
+                    AirframeTypes type = (result == ContentDialogResult.None) ? Config.Airframe : AirframeTypes.UNKNOWN;
+
+                    result = ContentDialogResult.Primary;
+                    if (FileManager.IsUniqueKBTemplatePackage(Config.Airframe, name))
                     {
                         result = await Utilities.Message2BDialog(Content.XamlRoot,
-                            "Template Exists",
-                            $"There is already a DTC template with the name “{name}”. Would you like to replace it?",
+                            "Template Package Exists",
+                            $"There is already either a generic or a airframe-specific kneeboard template package" +
+                            $" with the name “{name}”. Would you like to replace it?",
                             "Replace"
                         );
+                        if (result == ContentDialogResult.Primary)
+                        {
+                            FileManager.DeleteKBTemplatePackage(Config.Airframe, name);
+                            FileManager.DeleteKBTemplatePackage(AirframeTypes.UNKNOWN, name);
+                        }
                     }
                     if (result == ContentDialogResult.Primary)
                     {
-                        FileManager.ImportDTCTemplate(Config.Airframe, resultPick.Path);
-                        RebuildTemplateList();
+                        FileManager.ExtractKBTemplatePackage(type, resultPick.Path);
+                        EditKboard.Template = name;
+                        SaveEditStateToConfig();
+                        RebuildKneeboardList();
                     }
                 }
                 catch (Exception ex)
                 {
                     string msg = (ex.Source == "JAFDTC") ? ex.Message
-                                                         : $"The template “{name}” is not a valid DTC template.";
-                    FileManager.Log($"EditSimulatorDTCPage:BtnAddTmplt_Click exception {ex}");
-                    await Utilities.Message1BDialog(Content.XamlRoot, "DTC Template Import Failed", msg);
+                                                         : $"The kneeboard template package “{name}” is not a valid package.";
+                    FileManager.Log($"EditSimulatorKboardPage:BtnAddTmplt_Click exception {ex}");
+                    await Utilities.Message1BDialog(Content.XamlRoot, "Kneeboard Template Import Failed", msg);
                 }
             }
         }
 
         /// <summary>
-        /// delete template click: remove the currently selected dtc template from the known templates. the
-        /// template file is removed from the dtc area if the user approves. the default template is selected
-        /// upon deletions.
+        /// delete template click: remove the currently selected kneeboard template package from the known
+        /// templates. the template file is removed from the kneeboard area if the user approves. the default template is
+        /// selected upon deletions.
         /// </summary>
         private async void BtnDelTmplt_Click(object sender, RoutedEventArgs args)
         {
             if (uiComboTemplate.SelectedIndex > 0)
             {
-                string name = uiComboTemplate.SelectedItem as string;
+                TemplateComboItem item = uiComboTemplate.SelectedItem as TemplateComboItem;
                 ContentDialogResult result = await Utilities.Message2BDialog(Content.XamlRoot,
-                    "Delete DTC Template",
-                    $"Are you sure you want to delete the {Globals.AirframeShortNames[Config.Airframe]} DTC template “{name}”?",
+                    "Delete Kneeboard Template Package",
+                    $"Are you sure you want to delete the kneeboard template package “{item.DisplayName}”?" +
+                    $" This action cannot be undone.",
                     "Cancel",
-                    "Delete"
+                    "Delete Template Package"
                 );
                 if (result == ContentDialogResult.None)
                 {
-                    FileManager.DeleteDTCTemplate(Config.Airframe, name);
-                    EditDTC.Template = "";
+                    FileManager.DeleteKBTemplatePackage(Config.Airframe, item.TemplateName);
+                    FileManager.DeleteKBTemplatePackage(AirframeTypes.UNKNOWN, item.TemplateName);
+                    EditKboard.Template = "";
                     SaveEditStateToConfig();
+                    RebuildKneeboardList();
                 }
             }
         }
@@ -305,34 +387,32 @@ namespace JAFDTC.UI.Base
         private async void BtnSetOutput_Click(object sender, RoutedEventArgs args)
         {
             bool shouldMerge = false;
-            if (string.IsNullOrEmpty(EditDTC.OutputPath))
+            if (string.IsNullOrEmpty(EditKboard.OutputPath))
             {
                 try
                 {
-                    FileSavePicker picker = new((Application.Current as JAFDTC.App).Window.AppWindow.Id)
+                    FolderPicker picker = new((Application.Current as JAFDTC.App).Window.AppWindow.Id)
                     {
-                        CommitButtonText = "Save Merged Tape",
+                        CommitButtonText = "Select for Kneeboards",
                         SuggestedStartLocation = PickerLocationId.Desktop,
-                        SuggestedFileName = "JAFDTC_Tape.dtc",
-                        DefaultFileExtension = ".dtc"
                     };
-                    picker.FileTypeChoices.Add("DTC", [ ".dtc" ]);
 
-                    PickFileResult resultPick = await picker.PickSaveFileAsync();
+                    PickFolderResult resultPick = await picker.PickSingleFolderAsync();
                     if (resultPick != null)
                     {
-                        UpdateDTCOutputPath(resultPick.Path);
+                        UpdateKboardOutputPath(resultPick.Path);
                         SaveEditStateToConfig();
                         shouldMerge = true;
                     }
                 }
                 catch (Exception ex)
                 {
-                    FileManager.Log($"EditSimulatorDTCPage:BtnSetOutput_Click exception {ex}");
+                    FileManager.Log($"EditSimulatorKboardPage:BtnSetOutput_Click exception {ex}");
                     await Utilities.Message1BDialog(Content.XamlRoot, "Selection Failed", "Unable to select that file for output.");
                     shouldMerge = false;
                 }
-            } else
+            }
+            else
             {
                 shouldMerge = true;
             }
@@ -341,15 +421,17 @@ namespace JAFDTC.UI.Base
             {
                 try
                 {
-                    Config.SaveMergedSimDTC();
-                    await Utilities.Message1BDialog(Content.XamlRoot, "Tape Merged",
-                                                    $"Successfully generated and saved the merged tape to the file\n\n" +
-                                                    $"{EditDTC.OutputPath}");
+                    Config.SaveMergedKboards();
+                    string format = (EditKboard.EnableSVGValue) ? "SVG" : "PNG";
+                    await Utilities.Message1BDialog(Content.XamlRoot, "Kneeboards Created",
+                                                    $"Successfully saved kneeboards in {format} format in the directory\n\n" +
+                                                    $"{EditKboard.OutputPath}");
                 }
                 catch (Exception ex)
                 {
                     FileManager.Log($"EditSimulatorDTCPage:BtnSetOutput_Click exception {ex}");
-                    await Utilities.Message1BDialog(Content.XamlRoot, "Tape Merge Failed", $"Windows says you can thank {ex}");
+                    await Utilities.Message1BDialog(Content.XamlRoot, "Kneeboard Creation Failed",
+                                                    $"Windows says you can thank {ex}");
                 }
             }
         }
@@ -359,23 +441,23 @@ namespace JAFDTC.UI.Base
         /// </summary>
         private void BtnClearOutput_Click(object sender, RoutedEventArgs args)
         {
-            UpdateDTCOutputPath("");
+            UpdateKboardOutputPath("");
         }
 
         /// <summary>
-        /// system item click: change the state of the merged system item.
+        /// system item click: change the state of the include content item.
         /// </summary>
         private void BtnSystemItem_Click(object sender, RoutedEventArgs args)
         {
             ToggleButton tbtn = (ToggleButton)sender;
-            if ((tbtn.IsChecked == true) && !EditDTC.MergedSystemTags.Contains(tbtn.Tag.ToString()))
-                EditDTC.MergedSystemTags.Add(tbtn.Tag.ToString());
-            else if ((tbtn.IsChecked == false) && EditDTC.MergedSystemTags.Contains((string)tbtn.Tag.ToString()))
-                EditDTC.MergedSystemTags.Remove(tbtn.Tag.ToString());
+            if ((tbtn.IsChecked == true) && !EditKboard.KneeboardTags.Contains(tbtn.Tag.ToString()))
+                EditKboard.KneeboardTags.Add(tbtn.Tag.ToString());
+            else if ((tbtn.IsChecked == false) && EditKboard.KneeboardTags.Contains((string)tbtn.Tag.ToString()))
+                EditKboard.KneeboardTags.Remove(tbtn.Tag.ToString());
 
-            if (EditDTC.MergedSystemTags.Count == 0)
+            if (EditKboard.KneeboardTags.Count == 0)
             {
-                EditDTC.EnableRebuild = bool.FalseString;
+                EditKboard.EnableRebuild = bool.FalseString;
                 uiCkbxEnableRebuild.IsChecked = false;
             }
 
@@ -385,15 +467,16 @@ namespace JAFDTC.UI.Base
         // ---- combos ------------------------------------------------------------------------------------------------
 
         /// <summary>
-        /// combo selection: update the selection for the dcs dtc template combo.
+        /// combo selection: update the selection for the kneeboard template package combo.
         /// </summary>
         private void ComboTemplate_SelectionChanged(object sender, RoutedEventArgs args)
         {
-            if (!IsUIRebuilding)
+            if (!IsUIRebuilding && (uiComboTemplate.SelectedItem != null))
             {
-                string template = (uiComboTemplate.SelectedIndex > 0) ? uiComboTemplate.SelectedItem.ToString() : "";
-                EditDTC.Template = template;
+                TemplateComboItem item = uiComboTemplate.SelectedItem as TemplateComboItem;
+                EditKboard.Template = item.TemplateName;
                 SaveEditStateToConfig();
+                RebuildKneeboardList(true);
             }
         }
 
@@ -412,18 +495,15 @@ namespace JAFDTC.UI.Base
         protected override void OnNavigatedTo(NavigationEventArgs args)
         {
             ConfigEditorPageNavArgs navArgs = (ConfigEditorPageNavArgs)args.Parameter;
-            PageHelper = (IEditSimulatorDTCPageHelper)Activator.CreateInstance(navArgs.EditorHelperType);
+            PageHelper = (IEditCoreKboardPageHelper)Activator.CreateInstance(navArgs.EditorHelperType);
 
             base.OnNavigatedTo(args);
 
-            PageHelper.ValidateDTCSystem(Config);
+            PageHelper.ValidateKboardSystem(Config);
 
             CopyConfigToEditState();
 
-            ObservableCollection<SystemGridItem> items = [ ];
-            foreach (ConfigEditorPageInfo info in PageHelper.MergableSystems)
-                items.Add(new SystemGridItem(info.Tag, info.Glyph, info.Label, EditDTC.MergedSystemTags.Contains(info.Tag)));
-            uiGridSystemItems.ItemsSource = items;
+            RebuildKneeboardList();
         }
     }
 }

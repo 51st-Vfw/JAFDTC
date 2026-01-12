@@ -90,12 +90,13 @@
     <None Remove="UI\App\MapWindow.xaml" />
     <None Remove="UI\App\PilotFilterDialog.xaml" />
     <None Remove="UI\AV8B\AV8BEditWaypointListPage.xaml" />
+    <None Remove="UI\Base\EditCoreMissionPage.xaml" />
     <None Remove="UI\Base\EditNavpointListPage.xaml" />
     <None Remove="UI\Base\EditNavpointPage.xaml" />
     <None Remove="UI\Base\EditRadioPage.xaml" />
-    <None Remove="UI\Base\EditSimulatorKboardPage.xaml" />
     <None Remove="UI\BlankPage1.xaml" />
     <None Remove="UI\Controls\LinkResetBtnsControl.xaml" />
+    <None Remove="UI\Controls\PilotComboControl.xaml" />
     <None Remove="UI\F15E\F15EEditMiscPage.xaml" />
     <None Remove="UI\F15E\F15EEditMPDPage.xaml" />
     <None Remove="UI\F15E\F15EEditSteerpointListPage.xaml" />
@@ -264,13 +265,19 @@
     <None Update="Images\mk-84hd.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Page Update="UI\Controls\PilotComboControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="UI\Base\EditCoreMissionPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="UI\App\PilotFilterDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Update="UI\App\EditPilotsPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Update="UI\Base\EditSimulatorKboardPage.xaml">
+    <Page Update="UI\Base\EditCoreKboardPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Update="UI\App\EditThreatsFilterDialog.xaml">
@@ -300,7 +307,7 @@
     <Page Update="UI\App\MapWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Update="UI\Base\EditSimulatorDTCPage.xaml">
+    <Page Update="UI\Base\EditCoreSimDTCPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Update="UI\F16C\F16CEditSMSPage.xaml">

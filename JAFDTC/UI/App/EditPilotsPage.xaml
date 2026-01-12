@@ -242,7 +242,6 @@ https://www.gnu.org/licenses/.
                       SelectedIndex="{x:Bind EditPilot.AirframeUI, Mode=TwoWay}">
                 <!-- Tag is enum JAFDTC.Models.Core.AirframeTypes -->
                 <ComboBox.Items>
-                    <TextBlock Text="Other Airframes" Tag="0"/>
                     <TextBlock Text="A-10C Warthog" Tag="1"/>
                     <TextBlock Text="AV-8B Harrier" Tag="3"/>
                     <TextBlock Text="F-14A/B Tomcat" Tag="8"/>

@@ -21,11 +21,12 @@ namespace JAFDTC.Models.Planning
 {
     public class Flight
     {
-        public required string Name { get; set; }        
-        public required string Aircraft { get; set; }
+        public required string Name { get; set; }               // flight callsign (eg, "Venom 1")
+        public required string Aircraft { get; set; }           // aircraft type (eg, "F-16C Viper")
+        public required IReadOnlyList<Pilot> Pilots { get; set; }       // list of pilots in flight
 
-        public required IReadOnlyList<Pilot> Pilots { get; set; }
-        public IReadOnlyList<Radio>? Radios { get; set; }
-        public IReadOnlyList<Route>? Routes { get; set; }
+        public string? Tasking { get; set; }                    // tasking for flight
+        public IReadOnlyList<Radio>? Radios { get; set; }       // radio setup for flight
+        public IReadOnlyList<Route>? Routes { get; set; }       // navigation setup for flight
     }
 }

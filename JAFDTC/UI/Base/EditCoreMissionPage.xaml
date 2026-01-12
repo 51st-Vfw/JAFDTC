@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+**********************************************************************************************************************
+    
+EditCoreMissionPage.xaml : ui xaml for general mission editor page
+
+Copyright(C) 2026 ilominar/raven
+
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
+Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
+option) any later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
+implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+for more details.
+You should have received a copy of the GNU General Public License along with this program.  If not, see
+https://www.gnu.org/licenses/.
+
+**********************************************************************************************************************
+-->
+<ui_base:SystemEditorPageBase
+    x:Class="JAFDTC.UI.Base.EditCoreMissionPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:JAFDTC.UI.Base"
+    xmlns:ui_base="using:JAFDTC.UI.Base"
+    xmlns:ui_ctrl="using:JAFDTC.UI.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}">
+
+    <Page.Resources>
+
+        <!-- brush for error fields. -->
+        <SolidColorBrush x:Key="ErrorFieldBorderBrush" Color="DarkRed"/>
+        <SolidColorBrush x:Key="ErrorFieldBackgroundBrush" Color="PaleVioletRed"/>
+
+    </Page.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!--
+        ===============================================================================================================
+        flight overview
+        ===============================================================================================================
+        -->
+
+        <TextBlock Grid.Row="0" Margin="12,12,12,0"
+                   Style="{StaticResource EditorTitleTextBlockStyle}">
+            Flight Overview:
+        </TextBlock>
+        <Grid Grid.Row="1" Margin="24,12,12,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="3*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- flight name, ships, tasking -->
+            <TextBlock Grid.Row="0" Grid.Column="0"
+                       VerticalAlignment="Center" HorizontalAlignment="Right"
+                       Text="Name"/>
+            <TextBox Grid.Row="0" Grid.Column="1" Margin="12,0,0,0" Tag="Callsign" x:Name="uiTxtFlightCallsign"
+                     VerticalAlignment="Center" HorizontalAlignment="Stretch"
+                     Style="{StaticResource EditorParamEditTextBoxStyle}"
+                     LostFocus="TextBox_LostFocus" GotFocus="TextBox_GotFocus"
+                     PlaceholderText="Viper 1"/>
+            <ComboBox Grid.Row="0" Grid.Column="2" Margin="8,0,0,0" x:Name="uiCmbFlightShips"
+                      VerticalAlignment="Center" HorizontalAlignment="Stretch"
+                      SelectionChanged="CmbFlightShips_SelectionChanged"
+                      SelectedIndex="{x:Bind ShipsUI, Mode=TwoWay}">
+                <ComboBoxItem>1-ship</ComboBoxItem>
+                <ComboBoxItem>2-ship</ComboBoxItem>
+                <ComboBoxItem>3-ship</ComboBoxItem>
+                <ComboBoxItem>4-ship</ComboBoxItem>
+            </ComboBox>
+            <TextBlock Grid.Row="0" Grid.Column="3" Margin="12,0,0,0"
+                       VerticalAlignment="Center" HorizontalAlignment="Right"
+                       Text="Task"/>
+            <TextBox Grid.Row="0" Grid.Column="4" Margin="12,0,0,0" Tag="Tasking" x:Name="uiTxtFlightTasking"
+                     VerticalAlignment="Center" HorizontalAlignment="Stretch"
+                     Style="{StaticResource EditorParamEditTextBoxStyle}"
+                     LostFocus="TextBox_LostFocus" GotFocus="TextBox_GotFocus"
+                     PlaceholderText="Tasking information"/>
+        </Grid>
+
+        <!--
+        ===============================================================================================================
+        pilot overview
+        ===============================================================================================================
+        -->
+
+        <TextBlock Grid.Row="2" Margin="12,18,12,0"
+                   Style="{StaticResource EditorTitleTextBlockStyle}">
+            Assigned Pilots:
+        </TextBlock>
+        <Grid Grid.Row="4" Margin="24,12,12,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="200"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- -1 edit panel -->
+            <TextBlock Grid.Row="0" Grid.Column="0" x:Name="uiLblShipCallsignDash1"
+                       VerticalAlignment="Center" HorizontalAlignment="Right"
+                       Text="FIXUP"/>
+            <ui_ctrl:PilotComboControl Grid.Row="0" Grid.Column="1" Margin="12,0,0,0" Tag="0" x:Name="uiCmbPilotDash1"
+                                       VerticalAlignment="Center" HorizontalAlignment="Stretch"
+                                       OwnshipCallsign="{x:Bind OwnshipCallsign}"
+                                       Pilots="{x:Bind AvailablePilots}"
+                                       SelectedPilot="{x:Bind AssignedPilots[0]}"
+                                       SelectionChanged="CmbPilot_SelectionChanged"/>
+            <TextBlock Grid.Row="0" Grid.Column="2" Margin="12,0,0,0" x:Name="uiLblLoadDash1"
+                       VerticalAlignment="Center" HorizontalAlignment="Right"
+                       Text="Loadout"/>
+            <TextBox Grid.Row="0" Grid.Column="3" Grid.ColumnSpan="2" Margin="12,0,0,0" Tag="0" x:Name="uiTxtLoadDash1"
+                     VerticalAlignment="Center" HorizontalAlignment="Stretch"
+                     Text="{x:Bind Loadouts[0], Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                     LostFocus="LoadoutField_LostFocus"/>
+
+            <!-- -2 edit panel -->
+            <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="5" x:Name="uiPnlEditDash2">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="200"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Row="0" Grid.Column="0" Margin="0,12,0,0" x:Name="uiLblShipCallsignDash2"
+                               VerticalAlignment="Center" HorizontalAlignment="Right"
+                               Text="FIXUP"/>
+                    <ui_ctrl:PilotComboControl Grid.Row="0" Grid.Column="1" Margin="12,12,0,0" Tag="1" x:Name="uiCmbPilotDash2"
+                                               VerticalAlignment="Center" HorizontalAlignment="Stretch"
+                                               OwnshipCallsign="{x:Bind OwnshipCallsign}"
+                                               Pilots="{x:Bind AvailablePilots}"
+                                               SelectedPilot="{x:Bind AssignedPilots[1]}"
+                                               SelectionChanged="CmbPilot_SelectionChanged"/>
+                    <TextBlock Grid.Row="0" Grid.Column="2" Margin="12,8,0,0" x:Name="uiLblLoadDash2"
+                               VerticalAlignment="Center" HorizontalAlignment="Right"
+                               Text="Loadout"/>
+                    <TextBox Grid.Row="0" Grid.Column="3" Margin="12,8,0,0" Tag="1" x:Name="uiTxtLoadDash2"
+                             VerticalAlignment="Center" HorizontalAlignment="Stretch"
+                             Text="{x:Bind Loadouts[1], Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                             LostFocus="LoadoutField_LostFocus"/>
+                    <TextBlock Grid.Row="0" Grid.Column="3" Margin="12,8,0,0" x:Name="uiLblLoadLinkDash2"
+                               VerticalAlignment="Center" HorizontalAlignment="Left"
+                               Style="{StaticResource TableHeaderTextStyle}"
+                               Text="Same loadout as FIXUP"/>
+                    <ToggleButton Grid.Row="0" Grid.Column="4" Margin="12,8,0,0" Tag="1" x:Name="uiBtnEditLoadDash2"
+                                  VerticalAlignment="Center" HorizontalAlignment="Right"
+                                  IsChecked="{x:Bind IsLoadoutCustom[1]}"
+                                  Click="BtnEditLoad_Click"
+                                  ToolTipService.ToolTip="Toggle loadout editing">
+                        <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE70F;"/>
+                    </ToggleButton>
+                </Grid>
+            </StackPanel>
+
+            <!-- -3 block -->
+            <StackPanel Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="5" x:Name="uiPnlEditDash3">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="200"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Row="0" Grid.Column="0" Margin="0,12,0,0" x:Name="uiLblShipCallsignDash3"
+                               VerticalAlignment="Center" HorizontalAlignment="Right"
+                               Text="FIXUP"/>
+                    <ui_ctrl:PilotComboControl Grid.Row="0" Grid.Column="1" Margin="12,12,0,0" Tag="2" x:Name="uiCmbPilotDash3"
+                                               VerticalAlignment="Center" HorizontalAlignment="Stretch"
+                                               OwnshipCallsign="{x:Bind OwnshipCallsign}"
+                                               Pilots="{x:Bind AvailablePilots}"
+                                               SelectedPilot="{x:Bind AssignedPilots[2]}"
+                                               SelectionChanged="CmbPilot_SelectionChanged"/>
+                    <TextBlock Grid.Row="0" Grid.Column="2" Margin="12,8,0,0" x:Name="uiLblLoadDash3"
+                               VerticalAlignment="Center" HorizontalAlignment="Right"
+                               Text="Loadout"/>
+                    <TextBox Grid.Row="0" Grid.Column="3" Margin="12,8,0,0" Tag="2" x:Name="uiTxtLoadDash3"
+                             VerticalAlignment="Center" HorizontalAlignment="Stretch"
+                             Text="{x:Bind Loadouts[2], Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                             LostFocus="LoadoutField_LostFocus"/>
+                    <TextBlock Grid.Row="0" Grid.Column="3" Margin="12,8,0,0" x:Name="uiLblLoadLinkDash3"
+                               VerticalAlignment="Center" HorizontalAlignment="Left"
+                               Style="{StaticResource TableHeaderTextStyle}"
+                               Text="Same loadout as FIXUP"/>
+                    <ToggleButton Grid.Row="0" Grid.Column="4" Margin="12,8,0,0" Tag="2" x:Name="uiBtnEditLoadDash3"
+                                  VerticalAlignment="Center" HorizontalAlignment="Right"
+                                  IsChecked="{x:Bind IsLoadoutCustom[2]}"
+                                  Click="BtnEditLoad_Click"
+                                  ToolTipService.ToolTip="Toggle loadout editing">
+                        <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE70F;"/>
+                    </ToggleButton>
+                </Grid>
+            </StackPanel>
+
+            <!-- -4 block -->
+            <StackPanel Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="5" x:Name="uiPnlEditDash4">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="200"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Row="0" Grid.Column="0" Margin="0,12,0,0" x:Name="uiLblShipCallsignDash4"
+                               VerticalAlignment="Center" HorizontalAlignment="Right"
+                               Text="FIXUP"/>
+                    <ui_ctrl:PilotComboControl Grid.Row="0" Grid.Column="1" Margin="12,12,0,0" Tag="3" x:Name="uiCmbPilotDash4"
+                                               VerticalAlignment="Center" HorizontalAlignment="Stretch"
+                                               OwnshipCallsign="{x:Bind OwnshipCallsign}"
+                                               Pilots="{x:Bind AvailablePilots}"
+                                               SelectedPilot="{x:Bind AssignedPilots[3]}"
+                                               SelectionChanged="CmbPilot_SelectionChanged"/>
+                    <TextBlock Grid.Row="0" Grid.Column="2" Margin="12,8,0,0" x:Name="uiLblLoadDash4"
+                               VerticalAlignment="Center" HorizontalAlignment="Right"
+                               Text="Loadout"/>
+                    <TextBox Grid.Row="0" Grid.Column="3" Margin="12,8,0,0" Tag="3" x:Name="uiTxtLoadDash4"
+                             VerticalAlignment="Center" HorizontalAlignment="Stretch"
+                             Text="{x:Bind Loadouts[3], Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                             LostFocus="LoadoutField_LostFocus"/>
+                    <TextBlock Grid.Row="0" Grid.Column="3" Margin="12,8,0,0" x:Name="uiLblLoadLinkDash4"
+                               VerticalAlignment="Center" HorizontalAlignment="Left"
+                               Style="{StaticResource TableHeaderTextStyle}"
+                               Text="Same loadout as FIXUP"/>
+                    <ToggleButton Grid.Row="0" Grid.Column="4" Margin="12,8,0,0" Tag="3" x:Name="uiBtnEditLoadDash4"
+                                  VerticalAlignment="Center" HorizontalAlignment="Right"
+                                  IsChecked="{x:Bind IsLoadoutCustom[3]}"
+                                  Click="BtnEditLoad_Click"
+                                  ToolTipService.ToolTip="Toggle loadout editing">
+                        <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE70F;"/>
+                    </ToggleButton>
+                </Grid>
+            </StackPanel>
+
+        </Grid>
+
+        <!--
+        ===============================================================================================================
+        common editor controls 
+        ===============================================================================================================
+        -->
+        <ui_ctrl:LinkResetBtnsControl Grid.Row="6" Grid.Column="0" Margin="0,0,0,0" x:Name="uiCtlLinkResetBtns"/>
+
+    </Grid>
+</ui_base:SystemEditorPageBase>

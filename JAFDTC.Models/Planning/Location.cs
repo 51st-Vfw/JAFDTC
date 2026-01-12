@@ -1,10 +1,29 @@
 ﻿
+// ********************************************************************************************************************
+//
+// flight.cs -- planning model Location information
+//
+// Copyright(C) 2026 rage, ilominar/raven
+//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
+// Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
+// option) any later version.
+//
+// This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
+// implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+// for more details.
+//
+// You should have received a copy of the GNU General Public License along with this program.  If not, see
+// <https://www.gnu.org/licenses/>.
+//
+// ********************************************************************************************************************
+
 namespace JAFDTC.Models.Planning
 {
     public class Location
     {
-        public required string Latitude { get; set; }
-        public required string Longitude { get; set; }
-        public required string Altitude { get; set; }
+        public required string Latitude { get; set; }           // latitude, avionics format (eg, "N 36 25.000")
+        public required string Longitude { get; set; }          // longitude, avionics format (eg, "W 115 00.000")
+        public required string Altitude { get; set; }           // altitude (ft)
     }
 }

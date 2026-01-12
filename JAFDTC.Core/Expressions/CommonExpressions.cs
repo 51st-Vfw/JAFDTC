@@ -23,10 +23,14 @@ namespace JAFDTC.Core.Expressions
 {
     public static partial class CommonExpressions
     {
+        // time callsign ("0:00:00 AM", "23:00:00 PM", etc.)
+        //
         [GeneratedRegex(@"(?i)^.+\s+(\d\d|\d):(\d\d):(\d\d)\s+(am|pm)")]
         public static partial Regex TimeRegex();
 
-        [GeneratedRegex(@"([^\d\s\-_]+)[\s\-_]*([\d]+)[^\d]*([\d]+){0,1}")]
+        // flight callsign regex for flights and ships ("Venom 1-1", "Jedi 3", "JEDI3", etc.)
+        //
+        [GeneratedRegex(@"(?i)([a-z]+)[\s\-_]*([\d]+)[^\s\-_]*([\d]+){0,1}")]
         public static partial Regex CallsignRegex();
     }
 }

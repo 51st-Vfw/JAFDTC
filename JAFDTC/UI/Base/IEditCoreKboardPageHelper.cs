@@ -1,6 +1,6 @@
 ﻿// ********************************************************************************************************************
 //
-// IEditSimulatorKboardPageHelper.cs : interface for EditSimulatorKboardPage helper classes
+// IEditCoreKboardPageHelper.cs : interface for EditSimulatorKboardPage helper classes
 //
 // Copyright(C) 2026 ilominar/raven
 //
@@ -27,10 +27,10 @@ using System.Text;
 namespace JAFDTC.UI.Base
 {
     /// <summary>
-    /// interface for the EditSimulatorKboardPage ui page helper class responsible for specializing the
-    /// EditSimulatorKboardPage base behavior for a specific airframe.
+    /// interface for the EditCoreKboardPage ui page helper class responsible for specializing the
+    /// EditCoreKboardPage base behavior for a specific airframe.
     /// </summary>
-    public interface IEditSimulatorKboardPageHelper
+    public interface IEditCoreKboardPageHelper
     {
         /// <summary>
         /// return the system to configure from the overall configuration.

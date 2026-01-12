@@ -345,7 +345,7 @@ namespace JAFDTC.Models
                     foreach (Package package in mission.Packages)
                         foreach (Flight flight in package.Flights)
                             if (flight.Pilots.Count == 0)
-                                flight.Pilots = [ new Pilot() { Name = Settings.Callsign, IsLead = true } ];
+                                flight.Pilots = [ new Pilot() { Name = Settings.Callsign, Position = 1 } ];
 
                     // unpack the template .zip capturing the .svg files in a temp directory we can point the
                     // builder at below. only build the kneeboards the user is asking to generate.

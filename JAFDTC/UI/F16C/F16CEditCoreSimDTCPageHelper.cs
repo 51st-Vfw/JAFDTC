@@ -1,8 +1,8 @@
 ﻿// ********************************************************************************************************************
 //
-// F16CEditSimulatorDTCPageHelper.cs : viper specialization for EditSimulatorDTCPage
+// F16CEditCoreSimDTCPageHelper.cs : viper specialization for EditCoreSimDTCPage
 //
-// Copyright(C) 2025 ilominar/raven
+// Copyright(C) 2025-2026 ilominar/raven
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 // Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -30,11 +30,11 @@ namespace JAFDTC.UI.F16C
     /// <summary>
     /// TODO: document
     /// </summary>
-    internal class F16CEditSimulatorDTCPageHelper : IEditSimulatorDTCPageHelper
+    internal class F16CEditCoreSimDTCPageHelper : IEditCoreSimDTCPageHelper
     {
         public static ConfigEditorPageInfo PageInfo
-            => new(CoreSimDTCSystem.SystemTag, "DCS DTC Tape", "DCS DTC", "\xE77C", typeof(EditSimulatorDTCPage),
-                   typeof(F16CEditSimulatorDTCPageHelper));
+            => new(CoreSimDTCSystem.SystemTag, "DCS DTC Tape", "DCS DTC", "\xE77C", typeof(EditCoreSimDTCPage),
+                   typeof(F16CEditCoreSimDTCPageHelper));
 
         public SystemBase GetSystemConfig(IConfiguration config) => ((F16CConfiguration)config).DTE;
 

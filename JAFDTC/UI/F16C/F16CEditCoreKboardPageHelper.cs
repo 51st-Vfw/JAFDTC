@@ -1,6 +1,6 @@
 ﻿// ********************************************************************************************************************
 //
-// F16CEditSimulatorKboardPageHelper.cs : viper specialization for EditSimulatorKboardPage helper object
+// F16CEditCoreKboardPageHelper.cs : viper specialization for EditCoreKboardPage helper object
 //
 // Copyright(C) 2026 ilominar/raven
 //
@@ -27,13 +27,13 @@ using System.Collections.Generic;
 namespace JAFDTC.UI.F16C
 {
     /// <summary>
-    /// helper class for airframe-specific customizations on EditSimulatorKboardPage.
+    /// helper class for airframe-specific customizations on EditCoreKboardPage.
     /// </summary>
-    internal class F16CEditSimulatorKboardPageHelper : IEditSimulatorKboardPageHelper
+    internal class F16CEditCoreKboardPageHelper : IEditCoreKboardPageHelper
     {
         public static ConfigEditorPageInfo PageInfo
-            => new(CoreKboardSystem.SystemTag, "Kneeboards", "Kneeboards", "\xF0E3", typeof(EditSimulatorKboardPage),
-                   typeof(F16CEditSimulatorKboardPageHelper));
+            => new(CoreKboardSystem.SystemTag, "Kneeboards", "Kneeboards", "\xF0E3", typeof(EditCoreKboardPage),
+                   typeof(F16CEditCoreKboardPageHelper));
 
         public SystemBase GetSystemConfig(IConfiguration config) => ((F16CConfiguration)config).Kboard;
 

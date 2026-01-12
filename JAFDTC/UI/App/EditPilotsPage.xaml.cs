@@ -32,11 +32,7 @@ using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
-using System.Threading.Tasks;
-using static JAFDTC.Models.CoreApp.MapFilterSpec;
 
 namespace JAFDTC.UI.App
 {
@@ -48,12 +44,12 @@ namespace JAFDTC.UI.App
     {
         public Pilot Pilot { get; set; }
 
-        public string AirframeUI => (Pilot.Airframe != AirframeTypes.UNKNOWN) ? Globals.AirframeNames[Pilot.Airframe]
-                                                                              : "Other Airframes";
+        public string AirframeUI => Globals.AirframeNames[Pilot.Airframe];
         public string BoardNumberUI => (string.IsNullOrEmpty(Pilot.BoardNumber)) ? "—" : Pilot.BoardNumber;
         public string AvionicsIDUI => (string.IsNullOrEmpty(Pilot.AvionicsID)) ? "—" : Pilot.AvionicsID;
 
-        public string Glyph => ((Settings.Callsign.Equals(Pilot.Name, StringComparison.OrdinalIgnoreCase)) ? "\xE77B" : "");
+        public string Glyph
+            => ((Settings.Callsign.Equals(Pilot.Name, StringComparison.OrdinalIgnoreCase)) ? Glyphs.Pilot : Glyphs.None);
 
         public PilotListItem(Pilot pilot) => (Pilot) = (pilot);
     }
@@ -99,8 +95,7 @@ namespace JAFDTC.UI.App
         }
 
         public bool IsEmpty
-            => ((Airframe == AirframeTypes.UNKNOWN) &&
-                string.IsNullOrEmpty(Name) && string.IsNullOrEmpty(BoardNumber) && string.IsNullOrEmpty(AvionicsID));
+            => (string.IsNullOrEmpty(Name) && string.IsNullOrEmpty(BoardNumber) && string.IsNullOrEmpty(AvionicsID));
 
         public bool IsDirty
         {

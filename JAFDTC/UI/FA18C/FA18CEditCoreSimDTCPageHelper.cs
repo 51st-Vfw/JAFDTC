@@ -1,8 +1,8 @@
 ﻿// ********************************************************************************************************************
 //
-// FA18CEditSimulatorDTCPageHelper.cs : hornet specialization for EditSimulatorDTCPage
+// FA18CEditCoreSimDTCPageHelper.cs : hornet specialization for EditCoreSimDTCPage
 //
-// Copyright(C) 2025 ilominar/raven
+// Copyright(C) 2025-2026 ilominar/raven
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 // Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -30,11 +30,11 @@ namespace JAFDTC.UI.FA18C
     /// <summary>
     /// TODO: document
     /// </summary>
-    internal class FA18CEditSimulatorDTCPageHelper : IEditSimulatorDTCPageHelper
+    internal class FA18CEditCoreSimDTCPageHelper : IEditCoreSimDTCPageHelper
     {
         public static ConfigEditorPageInfo PageInfo
-            => new(CoreSimDTCSystem.SystemTag, "DCS DTC Tape", "DCS DTC", "\xE77C", typeof(EditSimulatorDTCPage),
-                   typeof(FA18CEditSimulatorDTCPageHelper));
+            => new(CoreSimDTCSystem.SystemTag, "DCS DTC Tape", "DCS DTC", "\xE77C", typeof(EditCoreSimDTCPage),
+                   typeof(FA18CEditCoreSimDTCPageHelper));
 
         public SystemBase GetSystemConfig(IConfiguration config) => ((FA18CConfiguration)config).MUMI;
 
