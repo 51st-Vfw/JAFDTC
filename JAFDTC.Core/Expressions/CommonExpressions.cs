@@ -30,7 +30,7 @@ namespace JAFDTC.Core.Expressions
 
         // flight callsign regex for flights and ships ("Venom 1-1", "Jedi 3", "JEDI3", etc.)
         //
-        [GeneratedRegex(@"(?i)([a-z]+)[\s\-_]*([\d]+)[^\s\-_]*([\d]+){0,1}")]
+        [GeneratedRegex(@"(?i)([a-z]+)[\s\-_]*([\d]+)[\s\-_]{0,1}([\d]+){0,1}")]
         public static partial Regex CallsignRegex();
     }
 }
