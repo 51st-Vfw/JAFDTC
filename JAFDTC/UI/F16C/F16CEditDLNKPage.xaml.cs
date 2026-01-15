@@ -18,6 +18,7 @@
 // ********************************************************************************************************************
 
 using CommunityToolkit.WinUI;
+using JAFDTC.Core.Expressions;
 using JAFDTC.Models;
 using JAFDTC.Models.Core;
 using JAFDTC.Models.DCS;
@@ -25,17 +26,20 @@ using JAFDTC.Models.F16C;
 using JAFDTC.Models.F16C.DLNK;
 using JAFDTC.Models.Pilots;
 using JAFDTC.UI.App;
+using JAFDTC.UI.Controls;
 using JAFDTC.Utilities;
 using Microsoft.UI.Dispatching;
-using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace JAFDTC.UI.F16C
 {
@@ -45,6 +49,12 @@ namespace JAFDTC.UI.F16C
     /// </summary>
     public sealed partial class F16CEditDLNKPage : Page
     {
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // constants
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
         public static ConfigEditorPageInfo PageInfo
             => new(DLNKSystem.SystemTag, "Datalink", "DLNK", Glyphs.DLNK, typeof(F16CEditDLNKPage));
 
@@ -97,13 +107,19 @@ namespace JAFDTC.UI.F16C
 
         private DLNKSystemUI EditDLNK { get; set; }
 
-        private string OwnshipDriverUID { get; set; }
-
         private bool IsRebuildPending { get; set; }
 
         private bool IsRebuildingUI { get; set; }
 
-        private IReadOnlyList<Pilot> ViperPilots { get; set; }
+        private string OwnshipDriverUID { get; set; }
+
+        private string OwnshipCallsign { get; set; }
+
+        private IReadOnlyList<Pilot> AvailablePilots { get; set; }
+
+        private ObservableCollection<Pilot> AssignedPilots { get; set; } = [ ];
+
+        private Pilot UnknownPilot { get; set; }
 
         // ---- read-only properties
 
@@ -113,7 +129,7 @@ namespace JAFDTC.UI.F16C
         private readonly Dictionary<string, TextBox> _baseFieldValueMap;
         private readonly List<CheckBox> _tableTDOACkbxList;
         private readonly List<TextBox> _tableTNDLTextList;
-        private readonly List<ComboBox> _tableCallsignComboList;
+        private readonly List<PilotComboControl> _tableCallsignComboList;
         private readonly Brush _defaultBorderBrush;
         private readonly Brush _defaultBkgndBrush;
 
@@ -125,7 +141,23 @@ namespace JAFDTC.UI.F16C
 
         public F16CEditDLNKPage()
         {
-            InitializeComponent();
+            UnknownPilot = new Pilot();
+
+            PilotDbaseQuery query = new()
+            {
+                Airframes = [AirframeTypes.F16C]
+            };
+            List<Pilot> pilots = [.. PilotDbase.Instance.Find(query, true)];
+            pilots.Insert(0, UnknownPilot);
+            AvailablePilots = pilots;
+            OwnshipCallsign = Settings.Callsign;
+            OwnshipDriverUID = "<unknown>";
+            foreach (Pilot driver in AvailablePilots)
+                if (driver.Name == OwnshipCallsign)
+                {
+                    OwnshipDriverUID = driver.UniqueID;
+                    break;
+                }
 
             EditDLNK = new DLNKSystemUI();
             for (int i = 0; i < EditDLNK.TeamMembers.Length; i++)
@@ -135,21 +167,13 @@ namespace JAFDTC.UI.F16C
             IsRebuildPending = false;
             IsRebuildingUI = false;
 
-            PilotDbaseQuery query = new()
-            {
-                Airframes = [ AirframeTypes.F16C ]
-            };
-            ViperPilots = PilotDbase.Instance.Find(query, true);
-            OwnshipDriverUID = "<unknown>";
-            foreach (Pilot driver in ViperPilots)
-                if (driver.Name == Settings.Callsign)
-                {
-                    OwnshipDriverUID = driver.UniqueID;
-                    break;
-                }
+            InitializeComponent();
 
-            _configNameToUID = [ ];
-            _configNameList = [ ];
+            for (int i = 0; i < DLNKSystem.NUM_SLOTS_IN_TEAM; i++)
+                AssignedPilots.Add(UnknownPilot);
+
+            _configNameToUID = [];
+            _configNameList = [];
 
             _baseFieldValueMap = new Dictionary<string, TextBox>()
             {
@@ -190,6 +214,12 @@ namespace JAFDTC.UI.F16C
             EditDLNK.Ownship = Config.DLNK.Ownship;
             EditDLNK.OwnshipCallsignUI = Config.DLNK.OwnshipCallsign;
             EditDLNK.OwnshipFENumberUI = Config.DLNK.OwnshipFENumber;
+            //
+            // to prevent potential fuckery and chaos, always disable mission linking when the configuration of the
+            // datalink system to another datalink system, regardless of the setting in the source system.
+            //
+            EditDLNK.IsLinkedMission = (Config.DLNK.IsLinkedMission &&
+                                        string.IsNullOrEmpty(Config.SystemLinkedTo(DLNKSystem.SystemTag)));
             EditDLNK.IsOwnshipLead = Config.DLNK.IsOwnshipLead;
             EditDLNK.IsFillEmptyTNDL = Config.DLNK.IsFillEmptyTNDL;
             EditDLNK.FillEmptyTNDL = (Config.DLNK.IsFillEmptyTNDL) ? Config.DLNK.FillEmptyTNDL : "";
@@ -197,9 +227,28 @@ namespace JAFDTC.UI.F16C
                 EditDLNK.IsFillEmptyTNDL = false;
             for (int i = 0; i < EditDLNK.TeamMembers.Length; i++)
             {
-                EditDLNK.TeamMembers[i].TDOA = Config.DLNK.TeamMembers[i].TDOA;
-                EditDLNK.TeamMembers[i].TNDL = new(Config.DLNK.TeamMembers[i].TNDL);
-                EditDLNK.TeamMembers[i].DriverUID = new(Config.DLNK.TeamMembers[i].DriverUID);
+                Pilot pilot = PilotDbase.Instance.Find(Config.DLNK.TeamMembers[i].DriverUID);
+                if (pilot != null)
+                {
+                    AssignedPilots[i] = pilot;
+                    EditDLNK.TeamMembers[i].TDOA = Config.DLNK.TeamMembers[i].TDOA;
+                    EditDLNK.TeamMembers[i].TNDL = new(pilot.AvionicsID);
+                    EditDLNK.TeamMembers[i].DriverUID = new(pilot.UniqueID);
+                }
+                else if (string.IsNullOrEmpty(Config.DLNK.TeamMembers[i].DriverUID))
+                {
+                    AssignedPilots[i] = UnknownPilot;
+                    EditDLNK.TeamMembers[i].TDOA = Config.DLNK.TeamMembers[i].TDOA;
+                    EditDLNK.TeamMembers[i].TNDL = new(Config.DLNK.TeamMembers[i].TNDL);
+                    EditDLNK.TeamMembers[i].DriverUID = "";
+                }
+                else
+                {
+                    AssignedPilots[i] = UnknownPilot;
+                    EditDLNK.TeamMembers[i].TDOA = false;
+                    EditDLNK.TeamMembers[i].TNDL = "";
+                    EditDLNK.TeamMembers[i].DriverUID = "";
+                }
 
                 // it's possible that Ownship can get out of sync with the team members (for example, if you directly
                 // import a DLNK configuration from another pilot). check that here and update if necessary.
@@ -228,6 +277,12 @@ namespace JAFDTC.UI.F16C
                 //
                 Config.DLNK.OwnshipCallsign = EditDLNK.OwnshipCallsign;
                 Config.DLNK.OwnshipFENumber = EditDLNK.OwnshipFENumber;
+                //
+                // to prevent potential fuckery and chaos, always disable mission linking when the configuration of the
+                // datalink system to another datalink system, regardless of the setting in the source system.
+                //
+                Config.DLNK.IsLinkedMission = (EditDLNK.IsLinkedMission &&
+                                               string.IsNullOrEmpty(Config.SystemLinkedTo(DLNKSystem.SystemTag)));
                 Config.DLNK.IsOwnshipLead = EditDLNK.IsOwnshipLead;
                 Config.DLNK.IsFillEmptyTNDL = EditDLNK.IsFillEmptyTNDL;
                 Config.DLNK.FillEmptyTNDL = (EditDLNK.IsFillEmptyTNDL) ? EditDLNK.FillEmptyTNDL : "";
@@ -275,13 +330,11 @@ namespace JAFDTC.UI.F16C
             else
             {
                 for (int i = 0; i < EditDLNK.TeamMembers.Length; i++)
-                {
                     if (sender.Equals(EditDLNK.TeamMembers[i]))
                     {
                         SetFieldValidState(_tableTNDLTextList[i], !EditDLNK.TeamMembers[i].HasErrors);
                         break;
                     }
-                }
             }
             RebuildInterfaceState();
         }
@@ -296,7 +349,7 @@ namespace JAFDTC.UI.F16C
         {
             if (args.PropertyName == null)
             {
-                Dictionary<string, bool> map = [ ];
+                Dictionary<string, bool> map = [];
                 foreach (string error in EditDLNK.GetErrors(null))
                     map[error] = true;
                 foreach (KeyValuePair<string, TextBox> kvp in _baseFieldValueMap)
@@ -330,104 +383,92 @@ namespace JAFDTC.UI.F16C
 
         // ------------------------------------------------------------------------------------------------------------
         //
-        // utilities
-        //
-        // ------------------------------------------------------------------------------------------------------------
-
-        /// <summary>
-        /// find the pilot in the pilot database by uid. returns the ViperDriver instance on success, null if not found.
-        /// </summary>
-        private Pilot FindPilotByUID(string UID)
-        {
-            // TODO: maybe optimize; but honestly, pilot list is likely short so prolly not worth the effort...
-            foreach (Pilot pilot in ViperPilots)
-                if (pilot.UniqueID.Equals(UID))
-                    return pilot;
-            return null;
-        }
-
-        // ------------------------------------------------------------------------------------------------------------
-        //
         // ui support
         //
         // ------------------------------------------------------------------------------------------------------------
 
         /// <summary>
-        /// returns a StackPanel for use as a pilot item in the callsign combo boxes. items are a pilot name with the
-        /// current callsign from the settings getting a bullet-prefix. the stack panel tag is set to the uid of the
-        /// pilot. a pilot of null builds a panel with an empty name and "0" tag.
+        /// force an update to the table callsign combo and ownship callsign/fe number.
         /// </summary>
-        private static StackPanel BuildPilotItemStackPanel(Pilot pilot)
+        private void ForceSyncUI()
         {
-            bool isOwnship = ((pilot != null) && (pilot.Name == Settings.Callsign));
-            StackPanel itemPanel = new()
-            {
-                Orientation = Orientation.Horizontal,
-                Tag = (pilot != null) ? pilot.UniqueID : "0",
-            };
-            FontIcon itemIcon = new()
-            {
-                VerticalAlignment = VerticalAlignment.Center,
-                FontFamily = new FontFamily("Segoe Fluent Icons"),
-                Glyph = (isOwnship) ? "\xE915" : " "
-            };
-            TextBlock itemText = new()
-            {
-                Text = (pilot != null) ? pilot.Name : "",
-                FontWeight = (isOwnship) ? FontWeights.Bold : FontWeights.Normal
-            };
-            itemIcon.Width = 20;
-            itemText.Margin = new() { Left = 4 };
-            itemPanel.Children.Add(itemIcon);
-            itemPanel.Children.Add(itemText);
-            return itemPanel;
-        }
-
-        /// <summary>
-        /// returns a list of StackPanel instances to serve as the menu items for the callsign format combo controls.
-        /// the tags are set to the uid of the pilot from the pilot database. first element is blank with a "0" tag.
-        /// </summary>
-        private List<StackPanel> BuildCallsignComboItems()
-        {
-            List<StackPanel> pilotItems = [ BuildPilotItemStackPanel(null) ];
-            for (int i = 0; i < ViperPilots.Count; i++)
-                pilotItems.Add(BuildPilotItemStackPanel(ViperPilots[i]));
-            return pilotItems;
-        }
-
-        /// <summary>
-        /// rebuild the menus for the callsign combo boxes in the interaface. this should only need to be done upon
-        /// init or when the pilot database changes.
-        /// </summary>
-        private void RebuildCallsignCombos()
-        {
+            // TODO: get the bindings set up right so we don't have to do this crap.
+            //
             IsRebuildingUI = true;
-            Dictionary<string, int> uidToIndexMap = [ ];
-            for (int i = 0; i < ViperPilots.Count; i++)
-                uidToIndexMap[ViperPilots[i].UniqueID] = i + 1;
-
             for (int i = 0; i < EditDLNK.TeamMembers.Length; i++)
             {
-                _tableCallsignComboList[i].ItemsSource = BuildCallsignComboItems();
-
-                string uid = EditDLNK.TeamMembers[i].DriverUID;
-                if (uidToIndexMap.TryGetValue(uid, out int value) && (_tableCallsignComboList[i].SelectedIndex != value))
-                {
-                    _tableCallsignComboList[i].SelectedIndex = value;
-                }
-                else if (!uidToIndexMap.ContainsKey(uid) && !string.IsNullOrEmpty(uid))
-                {
-                    // tndl team member maps to a pilot that no longer is in the database, reset the pilot combo to
-                    // the generic entry (index 0) and reset the team member to be empty.
-                    //
-                    _tableCallsignComboList[i].SelectedIndex = 0;
-                    EditDLNK.TeamMembers[i].TDOA = false;
-                    EditDLNK.TeamMembers[i].TNDL = "";
-                    EditDLNK.TeamMembers[i].DriverUID = "";
-                }
+                _tableCallsignComboList[i].SelectedPilot = AssignedPilots[i];
+                _tableTDOACkbxList[i].IsChecked = EditDLNK.TeamMembers[i].TDOA;
+                _tableTNDLTextList[i].Text = EditDLNK.TeamMembers[i].TNDL;
             }
+            EditDLNK.OwnshipCallsignUI = Config.DLNK.OwnshipCallsign;
+            EditDLNK.OwnshipFENumberUI = Config.DLNK.OwnshipFENumber;
+            uiOwnTextCallsign.Text = EditDLNK.OwnshipCallsignUI;
+            uiOwnTextFENum.Text = EditDLNK.OwnshipFENumberUI;
             IsRebuildingUI = false;
-            CopyEditToConfig(true);
+        }
+
+        /// <summary>
+        /// update edit state to be consistent with linkage setting. caller should rebuild the ui (to update enable
+        /// state) and save the configuration after calling this.
+        /// </summary>
+        private void SetupMissionLinkage(bool isLinked)
+        {
+            if (isLinked)
+            {
+                int ownshipPosition = -1;
+                for (int i = 0; i < Config.Mission.Ships; i++)
+                {
+                    if (Config.Mission.PilotUIDs[i] == OwnshipDriverUID)
+                        ownshipPosition = i + 1;
+                    Pilot pilot = PilotDbase.Instance.Find(Config.Mission.PilotUIDs[i]);
+                    //
+                    // NOTE: directly select new pilot here as don't have 2-way bindings from control in xaml.
+                    //
+                    _tableCallsignComboList[i].SelectedPilot = (pilot != null) ? pilot : UnknownPilot;
+                    EditDLNK.TeamMembers[i].TNDL = (pilot != null) ? pilot.AvionicsID : "";
+                }
+
+                MatchCollection m = CommonExpressions.CallsignRegex().Matches(Config.Mission.Callsign.ToUpper());
+                if ((ownshipPosition != -1) && (m.Count == 1) && string.IsNullOrEmpty(m[0].Groups[3].Value.ToString()))
+                {
+                    EditDLNK.OwnshipCallsignUI = $"{m[0].Groups[1].ToString().First()}{m[0].Groups[1].ToString().Last()}";
+                    EditDLNK.OwnshipFENumberUI = $"{m[0].Groups[2]}{ownshipPosition}";
+                }
+                else
+                {
+                    EditDLNK.OwnshipCallsignUI = "––";
+                    EditDLNK.OwnshipFENumberUI = "––";
+                }
+                EditDLNK.IsOwnshipLead = (Config.Mission.PilotUIDs[0] == OwnshipDriverUID);
+            }
+        }
+
+        /// <summary>
+        /// set up the swap and mission information state based on the "link to mission" setting. for linked
+        /// configurations both elements are hidden.
+        /// </summary>
+        private void RebuildSwapAndInfo()
+        {
+            if (!string.IsNullOrEmpty(Config.SystemLinkedTo(DLNKSystem.SystemTag)))
+            {
+                uiTxtMissionInfo.Visibility = Visibility.Collapsed;
+                uiTNDLBtnSwap.Visibility = Visibility.Collapsed;
+            }
+            else if (EditDLNK.IsLinkedMission)
+            {
+                uiTxtMissionInfo.Text = $"Pilots for TNDL entries 1-{Config.Mission.Ships} correspond to" +
+                                        $" {Config.Mission.Callsign}-1 through" +
+                                        $" {Config.Mission.Callsign}-{Config.Mission.Ships} and are set by the" +
+                                        $" mission configuration.";
+                uiTxtMissionInfo.Visibility = Visibility.Visible;
+                uiTNDLBtnSwap.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                uiTxtMissionInfo.Visibility = Visibility.Collapsed;
+                uiTNDLBtnSwap.Visibility = Visibility.Visible;
+            }
         }
 
         /// <summary>
@@ -437,7 +478,7 @@ namespace JAFDTC.UI.F16C
         {
             int indexPDbOwnship = -1;
             int indexCurOwnship = -1;
-            List<string> list = [ ];
+            List<string> list = [];
             for (int i = 0; i < EditDLNK.TeamMembers.Length; i++)
             {
                 if (!string.IsNullOrEmpty(EditDLNK.TeamMembers[i].TNDL))
@@ -457,7 +498,7 @@ namespace JAFDTC.UI.F16C
         }
 
         /// <summary>
-        /// TODO: document
+        /// rebuild the link and reset controls at the bottom of the page.
         /// </summary>
         private void RebuildLinkControls()
         {
@@ -467,7 +508,7 @@ namespace JAFDTC.UI.F16C
 
         /// <summary>
         /// update the enable state on the ui elements based on the current settings. link controls must be set up
-        /// vi RebuildLinkControls() prior to calling this function.
+        /// via RebuildLinkControls() prior to calling this function.
         /// </summary>
         public void RebuildEnableState()
         {
@@ -477,9 +518,11 @@ namespace JAFDTC.UI.F16C
             bool isAnyInTable = false;
             for (int i = 0; i < _tableTDOACkbxList.Count; i++)
             {
+                bool isOwn = (EditDLNK.TeamMembers[i].DriverUID == OwnshipDriverUID);
                 bool isEmpty = string.IsNullOrEmpty(_tableTNDLTextList[i].Text);
-                Utilities.SetEnableState(_tableTDOACkbxList[i], isEditable && !isEmpty);
-                bool isCallsignSelect = _tableCallsignComboList[i].SelectedIndex > 0;
+                Utilities.SetEnableState(_tableTDOACkbxList[i], isEditable && !isEmpty && !isOwn);
+                bool isCallsignSelect = ((_tableCallsignComboList[i].SelectedPilot != null) &&
+                                         (_tableCallsignComboList[i].SelectedPilot.UniqueID != UnknownPilot.UniqueID));
                 Utilities.SetEnableState(_tableTNDLTextList[i], isEditable && !isCallsignSelect);
                 Utilities.SetEnableState(_tableCallsignComboList[i], isEditable);
 
@@ -488,11 +531,16 @@ namespace JAFDTC.UI.F16C
                 isAnyInTable |= !EditDLNK.TeamMembers[i].IsDefault;
             }
 
-            Utilities.SetEnableState(uiOwnComboEntry, isEditable && !isOwnInTable && isAnyInTable);
-            Utilities.SetEnableState(uiOwnCkbxLead, isEditable);
+            Utilities.SetEnableState(uiMsnCkbxLink, isEditable);
 
-            Utilities.SetEnableState(uiOwnTextCallsign, isEditable);
-            Utilities.SetEnableState(uiOwnTextFENum, isEditable);
+            Utilities.SetEnableState(uiOwnComboEntry, isEditable && !isOwnInTable && isAnyInTable);
+            Utilities.SetEnableState(uiOwnCkbxLead, isEditable && !EditDLNK.IsLinkedMission);
+
+            Utilities.SetEnableState(uiOwnTextCallsign, isEditable && !EditDLNK.IsLinkedMission);
+            Utilities.SetEnableState(uiOwnTextFENum, isEditable && !EditDLNK.IsLinkedMission);
+
+            for (int i = 0; i < Config.Mission.Ships; i++)
+                _tableCallsignComboList[i].IsEnabled = !EditDLNK.IsLinkedMission;
 
             Utilities.SetEnableState(uiTNDLBtnSwap, isEditable);
 
@@ -503,16 +551,19 @@ namespace JAFDTC.UI.F16C
         }
 
         /// <summary>
-        /// TODO: document
+        /// rebuild the user interface state to match current backing state. the method will enqueue a low-priority
+        /// task to do the rebuild assuming there is not a rebuild currently pending and the app is not shutting
+        /// down.
         /// </summary>
         public void RebuildInterfaceState()
         {
-            if (!IsRebuildPending)
+            if (!IsRebuildPending && !(Application.Current as JAFDTC.App).IsAppShuttingDown)
             {
                 IsRebuildPending = true;
                 DispatcherQueue.TryEnqueue(DispatcherQueuePriority.Low, () =>
                 {
                     IsRebuildingUI = true;
+                    RebuildSwapAndInfo();
                     RebuildOwnshipMenu();
                     RebuildLinkControls();
                     RebuildEnableState();
@@ -547,7 +598,7 @@ namespace JAFDTC.UI.F16C
                 Config.DLNK.Reset();
                 Config.Save(this, DLNKSystem.SystemTag);
                 CopyConfigToEdit();
-                RebuildCallsignCombos();
+                ForceSyncUI();
             }
         }
 
@@ -568,7 +619,25 @@ namespace JAFDTC.UI.F16C
                 Config.LinkSystemTo(DLNKSystem.SystemTag, NavArgs.UIDtoConfigMap[_configNameToUID[selectedItem]]);
                 Config.Save(this);
                 CopyConfigToEdit();
+                ForceSyncUI();
             }
+        }
+
+        // ---- mission link elements ---------------------------------------------------------------------------------
+
+        /// <summary>
+        /// on mission checkbox clicks, update the ui and editor state as appropriate either linking it to the
+        /// mission setup or unlinking it.
+        /// </summary>
+        private void MsnCkbxLink_Click(object sender, RoutedEventArgs args)
+        {
+            // HACK: x:Bind doesn't work with bools? seems that way? this is a hack.
+            //
+            CheckBox cbox = (CheckBox)sender;
+            EditDLNK.IsLinkedMission = (bool)cbox.IsChecked;
+            SetupMissionLinkage(EditDLNK.IsLinkedMission);
+            CopyEditToConfig(true);
+            RebuildInterfaceState();
         }
 
         // ---- ownship elements --------------------------------------------------------------------------------------
@@ -603,16 +672,8 @@ namespace JAFDTC.UI.F16C
         /// </summary>
         private void OwnTextFillTNDL_LostFocus(object sender, RoutedEventArgs args)
         {
-            // HACK: 100% uncut cya. as the app is shutting down we can get lost focus events that may try to
-            // HACK: operate on ui that has been torn down. in that case, return without doing anything.
-            // HACK: this potentially prevents persisting changes made to the control prior to focus loss.
-            //
-            if ((Application.Current as JAFDTC.App).IsAppShuttingDown)
-                return;
-
             TextBox tbox = (TextBox)sender;
             tbox.IsEnabled = false;
-#if NOPE
             if (string.IsNullOrEmpty(tbox.Text))
             {
                 int index = int.Parse((string)tbox.Tag);
@@ -620,12 +681,12 @@ namespace JAFDTC.UI.F16C
                 if (!string.IsNullOrEmpty(EditDLNK.Ownship) && (EditDLNK.Ownship == (index + 1).ToString()))
                     uiOwnComboEntry.SelectedIndex = -1;
             }
-#endif
             CopyEditToConfig(true);
         }
 
         /// <summary>
-        /// TODO: document
+        /// on changes to the ownship combo, update the tdoa value: ownship tdoa is always true, non-ownship
+        /// starts as false.
         /// </summary>
         private void OwnComboEntry_SelectionChanged(object sender, SelectionChangedEventArgs args)
         {
@@ -650,13 +711,6 @@ namespace JAFDTC.UI.F16C
         /// </summary>
         private void OwnText_LostFocus(object sender, RoutedEventArgs args)
         {
-            // HACK: 100% uncut cya. as the app is shutting down we can get lost focus events that may try to
-            // HACK: operate on ui that has been torn down. in that case, return without doing anything.
-            // HACK: this potentially prevents persisting changes made to the control prior to focus loss.
-            //
-            if ((Application.Current as JAFDTC.App).IsAppShuttingDown)
-                return;
-
             TextBox textBox = (TextBox)sender;
             if (((textBox == uiOwnTextCallsign) || (textBox == uiOwnTextFENum)) && (textBox.Text == "––"))
             {
@@ -682,7 +736,8 @@ namespace JAFDTC.UI.F16C
         /// </summary>
         private void TNDLCkbxTDOA_Click(object sender, RoutedEventArgs args)
         {
-            CopyEditToConfig(true);
+            if (!IsRebuildingUI)
+                CopyEditToConfig(true);
         }
 
         /// <summary>
@@ -690,13 +745,6 @@ namespace JAFDTC.UI.F16C
         /// </summary>
         private void TNDLTextTNDL_LostFocus(object sender, RoutedEventArgs args)
         {
-            // HACK: 100% uncut cya. as the app is shutting down we can get lost focus events that may try to
-            // HACK: operate on ui that has been torn down. in that case, return without doing anything.
-            // HACK: this potentially prevents persisting changes made to the control prior to focus loss.
-            //
-            if ((Application.Current as JAFDTC.App).IsAppShuttingDown)
-                return;
-
             TextBox tbox = (TextBox)sender;
             if (string.IsNullOrEmpty(tbox.Text))
             {
@@ -709,61 +757,81 @@ namespace JAFDTC.UI.F16C
         }
 
         /// <summary>
-        /// TODO: document
+        /// on callsign combo selection changes, update the internal team members table to match the selection and
+        /// update other entries as required.
         /// </summary>
-        private void TNDLComboCallsign_SelectionChanged(object sender, SelectionChangedEventArgs args)
+        private async void TNDLComboCallsign_SelectionChanged(object sender, SelectionChangedEventArgs args)
         {
-            if (IsRebuildingUI)
+            PilotComboControl comboBox = (PilotComboControl)sender;
+            int index = int.Parse(comboBox.Tag as string);
+            Pilot pilot = comboBox.SelectedPilot;
+
+            if (IsRebuildingUI || (pilot == null) || (pilot == AssignedPilots[index]))
                 return;
 
-            ComboBox comboBox = (ComboBox)sender;
-            int index = int.Parse((string)comboBox.Tag);
-            StackPanel item = (StackPanel)comboBox.SelectedItem;
-            Pilot pilot = FindPilotByUID((string)item.Tag);
-
             bool isOldOwnByCallsign = (OwnshipDriverUID == EditDLNK.TeamMembers[index].DriverUID);
-            bool isNewOwnByCallsign = false;
+            bool isNewOwnByCallsign = ((pilot.UniqueID != UnknownPilot.UniqueID) &&
+                                       (OwnshipDriverUID == pilot.UniqueID));
 
             int curPilotIndex = -1;
-            if (pilot != null)
+            if (pilot.UniqueID != UnknownPilot.UniqueID)
             {
-                isNewOwnByCallsign = (OwnshipDriverUID == pilot.UniqueID);
+                // figure out if the pilot is already in the table in a different slot so we can clear that slot
+                // out prior to wrapping up the update.
+                //
                 for (int i = 0; i < _tableCallsignComboList.Count; i++)
                 {
-                    StackPanel otherItem = (StackPanel)_tableCallsignComboList[i].SelectedItem;
-                    if ((i != index) && (otherItem != null) && otherItem.Tag.Equals(pilot.UniqueID))
+                    Pilot tablePilot = _tableCallsignComboList[i].SelectedPilot;
+                    if ((i != index) && (tablePilot != null) && (tablePilot.UniqueID == pilot.UniqueID))
                     {
                         curPilotIndex = i;
                         break;
                     }
                 }
+
+                // if we are trying to select a pilot that is already in the table from the mission link, veto that
+                // suggestion and tell the user why.
+                //
+                if (EditDLNK.IsLinkedMission && (curPilotIndex >= 0) && (curPilotIndex < Config.Mission.Ships))
+                {
+                    await Utilities.Message1BDialog(Content.XamlRoot, "Pilot Already Assigned",
+                        $"{pilot.Name} is already assigned to the table according to the mission. Their position " +
+                        $" cannot be changed without first unlinking datalink setup from the mission setup.");
+                    IsRebuildingUI = true;
+                    comboBox.SelectedPilot = AssignedPilots[index];
+                    IsRebuildingUI = false;
+                    return;
+                }
             }
+
+            AssignedPilots[index] = pilot;
 
             if (!isOldOwnByCallsign && !isNewOwnByCallsign)
             {
-                // we are not editing a team member entry that is ownship (either implicitly through the callsign or
-                // explicitly through the ownship combo). either clear the entry (if we are setting the generic
-                // callsign entry and the TNDL is not empty), or setup the entry from the pilot database. if we have
-                // a pilot moving locations in the table, reset her old location (but preserve TDOA).
+                // combo selection update is not changing from or changing to the ownship. either clear the entry
+                // (if we are setting the generic callsign entry and the TNDL is not empty), or setup the entry
+                // from the pilot database. if we have a pilot moving locations in the table, reset her old
+                // location in the table to the unknown pilot.
                 //
                 bool isCurTDOA = false;
+                isCurTDOA = EditDLNK.TeamMembers[index].TDOA;
                 if (curPilotIndex != -1)
                 {
                     IsRebuildingUI = true;
-                    _tableCallsignComboList[curPilotIndex].SelectedIndex = 0;
+                    _tableCallsignComboList[curPilotIndex].SelectedPilot = UnknownPilot;
                     IsRebuildingUI = false;
                     isCurTDOA = EditDLNK.TeamMembers[curPilotIndex].TDOA;
                     EditDLNK.TeamMembers[curPilotIndex].Reset();
                 }
-                if ((comboBox.SelectedIndex == 0) && !string.IsNullOrEmpty(EditDLNK.TeamMembers[index].TNDL))
+                if (comboBox.SelectedPilot.UniqueID == UnknownPilot.UniqueID)
                 {
                     EditDLNK.TeamMembers[index].Reset();
                     CopyEditToConfig(true);
                 }
-                else if (comboBox.SelectedIndex != 0)
+                else
                 {
-                    // rebuild here to avoid some visual glitches from enabled -> disabled transition with the field
-                    // contents updating around the same time.
+                    // rebuild enable state to avoid some visual glitches from enabled -> disabled transition with
+                    // the field contents updating around the same time.
                     //
                     RebuildEnableState();
                     EditDLNK.TeamMembers[index].TDOA = isCurTDOA;
@@ -774,25 +842,22 @@ namespace JAFDTC.UI.F16C
             }
             else if (isNewOwnByCallsign)
             {
-                // we are making an edit that ends with an implicitly defined (ie, through callsign) ownship in the
-                // team member table. clear any old entry associated with the callsign and update the new entry to
-                // be ownship. if there was an ownship specified explicitly, disable TDOA. RebuildOwnshipMenu and
-                // RebuildEnableState will handle the ownship menu post save.
+                // combo selection update is changing to the ownship. clear any old table entry associated with the
+                // callsign and update the new entry to match ownship. if there was an ownship specified explicitly
+                // (via ownship combo), disable TDOA.
                 //
                 if (curPilotIndex != -1)
                 {
                     IsRebuildingUI = true;
-                    _tableCallsignComboList[curPilotIndex].SelectedIndex = 0;
+                    _tableCallsignComboList[curPilotIndex].SelectedPilot = UnknownPilot;
                     IsRebuildingUI = false;
                     EditDLNK.TeamMembers[curPilotIndex].Reset();
                 }
                 if (!isOldOwnByCallsign && !string.IsNullOrEmpty(EditDLNK.Ownship))
-                {
                     EditDLNK.TeamMembers[int.Parse(EditDLNK.Ownship) - 1].TDOA = false;
-                }
                 //
-                // rebuild here to avoid some visual glitches from enabled -> disabled transition with the field
-                // contents updating around the same time.
+                // rebuild enable state to avoid some visual glitches from enabled -> disabled transition with
+                // the field contents updating around the same time.
                 //
                 RebuildEnableState();
                 EditDLNK.Ownship = (index + 1).ToString();
@@ -806,8 +871,8 @@ namespace JAFDTC.UI.F16C
                 // we are making an edit that removes an implicitly defined (ie, through callsign) ownship in the
                 // team member table. update the entry and clear the ownship.
                 //
-                // rebuild here to avoid some visual glitches from enabled -> disabled transition with the field
-                // contents updating around the same time.
+                // rebuild enable state to avoid some visual glitches from enabled -> disabled transition with
+                // the field contents updating around the same time.
                 //
                 RebuildEnableState();
                 EditDLNK.Ownship = "";
@@ -823,13 +888,12 @@ namespace JAFDTC.UI.F16C
         /// </summary>
         private void TNDLBtnSwap_Click(object sender, RoutedEventArgs args)
         {
-            TeamMember tmL;
-            TeamMember tmR;
-
             for (int i = 0; i < 4; i++)
             {
-                tmL = (EditDLNK.TeamMembers[i].HasErrors) ? new TeamMember() : new TeamMember(EditDLNK.TeamMembers[i]);
-                tmR = (EditDLNK.TeamMembers[i+4].HasErrors) ? new TeamMember() : new TeamMember(EditDLNK.TeamMembers[i+4]);
+                TeamMember tmL = (EditDLNK.TeamMembers[i].HasErrors) ? new TeamMember()
+                                                                     : new TeamMember(EditDLNK.TeamMembers[i]);
+                TeamMember tmR = (EditDLNK.TeamMembers[i + 4].HasErrors) ? new TeamMember()
+                                                                         : new TeamMember(EditDLNK.TeamMembers[i + 4]);
 
                 // copy individual fields to make sure property changed events get posted...
                 //
@@ -840,11 +904,12 @@ namespace JAFDTC.UI.F16C
                 EditDLNK.TeamMembers[i + 4].TDOA = tmL.TDOA;
                 EditDLNK.TeamMembers[i + 4].TNDL = tmL.TNDL;
                 EditDLNK.TeamMembers[i + 4].DriverUID = tmL.DriverUID;
+
+                (AssignedPilots[i + 4], AssignedPilots[i]) = (AssignedPilots[i], AssignedPilots[i + 4]);
             }
             CopyEditToConfig(true);
 
-            RebuildCallsignCombos();
-            RebuildEnableState();
+            ForceSyncUI();
             RebuildInterfaceState();
         }
 
@@ -860,10 +925,8 @@ namespace JAFDTC.UI.F16C
         private void ConfigurationSavedHandler(object sender, ConfigurationSavedEventArgs args)
         {
             if (string.IsNullOrEmpty(args.SyncSysTag))
-            {
                 CopyConfigToEdit();
-                RebuildCallsignCombos();
-            }
+
             RebuildInterfaceState();
         }
 
@@ -880,10 +943,18 @@ namespace JAFDTC.UI.F16C
             Utilities.BuildSystemLinkLists(NavArgs.UIDtoConfigMap, Config.UID, DLNKSystem.SystemTag,
                                            _configNameList, _configNameToUID);
 
+            for (int i = 0; i < EditDLNK.TeamMembers.Length; i++)
+            {
+                object foo = _tableCallsignComboList[i].SelectedPilot;
+            }
+
             CopyConfigToEdit();
 
-            RebuildCallsignCombos();
+            SetupMissionLinkage(EditDLNK.IsLinkedMission);
+            ForceSyncUI();
             RebuildInterfaceState();
+
+            CopyEditToConfig(true);
 
             base.OnNavigatedTo(args);
         }

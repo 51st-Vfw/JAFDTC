@@ -70,13 +70,19 @@ namespace JAFDTC.UI.Controls
             }
         }
 
+        public new bool IsEnabled
+        {
+            get => uiComboBox.IsEnabled;
+            set => uiComboBox.IsEnabled = value;
+        }
+
         public Pilot SelectedPilot
         {
             get => (uiComboBox.SelectedIndex != -1) ? Pilots[uiComboBox.SelectedIndex] : null;
             set
             {
                 int index = -1;
-                for (int i = 0; i < Pilots.Count; i++)
+                for (int i = 0; (Pilots != null) && (i < Pilots.Count); i++)
                     if (value.UniqueID == Pilots[i].UniqueID)
                     {
                         index = i;
