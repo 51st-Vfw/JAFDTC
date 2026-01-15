@@ -92,7 +92,6 @@ namespace JAFDTC.UI.Controls.Map
         public readonly int TagInt;
         public readonly string Lat;
         public readonly string Lon;
-        public readonly double Rad;
 
         // ------------------------------------------------------------------------------------------------------------
         //
@@ -101,11 +100,11 @@ namespace JAFDTC.UI.Controls.Map
         // ------------------------------------------------------------------------------------------------------------
 
         public MapMarkerInfo()
-            => (Type, TagStr, TagInt, Lat, Lon, Rad) = (MapMarkerInfo.MarkerType.UNKNOWN, null, -1, null, null, 0.0);
+            => (Type, TagStr, TagInt, Lat, Lon) = (MapMarkerInfo.MarkerType.UNKNOWN, null, -1, null, null);
 
         public MapMarkerInfo(MapMarkerInfo.MarkerType type, string tagStr = null, int tagInt = -1, string lat = null,
-                             string lon = null, double rad = 0.0)
-            => (Type, TagStr, TagInt, Lat, Lon, Rad) = (type, tagStr, tagInt, lat, lon, rad);
+                             string lon = null)
+            => (Type, TagStr, TagInt, Lat, Lon) = (type, tagStr, tagInt, lat, lon);
 
         internal MapMarkerInfo(MapMarkerControl marker)
         {
@@ -115,7 +114,6 @@ namespace JAFDTC.UI.Controls.Map
             TagInt = (Type != MapMarkerInfo.MarkerType.UNKNOWN) ? tuple.Item3 : -1;
             Lat = (Type != MapMarkerInfo.MarkerType.UNKNOWN) ? $"{marker.Location.Latitude:F8}" : null;
             Lon = (Type != MapMarkerInfo.MarkerType.UNKNOWN) ? $"{marker.Location.Longitude:F8}" : null;
-            Rad = 0.0;
         }
     }
 }
