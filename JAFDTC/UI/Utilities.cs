@@ -465,9 +465,9 @@ namespace JAFDTC.UI
         /// </summary>
         public static void SetEnableState(Control cntrl, bool isEnabled)
         {
-            cntrl.AllowFocusWhenDisabled = true;
-            cntrl.IsEnabled = isEnabled;
-            cntrl.AllowFocusWhenDisabled = false;
+            cntrl?.AllowFocusWhenDisabled = true;
+            cntrl?.IsEnabled = isEnabled;
+            cntrl?.AllowFocusWhenDisabled = false;
         }
 
         // TODO: DEPRECATE
