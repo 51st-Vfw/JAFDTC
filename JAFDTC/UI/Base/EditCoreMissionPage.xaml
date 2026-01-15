@@ -59,7 +59,7 @@ https://www.gnu.org/licenses/.
 
         <TextBlock Grid.Row="0" Margin="12,12,12,0"
                    Style="{StaticResource EditorTitleTextBlockStyle}">
-            Flight Overview:
+            Mission Overview:
         </TextBlock>
         <Grid Grid.Row="1" Margin="24,12,12,0">
             <Grid.RowDefinitions>
@@ -74,16 +74,26 @@ https://www.gnu.org/licenses/.
                 <ColumnDefinition Width="3*"/>
             </Grid.ColumnDefinitions>
 
-            <!-- flight name, ships, tasking -->
-            <TextBlock Grid.Row="0" Grid.Column="0"
+            <!-- mission name -->
+            <TextBlock Grid.Row="0" Grid.Column="0" Margin="0,0,0,12"
                        VerticalAlignment="Center" HorizontalAlignment="Right"
                        Text="Name"/>
-            <TextBox Grid.Row="0" Grid.Column="1" Margin="12,0,0,0" Tag="Callsign" x:Name="uiTxtFlightCallsign"
+            <TextBox Grid.Row="0" Grid.Column="1"  Grid.ColumnSpan="2" Margin="12,0,0,12" Tag="Name" x:Name="uiTxtMissionName"
+                     VerticalAlignment="Center" HorizontalAlignment="Stretch"
+                     Style="{StaticResource EditorParamEditTextBoxStyle}"
+                     LostFocus="TextBox_LostFocus" GotFocus="TextBox_GotFocus"
+                     PlaceholderText="Untitled"/>
+
+            <!-- flight name, ships, tasking -->
+            <TextBlock Grid.Row="1" Grid.Column="0"
+                       VerticalAlignment="Center" HorizontalAlignment="Right"
+                       Text="Flight"/>
+            <TextBox Grid.Row="1" Grid.Column="1" Margin="12,0,0,0" Tag="Callsign" x:Name="uiTxtFlightCallsign"
                      VerticalAlignment="Center" HorizontalAlignment="Stretch"
                      Style="{StaticResource EditorParamEditTextBoxStyle}"
                      LostFocus="TextBox_LostFocus" GotFocus="TextBox_GotFocus"
                      PlaceholderText="Viper 1"/>
-            <ComboBox Grid.Row="0" Grid.Column="2" Margin="8,0,0,0" x:Name="uiCmbFlightShips"
+            <ComboBox Grid.Row="1" Grid.Column="2" Margin="8,0,0,0" x:Name="uiCmbFlightShips"
                       VerticalAlignment="Center" HorizontalAlignment="Stretch"
                       SelectionChanged="CmbFlightShips_SelectionChanged"
                       SelectedIndex="{x:Bind ShipsUI, Mode=TwoWay}">
@@ -92,10 +102,10 @@ https://www.gnu.org/licenses/.
                 <ComboBoxItem>3-ship</ComboBoxItem>
                 <ComboBoxItem>4-ship</ComboBoxItem>
             </ComboBox>
-            <TextBlock Grid.Row="0" Grid.Column="3" Margin="12,0,0,0"
+            <TextBlock Grid.Row="1" Grid.Column="3" Margin="12,0,0,0"
                        VerticalAlignment="Center" HorizontalAlignment="Right"
                        Text="Task"/>
-            <TextBox Grid.Row="0" Grid.Column="4" Margin="12,0,0,0" Tag="Tasking" x:Name="uiTxtFlightTasking"
+            <TextBox Grid.Row="1" Grid.Column="4" Margin="12,0,0,0" Tag="Tasking" x:Name="uiTxtFlightTasking"
                      VerticalAlignment="Center" HorizontalAlignment="Stretch"
                      Style="{StaticResource EditorParamEditTextBoxStyle}"
                      LostFocus="TextBox_LostFocus" GotFocus="TextBox_GotFocus"

@@ -51,6 +51,13 @@ namespace JAFDTC.Models.Base
 
         // ---- following properties post change and validation events.
 
+        private string _name;                                   // mission name
+        public string Name
+        {
+            get => _name;
+            set => SetProperty(ref _name, value);
+        }
+
         private string _callsign;                               // "VENOM 1", "VENOM1", "Venom1", etc.
         public string Callsign
         {
@@ -94,7 +101,7 @@ namespace JAFDTC.Models.Base
 
         public string[] PilotUIDs { get; set; }                 // Pilot instance unique identifier
 
-        public string[] Loadouts { get; set; }                  // loadouts, null => same as "lead"
+        public string[] Loadouts { get; set; }                  // loadouts, null => same as ship's lead
 
         // ---- computed properties
 
@@ -109,7 +116,8 @@ namespace JAFDTC.Models.Base
                 for (int i = 0; i < NUM_SHIPS_IN_FLIGHT; i++)
                     if (!string.IsNullOrEmpty(PilotUIDs[i]) || !string.IsNullOrEmpty(Loadouts[i]))
                         return false;
-                return (string.IsNullOrEmpty(Callsign) &&
+                return (string.IsNullOrEmpty(Name) &&
+                        string.IsNullOrEmpty(Callsign) &&
                         string.IsNullOrEmpty(Tasking) &&
                         (Ships == NUM_SHIPS_IN_FLIGHT));
             }
@@ -123,6 +131,7 @@ namespace JAFDTC.Models.Base
 
         public CoreMissionSystem()
         {
+            Name = "";
             Callsign = "";
             Ships = NUM_SHIPS_IN_FLIGHT;
             Tasking = "";
@@ -132,6 +141,7 @@ namespace JAFDTC.Models.Base
 
         public CoreMissionSystem(CoreMissionSystem other)
         {
+            Name = new(other.Name);
             Callsign = new(other.Callsign);
             Ships = other.Ships;
             Tasking = new(other.Tasking);
@@ -157,6 +167,7 @@ namespace JAFDTC.Models.Base
         /// </summary>
         public override void Reset()
         {
+            Name = "";
             Callsign = "";
             Ships = NUM_SHIPS_IN_FLIGHT;
             Tasking = "";
@@ -176,8 +187,9 @@ namespace JAFDTC.Models.Base
         /// </summary>
         public override Mission MergeIntoMission(Mission mission, int indexPackage = 0, int indexFlight = 0)
         {
-            string baseLoadout = Loadouts[0];
+            mission.Name = Name;
 
+            string baseLoadout = Loadouts[0];
             List<Pilot> pilots = [ ];
             for (int i = 0; i < NUM_SHIPS_IN_FLIGHT; i++)
             {
@@ -199,6 +211,7 @@ namespace JAFDTC.Models.Base
             mission.Packages[indexPackage].Flights[indexFlight].Name = Callsign;
             mission.Packages[indexPackage].Flights[indexFlight].Tasking = Tasking;
             mission.Packages[indexPackage].Flights[indexFlight].Pilots = pilots;
+
             return mission;
         }
     }

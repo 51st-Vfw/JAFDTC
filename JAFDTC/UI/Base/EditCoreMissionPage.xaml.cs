@@ -114,7 +114,7 @@ namespace JAFDTC.UI.Base
             }
 
             InitializeComponent();
-            InitializeBase(EditMsn, uiTxtFlightCallsign, uiCtlLinkResetBtns, [ "Callsign", "Tasking" ]);
+            InitializeBase(EditMsn, uiTxtFlightCallsign, uiCtlLinkResetBtns, [ "Name", "Callsign", "Tasking" ]);
 
             _shipEditorPanels = [ null, uiPnlEditDash2, uiPnlEditDash3, uiPnlEditDash4 ];
             _shipEditorPanelElements = [
