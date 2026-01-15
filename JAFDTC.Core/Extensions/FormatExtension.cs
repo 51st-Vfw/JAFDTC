@@ -72,5 +72,26 @@ namespace JAFDTC.Core.Extensions
             return string.Empty;
         }
 
+        public static string ToCleanDCSUnitType(this string? value)
+        {
+            if (!string.IsNullOrWhiteSpace(value))
+            {
+                string[] fields = value.Replace("_", " ").Split(" ");
+                for (int i = 0; i < fields.Length; i++)
+                {
+                    if (fields[i].Equals("ln", StringComparison.CurrentCultureIgnoreCase))
+                        fields[i] = "Launcher";
+                    else if (fields[i].Equals("sr", StringComparison.CurrentCultureIgnoreCase))
+                        fields[i] = "Search Radar";
+                    else if (fields[i].Equals("tr", StringComparison.CurrentCultureIgnoreCase))
+                        fields[i] = "Track Radar";
+                    else if (fields[i].Equals("cp", StringComparison.CurrentCultureIgnoreCase))
+                        fields[i] = "Command Post";
+                    fields[i] = char.ToUpper(fields[i][0]) + fields[i][1..];
+                }
+                return string.Join(' ', fields);
+            }
+            return string.Empty;
+        }
     }
 }
