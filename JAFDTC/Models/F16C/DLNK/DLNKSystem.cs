@@ -2,7 +2,7 @@
 //
 // DLNKSystem.cs -- f-16c datalink system configuration
 //
-// Copyright(C) 2023-2025 ilominar/raven
+// Copyright(C) 2023-2026 ilominar/raven
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 // Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -17,7 +17,6 @@
 //
 // ********************************************************************************************************************
 
-using JAFDTC.Utilities;
 using System.Diagnostics;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
@@ -40,16 +39,18 @@ namespace JAFDTC.Models.F16C.DLNK
 
         public const int NUM_SLOTS_IN_TEAM = 8;
 
+        [GeneratedRegex(@"(?i)^[a-z][a-z]$")]
+        private static partial Regex ShortFlightNameRegex();
+
+
+        [GeneratedRegex(@"^[1-9][1-9]$")]
+        private static partial Regex FlightElementNumRegex();
+
         // ------------------------------------------------------------------------------------------------------------
         //
         // properties
         //
         // ------------------------------------------------------------------------------------------------------------
-
-        // ---- private properties, static
-
-        private static readonly Regex _callRegex = new(@"^[a-zA-Z][a-zA-Z]$");
-        private static readonly Regex _numRegex = new(@"^[1-9][1-9]$");
 
         // ---- public properties
 
@@ -59,6 +60,13 @@ namespace JAFDTC.Models.F16C.DLNK
 
         // ---- public properties, posts change/validation events
 
+        private bool _isLinkedMission;
+        public bool IsLinkedMission
+        {
+            get => _isLinkedMission;
+            set => SetProperty(ref _isLinkedMission, value);
+        }
+
         private bool _isOwnshipLead;
         public bool IsOwnshipLead
         {
@@ -66,14 +74,14 @@ namespace JAFDTC.Models.F16C.DLNK
             set => SetProperty(ref _isOwnshipLead, value);
         }
 
-        private string _ownshipCallsign;                        // string, two letter [A-Z][A-Z]
+        private string _ownshipCallsign;                        // string, 2-letter [A-Z][A-Z], ShortFlightNameRegex
         public string OwnshipCallsign
         {
             get => _ownshipCallsign;
             set
             {
                 string error = "Invalid callsign format";
-                if (IsRegexFieldValid(value, _callRegex))
+                if (IsRegexFieldValid(value, ShortFlightNameRegex()))
                 {
                     value = value.ToUpper();
                     error = null;
@@ -83,14 +91,14 @@ namespace JAFDTC.Models.F16C.DLNK
             }
         }
 
-        private string _ownshipFENumber;                        // string, two digit [1-9][1-9]
+        private string _ownshipFENumber;                        // string, 2-digit [1-9][1-9], FlightElementNumRegex
         public string OwnshipFENumber
         {
             get => _ownshipFENumber;
             set
             {
                 string error = "Invalid callsign flight number format";
-                if (IsRegexFieldValid(value, _numRegex))
+                if (IsRegexFieldValid(value, FlightElementNumRegex()))
                     error = null;
                 SetProperty(ref _ownshipFENumber, value, error);
             }
@@ -103,7 +111,7 @@ namespace JAFDTC.Models.F16C.DLNK
             set => SetProperty(ref _isFillEmptyTNDL, value);
         }
 
-        private string _fillEmptyTNDL;
+        private string _fillEmptyTNDL;                          // string tndl value (5 digit octal), RegexTNDL
         public string FillEmptyTNDL
         {
             get => _fillEmptyTNDL;
@@ -128,7 +136,8 @@ namespace JAFDTC.Models.F16C.DLNK
                 // NOTE: we don't include IsOwnshipLead here as default will depend on which slot the pilot is
                 // NOTE: sitting in.
                 //
-                return !IsFillEmptyTNDL && string.IsNullOrEmpty(OwnshipCallsign) && string.IsNullOrEmpty(OwnshipFENumber);
+                return !IsLinkedMission && !IsFillEmptyTNDL &&
+                       string.IsNullOrEmpty(OwnshipCallsign) && string.IsNullOrEmpty(OwnshipFENumber);
             }
         }
 
@@ -140,6 +149,7 @@ namespace JAFDTC.Models.F16C.DLNK
 
         public DLNKSystem()
         {
+            IsLinkedMission = false;
             Ownship = "";
             IsOwnshipLead = false;
             OwnshipCallsign = "";
@@ -153,6 +163,7 @@ namespace JAFDTC.Models.F16C.DLNK
 
         public DLNKSystem(DLNKSystem other)
         {
+            IsLinkedMission = other.IsLinkedMission;
             Ownship = new(other.Ownship);
             IsOwnshipLead = other.IsOwnshipLead;
             OwnshipCallsign = other.OwnshipCallsign;
@@ -176,6 +187,7 @@ namespace JAFDTC.Models.F16C.DLNK
         //
         public override void Reset()
         {
+            IsLinkedMission = false;
             Ownship = "";
             IsOwnshipLead = false;
             OwnshipCallsign = "";
