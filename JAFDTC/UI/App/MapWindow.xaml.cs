@@ -21,6 +21,7 @@
 //
 #define ENABLE_MAP_FILE_CACHE
 
+using JAFDTC.Core.Extensions;
 using JAFDTC.File;
 using JAFDTC.File.Models;
 using JAFDTC.Models.Base;
@@ -187,7 +188,9 @@ namespace JAFDTC.UI.App
 
         private readonly Dictionary<string, List<string>> _mappedCampaigns = [ ];
 
-        private readonly Dictionary<string, string> _mapImportedMarkerDict = [ ];
+        private readonly Dictionary<string, string> _mapImportMarkerNameDict = [];
+
+        private readonly Dictionary<string, string> _mapImportMarkerTypeDict = [];
 
         private readonly MapControl.Caching.ImageFileCache _mapTileCache;
 
@@ -525,18 +528,19 @@ namespace JAFDTC.UI.App
                 Child = pupStack
             };
 
-            if (_mapImportedMarkerDict.TryGetValue(mrkInfo.TagStr, out string importedMarkerName))
+            if (_mapImportMarkerNameDict.TryGetValue(mrkInfo.TagStr, out string importedMarkerName))
                 pupTextTitle.Text = importedMarkerName;
             else
                 pupTextTitle.Text = MarkerExplainer?.MarkerDisplayName(mrkInfo) ?? "Unknown";
+            string unitType = _mapImportMarkerTypeDict.GetValueOrDefault(mrkInfo.TagStr, "Element");
             pupTextSubtitle.Text = mrkInfo.Type switch
             {
                 MapMarkerInfo.MarkerType.POI_SYSTEM => "System POI",
                 MapMarkerInfo.MarkerType.POI_USER => "User POI",
                 MapMarkerInfo.MarkerType.POI_CAMPAIGN => "Campaign POI",
                 MapMarkerInfo.MarkerType.NAV_PT => "Navigation Route",
-                MapMarkerInfo.MarkerType.UNIT_FRIEND => "Friendly Element",
-                MapMarkerInfo.MarkerType.UNIT_ENEMY => "Enemy Element",
+                MapMarkerInfo.MarkerType.UNIT_FRIEND => $"Friendly {unitType}",
+                MapMarkerInfo.MarkerType.UNIT_ENEMY => $"Enemy {unitType}",
                 MapMarkerInfo.MarkerType.BULLSEYE => "Bullseye",
                 _ => "Map marker"
             };
@@ -671,7 +675,8 @@ namespace JAFDTC.UI.App
                     {
                         uiMap.AddMarker(type, unit.UniqueID,
                                         new Location(unit.Position.Latitude, unit.Position.Longitude));
-                        _mapImportedMarkerDict[unit.UniqueID] = (unit.IsAlive) ? unit.Name : (unit.Name + " [DEAD]");
+                        _mapImportMarkerNameDict[unit.UniqueID] = (unit.IsAlive) ? unit.Name : (unit.Name + " [DEAD]");
+                        _mapImportMarkerTypeDict[unit.UniqueID] = unit.Type.ToCleanDCSUnitType();
                         nMarkers++;
                     }
                 }
@@ -682,7 +687,7 @@ namespace JAFDTC.UI.App
                 {
                     uiMap.AddMarker(type, group.UniqueID, new Location(avgLat, avgLon), threatRadius,
                                     !importSpec.IsSummaryOnly);
-                    _mapImportedMarkerDict[group.UniqueID] = threatType + " WEZ";
+                    _mapImportMarkerNameDict[group.UniqueID] = threatType + " WEZ";
                 }
             }
             FileManager.Log($"MapWindow:CoreImportMarkers added {nMarkers} markers to map");
@@ -818,7 +823,7 @@ namespace JAFDTC.UI.App
             {
                 if (mrkInfo.Type == MapMarkerInfo.MarkerType.PATH_EDIT_HANDLE)
                     uiTxtSelName.Text = "Add Navpoint Handle";
-                else if (_mapImportedMarkerDict.TryGetValue(mrkInfo.TagStr, out string importedMarkerName))
+                else if (_mapImportMarkerNameDict.TryGetValue(mrkInfo.TagStr, out string importedMarkerName))
                     uiTxtSelName.Text = importedMarkerName;
                 else
                     uiTxtSelName.Text = MarkerExplainer?.MarkerDisplayName(mrkInfo) ?? "Unknown";
@@ -853,7 +858,7 @@ namespace JAFDTC.UI.App
             Utilities.SetEnableState(uiBarBtnEdit, isOpenable && CanOpenMarker);
             Utilities.SetEnableState(uiBarBtnDelete, uiMap.CanEditSelectedMarker);
             Utilities.SetEnableState(uiBarBtnImport, IsThreatsEnabled);
-            Utilities.SetEnableState(uiBarBtnClear, IsThreatsEnabled && (_mapImportedMarkerDict.Count > 0));
+            Utilities.SetEnableState(uiBarBtnClear, IsThreatsEnabled && (_mapImportMarkerNameDict.Count > 0));
             Utilities.SetEnableState(uiBarBtnFilter, IsFilterEnabled);
             Utilities.SetEnableState(uiBarBtnSettings, true);
         }
@@ -915,7 +920,7 @@ namespace JAFDTC.UI.App
             // imported at a time.
             //
             ContentDialogResult result;
-            if (_mapImportedMarkerDict.Count > 0)
+            if (_mapImportMarkerNameDict.Count > 0)
             {
                 result = await Utilities.Message2BDialog(Content.XamlRoot, "Are You Sure?",
                             "Importing threat and unit markers will remove any previously imported markers. Are" +
@@ -925,7 +930,8 @@ namespace JAFDTC.UI.App
                     return;                                     // **** EXITS: cancel
 
                 uiMap.ClearMarkers([MapMarkerInfo.MarkerType.UNIT_ENEMY, MapMarkerInfo.MarkerType.UNIT_FRIEND]);
-                _mapImportedMarkerDict.Clear();
+                _mapImportMarkerNameDict.Clear();
+                _mapImportMarkerTypeDict.Clear();
             }
 
             // select file to import threats from with FileOpenPicker.
@@ -985,7 +991,8 @@ namespace JAFDTC.UI.App
             {
                 MapImportSpec = null;
                 uiMap.ClearMarkers([MapMarkerInfo.MarkerType.UNIT_ENEMY, MapMarkerInfo.MarkerType.UNIT_FRIEND]);
-                _mapImportedMarkerDict.Clear();
+                _mapImportMarkerNameDict.Clear();
+                _mapImportMarkerTypeDict.Clear();
 
                 RebuildInterfaceState();
             }
