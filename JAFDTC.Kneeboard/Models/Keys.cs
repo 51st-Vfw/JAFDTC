@@ -48,6 +48,7 @@ namespace JAFDTC.Kneeboard.Models
         public const string FLIGHT_NAME = "F*.0:N";                             // "VENOM1"
         public const string FLIGHT_NAME_SHORT = "F*.0:NS";                      // "VM1"
         public const string FLIGHT_AIRCRAFT = "F*.0:A";                         // "F-16C"
+        public const string FLIGHT_TASKING = "F*.0:T";
 
         // TODO: since we only are supporting 1 flight all pilots, nav points, and comms tied to first flight...
 
@@ -63,6 +64,7 @@ namespace JAFDTC.Kneeboard.Models
         public const string PILOT_CALLSIGN_SHORT = "P*.0:CS";                   // "VM11"
         public const string PILOT_DATAID = "P*.0:DI";                           // string identifier (eg, viper tndl)
         public const string PILOT_SCL = "P*.0:SC";                              // string stores configuration
+        public const string PILOT_BOARD = "P*.0:BN";                            // "23-1234"
 
         // ---- communications keys
 

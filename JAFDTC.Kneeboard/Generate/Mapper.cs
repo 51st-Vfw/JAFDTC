@@ -84,6 +84,7 @@ namespace JAFDTC.Kneeboard.Generate
                 _data.Add(ToKey(Keys.FLIGHT_NAME, i), flight.Name);
                 _data.Add(ToKey(Keys.FLIGHT_NAME_SHORT, i), flight.Name.ToShortCallsign());
                 _data.Add(ToKey(Keys.FLIGHT_AIRCRAFT, i), flight.Aircraft);
+                _data.Add(ToKey(Keys.FLIGHT_TASKING, i), (!string.IsNullOrEmpty(flight.Tasking)) ? flight.Tasking : "None");
 
                 if (flight.Pilots.HasData())
                 {
@@ -93,6 +94,7 @@ namespace JAFDTC.Kneeboard.Generate
 
                         _data.Add(ToKey(Keys.PILOT_NAME, p), pilot.Name);
                         _data.Add(ToKey(Keys.PILOT_DATAID, p), Clean(pilot.DataId, ""));
+                        _data.Add(ToKey(Keys.PILOT_BOARD, p), Clean(pilot.Board, ""));
                         _data.Add(ToKey(Keys.PILOT_SCL, p), Clean(pilot.SCL, ""));
 
                         var callsign = $"{flight.Name}-{p + 1}"; //from flight + position
