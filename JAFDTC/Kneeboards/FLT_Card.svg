@@ -26,14 +26,14 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
      inkscape:zoom="0.5"
-     inkscape:cx="894"
-     inkscape:cy="347"
+     inkscape:cx="895"
+     inkscape:cy="345"
      inkscape:window-width="1920"
      inkscape:window-height="1009"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
-     inkscape:current-layer="g114"
+     inkscape:current-layer="KBT_Flight_Card"
      showgrid="false" />
   <!-- Generator: Sketch 61.2 (89653) - https://sketch.com -->
   <title
@@ -684,7 +684,7 @@
        y="0"
        width="1536"
        height="2048"
-       style="display:none"
+       style="display:inline"
        inkscape:label="NIGHT_TINT" />
   </g>
   <metadata
