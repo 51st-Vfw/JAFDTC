@@ -40,6 +40,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Xml.Linq;
 
 namespace JAFDTC.UI.F16C
 {
@@ -76,7 +77,7 @@ namespace JAFDTC.UI.F16C
                 set
                 {
                     OwnshipCallsign = (value != "––") ? value : "";
-                    _ownshipCallsignUI = OwnshipCallsign;
+                    SetProperty(ref _ownshipCallsignUI, OwnshipCallsign);
                 }
             }
 
@@ -87,7 +88,7 @@ namespace JAFDTC.UI.F16C
                 set
                 {
                     OwnshipFENumber = (value != "––") ? value : "";
-                    _ownshipFENumberUI = OwnshipFENumber;
+                    SetProperty(ref _ownshipFENumberUI, OwnshipFENumber);
                 }
             }
         }
