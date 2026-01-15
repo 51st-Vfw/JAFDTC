@@ -29,9 +29,6 @@ https://www.gnu.org/licenses/.
 
     <Grid>
         <ComboBox VerticalAlignment="Center" HorizontalAlignment="Stretch" x:Name="uiComboBox"
-                  SelectionChanged="ComboBox_SelectionChanged">
-            <ComboBoxItem>xxxx</ComboBoxItem>
-            <ComboBoxItem>yyyy</ComboBoxItem>
-        </ComboBox>
+                  SelectionChanged="ComboBox_SelectionChanged"/>
     </Grid>
 </UserControl>
