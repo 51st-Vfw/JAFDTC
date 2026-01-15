@@ -176,6 +176,8 @@ namespace JAFDTC.Models.Base
         /// </summary>
         public override Mission MergeIntoMission(Mission mission, int indexPackage = 0, int indexFlight = 0)
         {
+            string baseLoadout = Loadouts[0];
+
             List<Pilot> pilots = [ ];
             for (int i = 0; i < NUM_SHIPS_IN_FLIGHT; i++)
             {
@@ -188,10 +190,13 @@ namespace JAFDTC.Models.Base
                         Position = i,
                         DataId = pilot.AvionicsID,
                         Board = pilot.BoardNumber,
-                        SCL = Loadouts[i],
+                        SCL = (string.IsNullOrEmpty(Loadouts[i])) ? baseLoadout : Loadouts[i],
                     });
+                    if ((i == 2) && !string.IsNullOrEmpty(Loadouts[2]))
+                        baseLoadout = Loadouts[2];
                 }
             }
+            mission.Packages[indexPackage].Flights[indexFlight].Name = Callsign;
             mission.Packages[indexPackage].Flights[indexFlight].Tasking = Tasking;
             mission.Packages[indexPackage].Flights[indexFlight].Pilots = pilots;
             return mission;
