@@ -146,14 +146,14 @@ https://www.gnu.org/licenses/.
                                        VerticalAlignment="Center" HorizontalAlignment="Stretch"
                                        OwnshipCallsign="{x:Bind OwnshipCallsign}"
                                        Pilots="{x:Bind AvailablePilots}"
-                                       SelectedPilot="{x:Bind AssignedPilots[0]}"
+                                       SelectedPilot="{x:Bind BindsUI.PilotD1, Mode=TwoWay}"
                                        SelectionChanged="CmbPilot_SelectionChanged"/>
             <TextBlock Grid.Row="0" Grid.Column="2" Margin="12,0,0,0" x:Name="uiLblLoadDash1"
                        VerticalAlignment="Center" HorizontalAlignment="Right"
                        Text="Loadout"/>
             <TextBox Grid.Row="0" Grid.Column="3" Grid.ColumnSpan="2" Margin="12,0,0,0" Tag="0" x:Name="uiTxtLoadDash1"
                      VerticalAlignment="Center" HorizontalAlignment="Stretch"
-                     Text="{x:Bind Loadouts[0], Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                     Text="{x:Bind BindsUI.LoadoutD1, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
                      LostFocus="LoadoutField_LostFocus"/>
 
             <!-- -2 edit panel -->
@@ -177,14 +177,14 @@ https://www.gnu.org/licenses/.
                                                VerticalAlignment="Center" HorizontalAlignment="Stretch"
                                                OwnshipCallsign="{x:Bind OwnshipCallsign}"
                                                Pilots="{x:Bind AvailablePilots}"
-                                               SelectedPilot="{x:Bind AssignedPilots[1]}"
+                                               SelectedPilot="{x:Bind BindsUI.PilotD2, Mode=TwoWay}"
                                                SelectionChanged="CmbPilot_SelectionChanged"/>
                     <TextBlock Grid.Row="0" Grid.Column="2" Margin="12,8,0,0" x:Name="uiLblLoadDash2"
                                VerticalAlignment="Center" HorizontalAlignment="Right"
                                Text="Loadout"/>
                     <TextBox Grid.Row="0" Grid.Column="3" Margin="12,8,0,0" Tag="1" x:Name="uiTxtLoadDash2"
                              VerticalAlignment="Center" HorizontalAlignment="Stretch"
-                             Text="{x:Bind Loadouts[1], Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                             Text="{x:Bind BindsUI.LoadoutD2, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
                              LostFocus="LoadoutField_LostFocus"/>
                     <TextBlock Grid.Row="0" Grid.Column="3" Margin="12,8,0,0" x:Name="uiLblLoadLinkDash2"
                                VerticalAlignment="Center" HorizontalAlignment="Left"
@@ -192,7 +192,7 @@ https://www.gnu.org/licenses/.
                                Text="Same loadout as FIXUP"/>
                     <ToggleButton Grid.Row="0" Grid.Column="4" Margin="12,8,0,0" Tag="1" x:Name="uiBtnEditLoadDash2"
                                   VerticalAlignment="Center" HorizontalAlignment="Right"
-                                  IsChecked="{x:Bind IsLoadoutCustom[1]}"
+                                  IsChecked="{x:Bind BindsUI.CustomLoadoutD2, Mode=TwoWay}"
                                   Click="BtnEditLoad_Click"
                                   ToolTipService.ToolTip="Toggle loadout editing">
                         <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE70F;"/>
@@ -221,14 +221,14 @@ https://www.gnu.org/licenses/.
                                                VerticalAlignment="Center" HorizontalAlignment="Stretch"
                                                OwnshipCallsign="{x:Bind OwnshipCallsign}"
                                                Pilots="{x:Bind AvailablePilots}"
-                                               SelectedPilot="{x:Bind AssignedPilots[2]}"
+                                               SelectedPilot="{x:Bind BindsUI.PilotD3, Mode=TwoWay}"
                                                SelectionChanged="CmbPilot_SelectionChanged"/>
                     <TextBlock Grid.Row="0" Grid.Column="2" Margin="12,8,0,0" x:Name="uiLblLoadDash3"
                                VerticalAlignment="Center" HorizontalAlignment="Right"
                                Text="Loadout"/>
                     <TextBox Grid.Row="0" Grid.Column="3" Margin="12,8,0,0" Tag="2" x:Name="uiTxtLoadDash3"
                              VerticalAlignment="Center" HorizontalAlignment="Stretch"
-                             Text="{x:Bind Loadouts[2], Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                             Text="{x:Bind BindsUI.LoadoutD3, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
                              LostFocus="LoadoutField_LostFocus"/>
                     <TextBlock Grid.Row="0" Grid.Column="3" Margin="12,8,0,0" x:Name="uiLblLoadLinkDash3"
                                VerticalAlignment="Center" HorizontalAlignment="Left"
@@ -236,7 +236,7 @@ https://www.gnu.org/licenses/.
                                Text="Same loadout as FIXUP"/>
                     <ToggleButton Grid.Row="0" Grid.Column="4" Margin="12,8,0,0" Tag="2" x:Name="uiBtnEditLoadDash3"
                                   VerticalAlignment="Center" HorizontalAlignment="Right"
-                                  IsChecked="{x:Bind IsLoadoutCustom[2]}"
+                                  IsChecked="{x:Bind BindsUI.CustomLoadoutD3, Mode=TwoWay}"
                                   Click="BtnEditLoad_Click"
                                   ToolTipService.ToolTip="Toggle loadout editing">
                         <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE70F;"/>
@@ -265,14 +265,14 @@ https://www.gnu.org/licenses/.
                                                VerticalAlignment="Center" HorizontalAlignment="Stretch"
                                                OwnshipCallsign="{x:Bind OwnshipCallsign}"
                                                Pilots="{x:Bind AvailablePilots}"
-                                               SelectedPilot="{x:Bind AssignedPilots[3]}"
+                                               SelectedPilot="{x:Bind BindsUI.PilotD4, Mode=TwoWay}"
                                                SelectionChanged="CmbPilot_SelectionChanged"/>
                     <TextBlock Grid.Row="0" Grid.Column="2" Margin="12,8,0,0" x:Name="uiLblLoadDash4"
                                VerticalAlignment="Center" HorizontalAlignment="Right"
                                Text="Loadout"/>
                     <TextBox Grid.Row="0" Grid.Column="3" Margin="12,8,0,0" Tag="3" x:Name="uiTxtLoadDash4"
                              VerticalAlignment="Center" HorizontalAlignment="Stretch"
-                             Text="{x:Bind Loadouts[3], Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                             Text="{x:Bind BindsUI.LoadoutD4, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
                              LostFocus="LoadoutField_LostFocus"/>
                     <TextBlock Grid.Row="0" Grid.Column="3" Margin="12,8,0,0" x:Name="uiLblLoadLinkDash4"
                                VerticalAlignment="Center" HorizontalAlignment="Left"
@@ -280,7 +280,7 @@ https://www.gnu.org/licenses/.
                                Text="Same loadout as FIXUP"/>
                     <ToggleButton Grid.Row="0" Grid.Column="4" Margin="12,8,0,0" Tag="3" x:Name="uiBtnEditLoadDash4"
                                   VerticalAlignment="Center" HorizontalAlignment="Right"
-                                  IsChecked="{x:Bind IsLoadoutCustom[3]}"
+                                  IsChecked="{x:Bind BindsUI.CustomLoadoutD4, Mode=TwoWay}"
                                   Click="BtnEditLoad_Click"
                                   ToolTipService.ToolTip="Toggle loadout editing">
                         <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE70F;"/>
