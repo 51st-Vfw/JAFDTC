@@ -48,6 +48,12 @@ namespace JAFDTC.UI.Controls
         //
         // ------------------------------------------------------------------------------------------------------------
 
+        public static readonly DependencyProperty SelectedPilotProperty = DependencyProperty.Register(
+            nameof(SelectedPilot),
+            typeof(Pilot),
+            typeof(PilotComboControl),
+            new PropertyMetadata(default));
+
         private string _ownshipCallsign;
         public string OwnshipCallsign
         {
@@ -70,26 +76,28 @@ namespace JAFDTC.UI.Controls
             }
         }
 
-        public new bool IsEnabled
-        {
-            get => uiComboBox.IsEnabled;
-            set => uiComboBox.IsEnabled = value;
-        }
-
         public Pilot SelectedPilot
         {
             get => (uiComboBox.SelectedIndex != -1) ? Pilots[uiComboBox.SelectedIndex] : null;
             set
             {
                 int index = -1;
-                for (int i = 0; (Pilots != null) && (i < Pilots.Count); i++)
-                    if (value.UniqueID == Pilots[i].UniqueID)
-                    {
-                        index = i;
-                        break;
-                    }
+                if ((value != null) && (Pilots != null))
+                    for (int i = 0; i < Pilots.Count; i++)
+                        if (value.UniqueID == Pilots[i].UniqueID)
+                        {
+                            index = i;
+                            break;
+                        }
                 uiComboBox.SelectedIndex = index;
+                SetValue(SelectedPilotProperty, (index != -1) ? Pilots[index] : null);
             }
+        }
+
+        public new bool IsEnabled
+        {
+            get => uiComboBox.IsEnabled;
+            set => uiComboBox.IsEnabled = value;
         }
 
         public static Pilot UnassignedPilot => new()
@@ -174,6 +182,8 @@ namespace JAFDTC.UI.Controls
         /// </summary>
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs args)
         {
+            ComboBox combo = sender as ComboBox;
+            SelectedPilot = (combo.SelectedIndex != -1) ? Pilots[combo.SelectedIndex] : null;
             SelectionChanged?.Invoke(this, args);
         }
     }
