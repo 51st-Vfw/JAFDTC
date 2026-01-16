@@ -315,7 +315,7 @@ https://www.gnu.org/licenses/.
         row 4 : program visual display
         ===============================================================================================================
         -->
-        <Grid Grid.Row="4" Margin="12,12,12,24">
+        <Grid Grid.Row="4" Margin="12,12,12,0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -331,7 +331,7 @@ https://www.gnu.org/licenses/.
                 Chaff
             </TextBlock>
             <!-- TODO: why can't we use a static resource for foreground? -->
-            <ui_base:CMProgramCanvas Grid.Row="0" Grid.Column="1" Margin="12,12,0,0"
+            <ui_base:CMProgramCanvas Grid.Row="0" Grid.Column="1" Margin="12,8,0,0"
                                      x:Name="uiCMPgmChaffCanvas"
                                      Foreground="DarkGray"
                                      VerticalAlignment="Center"
@@ -357,7 +357,7 @@ https://www.gnu.org/licenses/.
         common editor controls 
         ===============================================================================================================
         -->
-        <ui_ctrl:LinkResetBtnsControl Grid.Row="6" Grid.Column="0" Margin="0,0,0,0" x:Name="uiCtlLinkResetBtns"/>
+        <ui_ctrl:LinkResetBtnsControl Grid.Row="6" Grid.Column="0" x:Name="uiCtlLinkResetBtns"/>
 
     </Grid>
 </ui_base:SystemEditorPageBase>
