@@ -4,7 +4,7 @@
     
 MapWindow.xaml : ui xaml for map window
 
-Copyright(C) 2025 ilominar/raven
+Copyright(C) 2025-2026 ilominar/raven
 
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -125,6 +125,13 @@ https://www.gnu.org/licenses/.
                     </AppBarButton.Icon>
                 </AppBarButton>
                 <AppBarSeparator/>
+                <AppBarToggleButton x:Name="uiBarBtnSnap" Label="Snap to Markers"
+                                    Click="CmdSnap_Click"
+                                    ToolTipService.ToolTip="Enable snapping to markers on map">
+                    <AppBarToggleButton.Icon>
+                        <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE73F;"/>
+                    </AppBarToggleButton.Icon>
+                </AppBarToggleButton>
                 <AppBarToggleButton x:Name="uiBarBtnFilter" Label="Filter Markers"
                                     Click="CmdFilter_Click"
                                     ToolTipService.ToolTip="Set filter to apply to markers">

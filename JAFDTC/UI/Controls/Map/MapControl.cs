@@ -2,7 +2,7 @@
 //
 // MapControl.cs : map control
 //
-// Copyright(C) 2025 ilominar/raven
+// Copyright(C) 2025-2026 ilominar/raven
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 // Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -207,6 +207,10 @@ namespace JAFDTC.UI.Controls.Map
         //
         private const double DIST2_MOVE_THRESHOLD = (7.0 * 7.0);
 
+        // snap radius (in pixels) for snapping to be a thing: you must be this close to snap...
+        //
+        private const double MARKER_SNAP_RADIUS = 20.0;
+
         // useful math constants.
         //
         private const double RADIUS_EARTH_M = 6378137.0;        // radius of earth in meters
@@ -258,6 +262,8 @@ namespace JAFDTC.UI.Controls.Map
         }
 
         public IMapControlMarkerPopupFactory MarkerPopupFactory { get; set; }
+
+        public bool IsSnappingEnabled { get; set; }
 
         // ---- computed properties
 
@@ -1042,6 +1048,48 @@ namespace JAFDTC.UI.Controls.Map
             marker.Visibility = Visibility.Collapsed;
         }
 
+        /// <summary>
+        /// returns the location to snap the marker at the given point to upon pointer release, null if the marker
+        /// should not snap. to snap, snap mode must be enabled and there must be at most one marker within
+        /// MARKER_SNAP_RADIUS pixels.
+        /// </summary>
+        private Location SnapMarker(MapMarkerControl snappingMarker, Windows.Foundation.Point centerPoint)
+        {
+            List<MapMarkerControl> closeByMarks = [ ];
+            if (IsSnappingEnabled)
+            {
+                foreach (MarkerInfo info in _marks.Values)
+                {
+                    if (info.Marker.IsLoaded && !info.Marker.Tag.Equals(snappingMarker.Tag))
+                    {
+                        try
+                        {
+                            // Get element's position relative to container
+                            var transform = info.Marker.TransformToVisual(this);
+                            var elementPos = transform.TransformPoint(new Windows.Foundation.Point(0, 0));
+
+                            // Get element's center
+                            double centerX = elementPos.X + (info.Marker.ActualWidth / 2);
+                            double centerY = elementPos.Y + (info.Marker.ActualHeight / 2);
+
+                            // Calculate distance
+                            double dx = centerX - centerPoint.X;
+                            double dy = centerY - centerPoint.Y;
+                            double distance = Math.Sqrt((dx * dx) + (dy * dy));
+
+                            if (distance <= MARKER_SNAP_RADIUS)
+                                closeByMarks.Add(info.Marker);
+                        }
+                        catch
+                        {
+                            // Ignore elements that can't be transformed
+                        }
+                    }
+                }
+            }
+            return (closeByMarks.Count == 1) ? closeByMarks[0].Location : null;
+        }
+
         // ------------------------------------------------------------------------------------------------------------
         //
         // yardstick management
@@ -1288,6 +1336,12 @@ namespace JAFDTC.UI.Controls.Map
         {
             if (_dragState == DragStateEnum.ACTIVE_MARKER)
             {
+                // check if we should snap to the location of a nearby marker. if so, twiddle the location.
+                //
+                Location snapLocation = SnapMarker(_selectedMarker, evt.GetCurrentPoint(this).Position);
+                if (snapLocation != null)
+                    MoveMapMarker(_selectedMarker, snapLocation);
+
                 // mark end of drag by sending a moved verb in the final location with a param of 1.
                 //
                 VerbMirror?.MirrorVerbMarkerMoved(this, new(_selectedMarker), 1);

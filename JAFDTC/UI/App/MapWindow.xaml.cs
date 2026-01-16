@@ -999,6 +999,15 @@ namespace JAFDTC.UI.App
         }
 
         /// <summary>
+        /// snap command: toggle enable on the snap command.
+        /// </summary>
+        public async void CmdSnap_Click(object sender, RoutedEventArgs args)
+        {
+            AppBarToggleButton button = (AppBarToggleButton)sender;
+            uiMap.IsSnappingEnabled = button.IsChecked.GetValueOrDefault(false);
+        }
+
+        /// <summary>
         /// filter command: set the filter to apply to markers on the map.
         /// </summary>
         public async void CmdFilter_Click(object sender, RoutedEventArgs args)
