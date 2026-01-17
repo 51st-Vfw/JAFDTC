@@ -10,12 +10,10 @@ common areas.
 As always, please consult the airframe guides for further details on a specific airframe.
 
 * [A-10C Warthog](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/Airframe_A10C.md)
-* [AV-8B Harrier](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/Airframe_AV8B.md)
 * [F-14A/B Tomcat](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/Airframe_F14AB.md)
 * [F&#x2011;15E&nbsp;Strike&nbsp;Eagle](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/Airframe_F15E.md)
 * [F-16C Viper](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/Airframe_F16C.md)
 * [F/A-18C Hornet](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/Airframe_FA18C.md)
-* [Mirage M-2000C](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/Airframe_M2000C.md)
 
 This guide starts by looking at sharing information between pilots before discussing common
 user interface and interaction techniques.
@@ -107,8 +105,8 @@ upload, four conditions must hold,
 3. A configuration must be selected from the
    [*Configuration List Page*](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/README.md#configuration-list-page)
    in the JAFDTC user interface.
-4. A mission must be running in DCS with a pilot in pit in an airframe that matches the
-   airframe of the selected configuration in (3).
+4. A mission must be running in DCS with a pilot in pit of an airframe that matches the
+   airframe of the configuration that is selected in (3).
 
 The
 [status area](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/README.md#status-area)

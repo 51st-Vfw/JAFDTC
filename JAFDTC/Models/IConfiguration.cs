@@ -238,9 +238,9 @@ namespace JAFDTC.Models
 
         /// <summary>
         /// persist the configuration to storage, posting a ConfigurationSaved event with an argument set up
-        /// appropriately. the invoked by parameter identifies the object  that invoked the save. the sync system tag
-        /// identifies the system (if any) that may need to be synchronized with configurations that link to this
-        /// configuration (null indicates no systems should be sync'd).
+        /// appropriately. the invoked by parameter identifies the object that invoked the save. the sync system tag
+        /// identifies the system that was updated and may need to be synchronized with configurations that link to
+        /// this configuration (null tag indicates no systems should be sync'd).
         /// </summary>
         public void Save(object invokedBy = null, string syncSysTag = null);
 

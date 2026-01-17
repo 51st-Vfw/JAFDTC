@@ -8,15 +8,13 @@ and other avionics setup, into a DCS module at the start of a flight. The applic
 the following DCS airframes and systems,
 
 - *A-10C Warthog* &ndash; DSMS, HMCS, IFFCC, Radios, TGP, Waypoints, Miscellaneous Systems
-- *AV-8B Harrier* &ndash; Waypoints
 - *F-14A/B Tomcat* &ndash; Waypoints
 - *F-15E Strike Eagle* &ndash; MPD/MPCD Formats, Radios, Steerpoints, Miscellaneous Systems
 - *F-16C Viper* &ndash; Countermeasures, Datalink, HARM (ALIC, HTS), MFD Formats, Radios,
   SMS Munitions, Steerpoints, Miscellaneous Systems
 - *F/A-18C Hornet* &ndash; Countermeasures, Pre-Planned Weapons, Radios, Waypoints
-- *Mirage M-2000C* &ndash; Waypoints
 
-> Support for the *Harrier*, *Tomcat*, and *Mirage* airframes is experimental and has had
+> Support for the *Hornet*, *Strike Eagle*, and *Tomcat* airframes is experimental and has had
 > limited testing.
 
 > While JAFDTC should run under Windows 10, all development currently takes place on Windows 11
