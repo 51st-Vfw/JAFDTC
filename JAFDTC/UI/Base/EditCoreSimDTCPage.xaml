@@ -180,13 +180,13 @@ https://www.gnu.org/licenses/.
         <CheckBox Grid.Row="9" Tag="EnableRebuild" x:Name="uiCkbxEnableRebuild"
                   Margin="24,12,24,0" HorizontalAlignment="Left"
                   Click="CheckBox_Clicked">
-            JAFDTC always rebuilds the merged .dtc file when a merged system changes
+            JAFDTC always rebuilds the merged .dtc file when an unlinked merged system changes
         </CheckBox>
 
         <CheckBox Grid.Row="10" Tag="EnableLoad" x:Name="uiCkbxEnableLoad"
                   Margin="24,0,24,0" HorizontalAlignment="Left"
                   Click="CheckBox_Clicked">
-            JAFDTC triggers DCS tape load via the aircraft avionics at the start of JAFDTC upload
+            JAFDTC triggers DCS tape load via the aircraft avionics at the start of a JAFDTC upload
         </CheckBox>
 
         <!--

@@ -155,7 +155,7 @@ https://www.gnu.org/licenses/.
         <StackPanel Grid.Row="6" Margin="24,12,24,0">
             <TextBlock Style="{StaticResource TableHeaderTextStyle}"
                        TextWrapping="Wrap">
-                Specifies the path to save the generated kneeboards at, typically in saved games directory for DCS.
+                Specifies the path to save the generated kneeboards to, typically in saved games directory for DCS.
                 Note that DCS only scans this directory at launch, so generation must be done prior to DCS launch
                 for the kneeboards to be available.
             </TextBlock>
@@ -170,7 +170,7 @@ https://www.gnu.org/licenses/.
         <CheckBox Grid.Row="8" Tag="EnableRebuild" x:Name="uiCkbxEnableRebuild"
                   Margin="24,6,24,0" HorizontalAlignment="Left"
                   Click="CheckBox_Clicked">
-            JAFDTC always rebuilds the generated kneeboards when a system providing content changes
+            JAFDTC always rebuilds the generated kneeboards when an unlinked system providing content changes
         </CheckBox>
         <CheckBox Grid.Row="9" Tag="EnableNight" x:Name="uiCkbxEnableNight"
                   Margin="24,0,24,0" HorizontalAlignment="Left"
