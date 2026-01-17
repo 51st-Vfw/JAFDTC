@@ -21,7 +21,6 @@
 using JAFDTC.Kneeboard.Generate;
 using JAFDTC.Kneeboard.Models;
 using JAFDTC.Models.A10C;
-using JAFDTC.Models.AV8B;
 using JAFDTC.Models.Base;
 using JAFDTC.Models.Core;
 using JAFDTC.Models.CoreApp;
@@ -29,7 +28,6 @@ using JAFDTC.Models.F14AB;
 using JAFDTC.Models.F15E;
 using JAFDTC.Models.F16C;
 using JAFDTC.Models.FA18C;
-using JAFDTC.Models.M2000C;
 using JAFDTC.Models.Planning;
 using JAFDTC.Utilities;
 using System;
@@ -44,7 +42,6 @@ using System.Text.Json.Serialization;
 using System.Threading;
 
 using static JAFDTC.Models.IConfiguration;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace JAFDTC.Models
 {
@@ -508,13 +505,10 @@ namespace JAFDTC.Models
             return airframe switch
             {
                 AirframeTypes.A10C  => new A10CConfiguration(Guid.NewGuid().ToString(), name, [ ]),
-                AirframeTypes.AH64D => null,
-                AirframeTypes.AV8B  => new AV8BConfiguration(Guid.NewGuid().ToString(), name, [ ]),
                 AirframeTypes.F14AB => new F14ABConfiguration(Guid.NewGuid().ToString(), name, [ ]),
                 AirframeTypes.F15E  => new F15EConfiguration(Guid.NewGuid().ToString(), name, [ ]),
                 AirframeTypes.F16C  => new F16CConfiguration(Guid.NewGuid().ToString(), name, [ ]),
                 AirframeTypes.FA18C => new FA18CConfiguration(Guid.NewGuid().ToString(), name, [ ]),
-                AirframeTypes.M2000C => new M2000CConfiguration(Guid.NewGuid().ToString(), name, [ ]),
                 _                   => null,
             };
         }
@@ -531,13 +525,10 @@ namespace JAFDTC.Models
                 config = airframe switch
                 {
                     AirframeTypes.A10C  => JsonSerializer.Deserialize<A10CConfiguration>(json),
-                    AirframeTypes.AH64D => null,
-                    AirframeTypes.AV8B  => JsonSerializer.Deserialize<AV8BConfiguration>(json),
                     AirframeTypes.F14AB => JsonSerializer.Deserialize<F14ABConfiguration>(json),
                     AirframeTypes.F15E  => JsonSerializer.Deserialize<F15EConfiguration>(json),
                     AirframeTypes.F16C  => JsonSerializer.Deserialize<F16CConfiguration>(json),
                     AirframeTypes.FA18C => JsonSerializer.Deserialize<FA18CConfiguration>(json),
-                    AirframeTypes.M2000C => JsonSerializer.Deserialize<M2000CConfiguration>(json),
                     _                   => null,
                 };
             }
