@@ -353,7 +353,7 @@ namespace JAFDTC.UI.Base
 
                 PageHelper.CopyEditToConfig(EditMsn, Config);
                 CopyAllSettings(SettingLocation.Edit, SettingLocation.Config, true);
-                Config.Save(this, CoreSimDTCSystem.SystemTag);
+                Config.Save(this, SystemTag);
             }
             UpdateUIFromEditState();
         }
@@ -427,7 +427,7 @@ namespace JAFDTC.UI.Base
         /// </summary>
         private void RebuildEnableState()
         {
-            bool isEditable = string.IsNullOrEmpty(Config.SystemLinkedTo(CoreMissionSystem.SystemTag));
+            bool isEditable = string.IsNullOrEmpty(Config.SystemLinkedTo(SystemTag));
 
             Utilities.SetEnableState(uiCmbFlightShips, isEditable);
             foreach (PilotComboControl combo in _shipPilots)

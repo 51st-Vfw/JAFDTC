@@ -106,7 +106,7 @@ namespace JAFDTC.UI.Base
             {
                 PageHelper.CopyEditToConfig(EditDTC, Config);
                 CopyAllSettings(SettingLocation.Edit, SettingLocation.Config, true);
-                Config.Save(this, CoreSimDTCSystem.SystemTag);
+                Config.Save(this, SystemTag);
             }
             UpdateUIFromEditState();
         }
