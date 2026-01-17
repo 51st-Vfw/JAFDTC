@@ -341,9 +341,9 @@ namespace JAFDTC.Models.F16C
             string stpts = "";
             if (!STPT.IsDefault)
                 stpts = $" along with { STPT.Count } steerpoint" + ((STPT.Count > 1) ? "s" : "");
-            UpdatesInfoTextUI = updatesStrings["UpdatesInfoTextUI"] + stpts;
-            UpdatesIconsUI = updatesStrings["UpdatesIconsUI"];
-            UpdatesIconBadgesUI = updatesStrings["UpdatesIconBadgesUI"];
+            SystemInfoTextUI = updatesStrings["SystemInfoTextUI"] + stpts;
+            SystemInfoIconsUI = updatesStrings["SystemInfoIconsUI"];
+            SystemInfoIconBadgesUI = updatesStrings["SystemInfoIconBadgesUI"];
         }
 
         public override string Serialize(string systemTag = null)

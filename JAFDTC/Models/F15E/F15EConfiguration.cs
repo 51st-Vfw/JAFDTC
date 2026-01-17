@@ -168,9 +168,9 @@ namespace JAFDTC.Models.F15E
                 string routePlural = (nRoutes > 1) ? "s" : "";
                 stpts = $" along with {STPT.Count} steerpoint{stptPlural} on {nRoutes} route{routePlural}";
             }
-            UpdatesInfoTextUI = seat + updatesStrings["UpdatesInfoTextUI"] + stpts;
-            UpdatesIconsUI = updatesStrings["UpdatesIconsUI"];
-            UpdatesIconBadgesUI = updatesStrings["UpdatesIconBadgesUI"];
+            SystemInfoTextUI = seat + updatesStrings["SystemInfoTextUI"] + stpts;
+            SystemInfoIconsUI = updatesStrings["SystemInfoIconsUI"];
+            SystemInfoIconBadgesUI = updatesStrings["SystemInfoIconBadgesUI"];
         }
 
         public override string Serialize(string systemTag = null)

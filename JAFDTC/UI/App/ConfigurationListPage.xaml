@@ -220,7 +220,7 @@ https://www.gnu.org/licenses/.
                             <TextBlock FontSize="12"
                                        FontStyle="Italic"
                                        Foreground="{StaticResource TextFillColorTertiary}"
-                                       Text="{x:Bind UpdatesInfoTextUI}"/>
+                                       Text="{x:Bind SystemInfoTextUI}"/>
                         </StackPanel>
                         <Grid Grid.Column="2">
                             <!--
@@ -238,13 +238,13 @@ https://www.gnu.org/licenses/.
                                        Foreground="{ThemeResource SystemAccentColor}"
                                        FontFamily="Segoe Fluent Icons"
                                        FontSize="20"
-                                       Text="{x:Bind UpdatesIconsUI}"/>
+                                       Text="{x:Bind SystemInfoIconsUI}"/>
                             <TextBlock VerticalAlignment="Center"
                                        HorizontalAlignment="Right"
                                        FontFamily="Segoe Fluent Icons"
                                        FontSize="20"
                                        Tag="uiCfgListViewItemBadges"
-                                       Text="{x:Bind UpdatesIconBadgesUI}">
+                                       Text="{x:Bind SystemInfoIconBadgesUI}">
                                 <TextBlock.Foreground>
                                     <SolidColorBrush Color="White" Opacity="0.0" />
                                 </TextBlock.Foreground>

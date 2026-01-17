@@ -70,13 +70,9 @@ namespace JAFDTC.UI
                     sysList.Add(info.ShortName);
                     icons += $" {info.Glyph}";
                     if (config.SystemLinkedTo(info.Tag) != null)
-                    {
                         iconBadges += $" {CfgEditorGlyphs.BADGE}";
-                    }
                     else
-                    {
                         iconBadges += $" {info.Glyph}";
-                    }
                 }
             }
 
@@ -88,9 +84,9 @@ namespace JAFDTC.UI
 
             return new Dictionary<string, string>()
             {
-                ["UpdatesInfoTextUI"] = infoText,
-                ["UpdatesIconsUI"] = icons,
-                ["UpdatesIconBadgesUI"] = iconBadges,
+                ["SystemInfoTextUI"] = infoText,
+                ["SystemInfoIconsUI"] = icons,
+                ["SystemInfoIconBadgesUI"] = iconBadges,
             };
         }
 

@@ -123,21 +123,21 @@ namespace JAFDTC.Models
         /// default setup for use in the ui.
         /// </summary>
         [JsonIgnore]
-        public string UpdatesInfoTextUI { get; set; }
+        public string SystemInfoTextUI { get; set; }
 
         /// <summary>
         /// provides a string of Segoe Fluent Icon glyphs representing the systems that have been updated from their
         /// default setup for use in the ui.
         /// </summary>
         [JsonIgnore]
-        public string UpdatesIconsUI { get; set; }
+        public string SystemInfoIconsUI { get; set; }
 
         /// <summary>
         /// provides a string of Segoe Fluent Icon glyphs representing the badges to apply to the icons from
-        /// UpdatesIcons for use in the ui.
+        /// SystemInfoIconsUI for use in the ui.
         /// </summary>
         [JsonIgnore]
-        public string UpdatesIconBadgesUI { get; set; }
+        public string SystemInfoIconBadgesUI { get; set; }
 
         // ------------------------------------------------------------------------------------------------------------
         //
@@ -263,8 +263,8 @@ namespace JAFDTC.Models
         public bool SaveMergedKboards();
 
         /// <summary>
-        /// updates the UpdatesInfoTextUI, UpdatesIconsUI, and UpdatesIconBadgesUI properties in response to an update
-        /// to the configuration.
+        /// updates the SystemInfoTextUI, SystemInfoIconsUI, and SystemInfoIconBadgesUI properties in response to an
+        /// update to the configuration.
         /// </summary>
         public void ConfigurationUpdated();
 

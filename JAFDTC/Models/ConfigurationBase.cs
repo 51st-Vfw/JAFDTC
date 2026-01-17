@@ -115,7 +115,6 @@ namespace JAFDTC.Models
             }
         }
 
-        [JsonIgnore]
         private string _favoriteGlyphUI;
         [JsonIgnore]
         public string FavoriteGlyphUI
@@ -131,49 +130,46 @@ namespace JAFDTC.Models
             }
         }
 
+        private string _systemInfoTextUI;
         [JsonIgnore]
-        private string _updatesInfoTextUI;
-        [JsonIgnore]
-        public string UpdatesInfoTextUI
+        public string SystemInfoTextUI
         {
-            get => _updatesInfoTextUI;
+            get => _systemInfoTextUI;
             set
             {
-                if (_updatesInfoTextUI != value)
+                if (_systemInfoTextUI != value)
                 {
-                    _updatesInfoTextUI = value;
+                    _systemInfoTextUI = value;
                     OnPropertyChanged();
                 }
             }
         }
 
+        private string _systemInfoIconsUI;
         [JsonIgnore]
-        private string _updatesIconsUI;
-        [JsonIgnore]
-        public string UpdatesIconsUI
+        public string SystemInfoIconsUI
         {
-            get => _updatesIconsUI;
+            get => _systemInfoIconsUI;
             set
             {
-                if (_updatesIconsUI != value)
+                if (_systemInfoIconsUI != value)
                 {
-                    _updatesIconsUI = value;
+                    _systemInfoIconsUI = value;
                     OnPropertyChanged();
                 }
             }
         }
 
+        private string _systemInfoIconBadgesUI;
         [JsonIgnore]
-        private string _updatesIconBadgesUI;
-        [JsonIgnore]
-        public string UpdatesIconBadgesUI
+        public string SystemInfoIconBadgesUI
         {
-            get => _updatesIconBadgesUI;
+            get => _systemInfoIconBadgesUI;
             set
             {
-                if (_updatesIconBadgesUI != value)
+                if (_systemInfoIconBadgesUI != value)
                 {
-                    _updatesIconBadgesUI = value;
+                    _systemInfoIconBadgesUI = value;
                     OnPropertyChanged();
                 }
             }
