@@ -184,6 +184,12 @@ namespace JAFDTC.Models.F16C
         //
         // ------------------------------------------------------------------------------------------------------------
 
+        /// <summary>
+        /// parse the role string from import role setup. the string consists of either callsign or tacan fields.
+        /// callsign fields are of the form CCNN, where C is [a-zA-Z] and N is [0-9] (eg, "VN11", "CY23"). tacan
+        /// fields are of the form NM where N is [0-9]{1,3] and M is [xyXY] (eg, "1Y", "132X"). retruns a dictionary
+        /// with role fields broken out, null on error.
+        /// </summary>
         private static Dictionary<string, string> ParseRole(string role)
         {
             Dictionary<string, string> info = [ ];
@@ -231,36 +237,49 @@ namespace JAFDTC.Models.F16C
                 Airframes = [ AirframeTypes.F16C ]
             };
 
-            // determine ownship flight/element number. we will check (in order): (1) value in config, (2) value
-            // inferred from position of pilot matching callsign from settings in team list, or (3) value from
-            // role specification string. later over-rides earlier, so (3) is selected if both (2) and (3) exist.
+            // determine ownship flight/element number. check (in order): (1) value in dlnk config, (2) value
+            // inferred from position of pilot matching callsign from settings in team list, (3) value from
+            // role specification string, or (4) value from mission config. later over-rides earlier, so (3) is
+            // selected if both (2) and (3) exist but not (4). with that information update dlnk configuration.
+            //
+            // note that if (4) hits, there is no need to update ownship information as the mission and dlnk
+            // configs should already be consistent.
             //
             string myUid = null;
             foreach (Pilot driver in PilotDbase.Instance.Find(query))
                 if (driver.Name == Settings.Callsign)
                 {
                     myUid = driver.UniqueID;
+                    foreach (string uid in Mission.PilotUIDs)
+                        if (uid == myUid)
+                        {
+                            myUid = null;
+                            break;
+                        }
                     break;
                 }
             string feNum = DLNK.OwnshipFENumber;
-            for (int i = 0; i < DLNK.TeamMembers.Length; i++)
-                if (DLNK.TeamMembers[i].DriverUID == myUid)
-                {
-                    int flight = (i / 4) + 1;
-                    int elem = (i % 4) + 1;
-                    if (string.IsNullOrEmpty(feNum))
-                        feNum = $"{flight}{elem}";
-                    else
-                        feNum = $"{feNum[0]}{elem}";
-                }
-            if (roleInfo.TryGetValue("FLIGHT", out string f) && roleInfo.TryGetValue("ELEM", out string e))
-                feNum = $"{f}{e}";
-            if (!string.IsNullOrEmpty(feNum))
+            if (myUid != null)
             {
-                DLNK.OwnshipFENumber = feNum;
-                if (roleInfo.TryGetValue("CALLSIGN", out string cs))
-                    DLNK.OwnshipCallsign = cs;
-                DLNK.IsOwnshipLead = (feNum[1] == '1');
+                for (int i = 0; i < DLNK.TeamMembers.Length; i++)
+                    if (DLNK.TeamMembers[i].DriverUID == myUid)
+                    {
+                        int flight = (i / 4) + 1;
+                        int elem = (i % 4) + 1;
+                        if (string.IsNullOrEmpty(feNum))
+                            feNum = $"{flight}{elem}";
+                        else
+                            feNum = $"{feNum[0]}{elem}";
+                    }
+                if (roleInfo.TryGetValue("FLIGHT", out string f) && roleInfo.TryGetValue("ELEM", out string e))
+                    feNum = $"{f}{e}";
+                if (!string.IsNullOrEmpty(feNum))
+                {
+                    DLNK.OwnshipFENumber = feNum;
+                    if (roleInfo.TryGetValue("CALLSIGN", out string cs))
+                        DLNK.OwnshipCallsign = cs;
+                    DLNK.IsOwnshipLead = (feNum[1] == '1');
+                }
             }
 
             // determine tacan setup. if we have tacan in role spec string, use that value as lead tacan and
