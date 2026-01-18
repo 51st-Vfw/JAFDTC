@@ -350,6 +350,28 @@ namespace JAFDTC.Models.F16C
             SystemInfoTextUI = updatesStrings["SystemInfoTextUI"] + stpts;
             SystemInfoIconsUI = updatesStrings["SystemInfoIconsUI"];
             SystemInfoIconBadgesUI = updatesStrings["SystemInfoIconBadgesUI"];
+
+            // when updating the mission system, we may need to push changes down into the dlnk system. if the
+            // mission is default, we unlink the datalink system (as what's the point?). if not, we need to
+            // update the pilots in slots 1-4 of the dlnk team table to match the mission, minding cases where
+            // the mission is decreasing the number of ships in play.
+            // 
+            if (updateSysTag == CoreMissionSystem.SystemTag)
+            {
+                if (Mission.IsDefault)
+                {
+                    DLNK.IsLinkedMission = false;
+                }
+                else if (DLNK.IsLinkedMission)
+                {
+                    for (int i = 0; i < Mission.Ships; i++)
+                        for (int j = 0; j < DLNK.TeamMembers.Length; j++)
+                            if (DLNK.TeamMembers[j].DriverUID == Mission.PilotUIDs[i])
+                                DLNK.TeamMembers[j].Reset();
+                    for (int i = 0; i < Mission.Ships; i++)
+                        DLNK.TeamMembers[i].DriverUID = Mission.PilotUIDs[i];
+                }
+            }
         }
 
         public override string Serialize(string systemTag = null)
