@@ -449,8 +449,8 @@ namespace JAFDTC.Models
 
         public void Save(object invokedBy = null, string syncSysTag = null)
         {
-            FileManager.SaveConfigurationFile(this);
             ConfigurationUpdated(syncSysTag);
+            FileManager.SaveConfigurationFile(this);
             OnConfigurationSaved(invokedBy, syncSysTag);
         }
 

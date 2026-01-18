@@ -265,7 +265,8 @@ namespace JAFDTC.Models
         /// <summary>
         /// configuration is updating based on changes to the specified system tag (null => unspecified system). at
         /// minimum, this function updates the SystemInfoTextUI, SystemInfoIconsUI, and SystemInfoIconBadgesUI
-        /// properties to remain consistent with the update.
+        /// properties to remain consistent with the update. this function should be called before persisting the
+        /// configuration.
         /// </summary>
         public void ConfigurationUpdated(string updateSysTag = null);
 
