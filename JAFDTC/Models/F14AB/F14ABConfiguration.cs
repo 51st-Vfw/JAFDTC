@@ -34,8 +34,14 @@ namespace JAFDTC.Models.F14AB
     /// up. this object is serialized to/from json when persisting configurations. configuration supports navigation
     /// system.
     /// </summary>
-    public class F14ABConfiguration : ConfigurationBase
+    public partial class F14ABConfiguration : ConfigurationBase
     {
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // constants
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
         private const string _versionCfg = "F14AB-1.0";         // current version
 
         // ------------------------------------------------------------------------------------------------------------
@@ -102,7 +108,7 @@ namespace JAFDTC.Models.F14AB
             };
         }
 
-        public override void ConfigurationUpdated()
+        public override void ConfigurationUpdated(string updateSysTag = null)
         {
             F14ABConfigurationEditor editor = new(this);
             Dictionary<string, string> updatesStrings = editor.BuildUpdatesStrings(this);
@@ -157,7 +163,7 @@ namespace JAFDTC.Models.F14AB
                 }
                 if (isHandled)
                 {
-                    ConfigurationUpdated();
+                    ConfigurationUpdated(systemTag);
                     isSuccess = true;
                 }
             }

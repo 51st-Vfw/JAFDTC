@@ -263,10 +263,11 @@ namespace JAFDTC.Models
         public bool SaveMergedKboards();
 
         /// <summary>
-        /// updates the SystemInfoTextUI, SystemInfoIconsUI, and SystemInfoIconBadgesUI properties in response to an
-        /// update to the configuration.
+        /// configuration is updating based on changes to the specified system tag (null => unspecified system). at
+        /// minimum, this function updates the SystemInfoTextUI, SystemInfoIconsUI, and SystemInfoIconBadgesUI
+        /// properties to remain consistent with the update.
         /// </summary>
-        public void ConfigurationUpdated();
+        public void ConfigurationUpdated(string updateSysTag = null);
 
         /// <summary>
         /// returns a json serialization of the entire configuration or a single system (identified by the system tag)

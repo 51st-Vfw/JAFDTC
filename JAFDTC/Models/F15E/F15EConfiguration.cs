@@ -39,8 +39,14 @@ namespace JAFDTC.Models.F15E
     /// up. this object is serialized to/from json when persisting configurations. configuration supports navigation,
     /// radio, and miscellaneous systems.
     /// </summary>
-    public class F15EConfiguration : ConfigurationBase
+    public partial class F15EConfiguration : ConfigurationBase
     {
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // constants
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
         private const string _versionCfg = "F15E-1.0";          // current version
 
         /// <summary>
@@ -145,7 +151,7 @@ namespace JAFDTC.Models.F15E
             };
         }
 
-        public override void ConfigurationUpdated()
+        public override void ConfigurationUpdated(string updateSysTag = null)
         {
             F15EConfigurationEditor editor = new(this);
             Dictionary<string, string> updatesStrings = editor.BuildUpdatesStrings(this);
@@ -231,7 +237,7 @@ namespace JAFDTC.Models.F15E
                 }
                 if (isHandled)
                 {
-                    ConfigurationUpdated();
+                    ConfigurationUpdated(systemTag);
                     isSuccess = true;
                 }
             }

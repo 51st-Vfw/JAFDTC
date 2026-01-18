@@ -41,6 +41,12 @@ namespace JAFDTC.Models.FA18C
     /// </summary>
     public partial class FA18CConfiguration : ConfigurationBase
     {
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // constants
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
         private const string _versionCfg = "FA18C-1.0";         // current version
 
         // ------------------------------------------------------------------------------------------------------------
@@ -137,7 +143,7 @@ namespace JAFDTC.Models.FA18C
             };
         }
 
-        public override void ConfigurationUpdated()
+        public override void ConfigurationUpdated(string updateSysTag = null)
         {
             FA18CConfigurationEditor editor = new(this);
             Dictionary<string, string> updatesStrings = editor.BuildUpdatesStrings(this);
@@ -206,7 +212,7 @@ namespace JAFDTC.Models.FA18C
                 }
                 if (isHandled)
                 {
-                    ConfigurationUpdated();
+                    ConfigurationUpdated(systemTag);
                     isSuccess = true;
                 }
             }

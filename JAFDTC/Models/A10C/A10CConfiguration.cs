@@ -40,8 +40,14 @@ namespace JAFDTC.Models.A10C
     /// up. this object is serialized to/from json when persisting configurations. configuration supports navigation
     /// system.
     /// </summary>
-    public class A10CConfiguration : ConfigurationBase
+    public partial class A10CConfiguration : ConfigurationBase
     {
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // constants
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
         private const string _versionCfg = "A10C-1.0";          // current version
 
         // ------------------------------------------------------------------------------------------------------------
@@ -150,7 +156,7 @@ namespace JAFDTC.Models.A10C
             };
         }
 
-        public override void ConfigurationUpdated()
+        public override void ConfigurationUpdated(string updateSysTag = null)
         {
             A10CConfigurationEditor editor = new(this);
             Dictionary<string, string> updatesStrings = editor.BuildUpdatesStrings(this);
@@ -234,7 +240,7 @@ namespace JAFDTC.Models.A10C
                 }
                 if (isHandled)
                 {
-                    ConfigurationUpdated();
+                    ConfigurationUpdated(systemTag);
                     isSuccess = true;
                 }
             }

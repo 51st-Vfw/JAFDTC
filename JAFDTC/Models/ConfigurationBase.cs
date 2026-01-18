@@ -430,7 +430,7 @@ namespace JAFDTC.Models
             LinkedSysMap ??= [ ];
             LinkedSysMap[systemTag] = linkedConfig.UID;
             CloneSystemFrom(systemTag, linkedConfig);
-            ConfigurationUpdated();
+            ConfigurationUpdated(systemTag);
         }
 
         public void UnlinkSystem(string systemTag)
@@ -438,19 +438,19 @@ namespace JAFDTC.Models
             if ((LinkedSysMap != null) && (systemTag == null))
             {
                 LinkedSysMap.Clear();
-                ConfigurationUpdated();
+                ConfigurationUpdated(systemTag);
             }
             else if ((LinkedSysMap != null) && (LinkedSysMap.ContainsKey(systemTag)))
             {
                 LinkedSysMap.Remove(systemTag);
-                ConfigurationUpdated();
+                ConfigurationUpdated(systemTag);
             }
         }
 
         public void Save(object invokedBy = null, string syncSysTag = null)
         {
             FileManager.SaveConfigurationFile(this);
-            ConfigurationUpdated();
+            ConfigurationUpdated(syncSysTag);
             OnConfigurationSaved(invokedBy, syncSysTag);
         }
 
@@ -475,7 +475,7 @@ namespace JAFDTC.Models
                 LinkedSysMap.Remove(system);
         }
 
-        public abstract void ConfigurationUpdated();
+        public abstract void ConfigurationUpdated(string updateSysTag = null);
 
         public abstract string Serialize(string systemTag = null);
 

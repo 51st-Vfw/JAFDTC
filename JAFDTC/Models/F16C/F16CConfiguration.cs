@@ -51,6 +51,12 @@ namespace JAFDTC.Models.F16C
     /// </summary>
     public partial class F16CConfiguration : ConfigurationBase
     {
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // constants
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
         private const string _versionCfg = "F16C-1.1";          // current version
 
         // v1.0 --> v1.1:
@@ -58,16 +64,16 @@ namespace JAFDTC.Models.F16C
         //
         private const string _versionCfg_10 = "F16C-1.0";
 
+        // ---- regular expressions
+
+        [GeneratedRegex(@"^[0-7]{5}$")]
+        public static partial Regex RegexTNDL();
+
         // ------------------------------------------------------------------------------------------------------------
         //
         // properties
         //
         // ------------------------------------------------------------------------------------------------------------
-
-        // ---- regular expressions
-
-        [GeneratedRegex(@"^[0-7]{5}$")]
-        public static partial Regex RegexTNDL();
 
         // ---- public properties
 
@@ -333,7 +339,7 @@ namespace JAFDTC.Models.F16C
             };
         }
 
-        public override void ConfigurationUpdated()
+        public override void ConfigurationUpdated(string updateSysTag = null)
         {
             F16CConfigurationEditor editor = new(this);
             Dictionary<string, string> updatesStrings = editor.BuildUpdatesStrings(this);
@@ -459,7 +465,7 @@ namespace JAFDTC.Models.F16C
                 }
                 if (isHandled)
                 {
-                    ConfigurationUpdated();
+                    ConfigurationUpdated(systemTag);
                     isSuccess = true;
                 }
             }
