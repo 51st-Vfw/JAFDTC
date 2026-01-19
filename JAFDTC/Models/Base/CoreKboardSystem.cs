@@ -137,6 +137,11 @@ namespace JAFDTC.Models.Base
         //
         // ------------------------------------------------------------------------------------------------------------
 
+        public override void Sanitize()
+        {
+            OutputPath = "";
+        }
+
         /// <summary>
         /// validates the Template and OutputPath fields are valid. if not, they are reset to default values.
         /// </summary>
