@@ -164,8 +164,7 @@ namespace JAFDTC.UI.Controls.Map
             {
                 Marker.Visibility = visibilityMark;
                 ThreatRing?.Visibility(visibilityRing);
-                if (EditHandle != null)
-                    EditHandle.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
+                EditHandle?.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
             }
 
             /// <summary>
@@ -210,6 +209,10 @@ namespace JAFDTC.UI.Controls.Map
         // snap radius (in pixels) for snapping to be a thing: you must be this close to snap...
         //
         private const double MARKER_SNAP_RADIUS = 20.0;
+
+        // delay (s) from mouse entered to starting pop-up.
+        //
+        private const double MARKER_POPUP_DELAY = 1.0;
 
         // useful math constants.
         //
@@ -427,12 +430,13 @@ namespace JAFDTC.UI.Controls.Map
         }
 
         /// <summary>
-        /// TODO: document
+        /// generate the text for use in the yardstick measurement "[distance][units at [bearing] T". returns
+        /// a boolean indicating if the popup should be left or right of the pointer (based on bearing).
         /// </summary>
         private static string YardstickText(ObservableCollection<Location> points, out bool isLeftHalfPlane)
         {
             points[0].GetAzimuthDistance(points[1], out double bearing, out double dist);
-            bearing = bearing * (180.0 / Math.PI);
+            bearing *= (180.0 / Math.PI);
             isLeftHalfPlane = (bearing < 0.0);
             bearing += (bearing < 0.0) ? 360.0 : 0.0;
             dist *= RADIUS_EARTH_M * NM_PER_M;
@@ -1481,7 +1485,8 @@ namespace JAFDTC.UI.Controls.Map
                 _mouseOverMarker = marker;
                 object tag = marker.Tag;
                 int enterSerial = ++_mouseOverSerial;
-                Utilities.DispatchAfterDelay(DispatcherQueue, 1.5, false, (s, e) => TriggerMarkerPopup(tag, enterSerial));
+                Utilities.DispatchAfterDelay(DispatcherQueue, MARKER_POPUP_DELAY, false,
+                                             (s, e) => TriggerMarkerPopup(tag, enterSerial));
             }
         }
 
