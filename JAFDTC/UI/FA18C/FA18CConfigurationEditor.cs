@@ -24,15 +24,16 @@ using System.Diagnostics;
 
 namespace JAFDTC.UI.FA18C
 {
-    // defines the glyphs to use for each system editor page in the viper configuration.
-    //
-    public class Glyphs
+    /// <summary>
+    /// defines the glyphs to use for each system editor page in the viper configuration.
+    /// </summary>
+    internal class Glyphs
     {
-        public const string CMS = "\xEA18";
-        public const string MISC = "\xE8B7";
+        public const string CMS = UI.Glyphs.Countermeasures;
+        public const string MISC = UI.Glyphs.Miscellaneous;
         public const string PP = "\xE8FD";
-        public const string RADIO = "\xE704";
-        public const string WYPT = "\xE707";
+        public const string RADIO = UI.Glyphs.Radio;
+        public const string WYPT = UI.Glyphs.Navigation;
     }
 
     /// <summary>

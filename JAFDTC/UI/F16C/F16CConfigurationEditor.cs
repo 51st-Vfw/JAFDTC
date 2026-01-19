@@ -27,7 +27,7 @@ namespace JAFDTC.UI.F16C
     /// <summary>
     /// defines the glyphs to use for each system editor page in the viper configuration.
     /// </summary>
-    public class Glyphs
+    internal class Glyphs
     {
         public const string CMDS = UI.Glyphs.Countermeasures;
         public const string DLNK = UI.Glyphs.Pilots;

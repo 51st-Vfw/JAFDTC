@@ -2,7 +2,7 @@
 //
 // F15EConfigurationEditor.cs : supports editors for the f16c configuration
 //
-// Copyright(C) 2023-2025 ilominar/raven
+// Copyright(C) 2023-2026 ilominar/raven
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 // Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -28,12 +28,12 @@ namespace JAFDTC.UI.F15E
     /// <summary>
     /// defines the glyphs to use for each system editor page in the viper configuration.
     /// </summary>
-    public class Glyphs
+    internal class Glyphs
     {
-        public const string MISC = "\xE8B7";
-        public const string MPD = "\xE950";
-        public const string RADIO = "\xE704";
-        public const string STPT = "\xE707";
+        public const string MISC = UI.Glyphs.Miscellaneous;
+        public const string MPD = UI.Glyphs.Displays;
+        public const string RADIO = UI.Glyphs.Radio;
+        public const string STPT = UI.Glyphs.Navigation;
         public const string UFC = "\xF261";
         public const string PILOT = "\xE806";
         public const string WSO = "\xF272";

@@ -2,7 +2,7 @@
 //
 // A10CConfigurationEditor.cs : supports editors for the a-10c configuration
 //
-// Copyright(C) 2023-2025 ilominar/raven
+// Copyright(C) 2023-2026 ilominar/raven
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 // Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -23,18 +23,19 @@ using System.Collections.ObjectModel;
 
 namespace JAFDTC.UI.A10C
 {
-    // defines the glyphs to use for each system editor page in the hawg configuration.
-    //
-    public class Glyphs
+    /// <summary>
+    /// defines the glyphs to use for each system editor page in the hawg configuration.
+    /// </summary>
+    internal class Glyphs
     {
         public const string DSMS =  "\xEBD2";
         public const string HMCS =  "\xEA4A";
         public const string IFFCC = "\xE70A";
-        public const string MISC =  "\xE8B7";
-        public const string RADIO = "\xE704";
+        public const string MISC =  UI.Glyphs.Miscellaneous;
+        public const string RADIO = UI.Glyphs.Radio;
         public const string TAD =   "\xE8B9";
         public const string TGP =   "\xF272";
-        public const string WYPT =  "\xE707";
+        public const string WYPT =  UI.Glyphs.Navigation;
     }
 
     /// <summary>
