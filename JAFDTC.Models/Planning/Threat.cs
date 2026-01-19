@@ -21,12 +21,18 @@ using JAFDTC.Models.Core;
 
 namespace JAFDTC.Models.Planning
 {
+    /// <summary>
+    /// planning threat model that includes coalition, name, type, location, and wez information. by convention,
+    /// setting Type to an empty string (null or "") identifies a threat region that is not associated with a
+    /// specific unit (for example, the overall threat region of a sam site as a whole). locations are specified in
+    /// decimal degrees.
+    /// </summary>
     public class Threat
     {
         public required CoalitionType Coalition { get; set; }               // coalition of threat
         public required string Name { get; set; }                           // name of threat
-        public required string Type { get; set; }                           // dcs type of threat
-        public required Location Location { get; set; }                     // location of threat
-        public double? WEZ { get; set; }                                    // size of wez (nm)
+        public required string? Type { get; set; }                          // dcs threat type, null => threat region
+        public required Location Location { get; set; }                     // location of threat, decimal degrees
+        public double? WEZ { get; set; }                                    // size of wez, centered on location (nm)
     }
 }
