@@ -19,19 +19,21 @@
 
 using JAFDTC.Models.A10C.DSMS;
 using JAFDTC.Models.A10C.HMCS;
+using JAFDTC.Models.A10C.IFFCC;
 using JAFDTC.Models.A10C.Misc;
 using JAFDTC.Models.A10C.Radio;
 using JAFDTC.Models.A10C.TAD;
 using JAFDTC.Models.A10C.TGP;
 using JAFDTC.Models.A10C.WYPT;
 using JAFDTC.Models.Core;
+using JAFDTC.Models.Planning;
 using JAFDTC.UI.A10C;
 using JAFDTC.Utilities;
 using System;
 using System.Collections.Generic;
-using System.Text.Json.Serialization;
 using System.Text.Json;
-using JAFDTC.Models.A10C.IFFCC;
+using System.Text.Json.Serialization;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace JAFDTC.Models.A10C
 {
@@ -139,6 +141,20 @@ namespace JAFDTC.Models.A10C
         // overriden class methods
         //
         // ------------------------------------------------------------------------------------------------------------
+
+        public override void Sanitize(bool isResetUID = false)
+        {
+            base.Sanitize(isResetUID);
+
+            DSMS.Sanitize();
+            HMCS.Sanitize();
+            IFFCC.Sanitize();
+            Misc.Sanitize();
+            Radio.Sanitize();
+            TAD.Sanitize();
+            TGP.Sanitize();
+            WYPT.Sanitize();
+        }
 
         public override ISystem SystemForTag(string tag)
         {

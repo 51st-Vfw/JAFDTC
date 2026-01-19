@@ -99,6 +99,13 @@ namespace JAFDTC.Models.F14AB
         //
         // ------------------------------------------------------------------------------------------------------------
 
+        public override void Sanitize(bool isResetUID = false)
+        {
+            base.Sanitize(isResetUID);
+
+            WYPT.Sanitize();
+        }
+
         public override ISystem SystemForTag(string tag)
         {
             return tag switch

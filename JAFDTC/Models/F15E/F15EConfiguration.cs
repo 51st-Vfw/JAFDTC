@@ -138,6 +138,17 @@ namespace JAFDTC.Models.F15E
         //
         // ------------------------------------------------------------------------------------------------------------
 
+        public override void Sanitize(bool isResetUID = false)
+        {
+            base.Sanitize(isResetUID);
+
+            Misc.Sanitize();
+            MPD.Sanitize();
+            Radio.Sanitize();
+            STPT.Sanitize();
+            UFC.Sanitize();
+        }
+
         public override ISystem SystemForTag(string tag)
         {
             return tag switch

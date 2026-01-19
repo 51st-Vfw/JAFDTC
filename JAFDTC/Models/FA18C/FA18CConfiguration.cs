@@ -130,6 +130,17 @@ namespace JAFDTC.Models.FA18C
         //
         // ------------------------------------------------------------------------------------------------------------
 
+        public override void Sanitize(bool isResetUID = false)
+        {
+            base.Sanitize(isResetUID);
+
+            CMS.Sanitize();
+            PP.Sanitize();
+            Radio.Sanitize();
+            WYPT.Sanitize();
+            MUMI.Sanitize();
+        }
+
         public override ISystem SystemForTag(string tag)
         {
             return tag switch

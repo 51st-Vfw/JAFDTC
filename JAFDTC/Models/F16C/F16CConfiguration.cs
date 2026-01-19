@@ -232,6 +232,24 @@ namespace JAFDTC.Models.F16C
         //
         // ------------------------------------------------------------------------------------------------------------
 
+        public override void Sanitize(bool isResetUID = false)
+        {
+            base.Sanitize(isResetUID);
+
+            CMDS.Sanitize();
+            DLNK.Sanitize();
+            HARM.Sanitize();
+            HTS.Sanitize();
+            MFD.Sanitize();
+            Misc.Sanitize();
+            Radio.Sanitize();
+            SMS.Sanitize();
+            STPT.Sanitize();
+            DTE.Sanitize();
+            Kboard.Sanitize();
+            Mission.Sanitize();
+        }
+
         public override bool ValidateRole(string role) => (ParseRole(role) != null);
 
         public override void AdjustForRole(string role)
