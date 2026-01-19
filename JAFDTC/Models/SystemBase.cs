@@ -27,7 +27,7 @@ namespace JAFDTC.Models
     /// <summary>
     /// abstract base class for an object that carries configuration information for a system or portion of a
     /// system. derived classes must provide implementations for IsDefault and Reset() and may override base
-    /// MergeIntoSimDTC() and MergeIntoMission() implementations.
+    /// Sanitize(), MergeIntoSimDTC(), and MergeIntoMission() implementations.
     /// </summary>
     public abstract class SystemBase : BindableObject, ISystem
     {
@@ -40,6 +40,8 @@ namespace JAFDTC.Models
         public abstract bool IsDefault { get; }
 
         public abstract void Reset();
+
+        public virtual void Sanitize() { }
 
         // ------------------------------------------------------------------------------------------------------------
         //

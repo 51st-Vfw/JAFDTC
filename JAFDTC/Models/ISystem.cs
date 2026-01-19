@@ -34,6 +34,12 @@ namespace JAFDTC.Models
         public bool IsDefault { get; }
 
         /// <summary>
+        /// sanatize a system prior to exporting. this clears any information that might refer to local host
+        /// resources such as paths.
+        /// </summary>
+        public void Sanitize();
+
+        /// <summary>
         /// returns the json node built by merging data from the system configuration into a dcs dtc configuration.
         /// the dcs dtc configuration is presented as a JsonObject for the root of the "data" object in the dtc
         /// file that encodes configuration data. this method will update the JsonObject and/or its children as
