@@ -687,7 +687,7 @@ namespace JAFDTC.UI.App
                 {
                     uiMap.AddMarker(type, group.UniqueID, new Location(avgLat, avgLon), threatRadius,
                                     !importSpec.IsSummaryOnly);
-                    _mapImportMarkerNameDict[group.UniqueID] = threatType + " WEZ";
+                    _mapImportMarkerNameDict[group.UniqueID] = $"{group.Name}: {threatType} WEZ";
                 }
             }
             FileManager.Log($"MapWindow:CoreImportMarkers added {nMarkers} markers to map");
