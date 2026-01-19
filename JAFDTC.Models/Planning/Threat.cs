@@ -17,13 +17,16 @@
 //
 // ********************************************************************************************************************
 
+using JAFDTC.Models.Core;
+
 namespace JAFDTC.Models.Planning
 {
     public class Threat
     {
-        public required string Name { get; set; }
-        public required string Type { get; set; }
-        public required Location Location { get; set; }
-        public double? WEZ { get; set; }
+        public required CoalitionType Coalition { get; set; }               // coalition of threat
+        public required string Name { get; set; }                           // name of threat
+        public required string Type { get; set; }                           // dcs type of threat
+        public required Location Location { get; set; }                     // location of threat
+        public double? WEZ { get; set; }                                    // size of wez (nm)
     }
 }
