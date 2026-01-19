@@ -49,7 +49,7 @@ https://www.gnu.org/licenses/.
                 <AutoSuggestBox Width="450"
                                 x:Name="uiAppConfigFilterBox"
                                 VerticalAlignment="Center"
-                                PlaceholderText="Filter Configurations by Name"
+                                PlaceholderText="Filter configurations by name"
                                 QueryIcon="Find"/>
             </TitleBar.Content>
         </TitleBar>
