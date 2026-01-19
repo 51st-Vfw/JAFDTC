@@ -397,7 +397,11 @@ namespace JAFDTC.Models
             MutexJAFDTC.ReleaseMutex();
         }
 
-        public void Sanitize(bool isResetUID = false)
+        /// <summary>
+        /// sanitize base implementation takes care of the base properties. subclasses may override to sanitize
+        /// any configuration-specific state, but should invoke base implementation before returning.
+        /// </summary>
+        public virtual void Sanitize(bool isResetUID = false)
         {
             UID = null;
             Filename = null;

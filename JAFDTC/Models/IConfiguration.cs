@@ -165,8 +165,9 @@ namespace JAFDTC.Models
 
         /// <summary>
         /// sanatize a configuration instance by clearing UID, Filename, IsFavorite, LinkedSysMap, LastSystemEdited
-        /// properties. typically this is done on a Clone() of a configuration that is to be exported. uid may be
-        /// optionally reset (note a sanitized config cannot be used until uid is reset).
+        /// properties along with sanitizing all of the configuration systems. typically this is done on a Clone()
+        /// of a configuration that is to be exported. uid may be optionally reset (note a sanitized config cannot
+        /// be used until uid is reset).
         /// </summary>
         public void Sanitize(bool isReestUID = false);
 
