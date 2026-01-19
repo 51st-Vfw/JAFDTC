@@ -38,14 +38,6 @@ namespace JAFDTC.UI
     /// </summary>
     public abstract class ConfigurationEditor : IConfigurationEditor
     {
-        /// <summary>
-        /// defines the glyphs common to the ui for configuration editors.
-        /// </summary>
-        public class CfgEditorGlyphs
-        {
-            public const string BADGE = "\xF0B6";
-        }
-
         // ------------------------------------------------------------------------------------------------------------
         //
         // IConfigurationEditor
@@ -54,13 +46,13 @@ namespace JAFDTC.UI
 
         public IConfiguration Config { get; set; }
 
-        public virtual ObservableCollection<ConfigEditorPageInfo> ConfigEditorPageInfo() => new();
+        public virtual ObservableCollection<ConfigEditorPageInfo> ConfigEditorPageInfo() => [ ];
 
-        public virtual ObservableCollection<ConfigAuxCommandInfo> ConfigAuxCommandInfo() => new();
+        public virtual ObservableCollection<ConfigAuxCommandInfo> ConfigAuxCommandInfo() => [ ];
 
         public virtual Dictionary<string, string> BuildUpdatesStrings(IConfiguration config)
         {
-            List<string> sysList = new();
+            List<string> sysList = [ ];
             string icons = "";
             string iconBadges = "";
             foreach (ConfigEditorPageInfo info in ConfigEditorPageInfo())
@@ -70,7 +62,7 @@ namespace JAFDTC.UI
                     sysList.Add(info.ShortName);
                     icons += $" {info.Glyph}";
                     if (config.SystemLinkedTo(info.Tag) != null)
-                        iconBadges += $" {CfgEditorGlyphs.BADGE}";
+                        iconBadges += $" {Glyphs.CfgLinkBadge}";
                     else
                         iconBadges += $" {info.Glyph}";
                 }

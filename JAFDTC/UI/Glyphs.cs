@@ -22,6 +22,9 @@ namespace JAFDTC.UI
     public class Glyphs
     {
         public const string None = "";
+
+        public const string CfgLinkBadge = "\xF0B6";            // configuration linked badge
+
         public const string Pilot = "\xE77B";                   // single person
         public const string Pilots = "\xE716";                  // multiple people
 

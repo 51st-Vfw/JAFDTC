@@ -2,7 +2,7 @@
 //
 // ConfigurationListView.cs -- custom ListView class for the configuration list
 //
-// Copyright(C) 2023 ilominar/raven
+// Copyright(C) 2023-2026 ilominar/raven
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 // Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -24,7 +24,6 @@ using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Media;
 using System.Diagnostics;
 using Windows.UI;
-using static JAFDTC.UI.ConfigurationEditor;
 
 namespace JAFDTC.UI.App
 {
@@ -41,7 +40,7 @@ namespace JAFDTC.UI.App
     /// HACK: customization necessary is straight-forward in iOS, have to figure there is some easier way to do this
     /// HACK: that i'm simply unaware of. c'est la vie.
     /// </summary>
-    public class ConfigurationListView : ListView
+    public partial class ConfigurationListView : ListView
     {
         // ------------------------------------------------------------------------------------------------------------
         //
@@ -69,7 +68,7 @@ namespace JAFDTC.UI.App
                 txtBlock.TextHighlighters.Clear();
                 for (int index = 0; index < badges.Length; index++)
                 {
-                    if (badges[index] == CfgEditorGlyphs.BADGE[0])
+                    if (badges[index] == Glyphs.CfgLinkBadge[0])
                     {
                         TextHighlighter highlighter = new()
                         {
