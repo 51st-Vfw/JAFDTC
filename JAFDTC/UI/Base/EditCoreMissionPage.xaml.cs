@@ -18,10 +18,16 @@
 // ********************************************************************************************************************
 
 using JAFDTC.Core.Extensions;
+using JAFDTC.File;
+using JAFDTC.File.Models;
 using JAFDTC.Models;
 using JAFDTC.Models.Base;
+using JAFDTC.Models.Core;
+using JAFDTC.Models.CoreApp;
 using JAFDTC.Models.DCS;
 using JAFDTC.Models.Pilots;
+using JAFDTC.Models.Threats;
+using JAFDTC.Models.Units;
 using JAFDTC.UI.App;
 using JAFDTC.UI.Controls;
 using JAFDTC.Utilities;
@@ -29,10 +35,12 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Navigation;
+using Microsoft.Windows.Storage.Pickers;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 
 namespace JAFDTC.UI.Base
 {
@@ -365,6 +373,123 @@ namespace JAFDTC.UI.Base
         // ------------------------------------------------------------------------------------------------------------
 
         /// <summary>
+        /// return the threat summary string to display in the ui based on the threats in the editor.
+        /// </summary>
+        private string ThreatSummaryString()
+        {
+            int numREDFOR = 0;
+            int numBLUEFOR = 0;
+            foreach (JAFDTC.Models.Planning.Threat threat in EditMsn.Threats)
+                if (threat.Coalition == Models.Core.CoalitionType.RED)
+                    numREDFOR++;
+                else if (threat.Coalition == Models.Core.CoalitionType.BLUE)
+                    numBLUEFOR++;
+
+            string name = Path.GetFileNameWithoutExtension(EditMsn.ThreatSource);
+            string rfCnt = (numREDFOR == 0) ? "no" : $"{numREDFOR}";
+            string rfSfx = (numREDFOR == 1) ? "" : "s";
+            string bfCnt = (numBLUEFOR == 0) ? "no" : $"{numBLUEFOR}";
+            string bfSfx = (numBLUEFOR == 1) ? "" : "s";
+            return $"{name} contains {rfCnt} REDFOR element{rfSfx} and {bfCnt} BLUEFOR element{bfSfx}";
+        }
+
+        /// <summary>
+        /// import threats according to the import specification and add them to the mission threats (clearing any
+        /// currently defined threats first). throws an exception on issues.
+        /// </summary>
+        void CoreImportThreats(MapImportSpec importSpec)
+        {
+            // build extractor and import groups/units from the file specified in the import specification.
+            //
+            IExtractor extractor = Path.GetExtension(importSpec.Path).ToLower() switch
+            {
+                ".acmi" => new JAFDTC.File.ACMI.Extractor(),
+                ".cf" => new JAFDTC.File.CF.Extractor(),
+                ".miz" => new JAFDTC.File.MIZ.Extractor(),
+                _ => (IExtractor)null
+            } ?? throw new Exception($"File type “{Path.GetExtension(importSpec.Path)}” is not supported.");
+
+            ExtractCriteria criteria = new()
+            {
+                FilePath = importSpec.Path,
+// TODO: do we want a theater specification in the mission to put here?
+                Theater = null,
+                UnitCategories = [ UnitCategoryType.GROUND, UnitCategoryType.NAVAL ],
+                IsAlive = (importSpec.IsAliveOnly) ? true : null
+            };
+            if (importSpec.IsEnemyOnly && (importSpec.FriendlyCoalition == CoalitionType.BLUE))
+                criteria.Coalitions = [ CoalitionType.RED ];
+            else if (importSpec.IsEnemyOnly && (importSpec.FriendlyCoalition == CoalitionType.RED))
+                criteria.Coalitions = [ CoalitionType.BLUE ];
+            IReadOnlyList<UnitGroupItem> groups = extractor.Extract(criteria)
+                ?? throw new Exception($"Encountered an error while importing from path\n\n{importSpec.Path}");
+
+            FileManager.Log($"EditCoreMissionPage:CoreImportThreats extracted {groups.Count} groups from {importSpec.Path}");
+
+            // add the threats to the threat list. this includes a threat for each unit along with a threat region
+            // for groups of units (per-unit threats are left out if import specification asks for summary only).
+            //
+            EditMsn.Threats.Clear();
+            foreach (UnitGroupItem group in groups)
+            {
+                string threatType = null;
+                double threatRadius = 0.0;
+                double avgLat = 0.0;
+                double avgLon = 0.0;
+                foreach (UnitItem unit in group.Units)
+                {
+                    ThreatDbaseQuery query = new([ unit.Type ], null, null, null, null, true);
+                    IReadOnlyList<Threat> dbThreats = ThreatDbase.Instance.Find(query);
+                    Threat dbThreat = ((dbThreats != null) && (dbThreats.Count > 0)) ? dbThreats[0] : null;
+                    if ((dbThreat != null) && (dbThreat.RadiusWEZ > threatRadius))
+                    {
+                        threatType = dbThreat.Name;
+                        threatRadius = dbThreat.RadiusWEZ;
+                    }
+                    avgLat += unit.Position.Latitude;
+                    avgLon += unit.Position.Longitude;
+
+                    if (!importSpec.IsSummaryOnly)
+                    {
+                        EditMsn.Threats.Add(new()
+                        {
+                            Coalition = group.Coalition,
+                            Name = unit.Name,
+                            Type = unit.Type,
+                            Location = new()
+                            {
+                                Latitude = $"{unit.Position.Latitude:F10}",
+                                Longitude = $"{unit.Position.Longitude:F10}",
+                                Altitude = $"{unit.Position.Altitude}"
+                            },
+                            WEZ = (dbThreat != null) ? dbThreat.RadiusWEZ : 0.0
+                        });
+                    }
+                }
+                avgLat /= (double)group.Units.Count;
+                avgLon /= (double)group.Units.Count;
+
+                if (threatRadius > 0.0)
+                {
+                    EditMsn.Threats.Add(new()
+                    {
+                        Coalition = group.Coalition,
+                        Name = $"{group.Name}: {threatType} WEZ",
+                        Type = null,
+                        Location = new()
+                        {
+                            Latitude = $"{avgLat:F10}",
+                            Longitude = $"{avgLon:F10}",
+                            Altitude = $"{group.Units[0].Position.Altitude}"
+                        },
+                        WEZ = threatRadius
+                    });
+                }
+            }
+            FileManager.Log($"EditCoreMissionPage:CoreImportThreats added {EditMsn.Threats.Count} threats to mission");
+        }
+
+        /// <summary>
         /// configure the elements in an edit panel for changes to the pilot. reconfiguration happens when the
         /// pilot is changing from or to unassigned as these transitions cause visibility changes in edit panel.
         /// </summary>
@@ -400,12 +525,12 @@ namespace JAFDTC.UI.Base
         /// </summary>
         private void RebuildEditPanelLinkText()
         {
-            _loadLinks[1].Text = $"Uses same loadout as {EditMsn.Callsign.ToUpper()}-1";
-            _loadLinks[2].Text = $"Uses same loadout as {EditMsn.Callsign.ToUpper()}-1";
+            _loadLinks[1].Text = $"Carries same loadout as {EditMsn.Callsign.ToUpper()}-1";
+            _loadLinks[2].Text = $"Carries same loadout as {EditMsn.Callsign.ToUpper()}-1";
             if (_loadButtons[2].IsChecked.GetValueOrDefault(false))
-                _loadLinks[3].Text = $"Uses same loadout as {EditMsn.Callsign.ToUpper()}-3";
+                _loadLinks[3].Text = $"Carries same loadout as {EditMsn.Callsign.ToUpper()}-3";
             else
-                _loadLinks[3].Text = $"Uses same loadout as {EditMsn.Callsign.ToUpper()}-1";
+                _loadLinks[3].Text = $"Carries same loadout as {EditMsn.Callsign.ToUpper()}-1";
         }
 
         /// <summary>
@@ -436,6 +561,10 @@ namespace JAFDTC.UI.Base
                 Utilities.SetEnableState(tbox, isEditable);
             foreach (ToggleButton button in _loadButtons)
                 Utilities.SetEnableState(button, isEditable);
+
+            uiTextThreats.Visibility = (EditMsn.Threats.Count > 0) ? Visibility.Visible : Visibility.Collapsed;
+
+            Utilities.SetEnableState(uiBtnClearThreats, (EditMsn.Threats.Count > 0));
         }
 
         /// <summary>
@@ -468,6 +597,8 @@ namespace JAFDTC.UI.Base
         // ui interactions
         //
         // ------------------------------------------------------------------------------------------------------------
+
+        // ---- loadout setup -----------------------------------------------------------------------------------------
 
         /// <summary>
         /// on click on edit button, update the internal loadout state based on state of the button.
@@ -554,6 +685,87 @@ namespace JAFDTC.UI.Base
             }
         }
 
+        // ---- threat setup ------------------------------------------------------------------------------------------
+
+        /// <summary>
+        /// on threat set click, select a file to import from along with the specification of the infomation to
+        /// gather and pull the threats from the file using the correct extractor. update the edit object and
+        /// persist.
+        /// </summary>
+        public async void BtnSetThreats_Click(object sender, RoutedEventArgs args)
+        {
+            // if there are already threats defined, ask if its ok to clear them out as we can only have one set
+            // imported at a time.
+            //
+            ContentDialogResult result;
+            if (EditMsn.Threats.Count > 0)
+            {
+                result = await Utilities.Message2BDialog(Content.XamlRoot, "Are You Sure?",
+                            "Do you want to change the current threat environment?");
+                if (result == ContentDialogResult.None)
+                    return;                                     // **** EXITS: cancel
+            }
+
+            // select file to import threats from with FileOpenPicker.
+            //
+            FileOpenPicker picker = new((Application.Current as JAFDTC.App).Window.AppWindow.Id)
+            {
+                CommitButtonText = "Import Threats",
+                SuggestedStartLocation = PickerLocationId.Desktop,
+                ViewMode = PickerViewMode.List
+            };
+            picker.FileTypeFilter.Add(".acmi");
+            picker.FileTypeFilter.Add(".cf");
+            picker.FileTypeFilter.Add(".miz");
+
+            PickFileResult resultPick = await picker.PickSingleFileAsync();
+            if (resultPick == null)
+                return;                                         // **** EXITS: cancel
+
+            // set up parameters for the import with ImportParamsThreatDialog.
+            //
+            MapImportSpec importSpec = new()
+            {
+                Path = resultPick.Path
+            };
+            ImportParamsThreatDialog setupDialog = new(importSpec)
+            {
+                XamlRoot = Content.XamlRoot
+            };
+            result = await setupDialog.ShowAsync(ContentDialogPlacement.Popup);
+            if (result != ContentDialogResult.Primary)
+                return;                                         // **** EXITS: cancel
+
+            // now that we have parameters, try to do the import using the specification in the setup dialog.
+            //
+            try
+            {
+                EditMsn.ThreatSource = resultPick.Path;
+                CoreImportThreats(setupDialog.Spec);
+                uiTextThreats.Text = ThreatSummaryString();
+                SaveEditStateToConfig();
+            }
+            catch (Exception ex)
+            {
+                await Utilities.Message1BDialog(Content.XamlRoot, "Import Failed", ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// on threat clear click, clear out threats in edit object and persist.
+        /// </summary>
+        public async void BtnClearThreats_Click(object sender, RoutedEventArgs args)
+        {
+            ContentDialogResult result = await Utilities.Message2BDialog(Content.XamlRoot, "Are You Sure?",
+                "Do you want to clear the current threat environment?");
+            if (result == ContentDialogResult.None)
+                return;                                     // **** EXITS: cancel
+
+            EditMsn.ThreatSource = "";
+            EditMsn.Threats.Clear();
+            SaveEditStateToConfig();
+        }
+
         // ---- text fields -------------------------------------------------------------------------------------------
 
         /// <summary>
@@ -605,6 +817,8 @@ namespace JAFDTC.UI.Base
             base.OnNavigatedTo(args);
 
             CopyConfigToEditState();
+
+            uiTextThreats.Text = ThreatSummaryString();
         }
     }
 }

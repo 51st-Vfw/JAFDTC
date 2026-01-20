@@ -21,6 +21,7 @@ using JAFDTC.Models;
 using JAFDTC.Models.Base;
 using JAFDTC.Models.Core;
 using JAFDTC.Models.F16C;
+using JAFDTC.Models.Planning;
 using JAFDTC.UI.App;
 using JAFDTC.UI.Base;
 
@@ -50,6 +51,22 @@ namespace JAFDTC.UI.F16C
                 editMsn.PilotUIDs[i] = new(((F16CConfiguration)config).Mission.PilotUIDs[i]);
                 editMsn.Loadouts[i] = new(((F16CConfiguration)config).Mission.Loadouts[i]);
             }
+            editMsn.ThreatSource = new(((F16CConfiguration)config).Mission.ThreatSource);
+            editMsn.Threats = [ ];
+            foreach (Threat threat in ((F16CConfiguration)config).Mission.Threats)
+                editMsn.Threats.Add(new()
+                {
+                    Coalition = threat.Coalition,
+                    Name = new(threat.Name),
+                    Type = new(threat.Type),
+                    Location = new()
+                    {
+                        Latitude = new(threat.Location.Latitude),
+                        Longitude = new(threat.Location.Longitude),
+                        Altitude = new(threat.Location.Altitude)
+                    },
+                    WEZ = threat.WEZ
+                });
         }
 
         public void CopyEditToConfig(CoreMissionSystem editMsn, IConfiguration config)
@@ -63,6 +80,22 @@ namespace JAFDTC.UI.F16C
                 ((F16CConfiguration)config).Mission.PilotUIDs[i] = new(editMsn.PilotUIDs[i]);
                 ((F16CConfiguration)config).Mission.Loadouts[i] = new(editMsn.Loadouts[i]);
             }
+            ((F16CConfiguration)config).Mission.ThreatSource = new(editMsn.ThreatSource);
+            ((F16CConfiguration)config).Mission.Threats = [ ];
+            foreach (Threat threat in editMsn.Threats)
+                ((F16CConfiguration)config).Mission.Threats.Add(new()
+                {
+                    Coalition = threat.Coalition,
+                    Name = new(threat.Name),
+                    Type = new(threat.Type),
+                    Location = new()
+                    {
+                        Latitude = new(threat.Location.Latitude),
+                        Longitude = new(threat.Location.Longitude),
+                        Altitude = new(threat.Location.Altitude)
+                    },
+                    WEZ = threat.WEZ
+                });
         }
     }
 }

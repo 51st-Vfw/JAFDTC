@@ -21,6 +21,7 @@ using JAFDTC.Core.Expressions;
 using JAFDTC.Models.DCS;
 using JAFDTC.Models.Planning;
 using System.Collections.Generic;
+using System.IO;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 
@@ -83,7 +84,7 @@ namespace JAFDTC.Models.Base
             }
         }
 
-        private int _ships;                                     // ship count (1 => 1-ship, 4 => 4-ship)
+        private int _ships;                                     // ship count on [1, NUM_SHIPS_IN_FLIGHT]
         public int Ships
         {
             get => _ships;
@@ -97,11 +98,24 @@ namespace JAFDTC.Models.Base
             set => SetProperty(ref _tasking, value);
         }
 
+        private string _threatSource;                           // threat source
+        public string ThreatSource
+        {
+            get => _threatSource;
+            set => SetProperty(ref _threatSource, value);
+        }
+
         // ---- following properties do not post change and validation events.
 
         public string[] PilotUIDs { get; set; }                 // Pilot instance unique identifier
 
         public string[] Loadouts { get; set; }                  // loadouts, null => same as ship's lead
+
+        /// <summary>
+        /// defines the threat environment in the mission as a list of JAFDTC.Models.Planning.Threat instances.
+        /// threat locations are specified in decimal degrees.
+        /// </summary>
+        public List<Planning.Threat> Threats { get; set; }      // threats
 
         // ---- computed properties
 
@@ -119,6 +133,8 @@ namespace JAFDTC.Models.Base
                 return (string.IsNullOrEmpty(Name) &&
                         string.IsNullOrEmpty(Callsign) &&
                         string.IsNullOrEmpty(Tasking) &&
+                        string.IsNullOrEmpty(ThreatSource) &&
+                        (Threats.Count == 0) &&
                         (Ships == NUM_SHIPS_IN_FLIGHT));
             }
         }
@@ -135,6 +151,8 @@ namespace JAFDTC.Models.Base
             Callsign = "";
             Ships = NUM_SHIPS_IN_FLIGHT;
             Tasking = "";
+            ThreatSource = "";
+            Threats = [ ];
             PilotUIDs = new string[NUM_SHIPS_IN_FLIGHT];
             Loadouts = new string[NUM_SHIPS_IN_FLIGHT];
         }
@@ -145,6 +163,22 @@ namespace JAFDTC.Models.Base
             Callsign = new(other.Callsign);
             Ships = other.Ships;
             Tasking = new(other.Tasking);
+            ThreatSource = new(other.ThreatSource);
+            Threats = [ ];
+            foreach (Threat threat in other.Threats)
+                Threats.Add(new()
+                {
+                    Coalition = threat.Coalition,
+                    Name = new(threat.Name),
+                    Type = threat.Type,
+                    Location = new()
+                    {
+                        Latitude = threat.Location.Latitude,
+                        Longitude = threat.Location.Longitude,
+                        Altitude = threat.Location.Altitude,
+                    },
+                    WEZ = threat.WEZ
+                });
             PilotUIDs = new string[NUM_SHIPS_IN_FLIGHT];
             Loadouts = new string[NUM_SHIPS_IN_FLIGHT];
             for (int i = 0; i < NUM_SHIPS_IN_FLIGHT; i++)
@@ -158,7 +192,7 @@ namespace JAFDTC.Models.Base
 
         // ------------------------------------------------------------------------------------------------------------
         //
-        // methods
+        // ISystem overrides
         //
         // ------------------------------------------------------------------------------------------------------------
 
@@ -171,15 +205,22 @@ namespace JAFDTC.Models.Base
             Callsign = "";
             Ships = NUM_SHIPS_IN_FLIGHT;
             Tasking = "";
+            ThreatSource = "";
+            Threats = [ ];
             PilotUIDs = new string[NUM_SHIPS_IN_FLIGHT];
             Loadouts = new string[NUM_SHIPS_IN_FLIGHT];
         }
 
-        // ------------------------------------------------------------------------------------------------------------
-        //
-        // ISystem overrides
-        //
-        // ------------------------------------------------------------------------------------------------------------
+        public override void Sanitize()
+        {
+            base.Sanitize();
+
+            // sanitized form of the threat source is simply the filename without extension. this removes host-
+            // specific information from the system while retaining a label for the threat environment.
+            //
+            if (!string.IsNullOrEmpty(ThreatSource))
+                ThreatSource = Path.GetFileNameWithoutExtension(ThreatSource);
+        }
 
         /// <summary>
         /// returns the mission created by merging data from the system configuration into a mission plan. this

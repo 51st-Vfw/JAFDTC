@@ -44,6 +44,8 @@ https://www.gnu.org/licenses/.
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
@@ -53,7 +55,7 @@ https://www.gnu.org/licenses/.
 
         <!--
         ===============================================================================================================
-        flight overview
+        mission overview
         ===============================================================================================================
         -->
 
@@ -114,7 +116,7 @@ https://www.gnu.org/licenses/.
 
         <!--
         ===============================================================================================================
-        pilot overview
+        assigned pilots
         ===============================================================================================================
         -->
 
@@ -122,7 +124,7 @@ https://www.gnu.org/licenses/.
                    Style="{StaticResource EditorTitleTextBlockStyle}">
             Assigned Pilots:
         </TextBlock>
-        <Grid Grid.Row="4" Margin="24,12,12,0">
+        <Grid Grid.Row="3" Margin="24,12,12,0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -200,7 +202,7 @@ https://www.gnu.org/licenses/.
                 </Grid>
             </StackPanel>
 
-            <!-- -3 block -->
+            <!-- -3 edit panel -->
             <StackPanel Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="5" x:Name="uiPnlEditDash3">
                 <Grid>
                     <Grid.RowDefinitions>
@@ -244,7 +246,7 @@ https://www.gnu.org/licenses/.
                 </Grid>
             </StackPanel>
 
-            <!-- -4 block -->
+            <!-- -4 edit panel -->
             <StackPanel Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="5" x:Name="uiPnlEditDash4">
                 <Grid>
                     <Grid.RowDefinitions>
@@ -292,10 +294,57 @@ https://www.gnu.org/licenses/.
 
         <!--
         ===============================================================================================================
+        assigned pilots
+        ===============================================================================================================
+        -->
+
+        <TextBlock Grid.Row="4" Margin="12,18,12,0"
+                   Style="{StaticResource EditorTitleTextBlockStyle}">
+            Threat Environment:
+        </TextBlock>
+        <Grid Grid.Row="5" Margin="24,12,12,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBox Grid.Row="0" Grid.Column="0" x:Name="uiValueThreats"
+                     HorizontalAlignment="Stretch"
+                     Text="{x:Bind EditMsn.ThreatSource, Mode=TwoWay}"
+                     IsEnabled="False"
+                     PlaceholderText="No threat environment selected"/>
+            <Button Grid.Row="0" Grid.Column="1" Margin="12,0,0,0" x:Name="uiBtnSetThreats"
+                    VerticalAlignment="Center"
+                    Click="BtnSetThreats_Click"
+                    ToolTipService.ToolTip="Select a .miz or .acmi file to provide the threat picture">
+                <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE710;"/>
+            </Button>
+            <Button Grid.Row="0" Grid.Column="2" Margin="6,0,0,0" x:Name="uiBtnClearThreats"
+                    VerticalAlignment="Center"
+                    Click="BtnClearThreats_Click"
+                    ToolTipService.ToolTip="Clear the threat picture">
+                <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE894;"/>
+            </Button>
+
+            <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3"  Margin="0,12,0,0" x:Name="uiTextThreats"
+                       TextWrapping="Wrap"
+                       Style="{StaticResource TableHeaderTextStyle}">
+                FIXUP contains FIXUP REDFOR elements and FIXUP BLUEFOR elements.
+            </TextBlock>
+
+        </Grid>
+
+        <!--
+        ===============================================================================================================
         common editor controls 
         ===============================================================================================================
         -->
-        <ui_ctrl:LinkResetBtnsControl Grid.Row="6" Grid.Column="0" Margin="0,0,0,0" x:Name="uiCtlLinkResetBtns"/>
+        <ui_ctrl:LinkResetBtnsControl Grid.Row="7" Grid.Column="0" Margin="0,0,0,0" x:Name="uiCtlLinkResetBtns"/>
 
     </Grid>
 </ui_base:SystemEditorPageBase>
