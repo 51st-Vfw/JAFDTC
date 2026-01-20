@@ -172,10 +172,10 @@ namespace JAFDTC.UI.Controls.Map
             /// types listed (empty or null list implies remove all types). returns true if the marker was removed,
             /// false otherwise.
             /// </summary>
-            public bool Remove(MapControl map, List<MapMarkerInfo.MarkerType> removingTypes = null)
+            public bool Remove(MapControl map, Func<MapMarkerInfo.MarkerType, string, bool> fnFilter = null)
             {
-                CrackMarkerTag(Marker, out MapMarkerInfo.MarkerType type, out string _, out int _);
-                if ((removingTypes == null) || (removingTypes.Count == 0) || removingTypes.Contains(type))
+                CrackMarkerTag(Marker, out MapMarkerInfo.MarkerType type, out string strTag, out int _);
+                if ((fnFilter == null) || fnFilter(type, strTag))
                 {
                     map.RemoveElement(Marker);
                     map.RemoveElement(EditHandle);
@@ -577,16 +577,18 @@ namespace JAFDTC.UI.Controls.Map
         }
 
         /// <summary>
-        /// clear all markers matching a removal type that are currently associated with the control along with the
-        /// current selection. type list of null removes all markers. selection verb is invoked for the selection
-        /// clear. delete verb(s) are not invoked for element(s) removed from the map.
+        /// remove all markers that are currently associated with the control for which a filter lambda returns
+        /// true (a lambda of null is considered to always return true) and clear the current selection. the
+        /// filter lambda has the signature bool filter(MapMarkerInfo.MarkerType, string) where the string
+        /// parameter is the string portion of the marker tag (usually a uid). selection verb is invoked for the
+        /// selection clear. delete verb(s) are not invoked for element(s) removed from the map.
         /// </summary>
-        public void ClearMarkers(List<MapMarkerInfo.MarkerType> removingTypes = null)
+        public void ClearMarkers(Func<MapMarkerInfo.MarkerType, string, bool> fnFilter = null)
         {
             DoUnselectMarker();
             Dictionary<string, MarkerInfo> tmpMarks = new(_marks);
             foreach (KeyValuePair<string, MarkerInfo> kvp in tmpMarks)
-                if ((removingTypes == null) || kvp.Value.Remove(this, removingTypes))
+                if (kvp.Value.Remove(this, fnFilter))
                     _marks.Remove(kvp.Key);
         }
 

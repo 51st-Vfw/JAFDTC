@@ -165,7 +165,7 @@ namespace JAFDTC.UI.Base
             };
             MapWindow = NavpointUIHelper.OpenMap(this, PageHelper.SystemInfo.NavptMaxCount,
                                                  PageHelper.SystemInfo.NavptCoordFmt, openMask, editMask, routes,
-                                                 Config.LastMapMarkerImport, Config.LastMapFilter);
+                                                 null, Config.LastMapMarkerImport, Config.LastMapFilter);
             MapWindow.MarkerExplainer = this;
             MapWindow.Closed += MapWindow_Closed;
 

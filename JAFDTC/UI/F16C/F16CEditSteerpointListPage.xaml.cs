@@ -167,7 +167,9 @@ namespace JAFDTC.UI.F16C
                 [ STPTSystem.SystemInfo.RouteNames[0] ] = [.. EditSTPT.Points]
             };
             MapWindow = NavpointUIHelper.OpenMap(this, STPTSystem.SystemInfo.NavptMaxCount, LLFormat.DDM_P3ZF,
-                                                 openMask, editMask, routes, Config.LastMapMarkerImport,
+                                                 openMask, editMask, routes,
+                                                 Config.Mission.Threats,
+                                                 Config.LastMapMarkerImport,
                                                  Config.LastMapFilter);
             MapWindow.MarkerExplainer = this;
             MapWindow.Closed += MapWindow_Closed;

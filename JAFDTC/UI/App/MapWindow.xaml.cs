@@ -188,9 +188,13 @@ namespace JAFDTC.UI.App
 
         private readonly Dictionary<string, List<string>> _mappedCampaigns = [ ];
 
-        private readonly Dictionary<string, string> _mapImportMarkerNameDict = [];
+        private readonly Dictionary<string, string> _mapImportThreatNameDict = [ ];
 
-        private readonly Dictionary<string, string> _mapImportMarkerTypeDict = [];
+        private readonly Dictionary<string, string> _mapImportThreatTypeDict = [ ];
+
+        private readonly Dictionary<string, string> _mapImportMarkerNameDict = [ ];
+
+        private readonly Dictionary<string, string> _mapImportMarkerTypeDict = [ ];
 
         private readonly MapControl.Caching.ImageFileCache _mapTileCache;
 
@@ -384,6 +388,7 @@ namespace JAFDTC.UI.App
         /// </summary>
         public void SetupMapContent(Dictionary<string, List<INavpointInfo>> paths,
                                     Dictionary<string, PointOfInterest> marks,
+                                    List<Models.Planning.Threat> threats = null,
                                     MapImportSpec mapImport = null, MapFilterSpec mapFilter = null)
         {
             mapImport ??= new();
@@ -429,19 +434,10 @@ namespace JAFDTC.UI.App
                                 new Location(double.Parse(kvp.Value.Latitude), double.Parse(kvp.Value.Longitude)));
             }
 
-            // zoom the map control to fit all of the markers defined in the map.
+            // import threats from the threat environment and the last used import path. if we are unable to find
+            // or import, clear the import specification so it's not used going forward.
             //
-            BoundingBox bounds = uiMap.GetMarkerBoundingBox(2.0);
-            uiMap.ZoomToBounds(bounds);                                     // ztb here avoids visual glitch
-            DispatcherQueue.TryEnqueue(DispatcherQueuePriority.Low, () =>
-            {
-// TODO: should this center on theater instead of marker bounds?
-                uiMap.ZoomToBounds(bounds);                                 // ztb here with non-0 window size
-            });
-
-            // import threats from the last used import path. if we are unable to find or import, clear the import
-            // specification so it's not used going forward.
-            //
+            CoreImportThreats(threats);
             try
             {
                 MapImportSpec = null;
@@ -455,6 +451,16 @@ namespace JAFDTC.UI.App
             {
                 FileManager.Log($"SetupMapContent: import failed, {ex.Message}");
             }
+
+            // zoom the map control to fit all of the markers defined in the map.
+            //
+            BoundingBox bounds = uiMap.GetMarkerBoundingBox(2.0);
+            uiMap.ZoomToBounds(bounds);                                     // ztb here avoids visual glitch
+            DispatcherQueue.TryEnqueue(DispatcherQueuePriority.Low, () =>
+            {
+                // TODO: should this center on theater instead of marker bounds?
+                uiMap.ZoomToBounds(bounds);                                 // ztb here with non-0 window size
+            });
 
             RebuildElementsForFilter();
             RebuildInterfaceState();
@@ -528,11 +534,17 @@ namespace JAFDTC.UI.App
                 Child = pupStack
             };
 
-            if (_mapImportMarkerNameDict.TryGetValue(mrkInfo.TagStr, out string importedMarkerName))
-                pupTextTitle.Text = importedMarkerName;
+            if (_mapImportMarkerNameDict.TryGetValue(mrkInfo.TagStr, out string markerName))
+                pupTextTitle.Text = markerName;
+            else if (_mapImportThreatNameDict.TryGetValue(mrkInfo.TagStr, out string threatName))
+                pupTextTitle.Text = threatName;
             else
                 pupTextTitle.Text = MarkerExplainer?.MarkerDisplayName(mrkInfo) ?? "Unknown";
-            string unitType = _mapImportMarkerTypeDict.GetValueOrDefault(mrkInfo.TagStr, "Element");
+            string unitType = "Element";
+            if (_mapImportMarkerTypeDict.TryGetValue(mrkInfo.TagStr, out string markerType))
+                unitType = markerType;
+            else if (_mapImportThreatTypeDict.TryGetValue(mrkInfo.TagStr, out string threatType))
+                unitType = threatType;
             pupTextSubtitle.Text = mrkInfo.Type switch
             {
                 MapMarkerInfo.MarkerType.POI_SYSTEM => "System POI",
@@ -609,6 +621,45 @@ namespace JAFDTC.UI.App
         // ui support
         //
         // ------------------------------------------------------------------------------------------------------------
+
+        /// <summary>
+        /// import markers according to the import specification and add them to the map control updating internal
+        /// state as necessary. throws an exception on issues.
+        /// </summary>
+        void CoreImportThreats(List<Models.Planning.Threat> threats)
+        {
+            bool isSummaryOnly = true;
+            foreach (Models.Planning.Threat threat in threats)
+                if (!string.IsNullOrEmpty(threat.Type))
+                {
+                    isSummaryOnly = false;
+                    break;
+                }
+
+            int marker = 0;
+            foreach (Models.Planning.Threat threat in threats)
+            {
+                MapMarkerInfo.MarkerType type = (threat.Coalition == CoalitionType.BLUE)
+                                                ? MapMarkerInfo.MarkerType.UNIT_FRIEND
+                                                : MapMarkerInfo.MarkerType.UNIT_ENEMY;
+                string uid = $"<threat_{marker}>";
+
+                if (string.IsNullOrEmpty(threat.Type))
+                {
+                    uiMap.AddMarker(type, uid, new Location(double.Parse(threat.Location.Latitude),
+                                                            double.Parse(threat.Location.Longitude)),
+                                    threat.WEZ.GetValueOrDefault(0.0), !isSummaryOnly);
+                }
+                else
+                {
+                    uiMap.AddMarker(type, uid, new Location(double.Parse(threat.Location.Latitude),
+                                                            double.Parse(threat.Location.Longitude)));
+                    _mapImportThreatTypeDict[uid] = threat.Type.ToCleanDCSUnitType();
+                }
+                _mapImportThreatNameDict[uid] = threat.Name;
+                marker++;
+            }
+        }
 
         /// <summary>
         /// import markers according to the import specification and add them to the map control updating internal
@@ -823,8 +874,10 @@ namespace JAFDTC.UI.App
             {
                 if (mrkInfo.Type == MapMarkerInfo.MarkerType.PATH_EDIT_HANDLE)
                     uiTxtSelName.Text = "Add Navpoint Handle";
-                else if (_mapImportMarkerNameDict.TryGetValue(mrkInfo.TagStr, out string importedMarkerName))
-                    uiTxtSelName.Text = importedMarkerName;
+                else if (_mapImportMarkerNameDict.TryGetValue(mrkInfo.TagStr, out string markerName))
+                    uiTxtSelName.Text = markerName;
+                else if (_mapImportThreatNameDict.TryGetValue(mrkInfo.TagStr, out string threatName))
+                    uiTxtSelName.Text = threatName;
                 else
                     uiTxtSelName.Text = MarkerExplainer?.MarkerDisplayName(mrkInfo) ?? "Unknown";
 
@@ -929,7 +982,8 @@ namespace JAFDTC.UI.App
                 if (result == ContentDialogResult.None)
                     return;                                     // **** EXITS: cancel
 
-                uiMap.ClearMarkers([MapMarkerInfo.MarkerType.UNIT_ENEMY, MapMarkerInfo.MarkerType.UNIT_FRIEND]);
+                uiMap.ClearMarkers((t, s) => (((t == MapMarkerInfo.MarkerType.UNIT_FRIEND) ||
+                                               (t == MapMarkerInfo.MarkerType.UNIT_ENEMY)) && !s.StartsWith("<threat_")));
                 _mapImportMarkerNameDict.Clear();
                 _mapImportMarkerTypeDict.Clear();
             }
@@ -990,7 +1044,8 @@ namespace JAFDTC.UI.App
             if (result == ContentDialogResult.Primary)
             {
                 MapImportSpec = null;
-                uiMap.ClearMarkers([MapMarkerInfo.MarkerType.UNIT_ENEMY, MapMarkerInfo.MarkerType.UNIT_FRIEND]);
+                uiMap.ClearMarkers((t, s) => (((t == MapMarkerInfo.MarkerType.UNIT_FRIEND) ||
+                                               (t == MapMarkerInfo.MarkerType.UNIT_ENEMY)) && !s.StartsWith("<threat_")));
                 _mapImportMarkerNameDict.Clear();
                 _mapImportMarkerTypeDict.Clear();
 

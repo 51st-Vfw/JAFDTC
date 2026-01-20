@@ -24,6 +24,7 @@ using JAFDTC.Models.Core;
 using JAFDTC.Models.CoreApp;
 using JAFDTC.Models.DCS;
 using JAFDTC.Models.POI;
+using JAFDTC.Models.Planning;
 using JAFDTC.Models.Units;
 using JAFDTC.UI.App;
 using JAFDTC.UI.Controls.Map;
@@ -451,6 +452,7 @@ namespace JAFDTC.UI.Base
         public static MapWindow OpenMap(IMapControlVerbHandler observer, int maxRouteLen, LLFormat coordFormat,
                                         MapMarkerInfo.MarkerTypeMask openMask, MapMarkerInfo.MarkerTypeMask editMask,
                                         Dictionary<string, List<INavpointInfo>> routes,
+                                        List<Threat> threatEnvironment = null,
                                         MapImportSpec mapImport = null, MapFilterSpec mapFilter = null)
         {
             List<INavpointInfo> allRoutes = [ ];
@@ -472,7 +474,7 @@ namespace JAFDTC.UI.Base
                 CoordFormat = coordFormat,
                 MaxRouteLength = maxRouteLen
             };
-            mapWindow.SetupMapContent(routes, marks, mapImport, mapFilter);
+            mapWindow.SetupMapContent(routes, marks, threatEnvironment, mapImport, mapFilter);
             mapWindow.RegisterMapControlVerbObserver(observer);
 
             mapWindow.Activate();
