@@ -3,7 +3,7 @@
 // F16CMunition.cs -- Properties of F-16C weapons, hydrated from FileManager.LoadF16CMunitions().
 //
 // Copyright(C) 2021-2023 the-paid-actor & others
-// Copyright(C) 2024 ilominar/raven, fizzle
+// Copyright(C) 2024-2026 ilominar/raven, fizzle
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 // Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -25,7 +25,8 @@ using System.Text.Json.Serialization;
 namespace JAFDTC.Models.F16C
 {
     /// <summary>
-    /// TODO: document
+    /// information on a munition for the viper including descriptive information useful for the ui and avionics
+    /// defaults for avionics systems that configure the munition (eg, stores management system).
     /// </summary>
     public sealed class F16CMunition
     {
@@ -39,17 +40,17 @@ namespace JAFDTC.Models.F16C
 
         public SMSSystem.Munitions ID { get; set; }             // unique ID used in configuration files
 
-        public string LabelUI { get; set; }                     // munition label for ui
+        public string Label { get; set; }                       // munition label, human readable
 
-        public string DescrUI { get; set; }                     // munition long (ish) description for ui
+        public string Description { get; set; }                 // munition long(ish) description, human readable
 
-        public string[] LabelSMS { get; set; }                  // munition labels for sms page
+        public string[] LabelSMS { get; set; }                  // munition labels used by sms page
+
+        public string[] LabelSCL { get; set; }                  // munition labels used in scl
 
         public string Image { get; set; }                       // munition image for ui, relative to Images/
 
-        // TODO
-
-        public MunitionSettings MunitionInfo { get; set; }      // munition information
+        public MunitionSettings MunitionInfo { get; set; }      // munition information/settings for sms
 
         // ---- following properties are synthesized.
 

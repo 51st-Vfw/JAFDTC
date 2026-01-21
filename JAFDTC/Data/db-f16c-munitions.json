@@ -1,9 +1,10 @@
 ﻿[
   {
     "ID": 0,
-    "LabelUI": "CBU-87",
-    "DescrUI": "CB87B: CBU-87 Cluster Bomb with 202 BLU-97B (CEM) Submunitions",
+    "Label": "CBU-87",
+    "Description": "CB87B: CBU-87 Cluster Bomb with 202 BLU-97B (CEM) Submunitions",
     "LabelSMS": [ "CB87B" ],
+    "LabelSCL": [ "M87", "C87" ],
     "Image": "cbu-87-105.png",
     "MunitionInfo": {
       "ID": 0,
@@ -23,9 +24,10 @@
   },
   {
     "ID": 1,
-    "LabelUI": "CBU-97",
-    "DescrUI": "CB97B: CBU-97 Cluster Bomb with 10 BLU-108 (SFW) Submunitions",
+    "Label": "CBU-97",
+    "Description": "CB97B: CBU-97 Cluster Bomb with 10 BLU-108 (SFW) Submunitions",
     "LabelSMS": [ "CB97B" ],
+    "LabelSCL": [ "M97", "C97" ],
     "Image": "cbu-87-105.png",
     "MunitionInfo": {
       "ID": 1,
@@ -45,9 +47,10 @@
   },
   {
     "ID": 2,
-    "LabelUI": "CBU-103",
-    "DescrUI": "CB103: CBU-103 INS/GPS-Guided Cluster Bomb with 202 BLU-97B (CEM) Submunitions",
+    "Label": "CBU-103",
+    "Description": "CB103: CBU-103 INS/GPS-Guided Cluster Bomb with 202 BLU-97B (CEM) Submunitions",
     "LabelSMS": [ "CB103" ],
+    "LabelSCL": [ "M103", "C103" ],
     "Image": "cbu-87-105.png",
     "MunitionInfo": {
       "ID": 2,
@@ -60,9 +63,10 @@
   },
   {
     "ID": 3,
-    "LabelUI": "CBU-105",
-    "DescrUI": "CB105: CBU-105 INS/GPS-Guided Cluster Bomb with 10 BLU-108 (SFW) Submunitions",
+    "Label": "CBU-105",
+    "Description": "CB105: CBU-105 INS/GPS-Guided Cluster Bomb with 10 BLU-108 (SFW) Submunitions",
     "LabelSMS": [ "CB105" ],
+    "LabelSCL": [ "M105", "C105" ],
     "Image": "cbu-87-105.png",
     "MunitionInfo": {
       "ID": 3,
@@ -74,9 +78,10 @@
   },
   {
     "ID": 4,
-    "LabelUI": "GBU-10",
-    "DescrUI": "GB10C: GBU-10 Paveway II Laser-Guided bomb, 2000lb",
+    "Label": "GBU-10",
+    "Description": "GB10C: GBU-10 Paveway II Laser-Guided bomb, 2000lb",
     "LabelSMS": [ "GB10C" ],
+    "LabelSCL": [ "M10", "G10" ],
     "Image": "gbu-10-12.png",
     "MunitionInfo": {
       "ID": 4,
@@ -96,9 +101,10 @@
   },
   {
     "ID": 5,
-    "LabelUI": "GBU-12",
-    "DescrUI": "GB12: GBU-12 Paveway II Laser-Guided bomb, 500lb",
+    "Label": "GBU-12",
+    "Description": "GB12: GBU-12 Paveway II Laser-Guided bomb, 500lb",
     "LabelSMS": [ "GB12" ],
+    "LabelSCL": [ "M12", "G12" ],
     "Image": "gbu-10-12.png",
     "MunitionInfo": {
       "ID": 5,
@@ -118,9 +124,10 @@
   },
   {
     "ID": 6,
-    "LabelUI": "GBU-24",
-    "DescrUI": "GB24A: GBU-24 Paveway III Laser-Guided bomb, 2000lb",
+    "Label": "GBU-24",
+    "Description": "GB24A: GBU-24 Paveway III Laser-Guided bomb, 2000lb",
     "LabelSMS": [ "GB24A" ],
+    "LabelSCL": [ "M24", "G24" ],
     "Image": "gbu-24.png",
     "MunitionInfo": {
       "ID": 6,
@@ -137,9 +144,10 @@
   },
   {
     "ID": 7,
-    "LabelUI": "GBU-31 (1/B)",
-    "DescrUI": "GB31A: GBU-31(V)1/B JDAM INS/GPS-Guided Bomb, 2000lb",
+    "Label": "GBU-31 (1/B)",
+    "Description": "GB31A: GBU-31(V)1/B JDAM INS/GPS-Guided Bomb, 2000lb",
     "LabelSMS": [ "GB31A" ],
+    "LabelSCL": [ "M311", "G311" ],
     "Image": "gbu-31.png",
     "MunitionInfo": {
       "ID": 7,
@@ -152,9 +160,10 @@
   },
   {
     "ID": 8,
-    "LabelUI": "GBU-31 (3/B)",
-    "DescrUI": "GB31B: GBU-31(V)3/B JDAM INS/GPS-Guided Penetrator Bomb, 2000lb",
+    "Label": "GBU-31 (3/B)",
+    "Description": "GB31B: GBU-31(V)3/B JDAM INS/GPS-Guided Penetrator Bomb, 2000lb",
     "LabelSMS": [ "GB31B" ],
+    "LabelSCL": [ "M313", "G313" ],
     "Image": "gbu-31.png",
     "MunitionInfo": {
       "ID": 8,
@@ -167,9 +176,10 @@
   },
   {
     "ID": 9,
-    "LabelUI": "GBU-38",
-    "DescrUI": "GB38: GBU-38(V)1/B JDAM INS/GPS-Guided Bomb, 500lb",
+    "Label": "GBU-38",
+    "Description": "GB38: GBU-38(V)1/B JDAM INS/GPS-Guided Bomb, 500lb",
     "LabelSMS": [ "GB38" ],
+    "LabelSCL": [ "M38", "G38" ],
     "Image": "gbu-38.png",
     "MunitionInfo": {
       "ID": 9,
@@ -182,9 +192,10 @@
   },
   {
     "ID": 10,
-    "LabelUI": "Mk-82 LD",
-    "DescrUI": "M82: Mk-82 Low Drag General Purpose Bomb, 500lb",
+    "Label": "Mk-82 LD",
+    "Description": "M82: Mk-82 Low Drag General Purpose Bomb, 500lb",
     "LabelSMS": [ "M82" ],
+    "LabelSCL": [ "M82", "G82" ],
     "Image": "mk-82.png",
     "MunitionInfo": {
       "ID": 10,
@@ -204,9 +215,10 @@
   },
   {
     "ID": 11,
-    "LabelUI": "Mk-82 HD",
-    "DescrUI": "M82S: Mk-82 with Mk15 Snakeye High Drag General Purpose Bomb, 500lb",
+    "Label": "Mk-82 HD",
+    "Description": "M82S: Mk-82 with Mk15 Snakeye High Drag General Purpose Bomb, 500lb",
     "LabelSMS": [ "M82S" ],
+    "LabelSCL": [ "M15", "M82S" ],
     "Image": "mk-82se.png",
     "MunitionInfo": {
       "ID": 11,
@@ -226,9 +238,10 @@
   },
   {
     "ID": 12,
-    "LabelUI": "Mk-82 HD",
-    "DescrUI": "B49: Mk-82 with BSU-49 High Drag General Purpose Bomb, 500lb",
+    "Label": "Mk-82 HD",
+    "Description": "B49: Mk-82 with BSU-49 High Drag General Purpose Bomb, 500lb",
     "LabelSMS": [ "B49" ],
+    "LabelSCL": [ "M49", "B49" ],
     "Image": "mk-82ab.png",
     "MunitionInfo": {
       "ID": 12,
@@ -248,9 +261,10 @@
   },
   {
     "ID": 13,
-    "LabelUI": "Mk-84 LD",
-    "DescrUI": "M84: Mk-84 Low Drag General Purpose Bomb, 2000lb",
+    "Label": "Mk-84 LD",
+    "Description": "M84: Mk-84 Low Drag General Purpose Bomb, 2000lb",
     "LabelSMS": [ "M84" ],
+    "LabelSCL": [ "M84" ],
     "Image": "mk-84.png",
     "MunitionInfo": {
       "ID": 13,
@@ -270,9 +284,10 @@
   },
   {
     "ID": 14,
-    "LabelUI": "Mk-84 HD",
-    "DescrUI": "B50/BD50: Mk-84 with BSU-50 High Drag General Purpose Bomb (GP or TP), 2000lb",
+    "Label": "Mk-84 HD",
+    "Description": "B50/BD50: Mk-84 with BSU-50 High Drag General Purpose Bomb (GP or TP), 2000lb",
     "LabelSMS": [ "B50", "BD50" ],
+    "LabelSCL": [ "M52", "B50" ],
     "Image": "mk-84hd.png",
     "MunitionInfo": {
       "ID": 14,
@@ -292,9 +307,10 @@
   },
   {
     "ID": 15,
-    "LabelUI": "AGM-65D",
-    "DescrUI": "AG65D: AGM-65D Maverick IR-guided Missile, 125lb Warhead",
+    "Label": "AGM-65D",
+    "Description": "AG65D: AGM-65D Maverick IR-guided Missile, 125lb Warhead",
     "LabelSMS": [ "AG65D" ],
+    "LabelSCL": [ "M65D", "A65G" ],
     "Image": "agm-65d.png",
     "MunitionInfo": {
       "ID": 15,
@@ -305,9 +321,10 @@
   },
   {
     "ID": 16,
-    "LabelUI": "AGM-65G",
-    "DescrUI": "AG65G: AGM-65G Maverick IR-guided AG Missile, 300lb Warhead",
+    "Label": "AGM-65G",
+    "Description": "AG65G: AGM-65G Maverick IR-guided AG Missile, 300lb Warhead",
     "LabelSMS": [ "AG65G" ],
+    "LabelSCL": [ "M65G", "A65G" ],
     "Image": "agm-65g.png",
     "MunitionInfo": {
       "ID": 16,
@@ -318,9 +335,10 @@
   },
   {
     "ID": 17,
-    "LabelUI": "AGM-65H",
-    "DescrUI": "AG65H: AGM-65H Maverick CCD-guided AG Missile, 125lb Warhead",
+    "Label": "AGM-65H",
+    "Description": "AG65H: AGM-65H Maverick CCD-guided AG Missile, 125lb Warhead",
     "LabelSMS": [ "AG65H" ],
+    "LabelSCL": [ "M65H", "A65H" ],
     "Image": "agm-65h.png",
     "MunitionInfo": {
       "ID": 17,
@@ -331,9 +349,10 @@
   },
   {
     "ID": 18,
-    "LabelUI": "AGM-65K",
-    "DescrUI": "AG65K: AGM-65K Maverick CCD-guided AG Missile, 300lb Warhead",
+    "Label": "AGM-65K",
+    "Description": "AG65K: AGM-65K Maverick CCD-guided AG Missile, 300lb Warhead",
     "LabelSMS": [ "AG65K" ],
+    "LabelSCL": [ "M65K", "A65K" ],
     "Image": "agm-65k.png",
     "MunitionInfo": {
       "ID": 18,

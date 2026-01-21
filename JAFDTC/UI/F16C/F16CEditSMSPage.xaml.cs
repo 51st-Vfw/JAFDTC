@@ -2,7 +2,7 @@
 //
 // F16CEditSMSPage.xaml.cs : ui c# for viper sms editor page
 //
-// Copyright(C) 2024-2025 ilominar/raven
+// Copyright(C) 2024-2026 ilominar/raven
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 // Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -17,32 +17,67 @@
 //
 // ********************************************************************************************************************
 
+using CommunityToolkit.WinUI;
+using JAFDTC.Core.Extensions;
 using JAFDTC.Models;
+using JAFDTC.Models.Base;
+using JAFDTC.Models.DCS;
 using JAFDTC.Models.F16C;
 using JAFDTC.Models.F16C.SMS;
+using JAFDTC.Models.Pilots;
 using JAFDTC.UI.App;
 using JAFDTC.UI.Base;
 using JAFDTC.Utilities;
+using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using static JAFDTC.Models.F16C.SMS.SMSSystem;
 
 namespace JAFDTC.UI.F16C
 {
+    /// <summary>
+    /// item object for the munition selection list box.
+    /// </summary>
+    internal sealed class MunitionListItem(SMSSystem.Munitions id, string label, string path)
+    {
+        public SMSSystem.Munitions ID { get; } = id;
+        public string LabelUI { get; } = label;
+        public string ImageFullPath { get; } = path;
+
+        public int Section { get; set; }
+        public Brush FontForeground { get; set; }
+        public Windows.UI.Text.FontWeight FontWeight { get; set; }
+    }
+
+    // ================================================================================================================
+
     /// <summary>
     /// Page obejct for the system editor page that handles the ui for the viper sms munition setup editor. this
     /// handles setups for munition parameters like ripple modes, employment modes, etc.
     /// </summary>
     public sealed partial class F16CEditSMSPage : SystemEditorPageBase
     {
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // constants
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
         public static ConfigEditorPageInfo PageInfo
             => new(SMSSystem.SystemTag, "Munitions", "SMS", Glyphs.SMS, typeof(F16CEditSMSPage));
+
+
+        [GeneratedRegex(@"^[\d]*\s*")]
+        private static partial Regex SCLAtomRegex();
 
         // ------------------------------------------------------------------------------------------------------------
         //
@@ -54,7 +89,7 @@ namespace JAFDTC.UI.F16C
 
         protected override SystemBase SystemConfig => ((F16CConfiguration)Config).SMS;
 
-        protected override String SystemTag => SMSSystem.SystemTag;
+        protected override string SystemTag => SMSSystem.SystemTag;
 
         protected override string SystemName => "SMS munition setup";
 
@@ -68,9 +103,14 @@ namespace JAFDTC.UI.F16C
 
         private string EditProfileID { get; set; }
 
+        private List<SMSSystem.Munitions> MunitionsInLoadout { get; set; } = [ ];
+
+        private ObservableCollection<MunitionListItem> MunitionListItems { get; set; } = [ ];
+
+        private Dictionary<SMSSystem.Munitions, F16CMunition> MunitionDict { get; set; } = [ ];
+
         // ---- private read-only properties
 
-        private readonly List<F16CMunition> _munitions;
         private readonly string[] _textForProfile;
         private readonly string[] _textForEmplMode;
         private readonly string[] _textForRippleMode;
@@ -103,7 +143,8 @@ namespace JAFDTC.UI.F16C
             EditMuniID = SMSSystem.Munitions.CBU_87;
             EditProfileID = ((int)MunitionSettings.Profiles.PROF1).ToString();
 
-            _munitions = FileManager.LoadF16CMunitions();
+            foreach (F16CMunition muni in FileManager.LoadF16CMunitions())
+                MunitionDict[muni.ID] = muni;
 
             _textForProfile = [ "PROF1", "PROF2", "PROF3", "PROF4" ];
             _textForEmplMode = [ "CCIP", "CCRP", "DTOS", "LADD", "MAN", "PRE", "VIS", "BORE" ];
@@ -211,7 +252,7 @@ namespace JAFDTC.UI.F16C
                 foreach (Munitions muniID in muniIDs)
                 {
                     MunitionSettings settings = config.SMS.GetSettingsForMunitionProfile(muniID, EditProfileID);
-                    MunitionSettings defaults = _munitions[(int)EditMuniID].MunitionInfo;
+                    MunitionSettings defaults = MunitionDict[EditMuniID].MunitionInfo;
 
                     CopyPropertyHonorDefault(settings, EditState, defaults, "IsProfileSelected");
                     CopyPropertyHonorDefault(settings, EditState, defaults, "RipplePulse");
@@ -274,6 +315,56 @@ namespace JAFDTC.UI.F16C
         // ui support
         //
         // ------------------------------------------------------------------------------------------------------------
+
+        /// <summary>
+        /// return list of munitions that appear in a loadout. since the loadout cannot change during the lifetime
+        /// of this page, this only needs to be done once.
+        /// </summary>
+        private List<SMSSystem.Munitions> FindMunitionsInLoadout(string loadout)
+        {
+            HashSet<string> atoms = [];
+            if (!string.IsNullOrEmpty(loadout))
+                foreach (string elem in loadout.Split(" "))
+                    atoms.Add(SCLAtomRegex().Replace(elem, ""));
+
+            List<SMSSystem.Munitions> munitions = [];
+            foreach (KeyValuePair<SMSSystem.Munitions, F16CMunition> kvp in MunitionDict)
+                foreach (string key in kvp.Value.LabelSCL)
+                    if (atoms.Contains(key))
+                    {
+                        munitions.Add(kvp.Key);
+                        break;
+                    }
+            return munitions;
+        }
+
+        /// <summary>
+        /// TODO: document
+        /// </summary>
+        private void RebuildMunitionsListContent(bool isIncludeAll)
+        {
+            bool isEmptySCL = (MunitionsInLoadout.Count == 0);
+
+            SolidColorBrush textNormalBrush = new((Windows.UI.Color)this.TryFindResource("TextFillColorPrimary"));
+            SolidColorBrush textDimBrush = new((Windows.UI.Color)this.TryFindResource("TextFillColorTertiary"));
+
+            List<MunitionListItem> items = [ ];
+            foreach (KeyValuePair<SMSSystem.Munitions, F16CMunition> kvp in MunitionDict)
+            {
+                bool isInSCL = MunitionsInLoadout.Contains(kvp.Key);
+                if (isIncludeAll || isEmptySCL || isInSCL)
+                    items.Add(new(kvp.Value.ID, kvp.Value.Label, kvp.Value.ImageFullPath)
+                    {
+                        Section = (!isEmptySCL && isInSCL) ? 0 : 1,
+                        FontWeight = (!isEmptySCL && isInSCL) ? FontWeights.Bold : FontWeights.Normal,
+                        FontForeground = (!isEmptySCL && !isInSCL) ? textDimBrush : textNormalBrush
+                    });
+            }
+            MunitionListItems.Clear();
+            foreach (MunitionListItem item in items.OrderBy((p) => p.Section).ThenBy((p) => p.LabelUI).ToList())
+                MunitionListItems.Add(item);
+            uiListMunition.SelectedIndex = 0;
+        }
 
         /// <summary>
         /// crack a ComboBox item list spec of the form "{defaults_csv};{tags_csv}" where {tags_csv} is a csv list of
@@ -364,7 +455,7 @@ namespace JAFDTC.UI.F16C
         private void UpdateNonDefaultMunitionItems()
         {
             F16CConfiguration config = (F16CConfiguration)Config;
-            foreach (F16CMunition munition in uiListMunition.Items.Cast<F16CMunition>())
+            foreach (MunitionListItem munition in uiListMunition.Items.Cast<MunitionListItem>())
             {
                 UIElement container = (UIElement)uiListMunition.ContainerFromItem(munition);
                 FontIcon icon = Utilities.FindControl<FontIcon>(container, typeof(FontIcon), "DefaultBadgeIcon");
@@ -393,8 +484,7 @@ namespace JAFDTC.UI.F16C
                 profileID = (profileID[0] == '+') ? profileID[1..] : profileID;
                 MunitionSettings settings = config.SMS.GetSettingsForMunitionProfile(EditMuniID, profileID, false);
                 FontIcon icon = Utilities.FindControl<FontIcon>(grid, typeof(FontIcon), "BadgeIcon");
-                if (icon != null)
-                    icon.Visibility = Utilities.HiddenIfDefault(settings);
+                icon?.Visibility = Utilities.HiddenIfDefault(settings);
             }
         }
 
@@ -404,8 +494,8 @@ namespace JAFDTC.UI.F16C
         /// </summary>
         private void SetVisibilityRippleUI(MunitionSettings.ReleaseModes relMode, string ripplePulse, Munitions muniID)
         {
-            Boolean isRippleFeetViz;
-            Boolean isRippleDtViz;
+            bool isRippleFeetViz;
+            bool isRippleDtViz;
 
             switch (relMode)
             {
@@ -549,10 +639,15 @@ namespace JAFDTC.UI.F16C
             UpdateNonDefaultMunitionItems();
             UpdateNonDefaultProfileItems();
 
-            F16CMunition muni = (F16CMunition)uiListMunition.SelectedItem;
-            uiTextMuniDesc.Text = (muni != null) ? muni.DescrUI : "No Munition Selected";
-            uiMuniBtnResetTitle.Text = (string.IsNullOrEmpty(muni.MunitionInfo.Profile)) ? "Reset Parameters to Defaults"
-                                                                                         : "Reset Profile to Defaults";
+            F16CMunition muni = (uiListMunition.SelectedItem != null)
+                                ? MunitionDict[((MunitionListItem)uiListMunition.SelectedItem).ID] : null;
+            uiTextMuniDesc.Text = (muni != null) ? muni.Description : "No Munition Selected";
+            uiMuniBtnResetTitle.Text = ((muni == null) || string.IsNullOrEmpty(muni.MunitionInfo.Profile))
+                                       ? "Reset Parameters to Defaults" : "Reset Profile to Defaults";
+
+            if (MunitionsInLoadout.Count == 0)
+                uiCkboxShowAll.IsChecked = true;
+            Utilities.SetEnableState(uiCkboxShowAll, (MunitionsInLoadout.Count > 0));
 
             // base class does not manage the profile number since this property is immutable once a set of munition
             // settings are added to the configuration.
@@ -582,6 +677,16 @@ namespace JAFDTC.UI.F16C
         //
         // ------------------------------------------------------------------------------------------------------------
 
+        // ---- munition list filter ----------------------------------------------------------------------------------
+
+        /// <summary>
+        /// TODO: document
+        /// </summary>
+        private void CkboxShowAll_Click(object sender, RoutedEventArgs args)
+        {
+            RebuildMunitionsListContent(uiCkboxShowAll.IsChecked.GetValueOrDefault(false));
+        }
+
         // ---- munition list -----------------------------------------------------------------------------------------
 
         /// <summary>
@@ -590,18 +695,18 @@ namespace JAFDTC.UI.F16C
         /// </summary>
         private void ListMunition_SelectionChanged(object sender, SelectionChangedEventArgs args)
         {
-            if ((args.RemovedItems.Count > 0) && ((F16CMunition)args.RemovedItems[0] != null))
+            if ((args.RemovedItems.Count > 0) && ((MunitionListItem)args.RemovedItems[0] != null))
                 SaveEditStateToConfig();
 
             if (args.AddedItems.Count > 0)
             {
-                F16CMunition newSelectedMunition = (F16CMunition)args.AddedItems[0];
+                MunitionListItem newSelectedMunition = (MunitionListItem)args.AddedItems[0];
                 if (newSelectedMunition != null)
                 {
-                    EditMuniID = (SMSSystem.Munitions)newSelectedMunition.ID;
+                    EditMuniID = newSelectedMunition.ID;
                     EditProfileID = ((int)MunitionSettings.Profiles.PROF1).ToString();
                     CopyConfigToEditState();
-                    UpdateUIForCoreChange(newSelectedMunition);
+                    UpdateUIForCoreChange(MunitionDict[newSelectedMunition.ID]);
                 }
             }
 
@@ -628,7 +733,7 @@ namespace JAFDTC.UI.F16C
                     string tag = item.Tag.ToString();
                     EditProfileID = (tag[0] == '+') ? tag[1..] : tag;
                     CopyConfigToEditState();
-                    UpdateUIForCoreChange(_munitions[(int)EditMuniID]);
+                    UpdateUIForCoreChange(MunitionDict[EditMuniID]);
                     UpdateUIFromEditState();
                 }
             }
@@ -653,7 +758,35 @@ namespace JAFDTC.UI.F16C
         {
             base.OnNavigatedTo(args);
 
-            // TODO: consider preserving selected munition across visits?            
+            // figure out the loadout and build out some loadout-dependent state that is fixed for the lifetime of
+            // the page.
+            //
+            MunitionsInLoadout = [ ];
+            F16CConfiguration config = (F16CConfiguration)Config;
+            int iPilot = -1;
+            for (int i = 0; i < CoreMissionSystem.NUM_SHIPS_IN_FLIGHT; i++)
+            {
+                Pilot pilot = PilotDbase.Instance.Find(config.Mission.PilotUIDs[i]);
+                if ((pilot != null) && Settings.Callsign.Equals(pilot.Name, StringComparison.OrdinalIgnoreCase))
+                {
+                    MunitionsInLoadout = FindMunitionsInLoadout(config.Mission.Loadouts[i]);
+                    iPilot = i;
+                    break;
+                }
+            }
+            uiCkboxShowAll.IsChecked = (MunitionsInLoadout.Count == 0);
+
+            if ((iPilot == -1) && string.IsNullOrEmpty(Settings.Callsign))
+                uiLabelSCL.Text = $"SCL is unknown";
+            else if (iPilot == -1)
+                uiLabelSCL.Text = $"SCL for {Settings.Callsign} is unknown";
+            else if (string.IsNullOrEmpty(config.Mission.Loadouts[iPilot]))
+                uiLabelSCL.Text = $"SCL for {Settings.Callsign} ({config.Mission.Callsign.ToShortCallsign()}-{iPilot + 1}) is unknown";
+            else
+                uiLabelSCL.Text = $"{Settings.Callsign} ({config.Mission.Callsign.ToShortCallsign()}-{iPilot + 1}): {config.Mission.Loadouts[iPilot]}";
+
+            RebuildMunitionsListContent(false);
+// TODO: consider preserving selected munition across visits?
             uiListMunition.SelectedIndex = 0;
         }
     }
