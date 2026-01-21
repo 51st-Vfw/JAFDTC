@@ -4,7 +4,7 @@
 F16CFunctions.lua -- viper airframe-specific lua functions
 
 Copyright(C) 2021-2023 the-paid-actor & dcs-dtc contributors
-Copyright(C) 2023-2025 ilominar/raven
+Copyright(C) 2023-2026 ilominar/raven
 
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -170,6 +170,20 @@ function JAFDTC_F16CM_Fn_IsCallSignChar(position, letter)
     local table = JAFDTC_ParseDisplaySimple(DID_F16C_DED)
     local value = table["CallSign Name char" .. position .. "_inv"]
     return (value == letter)
+end
+
+function JAFDTC_F16CM_Fn_IsCallSignCharBefore(position, letter)
+    local table = JAFDTC_ParseDisplaySimple(DID_F16C_DED)
+    local value = table["CallSign Name char" .. position .. "_inv"]
+    JAFDTC_Log("char " .. value .. " before " .. letter)
+    return (value < letter)
+end
+
+function JAFDTC_F16CM_Fn_IsCallSignCharAfter(position, letter)
+    local table = JAFDTC_ParseDisplaySimple(DID_F16C_DED)
+    local value = table["CallSign Name char" .. position .. "_inv"]
+    JAFDTC_Log("char " .. value .. " after " .. letter)
+    return (value > letter)
 end
 
 function JAFDTC_F16CM_Fn_IsFlightLead(status)

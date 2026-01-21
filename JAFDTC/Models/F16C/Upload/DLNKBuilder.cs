@@ -58,29 +58,39 @@ namespace JAFDTC.Models.F16C.Upload
             if (_cfg.DLNK.IsDefault)
                 return;
 
-            AddExecFunction("NOP", new() { "==== DLNKBuilder:Build()" });
+            AddExecFunction("NOP", [ "==== DLNKBuilder:Build()" ]);
 
             AirframeDevice ufc = _aircraft.GetDevice("UFC");
 
             SelectDEDPage(ufc, "ENTR");
 
-            AddActions(ufc, new() { "SEQ", "DOWN", "DOWN", "DOWN" });           // tndl page, flight/element number
+            AddActions(ufc, [ "SEQ", "DOWN", "DOWN", "DOWN" ]);           // tndl page, flight/element number
             if (!string.IsNullOrEmpty(_cfg.DLNK.OwnshipFENumber))
-                AddActions(ufc, ActionsForString(_cfg.DLNK.OwnshipFENumber), new() { "ENTR" });
+                AddActions(ufc, ActionsForString(_cfg.DLNK.OwnshipFENumber), [ "ENTR" ]);
             else
                 AddAction(ufc, "DOWN");
 
             string cs = _cfg.DLNK.OwnshipCallsign;
             if (!string.IsNullOrEmpty(cs))
             {
-                AddWhileBlock("IsCallSignChar", false, new() { "1", $"{cs[0]}" }, delegate ()
+                AddWait(WAIT_BASE);
+
+                AddWhileBlock("IsCallSignCharBefore", true, [ "1", $"{cs[0]}" ], delegate ()
                 {
                     AddAction(ufc, "INC");
                 });
+                AddWhileBlock("IsCallSignCharAfter", true, [ "1", $"{cs[0]}" ], delegate ()
+                {
+                    AddAction(ufc, "DEC");
+                });
                 AddAction(ufc, "ENTR");
-                AddWhileBlock("IsCallSignChar", false, new() { "2", $"{cs[1]}" }, delegate ()
+                AddWhileBlock("IsCallSignCharBefore", true, [ "2", $"{cs[1]}" ], delegate ()
                 {
                     AddAction(ufc, "INC");
+                });
+                AddWhileBlock("IsCallSignCharAfter", true, [ "2", $"{cs[1]}" ], delegate ()
+                {
+                    AddAction(ufc, "DEC");
                 });
                 AddAction(ufc, "ENTR");
             }
@@ -90,7 +100,7 @@ namespace JAFDTC.Models.F16C.Upload
             }
 
             string flParam = (_cfg.DLNK.IsOwnshipLead) ? "NO" : "YES";
-            AddIfBlock("IsFlightLead", true, new() { flParam }, delegate () { AddAction(ufc, "1"); });
+            AddIfBlock("IsFlightLead", true, [ flParam ], delegate () { AddAction(ufc, "1"); });
 
             AddAction(ufc, "SEQ");
 
@@ -102,20 +112,20 @@ namespace JAFDTC.Models.F16C.Upload
             {
                 TeamMember tm = _cfg.DLNK.TeamMembers[i];
                 string tndl = (!string.IsNullOrEmpty(tm.TNDL)) ? tm.TNDL : defaultTNDL;
-                AddActions(ufc, new() { "DOWN" }, PredActionsForNumAndEnter(tndl));
+                AddActions(ufc, [ "DOWN" ], PredActionsForNumAndEnter(tndl));
                 if (tndl == null)
                     AddAction(ufc, "DOWN");
             }
 
             AddWait(WAIT_BASE);
-            AddActions(ufc, PredActionsForNumAndEnter(InferOwnship()), new() { "DOWN" });
+            AddActions(ufc, PredActionsForNumAndEnter(InferOwnship()), [ "DOWN" ]);
             AddWait(WAIT_BASE);
 
             for (int i = 0; i < _cfg.DLNK.TeamMembers.Length; i++)
             {
                 bool expect = !_cfg.DLNK.TeamMembers[i].TDOA;
-                AddIfBlock("IsTDOASet", expect, new() { (i + 1).ToString() }, delegate () { AddAction(ufc, "7"); });
-                AddActions(ufc, new() { "DOWN", "DOWN" });
+                AddIfBlock("IsTDOASet", expect, [ (i + 1).ToString() ], delegate () { AddAction(ufc, "7"); });
+                AddActions(ufc, [ "DOWN", "DOWN" ]);
             }
 
             SelectDEDPageDefault(ufc);
