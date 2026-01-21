@@ -4,7 +4,7 @@
     
 F16CEditDLNKPage.xaml : ui xaml for viper data link editor page
 
-Copyright(C) 2023-2025 ilominar/raven
+Copyright(C) 2023-2026 ilominar/raven
 
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -71,7 +71,7 @@ https://www.gnu.org/licenses/.
             <CheckBox Grid.Row="1" Margin="12,6,0,0" x:Name="uiMsnCkbxLink"
                       IsChecked="{x:Bind EditDLNK.IsLinkedMission, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
                       Click="MsnCkbxLink_Click">
-                Always use mission configuration to set up datalink configuration for pilots specified in mission
+                Always use mission configuration to set up datalink configuration according to flight specified in mission
             </CheckBox>
         </Grid>
 
