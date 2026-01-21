@@ -48,7 +48,7 @@ namespace JAFDTC.Models.F16C.DLNK
             get => _tndl;
             set
             {
-                string error = ((IsRegexFieldValid(value, F16CConfiguration.RegexTNDL()))) ? null : "Invalid TNDL value";
+                string error = ((IsRegexFieldValid(value, F16CConfiguration.TNDLRegex()))) ? null : "Invalid TNDL value";
                 SetProperty(ref _tndl, value, error);
             }
         }

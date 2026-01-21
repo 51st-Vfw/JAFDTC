@@ -67,7 +67,16 @@ namespace JAFDTC.Models.F16C
         // ---- regular expressions
 
         [GeneratedRegex(@"^[0-7]{5}$")]
-        public static partial Regex RegexTNDL();
+        public static partial Regex TNDLRegex();
+
+        [GeneratedRegex(@"(?i)^([\d]{1,3})([xy])$")]
+        private static partial Regex TACANRegex();
+
+        [GeneratedRegex(@"(?i)^([a-z]{2})([1-9])([1-4])$")]
+        private static partial Regex ShortCallsignRegex();
+
+        [GeneratedRegex(@"(?i)^([1-2][1-8]{3})$")]
+        private static partial Regex LaserRegex();
 
         // ------------------------------------------------------------------------------------------------------------
         //
@@ -191,37 +200,40 @@ namespace JAFDTC.Models.F16C
         // ------------------------------------------------------------------------------------------------------------
 
         /// <summary>
-        /// parse the role string from import role setup. the string consists of either callsign or tacan fields.
+        /// parse the role string from import role setup. the string consists of callsign, tacan, or laser fields.
         /// callsign fields are of the form CCNN, where C is [a-zA-Z] and N is [0-9] (eg, "VN11", "CY23"). tacan
-        /// fields are of the form NM where N is [0-9]{1,3] and M is [xyXY] (eg, "1Y", "132X"). retruns a dictionary
-        /// with role fields broken out, null on error.
+        /// fields are of the form NM where N is [0-9]{1,3} and M is [xyXY] (eg, "1Y", "132X"). laser fields are of
+        /// the form [1-8]{4}. retruns a dictionary with role fields broken out, null on error.
         /// </summary>
         private static Dictionary<string, string> ParseRole(string role)
         {
             Dictionary<string, string> info = [ ];
-            List<string> fields = [.. role.ToUpper().Split(' ') ];
-            foreach (string field in fields)
+            foreach (string field in role.Trim().ToUpper().Split(' '))
             {
-                if ((field.Length > 2) &&
-                    ((field[^1] == 'X') || (field[^1] == 'Y')) &&
-                    (int.TryParse(field[..^1], out int channel) && ((channel >= 1) && (channel <= 63))))
+                MatchCollection m = TACANRegex().Matches(field);
+                if ((m.Count == 1) && (m[0].Groups.Count == 3))
                 {
-                    info["TACAN_CHAN"] = $"{channel}";
-                    info["TACAN_BAND"] = $"{field[^1]}";
+                    info["TACAN_CHAN"] = $"{m[0].Groups[1].Value}";
+                    info["TACAN_BAND"] = $"{m[0].Groups[1].Value}";
+                    continue;
                 }
-                else if ((field.Length == 4) &&
-                         (int.TryParse($"{field[^2]}", out int flight) && ((flight >= 1) && (flight <= 9))) &&
-                         (int.TryParse($"{field[^1]}", out int elem) && ((elem >= 1) && (elem <= 4))) &&
-                         ($"{field[..1]}".All(char.IsLetter)))
+                m = ShortCallsignRegex().Matches(field);
+                if ((m.Count == 1) && (m[0].Groups.Count == 4))
                 {
-                    info["CALLSIGN"] = $"{field[..2]}";
-                    info["FLIGHT"] = $"{flight}";
-                    info["ELEM"] = $"{elem}";
+                    info["CALLSIGN"] = $"{m[0].Groups[1].Value}";
+                    info["FLIGHT"] = $"{m[0].Groups[2].Value}";
+                    info["ELEM"] = $"{m[0].Groups[3].Value}";
+                    continue;
                 }
-                else if (field.Length > 0)
+                m = LaserRegex().Matches(field);
+                if ((m.Count == 1) && (m[0].Groups.Count == 2))
                 {
+                    info["LASER"] = $"{m[0].Groups[1].Value}";
+                    continue;
+                }
+
+                if (!string.IsNullOrEmpty(field))
                     return null;
-                }
             }
             return info;
         }
@@ -333,9 +345,15 @@ namespace JAFDTC.Models.F16C
                 Misc.TACANChannel = $"{tcnChanNum}";
                 Misc.TACANMode = $"{(int)TACANModes.AA_TR}";
             }
+
+            // determine laser setup.
+            //
+            if (roleInfo.TryGetValue("LASER", out string l))
+                Misc.LaserTGPCode = l;
         }
 
-        public override string RoleHelpText() => "Can include callsign and lead TACAN; for exmaple, “CY11 38Y”";
+        public override string RoleHelpText()
+            => "May include short callsign, flight lead TACAN, and ATP/TGP laser code; for exmaple, “CY11 38Y 1776”";
 
         public override ISystem SystemForTag(string tag)
         {
