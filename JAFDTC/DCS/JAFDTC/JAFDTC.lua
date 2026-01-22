@@ -3,7 +3,7 @@
 
 JAFDTC.lua -- dcs export handlers for jafdtc
 
-Copyright(C) 2023-2025 ilominar/raven
+Copyright(C) 2023-2026 ilominar/raven
 
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -30,12 +30,9 @@ local JSON = loadfile("Scripts\\JSON.lua")()
 
 dofile(lfs.writedir() .. 'Scripts/JAFDTC/CommonFunctions.lua')
 dofile(lfs.writedir() .. 'Scripts/JAFDTC/A10CFunctions.lua')
-dofile(lfs.writedir() .. 'Scripts/JAFDTC/AV8BFunctions.lua')
-dofile(lfs.writedir() .. 'Scripts/JAFDTC/F14ABFunctions.lua')
 dofile(lfs.writedir() .. 'Scripts/JAFDTC/F15EFunctions.lua')
 dofile(lfs.writedir() .. 'Scripts/JAFDTC/F16CFunctions.lua')
 dofile(lfs.writedir() .. 'Scripts/JAFDTC/FA18CFunctions.lua')
-dofile(lfs.writedir() .. 'Scripts/JAFDTC/M2000CFunctions.lua')
 
 JAFDTC_Log("JAFDTC.lua loads complete");
 

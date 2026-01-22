@@ -4,7 +4,7 @@
 CommonFunctions.lua -- jafdtc common functions
 
 Copyright(C) 2021-2023 the-paid-actor & dcs-dtc contributors
-Copyright(C) 2023-2025 ilominar/raven
+Copyright(C) 2023-2026 ilominar/raven
 
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -34,14 +34,10 @@ function JAFDTC_GetPlayerAircraftType()
     if data then
         -- TODO: do a table lookup here?
         local model = string.upper(data["Name"])
-        if model == "AV8BNA" then return "AV8B" end
         if model == "A-10C_2" then return "A10C" end
-        if model == "F-14A-135-GR" then return "F14AB" end
-        if model == "F-14B" then return "F14AB" end
         if model == "F-15ESE" then return "F15E" end
         if model == "F-16C_50" then return "F16CM" end
         if model == "FA-18C_HORNET" then return "FA18C" end
-        if model == "M-2000C" then return "M2000C" end
         return model;
     end
     return "Unknown"

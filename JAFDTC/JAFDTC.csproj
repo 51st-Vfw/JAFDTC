@@ -62,13 +62,10 @@
     <None Remove="DCS\Hooks\JAFDTCWyptCaptureHook.lua" />
     <None Remove="DCS\JAFDTC.lua" />
     <None Remove="DCS\JAFDTC\A10CFunctions.lua" />
-    <None Remove="DCS\JAFDTC\AV8BFunctions.lua" />
     <None Remove="DCS\JAFDTC\commonFunctions.lua" />
-    <None Remove="DCS\JAFDTC\F14ABFunctions.lua" />
     <None Remove="DCS\JAFDTC\f15EFunctions.lua" />
     <None Remove="DCS\JAFDTC\f16CFunctions.lua" />
     <None Remove="DCS\JAFDTC\fa18CFunctions.lua" />
-    <None Remove="DCS\JAFDTC\M2000CFunctions.lua" />
     <None Remove="DCS\JAFDTC\StatusMsg.dlg" />
     <None Remove="DCS\JAFDTC\WyptCapture.dlg" />
     <None Remove="Package.appxmanifest" />
@@ -128,15 +125,12 @@
     <Content Include="DCS\Hooks\JAFDTCStatusMsgHook.lua" />
     <Content Include="DCS\Hooks\JAFDTCWyptCaptureHook.lua" />
     <Content Include="DCS\JAFDTC\A10CFunctions.lua" />
-    <Content Include="DCS\JAFDTC\AV8BFunctions.lua" />
     <Content Include="DCS\JAFDTC\StatusMsg.dlg" />
-    <Content Include="DCS\JAFDTC\F14ABFunctions.lua" />
     <Content Include="DCS\JAFDTC\JAFDTC.lua" />
     <Content Include="DCS\JAFDTC\CommonFunctions.lua" />
     <Content Include="DCS\JAFDTC\F15EFunctions.lua" />
     <Content Include="DCS\JAFDTC\F16CFunctions.lua" />
     <Content Include="DCS\JAFDTC\FA18CFunctions.lua" />
-    <Content Include="DCS\JAFDTC\M2000CFunctions.lua" />
     <Content Include="DCS\JAFDTC\WyptCapture.dlg" />
     <Content Include="Images\JAFDTC_Icon.ico" />
   </ItemGroup>
