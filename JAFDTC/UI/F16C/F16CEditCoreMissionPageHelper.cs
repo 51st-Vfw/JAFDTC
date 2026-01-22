@@ -21,9 +21,11 @@ using JAFDTC.Models;
 using JAFDTC.Models.Base;
 using JAFDTC.Models.Core;
 using JAFDTC.Models.F16C;
+using JAFDTC.Models.F16C.STPT;
 using JAFDTC.Models.Planning;
 using JAFDTC.UI.App;
 using JAFDTC.UI.Base;
+using System.Collections.Generic;
 
 namespace JAFDTC.UI.F16C
 {
@@ -38,22 +40,26 @@ namespace JAFDTC.UI.F16C
 
         public AirframeTypes Airframe => AirframeTypes.F16C;
 
+        public NavpointSystemInfo NavptSystemInfo => STPTSystem.SystemInfo;
+
         public SystemBase GetSystemConfig(IConfiguration config) => ((F16CConfiguration)config).Mission;
 
         public void CopyConfigToEdit(IConfiguration config, CoreMissionSystem editMsn)
         {
-            editMsn.Callsign = new(((F16CConfiguration)config).Mission.Callsign);
-            editMsn.Ships = ((F16CConfiguration)config).Mission.Ships;
-            editMsn.Tasking = new(((F16CConfiguration)config).Mission.Tasking);
+            F16CConfiguration viperConfig = (F16CConfiguration)config;
+
+            editMsn.Callsign = new(viperConfig.Mission.Callsign);
+            editMsn.Ships = viperConfig.Mission.Ships;
+            editMsn.Tasking = new(viperConfig.Mission.Tasking);
             editMsn.PilotUIDs = new string[4];
             for (int i = 0; i < editMsn.Ships; i++)
             {
-                editMsn.PilotUIDs[i] = new(((F16CConfiguration)config).Mission.PilotUIDs[i]);
-                editMsn.Loadouts[i] = new(((F16CConfiguration)config).Mission.Loadouts[i]);
+                editMsn.PilotUIDs[i] = new(viperConfig.Mission.PilotUIDs[i]);
+                editMsn.Loadouts[i] = new(viperConfig.Mission.Loadouts[i]);
             }
-            editMsn.ThreatSource = new(((F16CConfiguration)config).Mission.ThreatSource);
+            editMsn.ThreatSource = new(viperConfig.Mission.ThreatSource);
             editMsn.Threats = [ ];
-            foreach (Threat threat in ((F16CConfiguration)config).Mission.Threats)
+            foreach (Threat threat in viperConfig.Mission.Threats)
                 editMsn.Threats.Add(new()
                 {
                     Coalition = threat.Coalition,
@@ -71,19 +77,21 @@ namespace JAFDTC.UI.F16C
 
         public void CopyEditToConfig(CoreMissionSystem editMsn, IConfiguration config)
         {
-            ((F16CConfiguration)config).Mission.Callsign = new(editMsn.Callsign);
-            ((F16CConfiguration)config).Mission.Ships = editMsn.Ships;
-            ((F16CConfiguration)config).Mission.Tasking = new(editMsn.Tasking);
-            ((F16CConfiguration)config).Mission.PilotUIDs = new string[4];
+            F16CConfiguration viperConfig = (F16CConfiguration)config;
+
+            viperConfig.Mission.Callsign = new(editMsn.Callsign);
+            viperConfig.Mission.Ships = editMsn.Ships;
+            viperConfig.Mission.Tasking = new(editMsn.Tasking);
+            viperConfig.Mission.PilotUIDs = new string[4];
             for (int i = 0; i < editMsn.Ships; i++)
             {
-                ((F16CConfiguration)config).Mission.PilotUIDs[i] = new(editMsn.PilotUIDs[i]);
-                ((F16CConfiguration)config).Mission.Loadouts[i] = new(editMsn.Loadouts[i]);
+                viperConfig.Mission.PilotUIDs[i] = new(editMsn.PilotUIDs[i]);
+                viperConfig.Mission.Loadouts[i] = new(editMsn.Loadouts[i]);
             }
-            ((F16CConfiguration)config).Mission.ThreatSource = new(editMsn.ThreatSource);
-            ((F16CConfiguration)config).Mission.Threats = [ ];
+            viperConfig.Mission.ThreatSource = new(editMsn.ThreatSource);
+            viperConfig.Mission.Threats = [ ];
             foreach (Threat threat in editMsn.Threats)
-                ((F16CConfiguration)config).Mission.Threats.Add(new()
+                viperConfig.Mission.Threats.Add(new()
                 {
                     Coalition = threat.Coalition,
                     Name = new(threat.Name),
@@ -96,6 +104,38 @@ namespace JAFDTC.UI.F16C
                     },
                     WEZ = threat.WEZ
                 });
+        }
+
+        public int NumNavpoints(IConfiguration config) => ((F16CConfiguration)config).STPT.Points.Count;
+
+        public INavpointInfo GetNavpoint(IConfiguration config, string route, int index)
+            => ((F16CConfiguration)config).STPT.Points[index];
+
+        public Dictionary<string, List<INavpointInfo>> GetAllNavpoints(IConfiguration config)
+            => new()
+            {
+                [ NavptSystemInfo.RouteNames[0] ] = [.. ((F16CConfiguration)config).STPT.Points ]
+            };
+
+        public void AddNavpoint(IConfiguration config, string route, int index, string lat, string lon)
+        {
+            F16CConfiguration viperConfig = (F16CConfiguration)config;
+            SteerpointInfo stpt = viperConfig.STPT.Add(null, index);
+            stpt.Lat = lat;
+            stpt.Lon = lon;
+        }
+
+        public void MoveNavpoint(IConfiguration config, string route, int index, string lat, string lon)
+        {
+            F16CConfiguration viperConfig = (F16CConfiguration)config;
+            viperConfig.STPT.Points[index].Lat = lat;
+            viperConfig.STPT.Points[index].Lon = lon;
+        }
+
+        public void RemoveNavpoint(IConfiguration config, string route, int index)
+        {
+            F16CConfiguration viperConfig = (F16CConfiguration)config;
+            viperConfig.STPT.Delete(viperConfig.STPT.Points[index]);
         }
     }
 }

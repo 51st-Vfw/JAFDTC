@@ -20,9 +20,7 @@
 using JAFDTC.Models;
 using JAFDTC.Models.Base;
 using JAFDTC.Models.Core;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace JAFDTC.UI.Base
 {
@@ -38,7 +36,12 @@ namespace JAFDTC.UI.Base
         public AirframeTypes Airframe { get; }
 
         /// <summary>
-        /// return the system to configure from the overall configuration.
+        /// return an object defining key navpoint system parameters.
+        /// </summary>
+        public NavpointSystemInfo NavptSystemInfo { get; }
+
+        /// <summary>
+        /// return the mission system to configure from the overall configuration.
         /// </summary>
         public SystemBase GetSystemConfig(IConfiguration config);
 
@@ -53,5 +56,40 @@ namespace JAFDTC.UI.Base
         /// data from the configuration.
         /// </summary>
         public void CopyEditToConfig(CoreMissionSystem editMsn, IConfiguration config);
+
+        /// <summary>
+        /// return the number of navpoints currently defined in the configuration's navpoint system.
+        /// </summary>
+        public int NumNavpoints(IConfiguration config);
+
+        /// <summary>
+        /// return the specified navpoint from the configuration. updates to the navpoint by callers will not
+        /// update the navpoint in the backing system configuration.
+        /// </summary>
+        public INavpointInfo GetNavpoint(IConfiguration config, string route, int index);
+
+        /// <summary>
+        /// return all of the navpoints associated with the configuration. updates to any of the navpoints by
+        /// callers will not update the navptoints in the backing system configuration.
+        /// </summary>
+        public Dictionary<string, List<INavpointInfo>> GetAllNavpoints(IConfiguration config);
+
+        /// <summary>
+        /// add a new navpoint to a route in the configuration at the indicated index with the given latitude
+        /// and longitude.caller is responsible for persisting the updated configuration.
+        /// </summary>
+        public void AddNavpoint(IConfiguration config, string route, int index, string lat, string lon);
+
+        /// <summary>
+        /// move an existing navpoint in the configuration to the new latitude/longitude. caller is responsible
+        /// for persisting the updated configuration.
+        /// </summary>
+        public void MoveNavpoint(IConfiguration config, string route, int index, string lat, string lon);
+
+        /// <summary>
+        /// remove an existing navpoint from the configuration. caller is responsible for persisting the updated
+        /// configuration.
+        /// </summary>
+        public void RemoveNavpoint(IConfiguration config, string route, int index);
     }
 }

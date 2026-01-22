@@ -85,6 +85,13 @@ https://www.gnu.org/licenses/.
                      Style="{StaticResource EditorParamEditTextBoxStyle}"
                      LostFocus="TextBox_LostFocus" GotFocus="TextBox_GotFocus"
                      PlaceholderText="Untitled"/>
+            <Button Grid.Row="0" Grid.Column="4 " Margin="0,0,0,12" Tag="1" x:Name="uiBtnMap"
+                    VerticalAlignment="Center" HorizontalAlignment="Right"
+                    Click="BtnMap_Click"
+                    ToolTipService.ToolTip="Open map window">
+                <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE707;"/>
+            </Button>
+
 
             <!-- flight name, ships, tasking -->
             <TextBlock Grid.Row="1" Grid.Column="0"

@@ -30,6 +30,7 @@ using JAFDTC.Models.Threats;
 using JAFDTC.Models.Units;
 using JAFDTC.UI.App;
 using JAFDTC.UI.Controls;
+using JAFDTC.UI.Controls.Map;
 using JAFDTC.Utilities;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -48,7 +49,8 @@ namespace JAFDTC.UI.Base
     /// page to edit mission fields. this is a general-purpose class that is instatiated in combination with an
     /// IEditCoreMissionPageHelper class to provide airframe-specific specialization.
     /// </summary>
-    public sealed partial class EditCoreMissionPage : SystemEditorPageBase
+    public sealed partial class EditCoreMissionPage : SystemEditorPageBase,
+                                                      IMapControlVerbHandler, IMapControlMarkerExplainer
     {
         // ------------------------------------------------------------------------------------------------------------
         //
@@ -227,6 +229,20 @@ namespace JAFDTC.UI.Base
 
         // ---- internal properties
 
+        private MapWindow _mapWindow;
+        private MapWindow MapWindow
+        {
+            get => _mapWindow;
+            set
+            {
+                if (_mapWindow != value)
+                {
+                    _mapWindow = value;
+                    VerbMirror = value;
+                }
+            }
+        }
+
         private IEditCoreMissionPageHelper PageHelper { get; set; }
 
         private bool IsIgnoringSelection { get; set; }
@@ -364,6 +380,61 @@ namespace JAFDTC.UI.Base
                 Config.Save(this, SystemTag);
             }
             UpdateUIFromEditState();
+        }
+
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // utility
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
+        /// <summary>
+        /// build out the data source and so on necessary for the map window and create it. if there are currently
+        /// no steerpoints defined, we will prompt for a theater and add a single steerpoint to start us off.
+        /// </summary>
+        private async void CoreOpenMap()
+        {
+            if (PageHelper.NumNavpoints(Config) == 0)
+            {
+                // no navpoints: prompt for a theater then locate the new navpoint in the center of the area for
+                // that theater.
+                //
+                GetListDialog theaterDialog = new(Theater.Theaters, "Theater", 0, 0)
+                {
+                    XamlRoot = Content.XamlRoot,
+                    Title = $"Select a Theater for the Mission",
+                    PrimaryButtonText = "OK",
+                    CloseButtonText = "Cancel"
+                };
+                ContentDialogResult result = await theaterDialog.ShowAsync(ContentDialogPlacement.Popup);
+                if (result != ContentDialogResult.Primary)
+                    return;                                     // EXIT: cancelled, no change...
+
+                TheaterInfo info = Theater.TheaterInfo[theaterDialog.SelectedItem];
+                double lat = info.LatMin + ((info.LatMax - info.LatMin) / 2.0);
+                double lon = info.LonMin + ((info.LonMax - info.LonMin) / 2.0);
+
+                PageHelper.AddNavpoint(Config, PageHelper.NavptSystemInfo.RouteNames[0], 0, $"{lat:F10}", $"{lon:F10}");
+                Config.Save(this, SystemTag);
+                NavArgs.ConfigPage.ForceSystemListIconRebuild(PageHelper.NavptSystemInfo.SystemTag);
+            }
+
+            // configure and open the map window with the appropriate content.
+            //
+            bool isLinked = !string.IsNullOrEmpty(Config.SystemLinkedTo(PageHelper.NavptSystemInfo.SystemTag));
+            MapMarkerInfo.MarkerTypeMask editMask = ((isLinked) ? 0 : MapMarkerInfo.MarkerTypeMask.NAV_PT) |
+                                                    ((isLinked) ? 0 : MapMarkerInfo.MarkerTypeMask.PATH_EDIT_HANDLE);
+            MapMarkerInfo.MarkerTypeMask openMask = MapMarkerInfo.MarkerTypeMask.NAV_PT;
+
+            Dictionary<string, List<INavpointInfo>> routes = PageHelper.GetAllNavpoints(Config);
+
+            MapWindow = NavpointUIHelper.OpenMap(this, PageHelper.NavptSystemInfo.NavptMaxCount,
+                                                 PageHelper.NavptSystemInfo.NavptCoordFmt, openMask, editMask, routes,
+                                                 EditMsn.Threats, Config.LastMapMarkerImport, Config.LastMapFilter);
+            MapWindow.MarkerExplainer = this;
+            MapWindow.Closed += MapWindow_Closed;
+
+            NavArgs.ConfigPage.RegisterAuxWindow(MapWindow);
         }
 
         // ------------------------------------------------------------------------------------------------------------
@@ -598,6 +669,20 @@ namespace JAFDTC.UI.Base
         //
         // ------------------------------------------------------------------------------------------------------------
 
+        // ---- map setup ---------------------------------------------------------------------------------------------
+
+        /// <summary>
+        /// map command: if the map window is not currently open, build out the data source and so on necessary for
+        /// the window and create it. otherwise, activate the window.
+        /// </summary>
+        private void BtnMap_Click(object sender, RoutedEventArgs args)
+        {
+            if (MapWindow == null)
+                CoreOpenMap();
+            else
+                MapWindow.Activate();
+        }
+
         // ---- loadout setup -----------------------------------------------------------------------------------------
 
         /// <summary>
@@ -789,9 +874,133 @@ namespace JAFDTC.UI.Base
 
         // ------------------------------------------------------------------------------------------------------------
         //
+        // IMapControlMarkerExplainer
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
+        /// <summary>
+        /// returns the display type of the marker with the specified information.
+        /// </summary>
+        public string MarkerDisplayType(MapMarkerInfo info)
+        {
+            return (info.Type == MapMarkerInfo.MarkerType.NAV_PT) ? PageHelper.NavptSystemInfo.NavptName
+                                                                  : NavpointUIHelper.MarkerDisplayType(info);
+        }
+
+        /// <summary>
+        /// returns the display name of the marker with the specified information.
+        /// </summary>
+        public string MarkerDisplayName(MapMarkerInfo info)
+        {
+            if (info.Type == MapMarkerInfo.MarkerType.NAV_PT)
+            {
+                string name = PageHelper.GetNavpoint(Config, info.TagStr, info.TagInt - 1).Name;
+                if (string.IsNullOrEmpty(name))
+                    name = $"{SystemName} {info.TagInt}";
+                return name;
+            }
+            return NavpointUIHelper.MarkerDisplayName(info);
+        }
+
+        /// <summary>
+        /// returns the elevation of the marker with the specified information.
+        /// </summary>
+        public string MarkerDisplayElevation(MapMarkerInfo info, string units = "")
+        {
+            if (info.Type == MapMarkerInfo.MarkerType.NAV_PT)
+            {
+                string elev = PageHelper.GetNavpoint(Config, info.TagStr, info.TagInt - 1).Alt;
+                if (string.IsNullOrEmpty(elev))
+                    elev = "0";
+                return $"{elev}{units}";
+            }
+            return NavpointUIHelper.MarkerDisplayElevation(info, units);
+        }
+
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // IWorldMapControlVerbHandler
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
+        public string VerbHandlerTag => "EditCoreMissionPage";
+
+        public IMapControlVerbMirror VerbMirror { get; set; }
+
+        /// <summary>
+        /// TODO: document
+        /// </summary>
+        public void VerbMarkerSelected(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
+        {
+            Debug.WriteLine($"ECMP:VerbMarkerSelected({param}) {info.Type}, {info.TagStr}, {info.TagInt}");
+        }
+
+        /// <summary>
+        /// TODO: document
+        /// </summary>
+        public void VerbMarkerOpened(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
+        {
+            Debug.WriteLine($"ECMP:MarkerOpen({param}) {info.Type}, {info.TagStr}, {info.TagInt}");
+        }
+
+        /// <summary>
+        /// TODO: document
+        /// </summary>
+        public void VerbMarkerMoved(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
+        {
+            Debug.WriteLine($"ECMP:VerbMarkerMoved({param}) {info.Type}, {info.TagStr}, {info.TagInt}, {info.Lat}, {info.Lon}");
+            if (info.TagStr == PageHelper.NavptSystemInfo.RouteNames[0])
+            {
+                PageHelper.MoveNavpoint(Config, info.TagStr, info.TagInt - 1, info.Lat, info.Lon);
+                Config.Save(this, SystemTag);
+                NavArgs.ConfigPage.ForceSystemListIconRebuild(PageHelper.NavptSystemInfo.SystemTag);
+            }
+// TODO: handle other types of markers (user pois?)
+        }
+
+        /// <summary>
+        /// TODO: document
+        /// </summary>
+        public void VerbMarkerAdded(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
+        {
+            Debug.WriteLine($"ECMP:VerbMarkerAdded({param}) {info.Type}, {info.TagStr}, {info.TagInt}, {info.Lat}, {info.Lon}");
+            if (info.TagStr == PageHelper.NavptSystemInfo.RouteNames[0])
+            {
+                PageHelper.AddNavpoint(Config, info.TagStr, info.TagInt - 1, info.Lat, info.Lon);
+                Config.Save(this, SystemTag);
+                NavArgs.ConfigPage.ForceSystemListIconRebuild(PageHelper.NavptSystemInfo.SystemTag);
+            }
+// TODO: handle other types of markers (user pois?)
+        }
+
+        /// <summary>
+        /// TODO: document
+        /// </summary>
+        public void VerbMarkerDeleted(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
+        {
+            Debug.WriteLine($"ECMP:VerbMarkerDeleted({param}) {info.Type}, {info.TagStr}, {info.TagInt}");
+            if (info.TagStr == PageHelper.NavptSystemInfo.RouteNames[0])
+            {
+                PageHelper.RemoveNavpoint(Config, info.TagStr, info.TagInt - 1);
+                Config.Save(this, SystemTag);
+                NavArgs.ConfigPage.ForceSystemListIconRebuild(PageHelper.NavptSystemInfo.SystemTag);
+            }
+// TODO: handle other types of markers (user pois?)
+        }
+
+        // ------------------------------------------------------------------------------------------------------------
+        //
         // events
         //
         // ------------------------------------------------------------------------------------------------------------
+
+        /// <summary>
+        /// map window closing: clear map window instance.
+        /// </summary>
+        private void MapWindow_Closed(object sender, WindowEventArgs args)
+        {
+            MapWindow = null;
+        }
 
         /// <summary>
         /// on navigating to/from this page, set up and tear down our internal and ui state based on the configuration
