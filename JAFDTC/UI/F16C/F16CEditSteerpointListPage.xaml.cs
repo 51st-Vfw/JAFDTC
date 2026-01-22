@@ -594,6 +594,8 @@ namespace JAFDTC.UI.F16C
                 string name = EditSTPT.Points[info.TagInt - 1].Name;
                 if (string.IsNullOrEmpty(name))
                     name = $"Steerpoint {info.TagInt}";
+                if (!string.IsNullOrEmpty(EditSTPT.Points[info.TagInt - 1].TOS))
+                    name = $"{name}: TOS {EditSTPT.Points[info.TagInt - 1].TOS}L";
                 return name;
             }
             else
