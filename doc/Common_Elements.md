@@ -1,6 +1,6 @@
 # JAFDTC: Common Elements Guide
 
-**_Version 1.1.2 of 22 November 2025_**
+**_Version 1.3.0 (DRAFT) of 22 January 2026_**
 
 Though systems differ from airframe to airframe, based on the preculariites of the airframe,
 there are many concepts, layouts, and tasks in the JAFDTC user interface that share general
@@ -10,7 +10,6 @@ common areas.
 As always, please consult the airframe guides for further details on a specific airframe.
 
 * [A-10C Warthog](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/Airframe_A10C.md)
-* [F-14A/B Tomcat](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/Airframe_F14AB.md)
 * [F&#x2011;15E&nbsp;Strike&nbsp;Eagle](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/Airframe_F15E.md)
 * [F-16C Viper](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/Airframe_F16C.md)
 * [F/A-18C Hornet](https://github.com/51st-Vfw/JAFDTC/tree/master/doc/Airframe_FA18C.md)

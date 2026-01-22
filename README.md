@@ -1,6 +1,6 @@
 # JAFDTC: Just Another #%*@^!& DTC
 
-**_Version 1.2.0 of 29 December 2025_**
+**_Version 1.3.0 of 22 January 2026_**
 
 Just Another #%*@^!% DTC (JAFDTC) is a native C# WinUI Windows application for Windows 11 that
 allows you to upload data typically saved on a data cartridge, such as steerpoints/waypoints
@@ -8,14 +8,13 @@ and other avionics setup, into a DCS module at the start of a flight. The applic
 the following DCS airframes and systems,
 
 - *A-10C Warthog* &ndash; DSMS, HMCS, IFFCC, Radios, TGP, Waypoints, Miscellaneous Systems
-- *F-14A/B Tomcat* &ndash; Waypoints
 - *F-15E Strike Eagle* &ndash; MPD/MPCD Formats, Radios, Steerpoints, Miscellaneous Systems
-- *F-16C Viper* &ndash; Countermeasures, Datalink, HARM (ALIC, HTS), MFD Formats, Radios,
-  SMS Munitions, Steerpoints, Miscellaneous Systems
+- *F-16C Viper* &ndash; Countermeasures, Datalink, Data Cartridge (DTC), HARM (ALIC, HTS), MFD
+  Formats, Radios, SMS Munitions, Steerpoints, Miscellaneous Systems, Missions, Kneeboards
 - *F/A-18C Hornet* &ndash; Countermeasures, Pre-Planned Weapons, Radios, Waypoints
 
-> Support for the *Hornet*, *Strike Eagle*, and *Tomcat* airframes is experimental and has had
-> limited testing.
+> Support for the *Hornet* and *Strike Eagle* airframes is experimental and has had limited
+> testing.
 
 > While JAFDTC should run under Windows 10, all development currently takes place on Windows 11
 > exclusively. Testing on Windows 10 is likewise limited.
