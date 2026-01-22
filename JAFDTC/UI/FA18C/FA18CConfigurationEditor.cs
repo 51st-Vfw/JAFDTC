@@ -49,7 +49,9 @@ namespace JAFDTC.UI.FA18C
             FA18CEditRadioPageHelper.PageInfo,
             FA18CEditPreplanPage.PageInfo,
             FA18CEditCMSPage.PageInfo,
+#if TODO_IMPLEMENT
             FA18CEditCoreSimDTCPageHelper.PageInfo
+#endif
         };
 
         public FA18CConfigurationEditor(IConfiguration config) => (Config) = (config);
