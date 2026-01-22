@@ -762,6 +762,7 @@ namespace JAFDTC.UI.F16C
             // the page.
             //
             MunitionsInLoadout = [ ];
+            string loadoutSCL = null;
             F16CConfiguration config = (F16CConfiguration)Config;
             int iPilot = -1;
             for (int i = 0; i < CoreMissionSystem.NUM_SHIPS_IN_FLIGHT; i++)
@@ -769,7 +770,8 @@ namespace JAFDTC.UI.F16C
                 Pilot pilot = PilotDbase.Instance.Find(config.Mission.PilotUIDs[i]);
                 if ((pilot != null) && Settings.Callsign.Equals(pilot.Name, StringComparison.OrdinalIgnoreCase))
                 {
-                    MunitionsInLoadout = FindMunitionsInLoadout(config.Mission.Loadouts[i]);
+                    loadoutSCL = config.Mission.LoadoutForDash(i + 1);
+                    MunitionsInLoadout = FindMunitionsInLoadout(loadoutSCL);
                     iPilot = i;
                     break;
                 }
@@ -780,10 +782,10 @@ namespace JAFDTC.UI.F16C
                 uiLabelSCL.Text = $"SCL is unknown";
             else if (iPilot == -1)
                 uiLabelSCL.Text = $"SCL for {Settings.Callsign} is unknown";
-            else if (string.IsNullOrEmpty(config.Mission.Loadouts[iPilot]))
+            else if (string.IsNullOrEmpty(loadoutSCL))
                 uiLabelSCL.Text = $"SCL for {Settings.Callsign} ({config.Mission.Callsign.ToShortCallsign()}-{iPilot + 1}) is unknown";
             else
-                uiLabelSCL.Text = $"{Settings.Callsign} ({config.Mission.Callsign.ToShortCallsign()}-{iPilot + 1}): {config.Mission.Loadouts[iPilot]}";
+                uiLabelSCL.Text = $"{Settings.Callsign} ({config.Mission.Callsign.ToShortCallsign()}-{iPilot + 1}): {loadoutSCL}";
 
             RebuildMunitionsListContent(false);
 // TODO: consider preserving selected munition across visits?
