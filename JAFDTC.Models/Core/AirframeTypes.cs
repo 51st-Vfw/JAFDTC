@@ -24,11 +24,11 @@ namespace JAFDTC.Models.Core
         UNKNOWN = 0,
         A10C = 1,
         AH64D = 2,                      // TODO: consider supporting
-        AV8B_LEGACY = 3,                // NOTE: no longer supported
+        // AV8B = 3,                    // NOTE: no longer supported
         F15E = 4,
         F16C = 5,
         FA18C = 6,
-        M2000C_LEGACY = 7,              // NOTE: no longer supported
-        F14AB = 8
+        // M2000C = 7,                  // NOTE: no longer supported
+        // F14AB = 8                    // NOTE: no longer supported
     }
 }

@@ -149,7 +149,6 @@ namespace JAFDTC.Utilities
             {
                 [AirframeTypes.A10C] = 200,
                 [AirframeTypes.AH64D] = 200,
-                [AirframeTypes.F14AB] = 200,
                 [AirframeTypes.F15E] = 200,
                 [AirframeTypes.F16C] = 200,
                 [AirframeTypes.FA18C] = 200,

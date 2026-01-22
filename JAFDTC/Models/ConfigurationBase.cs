@@ -24,7 +24,6 @@ using JAFDTC.Models.A10C;
 using JAFDTC.Models.Base;
 using JAFDTC.Models.Core;
 using JAFDTC.Models.CoreApp;
-using JAFDTC.Models.F14AB;
 using JAFDTC.Models.F15E;
 using JAFDTC.Models.F16C;
 using JAFDTC.Models.FA18C;
@@ -505,7 +504,6 @@ namespace JAFDTC.Models
             return airframe switch
             {
                 AirframeTypes.A10C  => new A10CConfiguration(Guid.NewGuid().ToString(), name, [ ]),
-                AirframeTypes.F14AB => new F14ABConfiguration(Guid.NewGuid().ToString(), name, [ ]),
                 AirframeTypes.F15E  => new F15EConfiguration(Guid.NewGuid().ToString(), name, [ ]),
                 AirframeTypes.F16C  => new F16CConfiguration(Guid.NewGuid().ToString(), name, [ ]),
                 AirframeTypes.FA18C => new FA18CConfiguration(Guid.NewGuid().ToString(), name, [ ]),
@@ -525,7 +523,6 @@ namespace JAFDTC.Models
                 config = airframe switch
                 {
                     AirframeTypes.A10C  => JsonSerializer.Deserialize<A10CConfiguration>(json),
-                    AirframeTypes.F14AB => JsonSerializer.Deserialize<F14ABConfiguration>(json),
                     AirframeTypes.F15E  => JsonSerializer.Deserialize<F15EConfiguration>(json),
                     AirframeTypes.F16C  => JsonSerializer.Deserialize<F16CConfiguration>(json),
                     AirframeTypes.FA18C => JsonSerializer.Deserialize<FA18CConfiguration>(json),

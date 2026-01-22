@@ -33,7 +33,6 @@ namespace JAFDTC
             [AirframeTypes.F15E] = "F-15E Strike Eagle",
             [AirframeTypes.F16C] = "F-16C Viper",
             [AirframeTypes.FA18C] = "F/A-18C Hornet",
-            [AirframeTypes.F14AB] = "F-14A/B Tomcat"
         };
 
         public static readonly Dictionary<AirframeTypes, string> AirframeShortNames = new()
@@ -44,7 +43,6 @@ namespace JAFDTC
             [AirframeTypes.F15E] = "F-15E",
             [AirframeTypes.F16C] = "F-16C",
             [AirframeTypes.FA18C] = "F/A-18C",
-            [AirframeTypes.F14AB] = "F-14A/B"
         };
 
         public static readonly Dictionary<AirframeTypes, string> AirframeDTCTypes = new()
@@ -55,7 +53,6 @@ namespace JAFDTC
             [AirframeTypes.F15E] = "",
             [AirframeTypes.F16C] = "F-16C_50",
             [AirframeTypes.FA18C] = "FA-18C_hornet",
-            [AirframeTypes.F14AB] = ""
         };
 
         public static readonly JsonSerializerOptions JSONOptions = new() { WriteIndented = true };

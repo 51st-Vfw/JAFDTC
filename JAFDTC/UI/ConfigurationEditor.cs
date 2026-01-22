@@ -20,7 +20,6 @@
 using JAFDTC.Models;
 using JAFDTC.Models.Core;
 using JAFDTC.UI.A10C;
-using JAFDTC.UI.F14AB;
 using JAFDTC.UI.F16C;
 using JAFDTC.UI.F15E;
 using JAFDTC.UI.FA18C;
@@ -99,7 +98,6 @@ namespace JAFDTC.UI
             return config.Airframe switch
             {
                 AirframeTypes.A10C => new A10CConfigurationEditor(config),
-                AirframeTypes.F14AB => new F14ABConfigurationEditor(config),
                 AirframeTypes.F16C => new F16CConfigurationEditor(config),
                 AirframeTypes.F15E => new F15EConfigurationEditor(config),
                 AirframeTypes.FA18C => new FA18CConfigurationEditor(config),
