@@ -214,6 +214,41 @@ namespace JAFDTC.UI.App
         }
 
         /// <summary>
+        /// force the rebuild of the icon in the system list for the editor identified by ConfigEditorPageInfo.
+        /// </summary>
+        public void ForceSystemListIconRebuild(ConfigEditorPageInfo modifiedInfo)
+        {
+            // HACK: this is a total hack as bindings don't seem to work the way they are supposed to; e.g.,
+            // HACK: as in
+            // HACK: https://stackoverflow.com/questions/59473945/update-display-of-one-item-in-a-listviews-observablecollection/59506197#59506197
+            // HACK: There appears to be some kinda race going on though, so put the reinsert on the dispatch
+            // HACK: queue with low priority.
+            //
+            DispatcherQueue.TryEnqueue(DispatcherQueuePriority.Low, () =>
+            {
+                RebuildIconForeground(modifiedInfo);
+                IsRefreshingNavList = true;
+                int index = uiNavListEditors.SelectedIndex;
+                EditorPages[EditorPages.IndexOf(modifiedInfo)] = modifiedInfo;
+                uiNavListEditors.SelectedIndex = index;
+                IsRefreshingNavList = false;
+            });
+        }
+
+        /// <summary>
+        /// force the rebuild of the icon in the system list for the editor identified by a system tag.
+        /// </summary>
+        public void ForceSystemListIconRebuild(string systemTag)
+        {
+            foreach (ConfigEditorPageInfo info in EditorPages)
+                if (info.Tag == systemTag)
+                {
+                    ForceSystemListIconRebuild(info);
+                    break;
+                }
+        }
+
+        /// <summary>
         /// rebuild the editor icon foregrounds to implement the link/unlink badge on the editor icon.
         /// </summary>
         private void RebuildIconForeground(ConfigEditorPageInfo info)
@@ -460,24 +495,8 @@ namespace JAFDTC.UI.App
                     }
                 }
             }
-            if (modifiedInfo != null)
-            {
-                // HACK: this is a total hack as bindings don't seem to work the way they are supposed to; e.g.,
-                // HACK: as in
-                // HACK: https://stackoverflow.com/questions/59473945/update-display-of-one-item-in-a-listviews-observablecollection/59506197#59506197
-                // HACK: There appears to be some kinda race going on though, so put the reinsert on the dispatch
-                // HACK: queue with low priority.
-                //
-                DispatcherQueue.TryEnqueue(DispatcherQueuePriority.Low, () =>
-                {
-                    RebuildIconForeground(modifiedInfo);
-                    IsRefreshingNavList = true;
-                    int index = uiNavListEditors.SelectedIndex;
-                    EditorPages[EditorPages.IndexOf(modifiedInfo)] = modifiedInfo;
-                    uiNavListEditors.SelectedIndex = index;
-                    IsRefreshingNavList = false;
-                });
-            }
+            if ((modifiedInfo != null) && !(Application.Current as JAFDTC.App).IsAppShuttingDown)
+                ForceSystemListIconRebuild(modifiedInfo);
         }
 
         /// <summary>
