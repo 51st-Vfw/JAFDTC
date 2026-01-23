@@ -68,7 +68,7 @@ namespace JAFDTC.UI.F16C
         /// <summary>
         /// specialization of the datalink system to include ui views of several parameters.
         /// </summary>
-        internal partial class DLNKSystemUI : DLNKSystem
+        private partial class DLNKSystemUI : DLNKSystem
         {
             private string _ownshipCallsignUI;                      // string, two letter [A-Z][A-Z]
             public string OwnshipCallsignUI
@@ -420,13 +420,23 @@ namespace JAFDTC.UI.F16C
                 int ownshipPosition = -1;
                 for (int i = 0; i < Config.Mission.Ships; i++)
                 {
+                    for (int j = 0; j < EditDLNK.TeamMembers.Length; j++)
+                        if ((i != j) && (Config.Mission.PilotUIDs[i] == EditDLNK.TeamMembers[j].DriverUID))
+                        {
+                            _tableCallsignComboList[i].SelectedPilot = UnknownPilot;
+                            EditDLNK.TeamMembers[j].Reset();
+                        }
+
                     if (Config.Mission.PilotUIDs[i] == OwnshipDriverUID)
+                    {
+                        EditDLNK.TeamMembers[i].TDOA = true;
                         ownshipPosition = i + 1;
+                    }
                     Pilot pilot = PilotDbase.Instance.Find(Config.Mission.PilotUIDs[i]);
                     //
                     // NOTE: directly select new pilot here as don't have 2-way bindings from control in xaml.
                     //
-                    _tableCallsignComboList[i].SelectedPilot = (pilot != null) ? pilot : UnknownPilot;
+                    _tableCallsignComboList[i].SelectedPilot = pilot ?? UnknownPilot;
                     EditDLNK.TeamMembers[i].TNDL = (pilot != null) ? pilot.AvionicsID : "";
                 }
 
@@ -521,10 +531,11 @@ namespace JAFDTC.UI.F16C
             {
                 bool isOwn = (EditDLNK.TeamMembers[i].DriverUID == OwnshipDriverUID);
                 bool isEmpty = string.IsNullOrEmpty(_tableTNDLTextList[i].Text);
+                bool isInMission = (EditDLNK.IsLinkedMission && (i < Config.Mission.Ships));
                 Utilities.SetEnableState(_tableTDOACkbxList[i], isEditable && !isEmpty && !isOwn);
                 bool isCallsignSelect = ((_tableCallsignComboList[i].SelectedPilot != null) &&
                                          (_tableCallsignComboList[i].SelectedPilot.UniqueID != UnknownPilot.UniqueID));
-                Utilities.SetEnableState(_tableTNDLTextList[i], isEditable && !isCallsignSelect);
+                Utilities.SetEnableState(_tableTNDLTextList[i], isEditable && !isCallsignSelect && !isInMission);
                 Utilities.SetEnableState(_tableCallsignComboList[i], isEditable);
 
                 if (EditDLNK.TeamMembers[i].DriverUID == OwnshipDriverUID)
@@ -777,8 +788,8 @@ namespace JAFDTC.UI.F16C
             int curPilotIndex = -1;
             if (pilot.UniqueID != UnknownPilot.UniqueID)
             {
-                // figure out if the pilot is already in the table in a different slot so we can clear that slot
-                // out prior to wrapping up the update.
+                // figure out if the pilot we are selecting is currently in the table in a different slot so we can
+                // clear that slot out prior to wrapping up the update.
                 //
                 for (int i = 0; i < _tableCallsignComboList.Count; i++)
                 {
@@ -806,24 +817,20 @@ namespace JAFDTC.UI.F16C
             }
 
             AssignedPilots[index] = pilot;
+            if (curPilotIndex != -1)
+            {
+                IsRebuildingUI = true;
+                _tableCallsignComboList[curPilotIndex].SelectedPilot = UnknownPilot;
+                IsRebuildingUI = false;
+                EditDLNK.TeamMembers[curPilotIndex].Reset();
+                AssignedPilots[curPilotIndex] = UnknownPilot;
+            }
 
             if (!isOldOwnByCallsign && !isNewOwnByCallsign)
             {
-                // combo selection update is not changing from or changing to the ownship. either clear the entry
-                // (if we are setting the generic callsign entry and the TNDL is not empty), or setup the entry
-                // from the pilot database. if we have a pilot moving locations in the table, reset her old
-                // location in the table to the unknown pilot.
+                // combo selection update is not changing from or changing to the ownship: either clear the entry
+                // (if we are setting the generic callsign entry), or setup the entry from the pilot database.
                 //
-                bool isCurTDOA = false;
-                isCurTDOA = EditDLNK.TeamMembers[index].TDOA;
-                if (curPilotIndex != -1)
-                {
-                    IsRebuildingUI = true;
-                    _tableCallsignComboList[curPilotIndex].SelectedPilot = UnknownPilot;
-                    IsRebuildingUI = false;
-                    isCurTDOA = EditDLNK.TeamMembers[curPilotIndex].TDOA;
-                    EditDLNK.TeamMembers[curPilotIndex].Reset();
-                }
                 if (comboBox.SelectedPilot.UniqueID == UnknownPilot.UniqueID)
                 {
                     EditDLNK.TeamMembers[index].Reset();
@@ -835,7 +842,7 @@ namespace JAFDTC.UI.F16C
                     // the field contents updating around the same time.
                     //
                     RebuildEnableState();
-                    EditDLNK.TeamMembers[index].TDOA = isCurTDOA;
+                    EditDLNK.TeamMembers[index].TDOA = false;
                     EditDLNK.TeamMembers[index].TNDL = pilot.AvionicsID;
                     EditDLNK.TeamMembers[index].DriverUID = pilot.UniqueID;
                     CopyEditToConfig(true);
@@ -943,11 +950,6 @@ namespace JAFDTC.UI.F16C
 
             Utilities.BuildSystemLinkLists(NavArgs.UIDtoConfigMap, Config.UID, DLNKSystem.SystemTag,
                                            _configNameList, _configNameToUID);
-
-            for (int i = 0; i < EditDLNK.TeamMembers.Length; i++)
-            {
-                object foo = _tableCallsignComboList[i].SelectedPilot;
-            }
 
             CopyConfigToEdit();
 
