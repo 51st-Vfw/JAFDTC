@@ -88,7 +88,7 @@ namespace JAFDTC.Kneeboard.Generate
 
         private void TintKneeboard(bool isNight)
         {
-            foreach (var item in _rectItems.Where(p => p.ID.Contains(Models.Keys.NIGHT_TINT)))
+            foreach (var item in _rectItems.Where(p => p?.ID != null && p.ID.Contains(Models.Keys.NIGHT_TINT)))
                 item.Opacity = (isNight) ? item.Opacity : (float) 0.0;
         }
 

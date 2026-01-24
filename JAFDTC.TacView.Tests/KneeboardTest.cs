@@ -48,7 +48,6 @@ namespace JAFDTC.Tests
             Assert.ThrowsException<ArgumentException>(() => generator.GenerateKneeboards(new()
             {
                 Mission = null,
-                Name = "",
                 PathOutput = "",
                 PathTemplates = "",
             }));
@@ -56,7 +55,6 @@ namespace JAFDTC.Tests
             Assert.ThrowsException<ArgumentException>(() => generator.GenerateKneeboards(new()
             {
                 Mission = null,
-                Name = "",
                 PathOutput = "",
                 PathTemplates = "",
             }));
@@ -64,7 +62,6 @@ namespace JAFDTC.Tests
             Assert.ThrowsException<ArgumentException>(() => generator.GenerateKneeboards(new()
             {
                 Mission = null,
-                Name = "JAF_TEST",
                 PathOutput = "",
                 PathTemplates = "",
             }));
@@ -72,7 +69,6 @@ namespace JAFDTC.Tests
             Assert.ThrowsException<ArgumentException>(() => generator.GenerateKneeboards(new()
             {
                 Mission = null,
-                Name = "JAF_TEST",
                 PathOutput = "..\\..\\..\\appdata\\kb\\output",
                 PathTemplates = "",
             }));
@@ -121,15 +117,16 @@ namespace JAFDTC.Tests
                                         {
                                             Name = "Rage",
                                             DataId = "67001",
-                                            IsLead = true,
                                             SCL = "bla",
+                                            Position = new()
                                         },
                                         new()
                                         {
                                             Name = "Raven",
                                             DataId = "67056",
-                                            IsLead = false,
                                             SCL = "bla2",
+                                            Position = new()
+
                                         }
                                     ],
                                     Radios =
@@ -254,6 +251,7 @@ namespace JAFDTC.Tests
                         {
                             Name = "SA-2 Guideline", //at hama airbase...
                             Type = "SAM",
+                            Coalition =  CoalitionType.RED,
                             Location = new()
                             {
                                 Altitude = "97",
@@ -266,6 +264,7 @@ namespace JAFDTC.Tests
                         {
                             Name = "ZSU-22", //at hama airbase...
                             Type = "AAA",
+                            Coalition =  CoalitionType.RED,
                             Location = new()
                             {
                                 Altitude = "97",
@@ -276,11 +275,11 @@ namespace JAFDTC.Tests
                         }
                     ]
                 },
-                Name = $"JAF TEST {DateTime.Now.ToString("yyyyMMddhhmmss")}",
+                //Name = $"JAF TEST {DateTime.Now.ToString("yyyyMMddhhmmss")}",
                 PathOutput = "..\\..\\..\\appdata\\kb\\output",
                 PathTemplates = "..\\..\\..\\appdata\\kb\\",
                 
-                NightMode = false,
+                //NightMode = false,
                 //PathLogo = "..\\..\\..\\appdata\\kb\\misc\\667logo.png",
             });
 
