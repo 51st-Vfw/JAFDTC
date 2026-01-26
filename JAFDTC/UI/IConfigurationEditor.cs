@@ -47,7 +47,10 @@ namespace JAFDTC.UI
         public ObservableCollection<ConfigAuxCommandInfo> ConfigAuxCommandInfo { get; }
 
         /// <summary>
-        /// returns the string with a human-readable description of what avionics systems the configuration changes.
+        /// returns a dictionary with strings with human-readable descriptions of what avionics systems the
+        /// configuration changes. the dictionary includes "SystemInfoTextUI" with text listing the system status,
+        /// "SystemInfoIconsUI" with a string of glyphs for each modified system, and "SystemInfoIconBadgesUI" with
+        /// a string of glyphs for the badge to apply to "SystemInfoIconsUI" icons.
         /// </summary>
         public Dictionary<string, string> BuildUpdatesStrings(IConfiguration config);
 
