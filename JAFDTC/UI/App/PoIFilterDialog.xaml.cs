@@ -75,7 +75,7 @@ namespace JAFDTC.UI.App
 
             if (mode == Mode.FILTER)
             {
-                uiComboTheater.Items.Add("Any Theater");
+                uiComboTheater.Items.Add("All Theaters");
                 foreach (string name in PointOfInterestDbase.KnownTheaters)
                     uiComboTheater.Items.Add(name);
                 if (string.IsNullOrEmpty(filter.Theater))
@@ -92,7 +92,7 @@ namespace JAFDTC.UI.App
             }
 
             if (mode == Mode.FILTER)
-                uiComboCampaign.Items.Add("Any Campaign");
+                uiComboCampaign.Items.Add("All Campaigns");
             else
                 uiComboCampaign.Items.Add("None (User Point of Interest)");
             foreach (string name in PointOfInterestDbase.Instance.KnownCampaigns)
