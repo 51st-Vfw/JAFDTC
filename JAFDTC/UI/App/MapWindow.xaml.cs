@@ -386,11 +386,14 @@ namespace JAFDTC.UI.App
         /// 
         /// this should be the final call in the setup process and will not generate add/delete/etc. verb calls.
         /// </summary>
-        public void SetupMapContent(Dictionary<string, List<INavpointInfo>> paths,
-                                    Dictionary<string, PointOfInterest> marks,
+        public void SetupMapContent(Dictionary<string, List<INavpointInfo>> paths = null,
+                                    Dictionary<string, PointOfInterest> marks = null,
                                     List<Models.Planning.Threat> threats = null,
                                     MapImportSpec mapImport = null, MapFilterSpec mapFilter = null)
         {
+            paths ??= [ ];
+            marks ??= [ ];
+            threats ??= [ ];
             mapImport ??= new();
 
             MapFilterSpec = mapFilter ?? new();
