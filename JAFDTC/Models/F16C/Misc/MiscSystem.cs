@@ -62,6 +62,12 @@ namespace JAFDTC.Models.F16C.Misc
     /// </summary>
     public partial class MiscSystem : SystemBase
     {
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // constants
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
         public const string SystemTag = "JAFDTC:F16C:MISC";
 
         // ------------------------------------------------------------------------------------------------------------
@@ -336,8 +342,11 @@ namespace JAFDTC.Models.F16C.Misc
             BullseyeMode = false.ToString(),
             ALOWCARAALOW = "500",
             ALOWMSLFloor = "5000",
-            LaserTGPCode = "0",
-            LaserLSTCode = "0",
+            //
+            // NOTE: laser defaults are when ATP/TGP on jet, they are "0" if there is no ATP/TGP loaded.
+            //
+            LaserTGPCode = "1688",
+            LaserLSTCode = "1688",
             LaserStartTime = "8",
             TACANChannel = "1",
             TACANBand = ((int)TACANBands.X).ToString(),
@@ -503,6 +512,8 @@ namespace JAFDTC.Models.F16C.Misc
                                                                                   : ExplicitDefaults.TACANChannel);
             mission.Owner.TacanBand = (TACANBandValue.ToString())[0];
             mission.Owner.Joker = int.Parse((!string.IsNullOrEmpty(Bingo)) ? Bingo : ExplicitDefaults.Bingo);
+            Debug.WriteLine($"{LaserTGPCode}");
+            Debug.WriteLine($"{ExplicitDefaults.LaserTGPCode}");
             mission.Owner.Lase = int.Parse((!string.IsNullOrEmpty(LaserTGPCode)) ? LaserTGPCode
                                                                                  : ExplicitDefaults.LaserTGPCode);
             return mission;
