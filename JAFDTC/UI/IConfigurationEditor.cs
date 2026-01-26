@@ -37,16 +37,14 @@ namespace JAFDTC.UI
         public IConfiguration Config { get; set; }
 
         /// <summary>
-        /// returns a collection of ConfigEditorPageInfo with information on the editor pages for the airframe
-        /// configuration.
+        /// collection of ConfigEditorPageInfo with information on the editor pages for the airframe configuration.
         /// </summary>
-        public ObservableCollection<ConfigEditorPageInfo> ConfigEditorPageInfo();
+        public ObservableCollection<ConfigEditorPageInfo> ConfigEditorPageInfo { get; }
 
         /// <summary>
-        /// returns a collection of ConfigAuxCommandInfo with information on the aux commands for the airframe
-        /// configuration.
+        /// collection of ConfigAuxCommandInfo with information on the aux commands for the airframe configuration.
         /// </summary>
-        public ObservableCollection<ConfigAuxCommandInfo> ConfigAuxCommandInfo();
+        public ObservableCollection<ConfigAuxCommandInfo> ConfigAuxCommandInfo { get; }
 
         /// <summary>
         /// returns the string with a human-readable description of what avionics systems the configuration changes.

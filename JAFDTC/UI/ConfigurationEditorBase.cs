@@ -45,16 +45,16 @@ namespace JAFDTC.UI
 
         public IConfiguration Config { get; set; }
 
-        public virtual ObservableCollection<ConfigEditorPageInfo> ConfigEditorPageInfo() => [ ];
+        public virtual ObservableCollection<ConfigEditorPageInfo> ConfigEditorPageInfo => [ ];
 
-        public virtual ObservableCollection<ConfigAuxCommandInfo> ConfigAuxCommandInfo() => [ ];
+        public virtual ObservableCollection<ConfigAuxCommandInfo> ConfigAuxCommandInfo => [ ];
 
         public virtual Dictionary<string, string> BuildUpdatesStrings(IConfiguration config)
         {
             List<string> sysList = [ ];
             string icons = "";
             string iconBadges = "";
-            foreach (ConfigEditorPageInfo info in ConfigEditorPageInfo())
+            foreach (ConfigEditorPageInfo info in ConfigEditorPageInfo)
             {
                 if (!config.IsDefault(info.Tag))
                 {

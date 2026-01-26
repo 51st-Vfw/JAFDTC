@@ -51,7 +51,7 @@ namespace JAFDTC.UI.A10C
 
         public A10CConfigurationEditor(IConfiguration config) => (Config) = (config);
 
-        public override ObservableCollection<ConfigEditorPageInfo> ConfigEditorPageInfo()
+        public override ObservableCollection<ConfigEditorPageInfo> ConfigEditorPageInfo
             => [
                 // This is the order they appear in the UI. Resist the temptation to alphabetize.
                 A10CEditWaypointListHelper.PageInfo,

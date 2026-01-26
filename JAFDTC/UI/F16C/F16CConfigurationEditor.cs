@@ -52,7 +52,7 @@ namespace JAFDTC.UI.F16C
         //
         // ------------------------------------------------------------------------------------------------------------
 
-        public override ObservableCollection<ConfigEditorPageInfo> ConfigEditorPageInfo()
+        public override ObservableCollection<ConfigEditorPageInfo> ConfigEditorPageInfo
             => [
                 F16CEditCoreMissionPageHelper.PageInfo,
                 F16CEditSteerpointListPage.PageInfo,

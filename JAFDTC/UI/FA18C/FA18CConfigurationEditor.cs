@@ -50,7 +50,7 @@ namespace JAFDTC.UI.FA18C
 
         public FA18CConfigurationEditor(IConfiguration config) => (Config) = (config);
 
-        public override ObservableCollection<ConfigEditorPageInfo> ConfigEditorPageInfo()
+        public override ObservableCollection<ConfigEditorPageInfo> ConfigEditorPageInfo
             => [
                 FA18CEditWaypointListHelper.PageInfo,
                 FA18CEditRadioPageHelper.PageInfo,

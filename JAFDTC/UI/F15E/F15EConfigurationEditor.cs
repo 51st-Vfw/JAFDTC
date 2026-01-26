@@ -64,9 +64,9 @@ namespace JAFDTC.UI.F15E
             new("WSO", "WSO Seat", Glyphs.WSO)
         ];
 
-        public override ObservableCollection<ConfigEditorPageInfo> ConfigEditorPageInfo() => _configEditorPageInfo;
+        public override ObservableCollection<ConfigEditorPageInfo> ConfigEditorPageInfo => _configEditorPageInfo;
 
-        public override ObservableCollection<ConfigAuxCommandInfo> ConfigAuxCommandInfo()
+        public override ObservableCollection<ConfigAuxCommandInfo> ConfigAuxCommandInfo
             => (((F15EConfiguration)Config).CrewMember == F15EConfiguration.CrewPositions.PILOT) ? _configAuxCmdPilot
                                                                                                  : _configAuxCmdWSO;
 

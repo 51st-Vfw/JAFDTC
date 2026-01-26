@@ -357,7 +357,7 @@ namespace JAFDTC.UI.App
         {
             if (ConfigEditor.HandleAuxCommand(this, (ConfigAuxCommandInfo)args.ClickedItem))
             {
-                AuxCommands = ConfigEditor.ConfigAuxCommandInfo();
+                AuxCommands = ConfigEditor.ConfigAuxCommandInfo;
                 uiNavListAuxCmd.ItemsSource = AuxCommands;
             }
         }
@@ -450,8 +450,8 @@ namespace JAFDTC.UI.App
 
             Config.ConfigurationSaved += ConfigurationSavedHandler;
 
-            EditorPages = ConfigEditor.ConfigEditorPageInfo();
-            AuxCommands = ConfigEditor.ConfigAuxCommandInfo();
+            EditorPages = ConfigEditor.ConfigEditorPageInfo;
+            AuxCommands = ConfigEditor.ConfigAuxCommandInfo;
             uiNavListEditors.SelectedIndex = Config.LastSystemEdited;
             uiHdrTxtConfigName.Text = Config.Name;
             uiHdrTxtConfigIsFav.Visibility = (Config.IsFavorite) ? Visibility.Visible : Visibility.Collapsed;
