@@ -53,17 +53,17 @@ namespace JAFDTC.UI.App
         /// </summary>
         public event EventHandler<ConfigAuxCommandInfo> AuxCommandInvoked;
 
+        public IConfiguration Config { get; set; }
+
+        public IConfigurationEditor ConfigEditor { get; set; }
+
         private JAFDTC.App CurApp { get; set; }
 
         private ObservableCollection<ConfigEditorPageInfo> EditorPages { get; set; }
 
         private ObservableCollection<ConfigAuxCommandInfo> AuxCommands { get; set; }
 
-        private IConfiguration Config { get; set; }
-
         private Dictionary<string, IConfiguration> UIDtoConfigMap { get; set; }
-
-        private IConfigurationEditor ConfigEditor { get; set; }
 
         private bool IsRefreshingNavList { get; set; }
 
