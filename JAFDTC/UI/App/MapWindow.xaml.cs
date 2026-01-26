@@ -419,6 +419,7 @@ namespace JAFDTC.UI.App
 
             // build out paths and marks based on the information in the provided dictionaries.
             //
+            uiMap.ClearPaths();
             foreach (KeyValuePair<string, List<INavpointInfo>> kvp in paths)
             {
                 ObservableCollection<Location> locations = [];
@@ -426,6 +427,7 @@ namespace JAFDTC.UI.App
                     locations.Add(new Location(double.Parse(kvp.Value[i].Lat), double.Parse(kvp.Value[i].Lon)));
                 uiMap.AddPath(MapMarkerInfo.MarkerType.NAV_PT, kvp.Key, locations);
             }
+            uiMap.ClearMarkers();
             foreach (KeyValuePair<string, PointOfInterest> kvp in marks)
             {
                 if (kvp.Value.Type == PointOfInterestType.CAMPAIGN)
