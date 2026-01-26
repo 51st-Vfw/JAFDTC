@@ -43,26 +43,26 @@ namespace JAFDTC.UI.F15E
     /// instance of a configuration editor for the f-16c viper. this class defines the configuration editor pages
     /// along with abstracting some access to internal system configuration state.
     /// </summary>
-    public class F15EConfigurationEditor : ConfigurationEditor
+    public class F15EConfigurationEditor : ConfigurationEditorBase
     {
-        private static readonly ObservableCollection<ConfigEditorPageInfo> _configEditorPageInfo = new()
-        {
+        private static readonly ObservableCollection<ConfigEditorPageInfo> _configEditorPageInfo =
+        [
             F15EEditSteerpointListPage.PageInfo,
             F15EEditMPDPage.PageInfo,
             F15EEditRadioPageHelper.PageInfo,
             F15EEditUFCPage.PageInfo,
             F15EEditMiscPage.PageInfo,
-        };
+        ];
 
-        private static readonly ObservableCollection<ConfigAuxCommandInfo> _configAuxCmdPilot = new()
-        {
+        private static readonly ObservableCollection<ConfigAuxCommandInfo> _configAuxCmdPilot =
+        [
             new("Pilot", "Pilot Seat", Glyphs.PILOT)
-        };
+        ];
 
-        private static readonly ObservableCollection<ConfigAuxCommandInfo> _configAuxCmdWSO = new()
-        {
+        private static readonly ObservableCollection<ConfigAuxCommandInfo> _configAuxCmdWSO =
+        [
             new("WSO", "WSO Seat", Glyphs.WSO)
-        };
+        ];
 
         public override ObservableCollection<ConfigEditorPageInfo> ConfigEditorPageInfo() => _configEditorPageInfo;
 

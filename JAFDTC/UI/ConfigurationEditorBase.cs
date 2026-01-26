@@ -1,6 +1,6 @@
 ﻿// ********************************************************************************************************************
 //
-// ConfigurationEditor.cs : abstract base class for a configuration editor
+// ConfigurationEditorBase.cs : abstract base class for a configuration editor
 //
 // Copyright(C) 2023-2026 ilominar/raven
 //
@@ -35,7 +35,7 @@ namespace JAFDTC.UI
     /// abstract base class for a configuration editor that implements IConfigurationEditor. the abstract base
     /// class provides a factory method to build concrete instances based on airframe.
     /// </summary>
-    public abstract class ConfigurationEditor : IConfigurationEditor
+    public abstract class ConfigurationEditorBase : IConfigurationEditor
     {
         // ------------------------------------------------------------------------------------------------------------
         //
@@ -85,7 +85,7 @@ namespace JAFDTC.UI
 
         // ------------------------------------------------------------------------------------------------------------
         //
-        // factories
+        // factory
         //
         // ------------------------------------------------------------------------------------------------------------
 

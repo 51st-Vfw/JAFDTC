@@ -41,13 +41,18 @@ namespace JAFDTC.UI.A10C
     /// <summary>
     /// TODO: document
     /// </summary>
-    public class A10CConfigurationEditor : ConfigurationEditor
+    public class A10CConfigurationEditor : ConfigurationEditorBase
     {
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // IConfigurationEditor
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
         public A10CConfigurationEditor(IConfiguration config) => (Config) = (config);
 
         public override ObservableCollection<ConfigEditorPageInfo> ConfigEditorPageInfo()
-            => new()
-            {
+            => [
                 // This is the order they appear in the UI. Resist the temptation to alphabetize.
                 A10CEditWaypointListHelper.PageInfo,
                 A10CEditDSMSPage.PageInfo,
@@ -57,6 +62,6 @@ namespace JAFDTC.UI.A10C
                 A10CEditHMCSPage.PageInfo,
                 A10CEditIFFCCPage.PageInfo,
                 A10CEditMiscPage.PageInfo
-            };
+            ];
     }
 }

@@ -44,37 +44,29 @@ namespace JAFDTC.UI.F16C
     /// instance of a configuration editor for the f-16c viper. this class defines the configuration editor pages
     /// along with abstracting some access to internal system configuration state.
     /// </summary>
-    public class F16CConfigurationEditor : ConfigurationEditor
+    public class F16CConfigurationEditor : ConfigurationEditorBase
     {
         // ------------------------------------------------------------------------------------------------------------
         //
-        // properties
+        // IConfigurationEditor
         //
         // ------------------------------------------------------------------------------------------------------------
 
-        private static readonly ObservableCollection<ConfigEditorPageInfo> _configEditorPageInfo =
-        [
-            F16CEditCoreMissionPageHelper.PageInfo,
-            F16CEditSteerpointListPage.PageInfo,
-            F16CEditMFDPage.PageInfo,
-            F16CEditRadioPageHelper.PageInfo,
-            F16CEditSMSPage.PageInfo,
-            F16CEditCMDSPage.PageInfo,
-            F16CEditHARMPage.PageInfo,
-            F16CEditHTSPage.PageInfo,
-            F16CEditDLNKPage.PageInfo,
-            F16CEditMiscPage.PageInfo,
-            F16CEditCoreSimDTCPageHelper.PageInfo,
-            F16CEditCoreKboardPageHelper.PageInfo,
-        ];
-
-        // ------------------------------------------------------------------------------------------------------------
-        //
-        // ConfigurationEditor methods
-        //
-        // ------------------------------------------------------------------------------------------------------------
-
-        public override ObservableCollection<ConfigEditorPageInfo> ConfigEditorPageInfo() => _configEditorPageInfo;
+        public override ObservableCollection<ConfigEditorPageInfo> ConfigEditorPageInfo()
+            => [
+                F16CEditCoreMissionPageHelper.PageInfo,
+                F16CEditSteerpointListPage.PageInfo,
+                F16CEditMFDPage.PageInfo,
+                F16CEditRadioPageHelper.PageInfo,
+                F16CEditSMSPage.PageInfo,
+                F16CEditCMDSPage.PageInfo,
+                F16CEditHARMPage.PageInfo,
+                F16CEditHTSPage.PageInfo,
+                F16CEditDLNKPage.PageInfo,
+                F16CEditMiscPage.PageInfo,
+                F16CEditCoreSimDTCPageHelper.PageInfo,
+                F16CEditCoreKboardPageHelper.PageInfo,
+            ];
 
         public F16CConfigurationEditor(IConfiguration config) => (Config) = (config);
     }

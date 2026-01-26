@@ -40,22 +40,25 @@ namespace JAFDTC.UI.FA18C
     /// instance of a configuration editor for the fa-18c hornet. this class defines the configuration editor pages
     /// along with abstracting some access to internal system configuration state.
     /// </summary>
-    public class FA18CConfigurationEditor : ConfigurationEditor
+    public class FA18CConfigurationEditor : ConfigurationEditorBase
     {
-
-        private static readonly ObservableCollection<ConfigEditorPageInfo> _configEditorPageInfo = new()
-        {
-            FA18CEditWaypointListHelper.PageInfo,
-            FA18CEditRadioPageHelper.PageInfo,
-            FA18CEditPreplanPage.PageInfo,
-            FA18CEditCMSPage.PageInfo,
-#if TODO_IMPLEMENT
-            FA18CEditCoreSimDTCPageHelper.PageInfo
-#endif
-        };
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // IConfigurationEditor
+        //
+        // ------------------------------------------------------------------------------------------------------------
 
         public FA18CConfigurationEditor(IConfiguration config) => (Config) = (config);
 
-        public override ObservableCollection<ConfigEditorPageInfo> ConfigEditorPageInfo() => _configEditorPageInfo;
+        public override ObservableCollection<ConfigEditorPageInfo> ConfigEditorPageInfo()
+            => [
+                FA18CEditWaypointListHelper.PageInfo,
+                FA18CEditRadioPageHelper.PageInfo,
+                FA18CEditPreplanPage.PageInfo,
+                FA18CEditCMSPage.PageInfo,
+#if TODO_IMPLEMENT
+                FA18CEditCoreSimDTCPageHelper.PageInfo
+#endif
+            ];
     }
 }
