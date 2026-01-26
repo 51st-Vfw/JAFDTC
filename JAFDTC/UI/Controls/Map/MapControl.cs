@@ -488,15 +488,16 @@ namespace JAFDTC.UI.Controls.Map
             => (Resources.TryGetValue(GetResourceName(markerType, what, index), out object rsrc)) ? rsrc : null;
 
         /// <summary>
-        /// returns the latitude and longitude extents for all known markers.
+        /// returns the latitude and longitude extents for all known markers. if there are no markers, the bounding
+        /// box is the entire planet.
         /// </summary>
         public void GetMarkerExtents(double dP,
                                      out double minLat, out double maxLat, out double minLon, out double maxLon)
         {
-            minLat = 90.0;
-            maxLat = -90.0;
-            minLon = 180.0;
-            maxLon = -180.0;
+            minLat = 89.0;
+            maxLat = -89.0;
+            minLon = 179.0;
+            maxLon = -179.0;
             foreach (var child in Children)
             {
                 MapMarkerControl marker = child as MapMarkerControl;
@@ -971,7 +972,7 @@ namespace JAFDTC.UI.Controls.Map
 
                             ShowEditHandleAtLocation(pathInfo.EditHandlePos,
                                                      TagForMarkerOfKind(MapMarkerInfo.MarkerType.PATH_EDIT_HANDLE, tagStr, tagInt + 1),
-                                                     LocatePathHandle(pathInfo  .Points, tagInt - 1, tagInt));
+                                                     LocatePathHandle(pathInfo.Points, tagInt - 1, tagInt));
                         });
                 }
             }
