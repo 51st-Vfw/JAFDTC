@@ -49,8 +49,7 @@ namespace JAFDTC.UI.Base
     /// page to edit mission fields. this is a general-purpose class that is instatiated in combination with an
     /// IEditCoreMissionPageHelper class to provide airframe-specific specialization.
     /// </summary>
-    public sealed partial class EditCoreMissionPage : SystemEditorPageBase,
-                                                      IMapControlVerbHandler, IMapControlMarkerExplainer
+    public sealed partial class EditCoreMissionPage : SystemEditorPageBase, IMapControlVerbHandler
     {
         // ------------------------------------------------------------------------------------------------------------
         //
@@ -431,7 +430,10 @@ namespace JAFDTC.UI.Base
             MapWindow = NavpointUIHelper.OpenMap(this, PageHelper.NavptSystemInfo.NavptMaxCount,
                                                  PageHelper.NavptSystemInfo.NavptCoordFmt, openMask, editMask, routes,
                                                  EditMsn.Threats, Config.LastMapMarkerImport, Config.LastMapFilter);
-            MapWindow.MarkerExplainer = this;
+            //
+            // NOTE: the configuration editor is also assumed to implement IMapControlMarkerExplainer.
+            //
+            MapWindow.MarkerExplainer = (IMapControlMarkerExplainer)NavArgs.ConfigPage.ConfigEditor;
             MapWindow.Closed += MapWindow_Closed;
 
             NavArgs.ConfigPage.RegisterAuxWindow(MapWindow);
@@ -870,51 +872,6 @@ namespace JAFDTC.UI.Base
             BindsUI.SetLoadout(int.Parse(tbox.Tag as string), tbox.Text);
 
             SaveEditStateToConfig();
-        }
-
-        // ------------------------------------------------------------------------------------------------------------
-        //
-        // IMapControlMarkerExplainer
-        //
-        // ------------------------------------------------------------------------------------------------------------
-
-        /// <summary>
-        /// returns the display type of the marker with the specified information.
-        /// </summary>
-        public string MarkerDisplayType(MapMarkerInfo info)
-        {
-            return (info.Type == MapMarkerInfo.MarkerType.NAV_PT) ? PageHelper.NavptSystemInfo.NavptName
-                                                                  : NavpointUIHelper.MarkerDisplayType(info);
-        }
-
-        /// <summary>
-        /// returns the display name of the marker with the specified information.
-        /// </summary>
-        public string MarkerDisplayName(MapMarkerInfo info)
-        {
-            if (info.Type == MapMarkerInfo.MarkerType.NAV_PT)
-            {
-                string name = PageHelper.GetNavpoint(Config, info.TagStr, info.TagInt - 1).Name;
-                if (string.IsNullOrEmpty(name))
-                    name = $"{SystemName} {info.TagInt}";
-                return name;
-            }
-            return NavpointUIHelper.MarkerDisplayName(info);
-        }
-
-        /// <summary>
-        /// returns the elevation of the marker with the specified information.
-        /// </summary>
-        public string MarkerDisplayElevation(MapMarkerInfo info, string units = "")
-        {
-            if (info.Type == MapMarkerInfo.MarkerType.NAV_PT)
-            {
-                string elev = PageHelper.GetNavpoint(Config, info.TagStr, info.TagInt - 1).Alt;
-                if (string.IsNullOrEmpty(elev))
-                    elev = "0";
-                return $"{elev}{units}";
-            }
-            return NavpointUIHelper.MarkerDisplayElevation(info, units);
         }
 
         // ------------------------------------------------------------------------------------------------------------

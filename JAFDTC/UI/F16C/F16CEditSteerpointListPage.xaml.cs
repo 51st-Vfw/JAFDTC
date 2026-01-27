@@ -50,7 +50,7 @@ namespace JAFDTC.UI.F16C
     /// <summary>
     /// editor for steerpoints in the viper.
     /// </summary>
-    public sealed partial class F16CEditSteerpointListPage : Page, IMapControlVerbHandler, IMapControlMarkerExplainer
+    public sealed partial class F16CEditSteerpointListPage : Page, IMapControlVerbHandler
     {
         public static ConfigEditorPageInfo PageInfo
             => new(STPTSystem.SystemTag, "Steerpoints", "STPT", Glyphs.STPT, typeof(F16CEditSteerpointListPage));
@@ -171,7 +171,10 @@ namespace JAFDTC.UI.F16C
                                                  Config.Mission.Threats,
                                                  Config.LastMapMarkerImport,
                                                  Config.LastMapFilter);
-            MapWindow.MarkerExplainer = this;
+            //
+            // NOTE: the configuration editor is also assumed to implement IMapControlMarkerExplainer.
+            //
+            MapWindow.MarkerExplainer = (IMapControlMarkerExplainer)NavArgs.ConfigPage.ConfigEditor;
             MapWindow.Closed += MapWindow_Closed;
 
             NavArgs.ConfigPage.RegisterAuxWindow(MapWindow);
@@ -565,61 +568,6 @@ namespace JAFDTC.UI.F16C
         {
             if (uiStptListView.SelectedItems.Count > 0)
                 EditSteerpoint((SteerpointInfo)uiStptListView.SelectedItems[0]);
-        }
-
-        // ------------------------------------------------------------------------------------------------------------
-        //
-        // IMapControlMarkerExplainer
-        //
-        // ------------------------------------------------------------------------------------------------------------
-
-        /// <summary>
-        /// returns the display type of the marker with the specified information.
-        /// </summary>
-        public string MarkerDisplayType(MapMarkerInfo info)
-        {
-            return (info.Type == MapMarkerInfo.MarkerType.NAV_PT) ? STPTSystem.SystemInfo.NavptName
-                                                                  : NavpointUIHelper.MarkerDisplayType(info);
-        }
-
-        /// <summary>
-        /// returns the display name of the marker with the specified information.
-        /// </summary>
-        public string MarkerDisplayName(MapMarkerInfo info)
-        {
-            if (info.Type == MapMarkerInfo.MarkerType.NAV_PT)
-            {
-                if (EditStptDetailPage != null)
-                    CopyConfigToEdit();                                 // just in case editor is FA, so it won't FO
-                string name = EditSTPT.Points[info.TagInt - 1].Name;
-                if (string.IsNullOrEmpty(name))
-                    name = $"Steerpoint {info.TagInt}";
-                if (!string.IsNullOrEmpty(EditSTPT.Points[info.TagInt - 1].TOS))
-                    name = $"{name}: TOS {EditSTPT.Points[info.TagInt - 1].TOS}L";
-                return name;
-            }
-            else
-            {
-                return NavpointUIHelper.MarkerDisplayName(info);
-            }
-        }
-
-        /// <summary>
-        /// returns the elevation of the marker with the specified information.
-        /// </summary>
-        public string MarkerDisplayElevation(MapMarkerInfo info, string units = "")
-        {
-            if (info.Type == MapMarkerInfo.MarkerType.NAV_PT)
-            {
-                if (EditStptDetailPage != null)
-                    CopyConfigToEdit();                                 // just in case editor is FA, so it won't FO
-                string elev = EditSTPT.Points[info.TagInt - 1].Alt;
-                return (string.IsNullOrEmpty(elev)) ? "Ground" : $"{elev}{units}";
-            }
-            else
-            {
-                return NavpointUIHelper.MarkerDisplayElevation(info, units);
-            }
         }
 
         // ------------------------------------------------------------------------------------------------------------

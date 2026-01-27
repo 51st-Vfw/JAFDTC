@@ -51,8 +51,7 @@ namespace JAFDTC.UI.Base
     /// using IEditNavpointListHelper, this class can support other navigation point systems that go beyond the basic
     /// functionality in NavpointInfoBase and NavpointSystemBase.
     /// </summary>
-    public sealed partial class EditNavpointListPage : SystemEditorPageBase,
-                                                       IMapControlVerbHandler, IMapControlMarkerExplainer
+    public sealed partial class EditNavpointListPage : SystemEditorPageBase, IMapControlVerbHandler
     {
         // ------------------------------------------------------------------------------------------------------------
         //
@@ -166,7 +165,10 @@ namespace JAFDTC.UI.Base
             MapWindow = NavpointUIHelper.OpenMap(this, PageHelper.SystemInfo.NavptMaxCount,
                                                  PageHelper.SystemInfo.NavptCoordFmt, openMask, editMask, routes,
                                                  null, Config.LastMapMarkerImport, Config.LastMapFilter);
-            MapWindow.MarkerExplainer = this;
+            //
+            // NOTE: the configuration editor is also assumed to implement IMapControlMarkerExplainer.
+            //
+            MapWindow.MarkerExplainer = (IMapControlMarkerExplainer)NavArgs.ConfigPage.ConfigEditor;
             MapWindow.Closed += MapWindow_Closed;
 
             NavArgs.ConfigPage.RegisterAuxWindow(MapWindow);
@@ -486,61 +488,6 @@ namespace JAFDTC.UI.Base
         {
             if (uiNavptListView.SelectedItems.Count > 0)
                 EditNavpoint((INavpointInfo)uiNavptListView.SelectedItems[0]);
-        }
-
-        // ------------------------------------------------------------------------------------------------------------
-        //
-        // IMapControlMarkerExplainer
-        //
-        // ------------------------------------------------------------------------------------------------------------
-
-        /// <summary>
-        /// returns the display type of the marker with the specified information.
-        /// </summary>
-        public string MarkerDisplayType(MapMarkerInfo info)
-        {
-            return (info.Type == MapMarkerInfo.MarkerType.NAV_PT) ? PageHelper.SystemInfo.NavptName
-                                                                  : NavpointUIHelper.MarkerDisplayType(info);
-        }
-
-        /// <summary>
-        /// returns the display name of the marker with the specified information.
-        /// </summary>
-        public string MarkerDisplayName(MapMarkerInfo info)
-        {
-            if (info.Type == MapMarkerInfo.MarkerType.NAV_PT)
-            {
-                if (EditNavptDetailPage != null)
-                    CopyConfigToEditState();                            // just in case editor is FA, so it won't FO
-                string name = EditNavpt[info.TagInt - 1].Name;
-                if (string.IsNullOrEmpty(name))
-                    name = $"{SystemName} {info.TagInt}";
-                return name;
-            }
-            else
-            {
-                return NavpointUIHelper.MarkerDisplayName(info);
-            }
-        }
-
-        /// <summary>
-        /// returns the elevation of the marker with the specified information.
-        /// </summary>
-        public string MarkerDisplayElevation(MapMarkerInfo info, string units = "")
-        {
-            if (info.Type == MapMarkerInfo.MarkerType.NAV_PT)
-            {
-                if (EditNavptDetailPage != null)
-                    CopyConfigToEditState();                            // just in case editor is FA, so it won't FO
-                string elev = EditNavpt[info.TagInt - 1].Alt;
-                if (string.IsNullOrEmpty(elev))
-                    elev = "0";
-                return $"{elev}{units}";
-            }
-            else
-            {
-                return NavpointUIHelper.MarkerDisplayElevation(info, units);
-            }
         }
 
         // ------------------------------------------------------------------------------------------------------------

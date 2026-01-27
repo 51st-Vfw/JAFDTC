@@ -18,7 +18,13 @@
 // ********************************************************************************************************************
 
 using JAFDTC.Models;
+using JAFDTC.Models.DCS;
+using JAFDTC.Models.F16C;
+using JAFDTC.Models.POI;
 using JAFDTC.UI.App;
+using JAFDTC.UI.Base;
+using JAFDTC.UI.Controls.Map;
+using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 
@@ -48,7 +54,7 @@ namespace JAFDTC.UI.F16C
     {
         // ------------------------------------------------------------------------------------------------------------
         //
-        // IConfigurationEditor
+        // IConfigurationEditor overrides
         //
         // ------------------------------------------------------------------------------------------------------------
 
@@ -69,5 +75,42 @@ namespace JAFDTC.UI.F16C
             ];
 
         public F16CConfigurationEditor(IConfiguration config) => (Config) = (config);
+
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // IMapControlMarkerExplainer overrides
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
+        public override string MarkerDisplayType(MapMarkerInfo info)
+        {
+            F16CConfiguration config = (F16CConfiguration)Config;
+            return (info.Type == MapMarkerInfo.MarkerType.NAV_PT) ? config.STPT.SysInfo.NavptName
+                                                                  : base.MarkerDisplayType(info);
+        }
+
+        public override string MarkerDisplayName(MapMarkerInfo info)
+        {
+            F16CConfiguration config = (F16CConfiguration)Config;
+            if (info.Type == MapMarkerInfo.MarkerType.NAV_PT)
+            {
+                string name = config.STPT.Points[info.TagInt - 1].Name;
+                if (string.IsNullOrEmpty(name))
+                    name = $"SP{info.TagInt}";
+                return name;
+            }
+            return base.MarkerDisplayName(info);
+        }
+
+        public override string MarkerDisplayElevation(MapMarkerInfo info, string units = "")
+        {
+            F16CConfiguration config = (F16CConfiguration)Config;
+            if (info.Type == MapMarkerInfo.MarkerType.NAV_PT)
+            {
+                string elev = config.STPT.Points[info.TagInt - 1].Alt;
+                return (string.IsNullOrEmpty(elev)) ? "Ground" : $"{elev}{units}";
+            }
+            return base.MarkerDisplayElevation(info, units);
+        }
     }
 }

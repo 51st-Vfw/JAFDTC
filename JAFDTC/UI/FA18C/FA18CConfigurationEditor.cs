@@ -18,7 +18,9 @@
 // ********************************************************************************************************************
 
 using JAFDTC.Models;
+using JAFDTC.Models.FA18C;
 using JAFDTC.UI.App;
+using JAFDTC.UI.Controls.Map;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 
@@ -60,5 +62,42 @@ namespace JAFDTC.UI.FA18C
                 FA18CEditCoreSimDTCPageHelper.PageInfo
 #endif
             ];
+
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // IMapControlMarkerExplainer overrides
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
+        public override string MarkerDisplayType(MapMarkerInfo info)
+        {
+            FA18CConfiguration config = (FA18CConfiguration)Config;
+            return (info.Type == MapMarkerInfo.MarkerType.NAV_PT) ? config.WYPT.SysInfo.NavptName
+                                                                  : base.MarkerDisplayType(info);
+        }
+
+        public override string MarkerDisplayName(MapMarkerInfo info)
+        {
+            FA18CConfiguration config = (FA18CConfiguration)Config;
+            if (info.Type == MapMarkerInfo.MarkerType.NAV_PT)
+            {
+                string name = config.WYPT.Points[info.TagInt - 1].Name;
+                if (string.IsNullOrEmpty(name))
+                    name = $"SP{info.TagInt}";
+                return name;
+            }
+            return base.MarkerDisplayName(info);
+        }
+
+        public override string MarkerDisplayElevation(MapMarkerInfo info, string units = "")
+        {
+            FA18CConfiguration config = (FA18CConfiguration)Config;
+            if (info.Type == MapMarkerInfo.MarkerType.NAV_PT)
+            {
+                string elev = config.WYPT.Points[info.TagInt - 1].Alt;
+                return (string.IsNullOrEmpty(elev)) ? "Ground" : $"{elev}{units}";
+            }
+            return base.MarkerDisplayElevation(info, units);
+        }
     }
 }

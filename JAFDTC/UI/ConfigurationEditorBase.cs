@@ -19,15 +19,19 @@
 
 using JAFDTC.Models;
 using JAFDTC.Models.Core;
+using JAFDTC.Models.DCS;
+using JAFDTC.Models.POI;
 using JAFDTC.UI.A10C;
-using JAFDTC.UI.F16C;
-using JAFDTC.UI.F15E;
-using JAFDTC.UI.FA18C;
 using JAFDTC.UI.App;
+using JAFDTC.UI.Controls.Map;
+using JAFDTC.UI.F15E;
+using JAFDTC.UI.F16C;
+using JAFDTC.UI.FA18C;
+using JAFDTC.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using JAFDTC.Utilities;
 
 namespace JAFDTC.UI
 {
@@ -35,8 +39,29 @@ namespace JAFDTC.UI
     /// abstract base class for a configuration editor that implements IConfigurationEditor. the abstract base
     /// class provides a factory method to build concrete instances based on airframe.
     /// </summary>
-    public abstract class ConfigurationEditorBase : IConfigurationEditor
+    public abstract class ConfigurationEditorBase : IConfigurationEditor, IMapControlMarkerExplainer
     {
+
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // IConfigurationEditor instance factory
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
+        /// <summary>
+        /// returns an instance of the configuration editor to use for a particular configuration. null if the
+        /// configuration is invalid or for an unsupported airframe.
+        /// </summary>
+        public static IConfigurationEditor Factory(IConfiguration config)
+            => config.Airframe switch
+            {
+                AirframeTypes.A10C => new A10CConfigurationEditor(config),
+                AirframeTypes.F16C => new F16CConfigurationEditor(config),
+                AirframeTypes.F15E => new F15EConfigurationEditor(config),
+                AirframeTypes.FA18C => new FA18CConfigurationEditor(config),
+                _ => null,
+            };
+
         // ------------------------------------------------------------------------------------------------------------
         //
         // IConfigurationEditor
@@ -45,10 +70,25 @@ namespace JAFDTC.UI
 
         public IConfiguration Config { get; set; }
 
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // IConfigurationEditor, virtual methods
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
+        // derived classes must override this to provide the correct list of editor page information for the
+        // systems in the configuration.
+        //
         public virtual ObservableCollection<ConfigEditorPageInfo> ConfigEditorPageInfo => [ ];
 
+        // derived classes must override this to provide the correct list of auxilliary command information for
+        // the configuration.
+        //
         public virtual ObservableCollection<ConfigAuxCommandInfo> ConfigAuxCommandInfo => [ ];
 
+        // derived classes may override this to provide the information for the update strings suitable for the
+        // configuration.
+        //
         public virtual Dictionary<string, string> BuildUpdatesStrings(IConfiguration config)
         {
             List<string> sysList = [ ];
@@ -81,28 +121,57 @@ namespace JAFDTC.UI
             };
         }
 
+        // derived classes must override this to handle auxilliary commands.
+        //
         public virtual bool HandleAuxCommand(ConfigurationPage configPage, ConfigAuxCommandInfo cmd) => false;
 
         // ------------------------------------------------------------------------------------------------------------
         //
-        // factory
+        // IMapControlMarkerExplainer, virtual methods
         //
         // ------------------------------------------------------------------------------------------------------------
 
-        /// <summary>
-        /// returns an instance of the configuration editor to use for a particular configuration. null if the
-        /// configuration is invalid or for an unsupported airframe.
-        /// </summary>
-        public static IConfigurationEditor Factory(IConfiguration config)
-        {
-            return config.Airframe switch
+        public virtual string MarkerDisplayType(MapMarkerInfo info)
+            => info.Type switch
             {
-                AirframeTypes.A10C => new A10CConfigurationEditor(config),
-                AirframeTypes.F16C => new F16CConfigurationEditor(config),
-                AirframeTypes.F15E => new F15EConfigurationEditor(config),
-                AirframeTypes.FA18C => new FA18CConfigurationEditor(config),
-                _ => null,
+                MapMarkerInfo.MarkerType.POI_SYSTEM => $"Core POI",
+                MapMarkerInfo.MarkerType.POI_USER => $"User POI",
+                MapMarkerInfo.MarkerType.POI_CAMPAIGN => $"Campaign POI",
+                _ => ""
             };
+
+        public virtual string MarkerDisplayName(MapMarkerInfo info)
+        {
+            string name = "";
+            if ((info.Type == MapMarkerInfo.MarkerType.POI_SYSTEM) ||
+                (info.Type == MapMarkerInfo.MarkerType.POI_USER) ||
+                (info.Type == MapMarkerInfo.MarkerType.POI_CAMPAIGN))
+            {
+                PointOfInterest poi = PointOfInterestDbase.Instance.Find(info.TagStr);
+                if (poi != null)
+                    name = poi.Type switch
+                    {
+                        PointOfInterestType.SYSTEM => $"POI: {poi.Name}",
+                        PointOfInterestType.USER => $"User: {poi.Name}",
+                        PointOfInterestType.CAMPAIGN => $"{poi.Campaign}: {poi.Name}",
+                        _ => throw new NotImplementedException(),
+                    };
+            }
+            return name;
+        }
+
+        public virtual string MarkerDisplayElevation(MapMarkerInfo info, string units = "")
+        {
+            string elev = "";
+            if ((info.Type == MapMarkerInfo.MarkerType.POI_SYSTEM) ||
+                (info.Type == MapMarkerInfo.MarkerType.POI_USER) ||
+                (info.Type == MapMarkerInfo.MarkerType.POI_CAMPAIGN))
+            {
+                PointOfInterest poi = PointOfInterestDbase.Instance.Find(info.TagStr);
+                if (poi != null)
+                    elev = $"{poi.Elevation}{units}";
+            }
+            return elev;
         }
     }
 }
