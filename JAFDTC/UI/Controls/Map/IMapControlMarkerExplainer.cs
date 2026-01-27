@@ -24,17 +24,20 @@ namespace JAFDTC.UI.Controls.Map
     public interface IMapControlMarkerExplainer
     {
         /// <summary>
-        /// returns the display type of the marker with the specified information.
+        /// returns a string for the type of the marker with the specified information for use in the ui, "" if the
+        /// display type cannot be determined.
         /// </summary>
         public string MarkerDisplayType(MapMarkerInfo info);
 
         /// <summary>
-        /// returns the display name of the marker with the specified information.
+        /// returns a string for the name of the marker with the specified information for use in the ui, "" if the
+        /// display name cannot be determined.
         /// </summary>
         public string MarkerDisplayName(MapMarkerInfo info);
 
         /// <summary>
-        /// returns the elevation of the marker with the specified information.
+        /// returns a string for the elevation of the marker with the specified information for use in the ui, ""
+        /// if elevation cannot be determined.
         /// </summary>
         public string MarkerDisplayElevation(MapMarkerInfo info, string units = "");
     }
