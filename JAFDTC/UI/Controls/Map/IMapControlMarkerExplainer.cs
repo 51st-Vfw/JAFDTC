@@ -1,4 +1,5 @@
-﻿//
+﻿// ********************************************************************************************************************
+//
 // IMapControlMarkerExplainer.cs : interfaces for a map window marker control helper to provide marker descriptions
 //
 // Copyright(C) 2025 ilominar/raven

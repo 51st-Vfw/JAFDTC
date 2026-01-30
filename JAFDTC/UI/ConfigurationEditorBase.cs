@@ -19,16 +19,14 @@
 
 using JAFDTC.Models;
 using JAFDTC.Models.Core;
-using JAFDTC.Models.DCS;
-using JAFDTC.Models.POI;
 using JAFDTC.UI.A10C;
 using JAFDTC.UI.App;
+using JAFDTC.UI.Base;
 using JAFDTC.UI.Controls.Map;
 using JAFDTC.UI.F15E;
 using JAFDTC.UI.F16C;
 using JAFDTC.UI.FA18C;
 using JAFDTC.Utilities;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -150,46 +148,12 @@ namespace JAFDTC.UI
         // ------------------------------------------------------------------------------------------------------------
 
         public virtual string MarkerDisplayType(MapMarkerInfo info)
-            => info.Type switch
-            {
-                MapMarkerInfo.MarkerType.POI_SYSTEM => $"Core POI",
-                MapMarkerInfo.MarkerType.POI_USER => $"User POI",
-                MapMarkerInfo.MarkerType.POI_CAMPAIGN => $"Campaign POI",
-                _ => ""
-            };
+            => MarkerExplainerHelper.MarkerDisplayType(info);
 
         public virtual string MarkerDisplayName(MapMarkerInfo info)
-        {
-            string name = "";
-            if ((info.Type == MapMarkerInfo.MarkerType.POI_SYSTEM) ||
-                (info.Type == MapMarkerInfo.MarkerType.POI_USER) ||
-                (info.Type == MapMarkerInfo.MarkerType.POI_CAMPAIGN))
-            {
-                PointOfInterest poi = PointOfInterestDbase.Instance.Find(info.TagStr);
-                if (poi != null)
-                    name = poi.Type switch
-                    {
-                        PointOfInterestType.SYSTEM => $"POI: {poi.Name}",
-                        PointOfInterestType.USER => $"User: {poi.Name}",
-                        PointOfInterestType.CAMPAIGN => $"{poi.Campaign}: {poi.Name}",
-                        _ => throw new NotImplementedException(),
-                    };
-            }
-            return name;
-        }
+            => MarkerExplainerHelper.MarkerDisplayName(info);
 
         public virtual string MarkerDisplayElevation(MapMarkerInfo info, string units = "")
-        {
-            string elev = "";
-            if ((info.Type == MapMarkerInfo.MarkerType.POI_SYSTEM) ||
-                (info.Type == MapMarkerInfo.MarkerType.POI_USER) ||
-                (info.Type == MapMarkerInfo.MarkerType.POI_CAMPAIGN))
-            {
-                PointOfInterest poi = PointOfInterestDbase.Instance.Find(info.TagStr);
-                if (poi != null)
-                    elev = $"{poi.Elevation}{units}";
-            }
-            return elev;
-        }
+            => MarkerExplainerHelper.MarkerDisplayElevation(info, units);
     }
 }

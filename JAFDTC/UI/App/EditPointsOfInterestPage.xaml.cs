@@ -1407,18 +1407,18 @@ namespace JAFDTC.UI.App
         /// <summary>
         /// returns the display type of the marker with the specified information.
         /// </summary>
-        public string MarkerDisplayType(MapMarkerInfo info) => NavpointUIHelper.MarkerDisplayType(info);
+        public string MarkerDisplayType(MapMarkerInfo info) => MarkerExplainerHelper.MarkerDisplayType(info);
 
         /// <summary>
         /// returns the display name of the marker with the specified information.
         /// </summary>
-        public string MarkerDisplayName(MapMarkerInfo info) => NavpointUIHelper.MarkerDisplayName(info);
+        public string MarkerDisplayName(MapMarkerInfo info) => MarkerExplainerHelper.MarkerDisplayName(info);
 
         /// <summary>
         /// returns the elevation of the marker with the specified information.
         /// </summary>
         public string MarkerDisplayElevation(MapMarkerInfo info, string units = "")
-            => NavpointUIHelper.MarkerDisplayElevation(info, units);
+            => MarkerExplainerHelper.MarkerDisplayElevation(info, units);
 
         // ------------------------------------------------------------------------------------------------------------
         //
