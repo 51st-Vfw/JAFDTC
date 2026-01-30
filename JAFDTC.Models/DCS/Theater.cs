@@ -61,7 +61,7 @@ namespace JAFDTC.Models.DCS
         /// </summary>
         public static List<string> TheatersForCoords(double lat, double lon)
         {
-            List<string> theaters = [];
+            List<string> theaters = [ ];
             foreach (KeyValuePair<string, TheaterInfo> kvp in TheaterInfo)
                 if (kvp.Value.Contains(lat, lon))
                     theaters.Add(kvp.Key);
@@ -71,13 +71,13 @@ namespace JAFDTC.Models.DCS
         /// <summary>
         /// returns a list of the names of the dcs theaters that contains the given coordinate, empty list if
         /// no theater matches the coordinates. the match is based on approximate lat/lon bounds of the theaters.
-        /// note that a coordinate may appear in multiple theaters. null is returned if unable to parse.
+        /// note that a coordinate may appear in multiple theaters. empty list is returned if unable to parse.
         /// </summary>
         public static List<string> TheatersForCoords(string lat, string lon)
         {
             if (double.TryParse(lat, out double latNum) && double.TryParse(lon, out double lonNum))
                 return TheatersForCoords(latNum, lonNum);
-            return null;
+            return [ ];
         }
     }
 }
