@@ -119,8 +119,8 @@ namespace JAFDTC.UI.Base
         /// </summary>
         private List<PointOfInterest> GetPoIsMatchingFilter(string name = null)
         {
-            PointOfInterestDbQuery query = new(POIFilter.IncludeTypes, POIFilter.Theater, POIFilter.Campaign,
-                                               name, POIFilter.Tags, PointOfInterestDbQueryFlags.NAME_PARTIAL_MATCH);
+            PointOfInterestDbaseQuery query = new(POIFilter.IncludeTypes, POIFilter.Theater, [ POIFilter.Campaign ],
+                                                  name, POIFilter.Tags, PointOfInterestDbaseQueryFlags.NAME_PARTIAL_MATCH);
             return PointOfInterestDbase.Instance.Find(query, true);
         }
 

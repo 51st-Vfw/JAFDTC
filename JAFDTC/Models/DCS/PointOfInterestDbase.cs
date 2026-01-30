@@ -28,60 +28,6 @@ using System.Diagnostics;
 namespace JAFDTC.Models.DCS
 {
     /// <summary>
-    /// flags to control paramters of a query in the point of interest database via Find().
-    /// </summary>
-    [Flags]
-    public enum PointOfInterestDbQueryFlags
-    {
-        NONE = 0,                                               // no flags
-        NAME_PARTIAL_MATCH = 1 << 0,                            // allow partial match of name
-        TAGS_ANY_MATCH = 1 << 1,                                // allow at least one tag match
-        TAG_PARTIAL_MATCH = 1 << 2,                             // allow partial match of a tag
-    }
-
-    // ================================================================================================================
-
-    /// <summary>
-    /// parameters for a query of the point of interest database via Find(). for a poi to match a query,
-    /// the following must hold:
-    /// 
-    ///     1) query.Types contains poi.Type
-    ///     2) query.Theater matches poi.Theater exactly
-    ///     3) query.Campaign matches poi.Campaign exactly
-    ///     4) query.Name matches poi.Name per query.Flags, given poi.Name "abcdef"
-    ///             NAME_PARTIAL_MATCH => Name "bcd" matches
-    ///            !NAME_PARTIAL_MATCH => Name "bcd" does not match
-    ///     4) query.Tags matches poi.Tags per query.Flags, given poi.Tags "aa ; bb"
-    ///             TAGS_ANY_MATCH => to match, at least one tag in query.Tags must match a tag in poi.Tags
-    ///            !TAGS_ANY_MATCH => to match, all tags in query.Tags must match a tag in poi.Tags
-    ///             TAG_PARTIAL_MATCH => allows partial tag matches, "a" matches "aa"
-    ///            !TAG_PARTIAL_MATCH => disallows partial tag matches, "a" does not match "aa"
-    ///
-    /// string comparisons are always case-insensitive.
-    /// </summary>
-    public class PointOfInterestDbQuery
-    {
-        public readonly PointOfInterestTypeMask Types;          // types of points of interest to search
-
-        public readonly string Theater;                         // theater (null => match any)
-
-        public readonly string Campaign;                        // campaign name (null => match any)
-
-        public readonly string Name;                            // name (null => match any)
-
-        public readonly string Tags;                            // tags (";"-separated list, null => match any)
-
-        public readonly PointOfInterestDbQueryFlags Flags;      // query flags
-
-        public PointOfInterestDbQuery(PointOfInterestTypeMask types = PointOfInterestTypeMask.ANY, string theater = null,
-                                      string campaign = null, string name = null, string tags = null,
-                                      PointOfInterestDbQueryFlags flags = PointOfInterestDbQueryFlags.NONE)
-            => (Types, Theater, Campaign, Name, Tags, Flags) = (types, theater, campaign, name, tags, flags);
-    }
-
-    // ================================================================================================================
-
-    /// <summary>
     /// point of interest (poi) database holds information (PointOfInterest instances) known to jafdtc. the database
     /// class is a singleton that supports find operations to query the known pois. the database is built from fixed
     /// dcs pois (such as airfields) as well as user-defined pois.
@@ -172,18 +118,22 @@ namespace JAFDTC.Models.DCS
         /// matches "any". database seraches are always case insensitive. results are optionally sorted using
         /// SortPoIs().
         /// </summary>
-        public List<PointOfInterest> Find(PointOfInterestDbQuery query, bool isSorted = false)
+        public List<PointOfInterest> Find(PointOfInterestDbaseQuery query, bool isSorted = false)
         {
             string theater = query.Theater?.ToLower();
-            string campaign = query.Campaign?.ToLower();
             string tags = query.Tags?.ToLower();
             string name = query.Name?.ToLower();
-            PointOfInterestDbQueryFlags flags = query.Flags;
+            List<string> campaigns = [ ];
+            PointOfInterestDbaseQueryFlags flags = query.Flags;
             PointOfInterestTypeMask types = query.Types;
 
-            bool isNamePartial = flags.HasFlag(PointOfInterestDbQueryFlags.NAME_PARTIAL_MATCH);
-            bool isTagsAny = flags.HasFlag(PointOfInterestDbQueryFlags.TAGS_ANY_MATCH);
-            bool isTagsPartial = flags.HasFlag(PointOfInterestDbQueryFlags.TAG_PARTIAL_MATCH);
+            bool isNamePartial = flags.HasFlag(PointOfInterestDbaseQueryFlags.NAME_PARTIAL_MATCH);
+            bool isTagsAny = flags.HasFlag(PointOfInterestDbaseQueryFlags.TAGS_ANY_MATCH);
+            bool isTagsPartial = flags.HasFlag(PointOfInterestDbaseQueryFlags.TAG_PARTIAL_MATCH);
+
+            if ((query.Campaigns != null) && !string.IsNullOrEmpty(query.Campaigns[0]))
+                foreach (string campaign in query.Campaigns)
+                    campaigns.Add(campaign.ToLower());
 
             List<PointOfInterest> results = [ ];
             foreach (KeyValuePair<PointOfInterestType, Dictionary<string, List<PointOfInterest>>> kvpMain in _dbase)
@@ -196,13 +146,13 @@ namespace JAFDTC.Models.DCS
                     foreach (PointOfInterest poi in kvpAux.Value)
                     {
                         string poiName = poi.Name.ToLower();
+                        string campName = (string.IsNullOrEmpty(poi.Campaign)) ? "<NONE>" : poi.Campaign.ToLower();
 
                         if ((!string.IsNullOrEmpty(theater) &&
                             (!theater.Equals(poi.Theater, StringComparison.CurrentCultureIgnoreCase))) ||
                             (!string.IsNullOrEmpty(name) && ((!isNamePartial && (name != poiName)) ||
                                                              (isNamePartial && !poiName.Contains(name)))) ||
-                            (!string.IsNullOrEmpty(campaign) &&
-                            (!campaign.Equals(poi.Campaign, StringComparison.CurrentCultureIgnoreCase))))
+                            ((campaigns.Count > 0) && (!campaigns.Contains(campName))))
                         {
                             continue;
                         }
@@ -480,15 +430,15 @@ namespace JAFDTC.Models.DCS
         /// </summary>
         public bool Save(string campaign = null, bool isCullEmptyCampaign = false)
         {
-            PointOfInterestDbQuery query;
+            PointOfInterestDbaseQuery query;
             if (string.IsNullOrEmpty(campaign))
             {
-                query = new PointOfInterestDbQuery(PointOfInterestTypeMask.USER);
+                query = new PointOfInterestDbaseQuery(PointOfInterestTypeMask.USER);
                 return FileManager.SaveUserPointsOfInterest(Find(query));
             }
             else
             {
-                query = new PointOfInterestDbQuery(PointOfInterestTypeMask.CAMPAIGN, null, campaign);
+                query = new PointOfInterestDbaseQuery(PointOfInterestTypeMask.CAMPAIGN, null, [ campaign ]);
                 List<PointOfInterest> pois = Find(query);
                 if (isCullEmptyCampaign && (pois.Count == 0))
                     FileManager.DeleteCampaignPointsOfInterest(campaign);

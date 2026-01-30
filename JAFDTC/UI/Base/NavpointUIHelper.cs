@@ -208,8 +208,8 @@ namespace JAFDTC.UI.Base
         public static List<PoIListItem> RebuildPointsOfInterest(POIFilterSpec filter, string name = null)
         {
             List<PoIListItem> suitableItems = [ ];
-            PointOfInterestDbQuery query = new(filter.IncludeTypes, filter.Theater, null, name, filter.Tags,
-                                               PointOfInterestDbQueryFlags.NAME_PARTIAL_MATCH);
+            PointOfInterestDbaseQuery query = new(filter.IncludeTypes, filter.Theater, null, name, filter.Tags,
+                                                  PointOfInterestDbaseQueryFlags.NAME_PARTIAL_MATCH);
             foreach (PointOfInterest poi in PointOfInterestDbase.Instance.Find(query, true))
                 suitableItems.Add(new PoIListItem(poi));
             return suitableItems;

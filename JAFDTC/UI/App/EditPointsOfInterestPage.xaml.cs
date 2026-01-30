@@ -660,8 +660,8 @@ namespace JAFDTC.UI.App
         /// </summary>
         private List<PointOfInterest> GetPoIsMatchingFilter(string name = null)
         {
-            PointOfInterestDbQuery query = new(POIFilter.IncludeTypes, POIFilter.Theater, POIFilter.Campaign,
-                                               name, POIFilter.Tags, PointOfInterestDbQueryFlags.NAME_PARTIAL_MATCH);
+            PointOfInterestDbaseQuery query = new(POIFilter.IncludeTypes, POIFilter.Theater, [ POIFilter.Campaign ],
+                                                  name, POIFilter.Tags, PointOfInterestDbaseQueryFlags.NAME_PARTIAL_MATCH);
             return PointOfInterestDbase.Instance.Find(query, true);
         }
 
@@ -1117,7 +1117,7 @@ namespace JAFDTC.UI.App
             string campaign = await PromptForCampaign("Delete");
             if (campaign != null)
             {
-                PointOfInterestDbQuery query = new(PointOfInterestTypeMask.CAMPAIGN, null, campaign);
+                PointOfInterestDbaseQuery query = new(PointOfInterestTypeMask.CAMPAIGN, null, [ campaign ]);
                 foreach (PointOfInterest poi in PointOfInterestDbase.Instance.Find(query))
                     MapWindow?.MirrorVerbMarkerDeleted(this, new((MapMarkerInfo.MarkerType)poi.Type, poi.UniqueID));
 

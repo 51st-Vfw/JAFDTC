@@ -96,7 +96,7 @@ namespace JAFDTC.UI.Base
                 if (result == ContentDialogResult.None)             // EXIT: user cancels
                     return;
 
-                PointOfInterestDbQuery query = new(PointOfInterestTypeMask.ANY, null, campaignName);
+                PointOfInterestDbaseQuery query = new(PointOfInterestTypeMask.ANY, null, [ campaignName ]);
                 pois = PointOfInterestDbase.Instance.Find(query);
             }
 

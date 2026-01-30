@@ -103,7 +103,7 @@ namespace JAFDTC.UI.FA18C
             Dictionary<string, PointOfInterest> marks = [];
             if (theater != null)
             {
-                PointOfInterestDbQuery query = new(PointOfInterestTypeMask.ANY, theater);
+                PointOfInterestDbaseQuery query = new(PointOfInterestTypeMask.ANY, theater);
                 foreach (PointOfInterest poi in PointOfInterestDbase.Instance.Find(query))
                     marks[poi.UniqueID] = poi;
             }
