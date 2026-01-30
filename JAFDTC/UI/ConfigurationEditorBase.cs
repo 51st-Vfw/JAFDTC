@@ -19,16 +19,14 @@
 
 using JAFDTC.Models;
 using JAFDTC.Models.Core;
-using JAFDTC.Models.DCS;
-using JAFDTC.Models.POI;
 using JAFDTC.UI.A10C;
 using JAFDTC.UI.App;
+using JAFDTC.UI.Base;
 using JAFDTC.UI.Controls.Map;
 using JAFDTC.UI.F15E;
 using JAFDTC.UI.F16C;
 using JAFDTC.UI.FA18C;
 using JAFDTC.Utilities;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -41,7 +39,6 @@ namespace JAFDTC.UI
     /// </summary>
     public abstract class ConfigurationEditorBase : IConfigurationEditor, IMapControlMarkerExplainer
     {
-
         // ------------------------------------------------------------------------------------------------------------
         //
         // IConfigurationEditor instance factory
@@ -76,19 +73,28 @@ namespace JAFDTC.UI
         //
         // ------------------------------------------------------------------------------------------------------------
 
-        // derived classes must override this to provide the correct list of editor page information for the
-        // systems in the configuration.
-        //
+        /// <summary>
+        /// base implementation returns an empty list.
+        /// 
+        /// derived classes must override this to provide the correct list of editor page information for the
+        /// systems in the configuration.
+        /// </summary>
         public virtual ObservableCollection<ConfigEditorPageInfo> ConfigEditorPageInfo => [ ];
 
-        // derived classes must override this to provide the correct list of auxilliary command information for
-        // the configuration.
-        //
+        /// <summary>
+        /// base implementation returns an empty list.
+        /// 
+        /// derived classes must override this to provide the correct list of editor page information for the
+        /// systems in the configuration.
+        /// </summary>
         public virtual ObservableCollection<ConfigAuxCommandInfo> ConfigAuxCommandInfo => [ ];
 
-        // derived classes may override this to provide the information for the update strings suitable for the
-        // configuration.
-        //
+        /// <summary>
+        /// base implementation returns an baseline dictionary suitable for common cases.
+        /// 
+        /// derived classes may override this to provide the information for the update strings suitable for the
+        /// airframe and configuration.
+        /// </summary>
         public virtual Dictionary<string, string> BuildUpdatesStrings(IConfiguration config)
         {
             List<string> sysList = [ ];
@@ -109,9 +115,7 @@ namespace JAFDTC.UI
 
             string infoText = "Default setup, no changes to avionics";
             if (sysList.Count > 0)
-            {
                 infoText = $"Sets up {General.JoinList(sysList)} system" + ((sysList.Count > 1) ? "s" : "");
-            }
 
             return new Dictionary<string, string>()
             {
@@ -121,9 +125,21 @@ namespace JAFDTC.UI
             };
         }
 
-        // derived classes must override this to handle auxilliary commands.
-        //
+        /// <summary>
+        /// base implementation always returns false.
+        /// 
+        /// derived classes for configurations that support aux commands must override this method to correctly
+        /// handle the aux command.
+        /// </summary>
         public virtual bool HandleAuxCommand(ConfigurationPage configPage, ConfigAuxCommandInfo cmd) => false;
+
+        /// <summary>
+        /// base implementation is an empty function.
+        /// 
+        /// derived classes for configurations that support the map window must override this method to correctly
+        /// set up the map window.
+        /// </summary>
+        public virtual void SetupMapWindow() { }
 
         // ------------------------------------------------------------------------------------------------------------
         //
@@ -132,46 +148,12 @@ namespace JAFDTC.UI
         // ------------------------------------------------------------------------------------------------------------
 
         public virtual string MarkerDisplayType(MapMarkerInfo info)
-            => info.Type switch
-            {
-                MapMarkerInfo.MarkerType.POI_SYSTEM => $"Core POI",
-                MapMarkerInfo.MarkerType.POI_USER => $"User POI",
-                MapMarkerInfo.MarkerType.POI_CAMPAIGN => $"Campaign POI",
-                _ => ""
-            };
+            => MarkerExplainerHelper.MarkerDisplayType(info);
 
         public virtual string MarkerDisplayName(MapMarkerInfo info)
-        {
-            string name = "";
-            if ((info.Type == MapMarkerInfo.MarkerType.POI_SYSTEM) ||
-                (info.Type == MapMarkerInfo.MarkerType.POI_USER) ||
-                (info.Type == MapMarkerInfo.MarkerType.POI_CAMPAIGN))
-            {
-                PointOfInterest poi = PointOfInterestDbase.Instance.Find(info.TagStr);
-                if (poi != null)
-                    name = poi.Type switch
-                    {
-                        PointOfInterestType.SYSTEM => $"POI: {poi.Name}",
-                        PointOfInterestType.USER => $"User: {poi.Name}",
-                        PointOfInterestType.CAMPAIGN => $"{poi.Campaign}: {poi.Name}",
-                        _ => throw new NotImplementedException(),
-                    };
-            }
-            return name;
-        }
+            => MarkerExplainerHelper.MarkerDisplayName(info);
 
         public virtual string MarkerDisplayElevation(MapMarkerInfo info, string units = "")
-        {
-            string elev = "";
-            if ((info.Type == MapMarkerInfo.MarkerType.POI_SYSTEM) ||
-                (info.Type == MapMarkerInfo.MarkerType.POI_USER) ||
-                (info.Type == MapMarkerInfo.MarkerType.POI_CAMPAIGN))
-            {
-                PointOfInterest poi = PointOfInterestDbase.Instance.Find(info.TagStr);
-                if (poi != null)
-                    elev = $"{poi.Elevation}{units}";
-            }
-            return elev;
-        }
+            => MarkerExplainerHelper.MarkerDisplayElevation(info, units);
     }
 }

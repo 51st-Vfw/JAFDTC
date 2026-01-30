@@ -2,7 +2,7 @@
 //
 // MapSettingsDialog.xaml.cs -- ui c# for map settings dialog
 //
-// Copyright(C) 2025 ilominar/raven
+// Copyright(C) 2025-2026 ilominar/raven
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 // Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -34,10 +34,7 @@ namespace JAFDTC.UI.App
         //
         // ------------------------------------------------------------------------------------------------------------
 
-        public MapSettingsData Settings => new(uiSetCkbxAutoOpen.IsChecked ?? false,
-                                               uiSetCkbxEnableCache.IsChecked ?? false);
-
-        public bool IsAutoOpen => uiSetCkbxAutoOpen.IsChecked ?? false;
+        public MapSettingsData Settings => new(uiSetCkbxEnableCache.IsChecked ?? false);
 
         public bool IsTileCacheEnabled => uiSetCkbxEnableCache.IsChecked ?? false;
 
@@ -54,7 +51,6 @@ namespace JAFDTC.UI.App
             uiTxtCacheInfo.Text = $"The map tile cache currently uses {dbaseSize} in the directory:";
             uiTxtCachePath.Text = dbasePath;
 
-            uiSetCkbxAutoOpen.IsChecked = settings.IsAutoOpen;
             uiSetCkbxEnableCache.IsChecked = settings.IsTileCacheEnabled;
         }
     }

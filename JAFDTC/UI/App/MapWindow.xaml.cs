@@ -154,6 +154,21 @@ namespace JAFDTC.UI.App
             set
             {
                 _coordFormat = value;
+
+                // set up the width of the current mouse lat/lon based on the coordinate format we are using.
+                //
+                double width = value switch
+                {
+                    LLFormat.DDM_P1ZF => (6.0 + (5.0 * 0.5)) * 8.0,             // M 00 00.0, M 000 00.0
+                    LLFormat.DDM_P2ZF => (7.0 + (5.0 * 0.5)) * 8.0,             // M 00 00.000, M 000 00.00
+                    LLFormat.DDM_P3ZF => (8.0 + (5.0 * 0.5)) * 8.0,             // M 00 00.000, M 000 00.000
+                    LLFormat.DMS => (7.0 + (4.0 * 0.5)) * 8.0,                  // M 00 00 00, M 000 00 00
+                    _ => 100.0
+                };
+// TODO: use bindings here?
+                uiTxtMouseLat.Width = width;
+                uiTxtMouseLon.Width = width + 8.0;
+
                 RebuildInterfaceState();
             }
         }
@@ -168,6 +183,7 @@ namespace JAFDTC.UI.App
 
         public int MaxRouteLength
         {
+// TODO: use bindings here?
             get => uiMap.MaxRouteLength;
             set => uiMap.MaxRouteLength = value;
         }
@@ -374,6 +390,14 @@ namespace JAFDTC.UI.App
         // ------------------------------------------------------------------------------------------------------------
 
         /// <summary>
+        /// clear out all content in the map.
+        /// </summary>
+        public void ClearMapContent()
+        {
+            SetupMapContent();
+        }
+
+        /// <summary>
         /// set up initial map content (markers, routes, threats) and load it into the map control as well as various
         /// ui elements in the window. set the initial map view configuraiton to center on bounding box of markers.
         /// 
@@ -400,21 +424,7 @@ namespace JAFDTC.UI.App
             if (uiBarBtnFilter.IsChecked != IsFiltered)
                 uiBarBtnFilter.IsChecked = IsFiltered;
 
-            // set up theater in status area at bottom of window and size the width of the current mouse lat/lon
-            // based on the coordinate format we are using.
-            //
             uiTxtTheater.Text = Theater;
-            double width = CoordFormat switch
-            {
-                LLFormat.DDM_P1ZF => (6.0 + (5.0 * 0.5)) * 8.0,             // M 00 00.0, M 000 00.0
-                LLFormat.DDM_P2ZF => (7.0 + (5.0 * 0.5)) * 8.0,             // M 00 00.000, M 000 00.00
-                LLFormat.DDM_P3ZF => (8.0 + (5.0 * 0.5)) * 8.0,             // M 00 00.000, M 000 00.000
-                LLFormat.DMS => (7.0 + (4.0 * 0.5)) * 8.0,                  // M 00 00 00, M 000 00 00
-                _ => 100.0
-            };
-            uiTxtMouseLat.Width = width;
-            uiTxtMouseLon.Width = width + 8.0;
-
             uiMap.SetTheater(Theater);
 
             // build out paths and marks based on the information in the provided dictionaries.
@@ -459,11 +469,10 @@ namespace JAFDTC.UI.App
 
             // zoom the map control to fit all of the markers defined in the map.
             //
-            BoundingBox bounds = uiMap.GetMarkerBoundingBox(2.0);
+            BoundingBox bounds = uiMap.GetMarkerBoundingBox(1.0);
             uiMap.ZoomToBounds(bounds);                                     // ztb here avoids visual glitch
             DispatcherQueue.TryEnqueue(DispatcherQueuePriority.Low, () =>
             {
-                // TODO: should this center on theater instead of marker bounds?
                 uiMap.ZoomToBounds(bounds);                                 // ztb here with non-0 window size
             });
 
@@ -576,7 +585,18 @@ namespace JAFDTC.UI.App
         /// </summary>
         public void RegisterMapControlVerbObserver(IMapControlVerbHandler observer)
         {
+            Debug.WriteLine($"MapWindow:RegisterMapControlVerbObserver {observer.VerbHandlerTag}");
             _mapObservers[observer.VerbHandlerTag] = observer;
+        }
+
+        /// <summary>
+        /// unregisters a map control verb observer with the mirror.
+        /// </summary>
+        public void UnregisterMapControlVerbObserver(IMapControlVerbHandler observer)
+        {
+            Debug.WriteLine($"MapWindow:UnregisterMapControlVerbObserver {observer.VerbHandlerTag}");
+            if (_mapObservers.ContainsKey(observer.VerbHandlerTag))
+                _mapObservers.Remove(observer.VerbHandlerTag);
         }
 
         // following functions simply wlk the observers list and pass the verb along to all observers other than the

@@ -69,22 +69,6 @@ namespace JAFDTC.UI.Base
 
         protected override bool IsPageStateDefault => (EditNavpt.Count == 0);
 
-        // ---- internal properties
-
-        private MapWindow _mapWindow;
-        private MapWindow MapWindow
-        {
-            get => _mapWindow;
-            set
-            {
-                if (_mapWindow != value)
-                {
-                    _mapWindow = value;
-                    VerbMirror = value;
-                }
-            }
-        }
-
         private IEditNavpointListPageHelper PageHelper { get; set; }
 
         private ObservableCollection<INavpointInfo> EditNavpt { get; set; }
@@ -149,47 +133,16 @@ namespace JAFDTC.UI.Base
         // ------------------------------------------------------------------------------------------------------------
 
         /// <summary>
-        /// build out the data source and so on necessary for the map window and create it.
-        /// </summary>
-        private void CoreOpenMap(bool isMapWindowActive)
-        {
-            bool isLinked = !string.IsNullOrEmpty(Config.SystemLinkedTo(SystemTag));
-            MapMarkerInfo.MarkerTypeMask editMask = ((isLinked) ? 0 : MapMarkerInfo.MarkerTypeMask.NAV_PT) |
-                                                    ((isLinked) ? 0 : MapMarkerInfo.MarkerTypeMask.PATH_EDIT_HANDLE);
-            MapMarkerInfo.MarkerTypeMask openMask = MapMarkerInfo.MarkerTypeMask.NAV_PT;
-
-            Dictionary<string, List<INavpointInfo>> routes = new()
-            {
-                [ PageHelper.SystemInfo.RouteNames[0] ] = [.. EditNavpt ]
-            };
-            MapWindow = NavpointUIHelper.OpenMap(this, PageHelper.SystemInfo.NavptMaxCount,
-                                                 PageHelper.SystemInfo.NavptCoordFmt, openMask, editMask, routes,
-                                                 null, Config.LastMapMarkerImport, Config.LastMapFilter);
-            //
-            // NOTE: the configuration editor is also assumed to implement IMapControlMarkerExplainer.
-            //
-            MapWindow.MarkerExplainer = (IMapControlMarkerExplainer)NavArgs.ConfigPage.ConfigEditor;
-            MapWindow.Closed += MapWindow_Closed;
-
-            NavArgs.ConfigPage.RegisterAuxWindow(MapWindow);
-
-            if (uiNavptListView.SelectedIndex != -1)
-                VerbMirror?.MirrorVerbMarkerSelected(this, new(MapMarkerInfo.MarkerType.ANY,
-                                                     PageHelper.SystemInfo.RouteNames[0],
-                                                     uiNavptListView.SelectedIndex + 1));
-
-// TODO: activate main window on !isMapWindowActive?
-        }
-
-        /// <summary>
         /// launch the proper detail page to edit the specified navpoint.
         /// </summary>
         private void EditNavpoint(INavpointInfo navpt)
         {
+            MapWindow verbMirror = NavArgs.ConfigPage.MapWindow;
+
             SaveEditStateToConfig();
             NavArgs.BackButton.IsEnabled = false;
             this.Frame.Navigate(PageHelper.NavptEditorType,
-                                PageHelper.NavptEditorArg(this, VerbMirror, Config, EditNavpt.IndexOf(navpt)),
+                                PageHelper.NavptEditorArg(this, verbMirror, Config, EditNavpt.IndexOf(navpt)),
                                 new SlideNavigationTransitionInfo() { Effect = SlideNavigationTransitionEffect.FromRight });
         }
 
@@ -232,6 +185,8 @@ namespace JAFDTC.UI.Base
         protected override void ResetConfigToDefault()
         {
             PageHelper.ResetSystem(Config);
+
+            NavArgs.ConfigPage.SetupMapWindow(false, true);
         }
 
         // ------------------------------------------------------------------------------------------------------------
@@ -256,19 +211,31 @@ namespace JAFDTC.UI.Base
         /// </summary>
         private async void CmdAdd_Click(object sender, RoutedEventArgs args)
         {
+            MapWindow verbMirror = NavArgs.ConfigPage.MapWindow;
+            bool isEmpty = (EditNavpt.Count == 0);
+
             Tuple<string, string> ll = await NavpointUIHelper.ProposeNewNavptLatLon(Content.XamlRoot, [.. EditNavpt ]);
             if (ll != null)
             {
+                _isMarshalling = true;
                 int index = PageHelper.AddNavpoint(Config);
                 CopyConfigToEditState();
                 EditNavpt[index].Lat = ll.Item1;
                 EditNavpt[index].Lon = ll.Item2;
                 SaveEditStateToConfig();
+                _isMarshalling = false;
 
-                MapMarkerInfo info = new(MapMarkerInfo.MarkerType.NAV_PT, PageHelper.SystemInfo.RouteNames[0],
-                                         index + 1, ll.Item1, ll.Item2);
-                VerbMirror?.MirrorVerbMarkerAdded(this, info);
-                VerbMirror?.MirrorVerbMarkerSelected(this, info);
+                if (isEmpty && (verbMirror != null))
+                {
+                    NavArgs.ConfigPage.ConfigEditor.SetupMapWindow();
+                }
+                else if (!isEmpty)
+                {
+                    MapMarkerInfo info = new(MapMarkerInfo.MarkerType.NAV_PT, PageHelper.SystemInfo.RouteNames[0],
+                                             index + 1, ll.Item1, ll.Item2);
+                    verbMirror?.MirrorVerbMarkerAdded(this, info);
+                    verbMirror?.MirrorVerbMarkerSelected(this, info);
+                }
             }
         }
 
@@ -289,9 +256,6 @@ namespace JAFDTC.UI.Base
         /// </summary>
         private async void CmdPaste_Click(object sender, RoutedEventArgs args)
         {
-// TODO: consider doing this without closing the map window?
-            MapWindow?.Close();
-
 // TODO: need to check paste against maximum navpoint count
             ClipboardData cboard = await General.ClipboardDataAsync();
             if (cboard?.SystemTag == PageHelper.SystemInfo.NavptListTag)
@@ -308,6 +272,8 @@ namespace JAFDTC.UI.Base
         /// </summary>
         private async void CmdDelete_Click(object sender, RoutedEventArgs args)
         {
+            MapWindow verbMirror = NavArgs.ConfigPage.MapWindow;
+
             Debug.Assert(uiNavptListView.SelectedItems.Count > 0);
 
             if (await NavpointUIHelper.DeleteDialog(Content.XamlRoot, SystemName,
@@ -323,10 +289,10 @@ namespace JAFDTC.UI.Base
                 foreach (int index in selectedIndices)
                 {
                     EditNavpt.RemoveAt(index);
-                    VerbMirror?.MirrorVerbMarkerDeleted(this, new(MapMarkerInfo.MarkerType.NAV_PT,
+                    verbMirror?.MirrorVerbMarkerDeleted(this, new(MapMarkerInfo.MarkerType.NAV_PT,
                                                                   PageHelper.SystemInfo.RouteNames[0], index + 1));
                 }
-                VerbMirror?.MirrorVerbMarkerSelected(this, new());
+                verbMirror?.MirrorVerbMarkerSelected(this, new());
                 _isMarshalling = false;
 
                 SaveEditStateToConfig();
@@ -339,7 +305,8 @@ namespace JAFDTC.UI.Base
         /// </summary>
         private async void CmdCapture_Click(object sender, RoutedEventArgs args)
         {
-            MapWindow?.Close();
+// TODO: do this without closing the map window?
+            NavArgs.ConfigPage.MapWindow?.Close();
 
             _captureIndex = EditNavpt.Count;
             if (EditNavpt.Count > 0)
@@ -375,7 +342,8 @@ namespace JAFDTC.UI.Base
         /// </summary>
         private void CmdImportPOIs_Click(object sender, RoutedEventArgs args)
         {
-            MapWindow?.Close();
+// TODO: do this without closing the map window?
+            NavArgs.ConfigPage.MapWindow?.Close();
 
             SaveEditStateToConfig();
             NavArgs.BackButton.IsEnabled = false;
@@ -402,7 +370,8 @@ namespace JAFDTC.UI.Base
         /// </summary>
         private async void CmdImport_Click(object sender, RoutedEventArgs args)
         {
-            MapWindow?.Close();
+// TODO: do this without closing the map window?
+            NavArgs.ConfigPage.MapWindow?.Close();
 
             if (await NavpointUIHelper.Import(Content.XamlRoot, PageHelper.SystemInfo.AirframeType,
                                               PageHelper.NavptSystem(Config), SystemName))
@@ -418,10 +387,7 @@ namespace JAFDTC.UI.Base
         /// </summary>
         private void CmdMap_Click(object sender, RoutedEventArgs args)
         {
-            if (MapWindow == null)
-                CoreOpenMap(true);
-            else
-                MapWindow.Activate();
+            NavArgs.ConfigPage.SetupMapWindow(true);
         }
 
         // ---- navigation point list ---------------------------------------------------------------------------------
@@ -433,15 +399,16 @@ namespace JAFDTC.UI.Base
         {
             if (!_isMarshalling)
             {
+                MapWindow verbMirror = NavArgs.ConfigPage.MapWindow;
                 ListView listView = sender as ListView;
                 if ((listView.SelectedItems.Count != 1) && !_isVerbEvent)
                 {
 // TODO: this will clear map window selection when we have multiple things selected in the poi list.
 // TODO: this likely needs to change if multi-selection is ever supported in the map window.
-                    VerbMirror?.MirrorVerbMarkerSelected(this, new());
+                    verbMirror?.MirrorVerbMarkerSelected(this, new());
                 }
                 else if ((listView.SelectedItems.Count == 1) && !_isVerbEvent)
-                    VerbMirror?.MirrorVerbMarkerSelected(this, new(MapMarkerInfo.MarkerType.ANY,
+                    verbMirror?.MirrorVerbMarkerSelected(this, new(MapMarkerInfo.MarkerType.ANY,
                                                                    PageHelper.SystemInfo.RouteNames[0],
                                                                    listView.SelectedIndex + 1));
                 UpdateUIFromEditState();
@@ -497,8 +464,6 @@ namespace JAFDTC.UI.Base
         // ------------------------------------------------------------------------------------------------------------
 
         public string VerbHandlerTag => "EditNavpointListPage";
-
-        public IMapControlVerbMirror VerbMirror { get; set; }
 
         /// <summary>
         /// TODO: document
@@ -622,6 +587,8 @@ namespace JAFDTC.UI.Base
         /// </summary>
         private void CollectionChangedHandler(object sender, NotifyCollectionChangedEventArgs args)
         {
+            MapWindow verbMirror = NavArgs.ConfigPage.MapWindow;
+
             // TODO: this is a bit of a hack since there's no clear way to know when a re-order via drag has completed
             // TODO: other than looking for these changes.
             //
@@ -634,13 +601,13 @@ namespace JAFDTC.UI.Base
                 MapMarkerInfo info = new(MapMarkerInfo.MarkerType.NAV_PT, PageHelper.SystemInfo.RouteNames[0],
                                          args.NewStartingIndex + 1,
                                          (args.NewItems[0] as INavpointInfo).Lat, (args.NewItems[0] as INavpointInfo).Lon);
-                VerbMirror?.MirrorVerbMarkerAdded(this, info);
+                verbMirror?.MirrorVerbMarkerAdded(this, info);
             }
             else if (!_isVerbEvent && !_isMarshalling && (args.Action == NotifyCollectionChangedAction.Remove))
             {
                 MapMarkerInfo info = new(MapMarkerInfo.MarkerType.NAV_PT, PageHelper.SystemInfo.RouteNames[0],
                                          args.OldStartingIndex + 1);
-                VerbMirror?.MirrorVerbMarkerDeleted(this, info);
+                verbMirror?.MirrorVerbMarkerDeleted(this, info);
             }
             if (!_isMarshalling && (list.Count > 0))
                 RenumberNavpoints();
@@ -658,22 +625,9 @@ namespace JAFDTC.UI.Base
             }
         }
 
-        /// <summary>
-        /// map window closing: persist the import and filter specifications that the user set up for next time, save
-        /// the configuration, and cancel subscriptions.
-        /// </summary>
-        private void MapWindow_Closed(object sender, WindowEventArgs args)
-        {
-            Config.LastMapMarkerImport = MapWindow.MapImportSpec;
-            Config.LastMapFilter = MapWindow.MapFilterSpec;
-            Config.Save(this);
-
-            MapWindow = null;
-        }
-
         // ------------------------------------------------------------------------------------------------------------
         //
-        // events
+        // navigation events
         //
         // ------------------------------------------------------------------------------------------------------------
 
@@ -701,9 +655,6 @@ namespace JAFDTC.UI.Base
             ((Application.Current as JAFDTC.App)?.Window).Activated += WindowActivatedHandler;
 
             ClipboardChangedHandler(null, null);
-
-            if (Settings.MapSettings.IsAutoOpen)
-                Utilities.DispatchAfterDelay(DispatcherQueue, 1.0, false, (s, e) => CoreOpenMap(false));
         }
 
         /// <summary>

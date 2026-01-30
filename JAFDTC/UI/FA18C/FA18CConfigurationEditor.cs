@@ -18,9 +18,16 @@
 // ********************************************************************************************************************
 
 using JAFDTC.Models;
+using JAFDTC.Models.Base;
+using JAFDTC.Models.DCS;
 using JAFDTC.Models.FA18C;
+using JAFDTC.Models.FA18C.WYPT;
+using JAFDTC.Models.POI;
 using JAFDTC.UI.App;
+using JAFDTC.UI.Base;
 using JAFDTC.UI.Controls.Map;
+using Microsoft.UI.Xaml;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 
@@ -62,6 +69,59 @@ namespace JAFDTC.UI.FA18C
                 FA18CEditCoreSimDTCPageHelper.PageInfo
 #endif
             ];
+
+        public override void SetupMapWindow()
+        {
+            JAFDTC.App application = Application.Current as JAFDTC.App;
+            MapWindow mapWindow = application.CreateMapWindow();
+            FA18CConfiguration config = (FA18CConfiguration)Config;
+
+            // check the theater implied by any threats. default theater is whatever is currently selected.
+            //
+            string theater = mapWindow.Theater;
+// TODO: support threats here
+            List<string> theaters = []; // TODO: Models.Planning.Threat.TheatersForThreats(config.Mission.Threats);
+            if (theaters.Count > 0)
+                theater = theaters[0];
+
+            // check the theater implied by any steerpoints. this theater will override the threats theater in the
+            // case both are specified.
+            //
+            Dictionary<string, List<INavpointInfo>> routes = new()
+            {
+                [WYPTSystem.SystemInfo.RouteNames[0]] = [.. config.WYPT.Points ]
+            };
+            List<INavpointInfo> allRoutes = [];
+            foreach (string route in routes.Keys)
+                allRoutes.AddRange(routes[route]);
+            theaters = NavpointUIHelper.TheatersForNavpoints(allRoutes);
+            if (theaters.Count > 0)
+                theater = theaters[0];
+
+            // collect the pois that match the identified theater.
+            //
+            Dictionary<string, PointOfInterest> marks = [];
+            if (theater != null)
+            {
+                PointOfInterestDbQuery query = new(PointOfInterestTypeMask.ANY, theater);
+                foreach (PointOfInterest poi in PointOfInterestDbase.Instance.Find(query))
+                    marks[poi.UniqueID] = poi;
+            }
+
+            // configure the map window with the appropriate content.
+            //
+            bool isLinked = !string.IsNullOrEmpty(Config.SystemLinkedTo(WYPTSystem.SystemTag));
+
+            mapWindow.Theater = theater;
+            mapWindow.OpenMask = MapMarkerInfo.MarkerTypeMask.NAV_PT;
+            mapWindow.EditMask = ((isLinked) ? 0 : MapMarkerInfo.MarkerTypeMask.NAV_PT) |
+                                 ((isLinked) ? 0 : MapMarkerInfo.MarkerTypeMask.PATH_EDIT_HANDLE);
+            mapWindow.CoordFormat = WYPTSystem.SystemInfo.NavptCoordFmt;
+            mapWindow.MaxRouteLength = WYPTSystem.SystemInfo.NavptMaxCount;
+
+// TODO: support threats here
+            mapWindow.SetupMapContent(routes, marks, [], config.LastMapMarkerImport, config.LastMapFilter);
+        }
 
         // ------------------------------------------------------------------------------------------------------------
         //

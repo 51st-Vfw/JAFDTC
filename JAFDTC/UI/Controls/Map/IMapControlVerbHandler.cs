@@ -31,11 +31,6 @@ namespace JAFDTC.UI.Controls.Map
     public interface IMapControlVerbHandler
     {
         /// <summary>
-        /// provides the mirror object (implements IMapControlVerMirror) to use for mirroring.
-        /// </summary>
-        public IMapControlVerbMirror VerbMirror { get; set; }
-
-        /// <summary>
         /// returns a unique tag for this verb handler.
         /// </summary>
         public string VerbHandlerTag { get; }

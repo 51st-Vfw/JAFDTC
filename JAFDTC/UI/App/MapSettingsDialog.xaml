@@ -4,7 +4,7 @@
     
 MapSettingsDialog.xaml : ui xaml for map settings dialog
 
-Copyright(C) 2025 ilominar/raven
+Copyright(C) 2025-2026 ilominar/raven
 
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -43,10 +43,6 @@ https://www.gnu.org/licenses/.
             <RowDefinition/>
         </Grid.RowDefinitions>
 
-        <CheckBox x:Name="uiSetCkbxAutoOpen" Grid.Row="0" Margin="0,8,0,0"
-                  HorizontalAlignment="Left">
-            Automatically open a map window when available
-        </CheckBox>
         <CheckBox x:Name="uiSetCkbxEnableCache" Grid.Row="1" Margin="0,0,0,0"
                   HorizontalAlignment="Left">
             Enable local map tile cache for map windows

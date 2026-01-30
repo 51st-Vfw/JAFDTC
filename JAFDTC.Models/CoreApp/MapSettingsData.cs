@@ -2,7 +2,7 @@
 //
 // MapSettingsData.cs -- map window settings specification
 //
-// Copyright(C) 2025 ilominar/raven
+// Copyright(C) 2025-2026 ilominar/raven
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU General
 // Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
@@ -32,13 +32,12 @@ namespace JAFDTC.Models.CoreApp
         //
         // ------------------------------------------------------------------------------------------------------------
 
-        public bool IsAutoOpen { get; set; }
         public bool IsTileCacheEnabled { get; set; }
 
         // ---- constructed properties
 
         [JsonIgnore]
-        public bool IsDefault => ((IsAutoOpen == false) && (IsTileCacheEnabled == true));
+        public bool IsDefault => (IsTileCacheEnabled == true);
 
         [JsonIgnore]
         public static MapFilterSpec Default => new();
@@ -49,9 +48,8 @@ namespace JAFDTC.Models.CoreApp
         //
         // ------------------------------------------------------------------------------------------------------------
 
-        public MapSettingsData() => (IsAutoOpen, IsTileCacheEnabled) = (false, true);
+        public MapSettingsData() => (IsTileCacheEnabled) = (true);
 
-        public MapSettingsData(bool isAutoOpen, bool isTileCacheEabled)
-            => (IsAutoOpen, IsTileCacheEnabled) = (isAutoOpen, isTileCacheEabled);
+        public MapSettingsData(bool isTileCacheEabled) => (IsTileCacheEnabled) = (isTileCacheEabled);
     }
 }
