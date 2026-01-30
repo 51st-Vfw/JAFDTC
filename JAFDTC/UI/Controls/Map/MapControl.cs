@@ -530,6 +530,8 @@ namespace JAFDTC.UI.Controls.Map
         /// </summary>
         public void SetTheater(string theater)
         {
+            theater ??= "Unknown";
+
             _theaterBounds?.Remove(this);
             _theaterBounds = null;
 
