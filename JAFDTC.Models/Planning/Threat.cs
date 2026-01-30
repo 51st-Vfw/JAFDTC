@@ -18,6 +18,7 @@
 // ********************************************************************************************************************
 
 using JAFDTC.Models.Core;
+using JAFDTC.Models.DCS;
 
 namespace JAFDTC.Models.Planning
 {
@@ -29,10 +30,48 @@ namespace JAFDTC.Models.Planning
     /// </summary>
     public class Threat
     {
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // properties
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
         public required CoalitionType Coalition { get; set; }               // coalition of threat
         public required string Name { get; set; }                           // name of threat
         public required string? Type { get; set; }                          // dcs threat type, null => threat region
         public required Location Location { get; set; }                     // location of threat, decimal degrees
         public double? WEZ { get; set; }                                    // size of wez, centered on location (nm)
+
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // utilities
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
+        /// <summary>
+        /// returns a list of theaters that cover the list of threats. the list is sorted in order of membership:
+        /// first index is the theater with the most matches, last index is the theater with the least.
+        /// </summary>
+        public static List<string> TheatersForThreats(List<Threat> threats)
+        {
+            Dictionary<string, int> theaterMap = [ ];
+            foreach (Threat threat in threats)
+                foreach (string theater in Theater.TheatersForCoords(threat.Location.Latitude, threat.Location.Longitude))
+                    theaterMap[theater] = theaterMap.GetValueOrDefault(theater, 0) + 1;
+
+            Dictionary<int, List<string>> freqMap = [ ];
+            foreach (KeyValuePair<string, int> kvp in theaterMap)
+                if (freqMap.TryGetValue(kvp.Value, out List<string>? value))
+                    value.Add(kvp.Key);
+                else
+                    freqMap[kvp.Value] = [ kvp.Key ];
+
+            List<string> theaters = [ ];
+            foreach (int freq in freqMap.Keys.OrderByDescending(k => k))
+                foreach (string theater in freqMap[freq])
+                    theaters.Add(theater);
+
+            return theaters;
+        }
     }
 }
