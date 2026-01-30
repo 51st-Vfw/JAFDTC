@@ -185,6 +185,8 @@ namespace JAFDTC.UI.Base
         protected override void ResetConfigToDefault()
         {
             PageHelper.ResetSystem(Config);
+
+            NavArgs.ConfigPage.SetupMapWindow(false, true);
         }
 
         // ------------------------------------------------------------------------------------------------------------

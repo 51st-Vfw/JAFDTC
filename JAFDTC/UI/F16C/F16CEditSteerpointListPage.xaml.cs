@@ -462,6 +462,8 @@ namespace JAFDTC.UI.F16C
                 Config.Save(this, STPTSystem.SystemTag);
                 CopyConfigToEdit();
                 RebuildInterfaceState();
+
+                NavArgs.ConfigPage.SetupMapWindow(false, true);
             }
         }
 
