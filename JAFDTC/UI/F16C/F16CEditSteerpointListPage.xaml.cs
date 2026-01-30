@@ -52,6 +52,12 @@ namespace JAFDTC.UI.F16C
     /// </summary>
     public sealed partial class F16CEditSteerpointListPage : Page, IMapControlVerbHandler
     {
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // constants
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
         public static ConfigEditorPageInfo PageInfo
             => new(STPTSystem.SystemTag, "Steerpoints", "STPT", Glyphs.STPT, typeof(F16CEditSteerpointListPage));
 
@@ -75,20 +81,6 @@ namespace JAFDTC.UI.F16C
         private int CaptureIndex { get; set; }
 
         // ---- internal properties
-
-        private MapWindow _mapWindow;
-        private MapWindow MapWindow
-        {
-            get => _mapWindow;
-            set
-            {
-                if (_mapWindow != value)
-                {
-                    _mapWindow = value;
-                    VerbMirror = value;
-                }
-            }
-        }
 
         private F16CEditSteerpointPage EditStptDetailPage { get; set; }
 
@@ -153,49 +145,16 @@ namespace JAFDTC.UI.F16C
         // ------------------------------------------------------------------------------------------------------------
 
         /// <summary>
-        /// build out the data source and so on necessary for the map window and create it.
-        /// </summary>
-        private void CoreOpenMap(bool isMapWindowActive)
-        {
-            bool isLinked = !string.IsNullOrEmpty(Config.SystemLinkedTo(STPTSystem.SystemTag));
-            MapMarkerInfo.MarkerTypeMask editMask = ((isLinked) ? 0 : MapMarkerInfo.MarkerTypeMask.NAV_PT) |
-                                                    ((isLinked) ? 0 : MapMarkerInfo.MarkerTypeMask.PATH_EDIT_HANDLE);
-            MapMarkerInfo.MarkerTypeMask openMask = MapMarkerInfo.MarkerTypeMask.NAV_PT;
-
-            Dictionary<string, List<INavpointInfo>> routes = new()
-            {
-                [ STPTSystem.SystemInfo.RouteNames[0] ] = [.. EditSTPT.Points]
-            };
-            MapWindow = NavpointUIHelper.OpenMap(this, STPTSystem.SystemInfo.NavptMaxCount, LLFormat.DDM_P3ZF,
-                                                 openMask, editMask, routes,
-                                                 Config.Mission.Threats,
-                                                 Config.LastMapMarkerImport,
-                                                 Config.LastMapFilter);
-            //
-            // NOTE: the configuration editor is also assumed to implement IMapControlMarkerExplainer.
-            //
-            MapWindow.MarkerExplainer = (IMapControlMarkerExplainer)NavArgs.ConfigPage.ConfigEditor;
-            MapWindow.Closed += MapWindow_Closed;
-
-            NavArgs.ConfigPage.RegisterAuxWindow(MapWindow);
-
-            if (uiStptListView.SelectedIndex != -1)
-                VerbMirror?.MirrorVerbMarkerSelected(this, new(MapMarkerInfo.MarkerType.ANY,
-                                                               STPTSystem.SystemInfo.RouteNames[0],
-                                                               uiStptListView.SelectedIndex + 1));
-
-// TODO: activate main window on !isMapWindowActive?
-        }
-
-        /// <summary>
         /// launch the F16CEditSteerpointPage to edit the specified steerpoint.
         /// </summary>
         private void EditSteerpoint(SteerpointInfo stpt)
         {
+            MapWindow verbMirror = NavArgs.ConfigPage.MapWindow;
+
             NavArgs.BackButton.IsEnabled = false;
             bool isUnlinked = string.IsNullOrEmpty(Config.SystemLinkedTo(STPTSystem.SystemTag));
             Frame.Navigate(typeof(F16CEditSteerpointPage),
-                           new F16CEditStptPageNavArgs(this, VerbMirror, Config, EditSTPT.IndexOf(stpt), isUnlinked),
+                           new F16CEditStptPageNavArgs(this, verbMirror, Config, EditSTPT.IndexOf(stpt), isUnlinked),
                            new SlideNavigationTransitionInfo() { Effect = SlideNavigationTransitionEffect.FromRight });
         }
 
@@ -279,20 +238,37 @@ namespace JAFDTC.UI.F16C
         /// </summary>
         private async void CmdAdd_Click(object sender, RoutedEventArgs args)
         {
+            MapWindow verbMirror = NavArgs.ConfigPage.MapWindow;
+            bool isEmpty = (EditSTPT.Points.Count == 0);
+
             Tuple<string, string> ll = await NavpointUIHelper.ProposeNewNavptLatLon(Content.XamlRoot, [.. EditSTPT.Points ]);
             if (ll != null)
             {
-                SteerpointInfo stpt = EditSTPT.Add();
+                _isMarshalling = true;
+                SteerpointInfo stpt = new()
+                {
+                    Lat = ll.Item1,
+                    Lon = ll.Item2,
+                    Alt = "10000"
+                };
+                EditSTPT.Add(stpt);
                 int index = EditSTPT.Points.IndexOf(stpt);
-                EditSTPT.Points[index].Lat = ll.Item1;
-                EditSTPT.Points[index].Lon = ll.Item2;
                 CopyEditToConfig(true);
-                RebuildInterfaceState();
+                _isMarshalling = false;
 
-                MapMarkerInfo info = new(MapMarkerInfo.MarkerType.NAV_PT, STPTSystem.SystemInfo.RouteNames[0],
-                                         index + 1, ll.Item1, ll.Item2);
-                VerbMirror?.MirrorVerbMarkerAdded(this, info);
-                VerbMirror?.MirrorVerbMarkerSelected(this, info);
+                if (isEmpty && (verbMirror != null))
+                {
+                    NavArgs.ConfigPage.ConfigEditor.SetupMapWindow();
+                }
+                else if (!isEmpty)
+                {
+                    MapMarkerInfo info = new(MapMarkerInfo.MarkerType.NAV_PT, STPTSystem.SystemInfo.RouteNames[0],
+                                             index + 1, stpt.Lat, stpt.Lon);
+                    verbMirror?.MirrorVerbMarkerAdded(this, info);
+                    verbMirror?.MirrorVerbMarkerSelected(this, info);
+                }
+
+                RebuildInterfaceState();
             }
         }
 
@@ -328,6 +304,8 @@ namespace JAFDTC.UI.F16C
         //
         private async void CmdDelete_Click(object sender, RoutedEventArgs args)
         {
+            MapWindow verbMirror = NavArgs.ConfigPage.MapWindow;
+
             Debug.Assert(uiStptListView.SelectedItems.Count > 0);
 
             if (await NavpointUIHelper.DeleteDialog(Content.XamlRoot, "Steerpoint", uiStptListView.SelectedItems.Count))
@@ -343,10 +321,10 @@ namespace JAFDTC.UI.F16C
                 foreach (int index in selectedIndices)
                 {
                     EditSTPT.Points.RemoveAt(index);
-                    VerbMirror?.MirrorVerbMarkerDeleted(this, new(MapMarkerInfo.MarkerType.NAV_PT,
+                    verbMirror?.MirrorVerbMarkerDeleted(this, new(MapMarkerInfo.MarkerType.NAV_PT,
                                                                   STPTSystem.SystemInfo.RouteNames[0], index + 1));
                 }
-                VerbMirror?.MirrorVerbMarkerSelected(this, new());
+                verbMirror?.MirrorVerbMarkerSelected(this, new());
 
                 _isMarshalling = false;
 
@@ -361,6 +339,9 @@ namespace JAFDTC.UI.F16C
         /// </summary>
         private async void CmdCapture_Click(object sender, RoutedEventArgs args)
         {
+// TODO: do this without closing the map window?
+            NavArgs.ConfigPage.MapWindow?.Close();
+
             CaptureIndex = EditSTPT.Count;
             if (EditSTPT.Count > 0)
             {
@@ -418,7 +399,8 @@ namespace JAFDTC.UI.F16C
         /// </summary>
         private void CmdImportPOIs_Click(object sender, RoutedEventArgs args)
         {
-            MapWindow?.Close();
+// TODO: do this without closing the map window?
+            NavArgs.ConfigPage.MapWindow?.Close();
 
             CopyEditToConfig();
             NavArgs.BackButton.IsEnabled = false;
@@ -446,6 +428,9 @@ namespace JAFDTC.UI.F16C
         /// </summary>
         private async void CmdImport_Click(object sender, RoutedEventArgs args)
         {
+// TODO: do this without closing the map window?
+            NavArgs.ConfigPage.MapWindow?.Close();
+
             if (await NavpointUIHelper.Import(Content.XamlRoot, AirframeTypes.F16C, EditSTPT, "Steerpoint"))
             {
                 Config.Save(this, STPTSystem.SystemTag);
@@ -460,10 +445,7 @@ namespace JAFDTC.UI.F16C
         /// </summary>
         private void CmdMap_Click(object sender, RoutedEventArgs args)
         {
-            if (MapWindow == null)
-                CoreOpenMap(false);
-            else
-                MapWindow.Activate();
+            NavArgs.ConfigPage.SetupMapWindow(true);
         }
 
         // ---- buttons -----------------------------------------------------------------------------------------------
@@ -513,15 +495,16 @@ namespace JAFDTC.UI.F16C
         {
             if (!_isMarshalling)
             {
+                MapWindow verbMirror = NavArgs.ConfigPage.MapWindow;
                 ListView listView = sender as ListView;
                 if ((listView.SelectedItems.Count != 1) && !_isVerbEvent)
                 {
 // TODO: this will clear map window selection when we have multiple things selected in the poi list.
 // TODO: this likely needs to change if multi-selection is ever supported in the map window.
-                    VerbMirror?.MirrorVerbMarkerSelected(this, new());
+                    verbMirror?.MirrorVerbMarkerSelected(this, new());
                 }
                 else if ((listView.SelectedItems.Count == 1) && !_isVerbEvent)
-                    VerbMirror?.MirrorVerbMarkerSelected(this, new(MapMarkerInfo.MarkerType.ANY,
+                    verbMirror?.MirrorVerbMarkerSelected(this, new(MapMarkerInfo.MarkerType.ANY,
                                                                    STPTSystem.SystemInfo.RouteNames[0],
                                                                    listView.SelectedIndex + 1));
                 RebuildInterfaceState();
@@ -577,8 +560,6 @@ namespace JAFDTC.UI.F16C
         // ------------------------------------------------------------------------------------------------------------
 
         public string VerbHandlerTag => "F16CEditSteerpointListPage";
-
-        public IMapControlVerbMirror VerbMirror { get; set; }
 
         /// <summary>
         /// TODO: document
@@ -703,6 +684,8 @@ namespace JAFDTC.UI.F16C
         /// </summary>
         private void CollectionChangedHandler(object sender, NotifyCollectionChangedEventArgs args)
         {
+            MapWindow verbMirror = NavArgs.ConfigPage.MapWindow;
+
             // TODO: this is a bit of a hack since there's no clear way to know when a re-order via drag has completed
             // TODO: other than looking for these changes.
             //
@@ -715,13 +698,13 @@ namespace JAFDTC.UI.F16C
                 MapMarkerInfo info = new(MapMarkerInfo.MarkerType.NAV_PT, STPTSystem.SystemInfo.RouteNames[0],
                                          args.NewStartingIndex + 1,
                                          (args.NewItems[0] as INavpointInfo).Lat, (args.NewItems[0] as INavpointInfo).Lon);
-                VerbMirror?.MirrorVerbMarkerAdded(this, info);
+                verbMirror?.MirrorVerbMarkerAdded(this, info);
             }
             else if (!_isVerbEvent && !_isMarshalling && (args.Action == NotifyCollectionChangedAction.Remove))
             {
                 MapMarkerInfo info = new(MapMarkerInfo.MarkerType.NAV_PT, STPTSystem.SystemInfo.RouteNames[0],
                                          args.OldStartingIndex + 1);
-                VerbMirror?.MirrorVerbMarkerDeleted(this, info);
+                verbMirror?.MirrorVerbMarkerDeleted(this, info);
             }
             if (!_isMarshalling && (list.Count > 0))
                 RenumberSteerpoints();
@@ -737,19 +720,6 @@ namespace JAFDTC.UI.F16C
             {
                 RebuildInterfaceState();
             }
-        }
-
-        /// <summary>
-        /// map window closing: persist the import and filter specifications that the user set up for next time, save
-        /// the configuration, and cancel subscriptions.
-        /// </summary>
-        private void MapWindow_Closed(object sender, WindowEventArgs args)
-        {
-            Config.LastMapMarkerImport = MapWindow.MapImportSpec;
-            Config.LastMapFilter = MapWindow.MapFilterSpec;
-            Config.Save(this);
-
-            MapWindow = null;
         }
 
         // ------------------------------------------------------------------------------------------------------------
@@ -768,6 +738,12 @@ namespace JAFDTC.UI.F16C
                 CopyConfigToEdit();
             RebuildInterfaceState();
         }
+
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // navigation events
+        //
+        // ------------------------------------------------------------------------------------------------------------
 
         /// <summary>
         /// on navigating to/from this page, set up and tear down our internal and ui state based on the configuration
@@ -798,9 +774,6 @@ namespace JAFDTC.UI.F16C
             RebuildInterfaceState();
 
             base.OnNavigatedTo(args);
-
-            if (Settings.MapSettings.IsAutoOpen)
-                Utilities.DispatchAfterDelay(DispatcherQueue, 1.0, false, (s, e) => CoreOpenMap(false));
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs args)

@@ -118,7 +118,7 @@ namespace JAFDTC
         private const string JAFDTCFileActMutexName = "JAFDTC_FileActivationMutex";
         private const string JAFDTCFileActPipeName = "JAFDTC_FileActivationPipe";
 
-        private static readonly Mutex MutexJAFDTC = new (false, JAFDTCFileActMutexName);
+        private static readonly Mutex MutexJAFDTC = new(false, JAFDTCFileActMutexName);
 
 #endif
 
@@ -131,6 +131,8 @@ namespace JAFDTC
         // ---- public properties
 
         public MainWindow Window { get; private set; }
+
+        public MapWindow MapWindow { get; private set; }
 
         public string CmdLnArgValuePack => CmdLnArgs.ArgValuePack;
 
@@ -251,7 +253,7 @@ namespace JAFDTC
                         _isDCSExporting = false;
                         OnPropertyChanged(nameof(IsDCSExporting));
                     }
-                    else if(!_isDCSExporting && (TelemDataRx.Instance.NumPackets != LastDCSExportPacketCount))
+                    else if (!_isDCSExporting && (TelemDataRx.Instance.NumPackets != LastDCSExportPacketCount))
                     {
                         _isDCSExporting = true;
                         OnPropertyChanged(nameof(IsDCSExporting));
@@ -380,6 +382,25 @@ namespace JAFDTC
                 //
                 throw new Exception("Aborting launch, sent JAFDTC file activation to running instance");
             }
+        }
+
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // file activation hack
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
+        /// <summary>
+        /// returns the map window if it exists, creating it if not. caller is responsible for activation.
+        /// </summary>
+        public MapWindow CreateMapWindow()
+        {
+            if (MapWindow == null)
+            {
+                MapWindow = new MapWindow();
+                MapWindow.Closed += MapWindow_Closed;
+            }
+            return MapWindow;
         }
 
         // ------------------------------------------------------------------------------------------------------------
@@ -536,7 +557,7 @@ namespace JAFDTC
 
 #endif // #if ENABLE_FILE_ACTIVATION
 
-                    return true;
+            return true;
         }
 
         // ------------------------------------------------------------------------------------------------------------
@@ -866,6 +887,53 @@ namespace JAFDTC
 
         // ------------------------------------------------------------------------------------------------------------
         //
+        // window events
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
+        /// <summary>
+        /// window activated: when a window is activated or deactivated, start or stop (respectively) the dcs state
+        /// check timer to monitor that state for the rest of the ui. force regeneration of dcs state.
+        /// </summary>
+        private void MainWindow_Activated(object sender, WindowActivatedEventArgs args)
+        {
+            if (args.WindowActivationState == WindowActivationState.Deactivated)
+            {
+                CheckDCSTimer?.Stop();
+                CheckDCSTimer = null;
+            }
+            else
+            {
+                _ = IsDCSAvailable;                 // invoke accessor to rebuild state, return value ignored
+                CheckDCSTimer?.Start();
+            }
+        }
+
+        /// <summary>
+        /// main window closed: flag the app as shutting down so interested parties can take appropriate action and
+        /// stop the dcs state check timer as we no longer need to monitor dcs.
+        /// </summary>
+        private void MainWindow_Closed(object sender, WindowEventArgs args)
+        {
+            IsAppShuttingDown = true;
+
+            CheckDCSTimer?.Stop();
+            CheckDCSTimer = null;
+
+            MapWindow?.Close();
+            MapWindow = null;
+        }
+
+        /// <summary>
+        /// map window closed: clear out the map window instance variable.
+        /// </summary>
+        private void MapWindow_Closed(object sender, WindowEventArgs args)
+        {
+            MapWindow = null;
+        }
+
+        // ------------------------------------------------------------------------------------------------------------
+        //
         // events
         //
         // ------------------------------------------------------------------------------------------------------------
@@ -948,36 +1016,6 @@ namespace JAFDTC
         private void CheckDCSTimer_Tick(object sender, object args)
         {
             _ = IsDCSAvailable;                     // invoke accessor to rebuild state, return value ignored
-        }
-
-        /// <summary>
-        /// window activated: when a window is activated or deactivated, start or stop (respectively) the dcs state
-        /// check timer to monitor that state for the rest of the ui. force regeneration of dcs state.
-        /// </summary>
-        private void MainWindow_Activated(object sender, WindowActivatedEventArgs args)
-        {
-            if (args.WindowActivationState == WindowActivationState.Deactivated)
-            {
-                CheckDCSTimer?.Stop();
-                CheckDCSTimer = null;
-            }
-            else
-            {
-                _ = IsDCSAvailable;                 // invoke accessor to rebuild state, return value ignored
-                CheckDCSTimer?.Start();
-            }
-        }
-
-        /// <summary>
-        /// window closed: flag the app as shutting down so interested parties can take appropriate action and stop
-        /// the dcs state check timer as we no longer need to monitor dcs.
-        /// </summary>
-        private void MainWindow_Closed(object sender, WindowEventArgs args)
-        {
-            CheckDCSTimer?.Stop();
-            CheckDCSTimer = null;
-
-            IsAppShuttingDown = true;
         }
     }
 }

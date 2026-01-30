@@ -293,19 +293,7 @@ namespace JAFDTC.UI.App
 
         // ---- internal properties
 
-        private MapWindow _mapWindow;
-        private MapWindow MapWindow
-        {
-            get => _mapWindow;
-            set
-            {
-                if (_mapWindow != value)
-                {
-                    _mapWindow = value;
-                    VerbMirror = value;
-                }
-            }
-        }
+        private MapWindow MapWindow { get; set; }
 
         private ObservableCollection<PoIListItem> CurPoIItems { get; set; }
 
@@ -350,7 +338,6 @@ namespace JAFDTC.UI.App
         public EditPointsOfInterestPage()
         {
             JAFDTC.App curApp = Application.Current as JAFDTC.App;
-            curApp.Window.Closed += AppWindow_Closed;
 
             InitializeComponent();
 
@@ -457,30 +444,46 @@ namespace JAFDTC.UI.App
         /// <summary>
         /// build out the data source and so on necessary for the map window and create it.
         /// </summary>
-        private void CoreOpenMap(bool isMapWindowActive)
+        private void SetupMapWindow(bool isMapWindowActive)
         {
-            MapWindow = new()
-            {
-                MarkerExplainer = this,
-                OpenMask = MapMarkerInfo.MarkerTypeMask.POI_USER |
-                           MapMarkerInfo.MarkerTypeMask.POI_CAMPAIGN |
-                           MapMarkerInfo.MarkerTypeMask.POI_SYSTEM,
-                EditMask = MapMarkerInfo.MarkerTypeMask.POI_USER | MapMarkerInfo.MarkerTypeMask.POI_CAMPAIGN,
-                CoordFormat = LLDisplayFmt,
-                MaxRouteLength = 0,
-                CanOpenMarker = false
-            };
+            JAFDTC.App application = Application.Current as JAFDTC.App;
+
+            MapWindow = application.MapWindow;
             MapWindow.Closed += MapWindow_Closed;
+
+            MapWindow.MarkerExplainer = this;
+            MapWindow.OpenMask = MapMarkerInfo.MarkerTypeMask.POI_USER |
+                                 MapMarkerInfo.MarkerTypeMask.POI_CAMPAIGN |
+                                 MapMarkerInfo.MarkerTypeMask.POI_SYSTEM;
+            MapWindow.EditMask = MapMarkerInfo.MarkerTypeMask.POI_USER | MapMarkerInfo.MarkerTypeMask.POI_CAMPAIGN;
+            MapWindow.CoordFormat = LLDisplayFmt;
+            MapWindow.MaxRouteLength = 0;
+            MapWindow.CanOpenMarker = false;
+
             MapWindow.RegisterMapControlVerbObserver(this);
 
             RebuildPoIList();
 
-            MapWindow.Activate();
+            if (isMapWindowActive)
+                MapWindow.Activate();
 
-            // TODO: mirror selection? presently, RebuildPoIList clears the selection
-            //              if (uiPoIListView.SelectedItem is PoIListItem item)
-            //                  VerbMirror?.MirrorVerbMarkerSelected(this, new((MapMarkerInfo.MarkerType)item.PoI.Type,
-            //                                                                 item.PoI.UniqueID, -1));
+            if (uiPoIListView.SelectedItem is PoIListItem item)
+                MapWindow?.MirrorVerbMarkerSelected(this, new((MapMarkerInfo.MarkerType)item.PoI.Type,
+                                                              item.PoI.UniqueID, -1));
+        }
+
+        /// <summary>
+        /// clear the map window content and disconnect it from the poi editor page.
+        /// </summary>
+        private void ClearMapWindow()
+        {
+            MapWindow?.Closed -= MapWindow_Closed;
+
+            MapWindow?.ClearMapContent();
+            MapWindow?.MarkerExplainer = null;
+            MapWindow?.UnregisterMapControlVerbObserver(this);
+
+            MapWindow = null;
         }
 
         /// <summary>
@@ -596,14 +599,14 @@ namespace JAFDTC.UI.App
 
                 if (origUID != editUID)
                 {
-                    VerbMirror?.MirrorVerbMarkerDeleted(this, new((MapMarkerInfo.MarkerType)newPoI.Type, origUID, -1));
-                    VerbMirror?.MirrorVerbMarkerAdded(this, new((MapMarkerInfo.MarkerType)newPoI.Type, editUID, 
-                                                                -1, newPoI.Latitude, newPoI.Longitude));
+                    MapWindow?.MirrorVerbMarkerDeleted(this, new((MapMarkerInfo.MarkerType)newPoI.Type, origUID, -1));
+                    MapWindow?.MirrorVerbMarkerAdded(this, new((MapMarkerInfo.MarkerType)newPoI.Type, editUID, 
+                                                               -1, newPoI.Latitude, newPoI.Longitude));
                 }
                 else
                 {
-                    VerbMirror?.MirrorVerbMarkerMoved(this, new((MapMarkerInfo.MarkerType)newPoI.Type, newPoI.UniqueID,
-                                                                -1, newPoI.Latitude, newPoI.Longitude));
+                    MapWindow?.MirrorVerbMarkerMoved(this, new((MapMarkerInfo.MarkerType)newPoI.Type, newPoI.UniqueID,
+                                                               -1, newPoI.Latitude, newPoI.Longitude));
                 }
             }
             else if (isUnique)
@@ -613,8 +616,8 @@ namespace JAFDTC.UI.App
                 PointOfInterestDbase.Instance.AddPointOfInterest(newPoI);
                 editUID = newPoI.UniqueID;
 
-                VerbMirror?.MirrorVerbMarkerAdded(this, new((MapMarkerInfo.MarkerType)newPoI.Type, newPoI.UniqueID, -1,
-                                                            newPoI.Latitude, newPoI.Longitude));
+                MapWindow?.MirrorVerbMarkerAdded(this, new((MapMarkerInfo.MarkerType)newPoI.Type, newPoI.UniqueID, -1,
+                                                           newPoI.Latitude, newPoI.Longitude));
             }
 
             return editUID;
@@ -978,8 +981,8 @@ namespace JAFDTC.UI.App
                             {
                                 PointOfInterestDbase.Instance.RemovePointOfInterest(item.PoI, false);
 
-                                VerbMirror?.MirrorVerbMarkerDeleted(this, new((MapMarkerInfo.MarkerType)item.PoI.Type,
-                                                                              item.PoI.UniqueID));
+                                MapWindow?.MirrorVerbMarkerDeleted(this, new((MapMarkerInfo.MarkerType)item.PoI.Type,
+                                                                             item.PoI.UniqueID));
                             }
                         }
                     foreach (string campaign in campaignsModified.Keys)
@@ -1015,10 +1018,8 @@ namespace JAFDTC.UI.App
         /// </summary>
         private void CmdMap_Click(object sender, RoutedEventArgs args)
         {
-            if (MapWindow == null)
-                CoreOpenMap(true);
-            else
-                MapWindow.Activate();
+            MapWindow = (Application.Current as JAFDTC.App)?.CreateMapWindow();
+            SetupMapWindow(true);
         }
 
         /// <summary>
@@ -1118,7 +1119,7 @@ namespace JAFDTC.UI.App
             {
                 PointOfInterestDbQuery query = new(PointOfInterestTypeMask.CAMPAIGN, null, campaign);
                 foreach (PointOfInterest poi in PointOfInterestDbase.Instance.Find(query))
-                    VerbMirror?.MirrorVerbMarkerDeleted(this, new((MapMarkerInfo.MarkerType)poi.Type, poi.UniqueID));
+                    MapWindow?.MirrorVerbMarkerDeleted(this, new((MapMarkerInfo.MarkerType)poi.Type, poi.UniqueID));
 
                 PointOfInterestDbase.Instance.DeleteCampaign(campaign);
                 RebuildPoIList();
@@ -1211,7 +1212,7 @@ namespace JAFDTC.UI.App
 // TODO: this will clear map window selection when we have multiple things selected in the poi list.
 // TODO: this likely needs to change if multi-selection is ever supported in the map window.
                 if (!IsVerbEvent)
-                    VerbMirror?.MirrorVerbMarkerSelected(this, new());
+                    MapWindow?.MirrorVerbMarkerSelected(this, new());
             }
             else if (uiPoIListView.SelectedItems.Count == 1)
             {
@@ -1227,8 +1228,8 @@ namespace JAFDTC.UI.App
                 EditPoI.Alt = item.PoI.Elevation;
 
                 if (!IsVerbEvent)
-                    VerbMirror?.MirrorVerbMarkerSelected(this, new((MapMarkerInfo.MarkerType)item.PoI.Type,
-                                                                   item.PoI.UniqueID, -1));
+                    MapWindow?.MirrorVerbMarkerSelected(this, new((MapMarkerInfo.MarkerType)item.PoI.Type,
+                                                                  item.PoI.UniqueID, -1));
             }
             RebuildInterfaceState();
         }
@@ -1397,25 +1398,6 @@ namespace JAFDTC.UI.App
             RebuildInterfaceState();
         }
 
-        // ---- window changes ----------------------------------------------------------------------------------------
-
-        /// <summary>
-        /// on closing the map window, null out the MapWindow instance and dump any event handlers.
-        /// </summary>
-        private void MapWindow_Closed(object sender, WindowEventArgs args)
-        {
-            MapWindow.Closed -= MapWindow_Closed;
-            MapWindow = null;
-        }
-
-        /// <summary>
-        /// on closing the main app window, close any open map window too.
-        /// </summary>
-        private void AppWindow_Closed(object sender, WindowEventArgs args)
-        {
-            MapWindow?.Close();
-        }
-
         // ------------------------------------------------------------------------------------------------------------
         //
         // IMapControlMarkerExplainer
@@ -1445,8 +1427,6 @@ namespace JAFDTC.UI.App
         // ------------------------------------------------------------------------------------------------------------
 
         public string VerbHandlerTag => "EditPointsOfInterestPage";
-
-        public IMapControlVerbMirror VerbMirror { get; set; }
 
         /// <summary>
         /// TODO: document
@@ -1503,8 +1483,8 @@ namespace JAFDTC.UI.App
                                                         $" Restoring previous position.");
 
                         SetEditObjectLatLon(LastLat, LastLon);
-                        VerbMirror?.MirrorVerbMarkerMoved(this, new((MapMarkerInfo.MarkerType) poi.Type, info.TagStr,
-                                                                    info.TagInt, LastLat, LastLon), 1);
+                        MapWindow?.MirrorVerbMarkerMoved(this, new((MapMarkerInfo.MarkerType) poi.Type, info.TagStr,
+                                                                   info.TagInt, LastLat, LastLon), 1);
                         LastLat = null;
                         LastLon = null;
                         PointOfInterestDbase.Instance.Save(poi.Campaign);
@@ -1540,7 +1520,22 @@ namespace JAFDTC.UI.App
 
         // ------------------------------------------------------------------------------------------------------------
         //
-        // handlers
+        // window events
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
+        /// <summary>
+        /// on closing the map window, null out the MapWindow instance and dump any event handlers.
+        /// </summary>
+        private void MapWindow_Closed(object sender, WindowEventArgs args)
+        {
+            MapWindow?.Closed -= MapWindow_Closed;
+            MapWindow = null;
+        }
+
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // file activation events
         //
         // ------------------------------------------------------------------------------------------------------------
 
@@ -1561,7 +1556,7 @@ namespace JAFDTC.UI.App
 
         // ------------------------------------------------------------------------------------------------------------
         //
-        // events
+        // navigation events
         //
         // ------------------------------------------------------------------------------------------------------------
 
@@ -1571,19 +1566,22 @@ namespace JAFDTC.UI.App
         /// </summary>
         protected override void OnNavigatedTo(NavigationEventArgs args)
         {
+            JAFDTC.App application = Application.Current as JAFDTC.App;
+
             ChangeCoordFormat(Settings.LastPOICoordFmtSelection);
             EditPoI.ClearErrors();
             EditPoI.Reset();
 
-            RebuildPoIList();
+            if (application.MapWindow != null)
+                SetupMapWindow(false);
+            else
+                RebuildPoIList();
+
             RebuildInterfaceState();
 
             base.OnNavigatedTo(args);
 
-            if (Settings.MapSettings.IsAutoOpen)
-                Utilities.DispatchAfterDelay(DispatcherQueue, 1.0, false, (s, e) => CoreOpenMap(false));
-
-            (Application.Current as JAFDTC.App).Window.POIDbFileActivation += Window_FileActivation;
+            application.Window.POIDbFileActivation += Window_FileActivation;
         }
 
         /// <summary>
@@ -1593,7 +1591,7 @@ namespace JAFDTC.UI.App
         {
             (Application.Current as JAFDTC.App).Window.POIDbFileActivation -= Window_FileActivation;
 
-            MapWindow?.Close();
+            ClearMapWindow();
 
             base.OnNavigatedFrom(args);
         }

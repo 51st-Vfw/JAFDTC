@@ -19,6 +19,7 @@
 
 using JAFDTC.Models;
 using JAFDTC.UI.Base;
+using JAFDTC.UI.Controls.Map;
 using JAFDTC.Utilities;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
@@ -57,6 +58,8 @@ namespace JAFDTC.UI.App
 
         public IConfigurationEditor ConfigEditor { get; set; }
 
+        public MapWindow MapWindow => CurApp.MapWindow;
+        
         private JAFDTC.App CurApp { get; set; }
 
         private ObservableCollection<ConfigEditorPageInfo> EditorPages { get; set; }
@@ -66,8 +69,6 @@ namespace JAFDTC.UI.App
         private Dictionary<string, IConfiguration> UIDtoConfigMap { get; set; }
 
         private bool IsRefreshingNavList { get; set; }
-
-        private readonly List<Window> _auxWindowList = [];
 
         // ------------------------------------------------------------------------------------------------------------
         //
@@ -80,8 +81,6 @@ namespace JAFDTC.UI.App
             CurApp = Application.Current as JAFDTC.App;
             CurApp.PropertyChanged += App_PropertyChanged;
 
-            CurApp.Window.Closed += AppWindow_Closed;
-
             InitializeComponent();
 
             IsRefreshingNavList = false;
@@ -89,43 +88,51 @@ namespace JAFDTC.UI.App
 
         // ------------------------------------------------------------------------------------------------------------
         //
-        // ui support
+        // map window support
         //
         // ------------------------------------------------------------------------------------------------------------
 
         /// <summary>
-        /// registers an auxiliary  window for use by an editor page. these windows are automatically closed when
-        /// the configuration editor moves off of the configuration editor page on which they were registered. closing
-        /// the window via Close() will unregister an auxiliary  window.
+        /// TODO: document
         /// </summary>
-        public void RegisterAuxWindow(Window window)
+        public void SetupMapWindow(bool isWindowActive, bool isForceRebuild = false)
         {
-            _auxWindowList.Add(window);
-            window.Closed += AuxWindow_Closed;
+            object editorPage = ((Frame)uiNavSplitView.Content).Content;
+
+            if ((CurApp.MapWindow == null) || isForceRebuild)
+            {
+                ConfigEditor.SetupMapWindow();
+                //
+                // NOTE: the configuration editor is expected to implement IMapControlMarkerExplainer.
+                //
+                CurApp.MapWindow?.MarkerExplainer = (IMapControlMarkerExplainer)ConfigEditor;
+                if (editorPage.GetType().IsAssignableTo(typeof(IMapControlVerbHandler)))
+                    CurApp.MapWindow?.RegisterMapControlVerbObserver((IMapControlVerbHandler)editorPage);
+            }
+            if (isWindowActive)
+                CurApp.MapWindow.Activate();
         }
 
         /// <summary>
-        /// close an auxiliary window and remove it from the aux window list. passing a null window closes all known
-        /// aux windows.
+        /// TODO: document
         /// </summary>
-        public void CloseAuxWindows(Window window = null)
+        public void ClearMapWindow()
         {
-            if ((window == null) && (_auxWindowList.Count > 0))
-            {
-                foreach (Window wind in _auxWindowList)
-                {
-                    wind.Closed -= AuxWindow_Closed;
-                    wind.Close();
-                }
-                _auxWindowList.Clear();
-            }
-            else if (_auxWindowList.Count > 0)
-            {
-                window.Closed -= AuxWindow_Closed;
-                window.Close();
-                _auxWindowList.Remove(window);
-            }
+            MapWindow mapWind = CurApp.MapWindow;
+
+            object editorPage = ((Frame)uiNavSplitView.Content).Content;
+            if ((editorPage != null) && editorPage.GetType().IsAssignableTo(typeof(IMapControlVerbHandler)))
+                mapWind?.UnregisterMapControlVerbObserver((IMapControlVerbHandler)editorPage);
+
+            mapWind?.ClearMapContent();
+            mapWind?.MarkerExplainer = null;
         }
+
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // ui support
+        //
+        // ------------------------------------------------------------------------------------------------------------
 
         /// <summary>
         /// force the rebuild of the icon in the system list for the editor identified by ConfigEditorPageInfo.
@@ -212,7 +219,6 @@ namespace JAFDTC.UI.App
         /// </summary>
         private void HdrBtnBack_Click(object sender, RoutedEventArgs args)
         {
-            CloseAuxWindows();
             Frame.GoBack();
         }
 
@@ -290,19 +296,32 @@ namespace JAFDTC.UI.App
             ConfigEditorPageInfo info = (ConfigEditorPageInfo)uiNavListEditors.SelectedItem;
             if (!IsRefreshingNavList && (info != null))
             {
+                Frame navFrame = uiNavSplitView.Content as Frame;
+                object editorPage = navFrame.Content;
+
+                if ((editorPage != null) && editorPage.GetType().IsAssignableTo(typeof(IMapControlVerbHandler)))
+                    CurApp.MapWindow?.UnregisterMapControlVerbObserver((IMapControlVerbHandler)editorPage);
+
+                if (navFrame.CanGoBack)
+                    navFrame.GoBack();
+
                 ConfigEditorPageNavArgs navArgs = new(this, Config, info.EditorHelperType, UIDtoConfigMap, uiHdrBtnBack);
-                ((Frame)uiNavSplitView.Content).Navigate(info.EditorPageType, navArgs);
+                navFrame.Navigate(info.EditorPageType, navArgs);
+
+                editorPage = navFrame.Content;
+                if ((editorPage != null) && editorPage.GetType().IsAssignableTo(typeof(IMapControlVerbHandler)))
+                    CurApp.MapWindow?.RegisterMapControlVerbObserver((IMapControlVerbHandler)editorPage);
 
                 if (uiNavListEditors.SelectedIndex != Config.LastSystemEdited)
+                {
                     Config.AfterSystemEditorCompletes(EditorPages[Config.LastSystemEdited].Tag);
+                }
                 Config.LastSystemEdited = uiNavListEditors.SelectedIndex;
                 //
                 // we don't do this through Config.Save() here to avoid some notifications that are not needed.
                 // just save explicitly through file manager.
                 //
                 FileManager.SaveConfigurationFile(Config);
-
-                CloseAuxWindows();
             }
         }
 
@@ -401,15 +420,13 @@ namespace JAFDTC.UI.App
             else
             {
                 foreach (ConfigEditorPageInfo info in EditorPages)
-                {
                     if (info.EditorPageType == args.InvokedBy.GetType())
                     {
                         modifiedInfo = info;
                         break;
                     }
-                }
             }
-            if ((modifiedInfo != null) && !(Application.Current as JAFDTC.App).IsAppShuttingDown)
+            if ((modifiedInfo != null) && !CurApp.IsAppShuttingDown)
                 ForceSystemListIconRebuild(modifiedInfo);
         }
 
@@ -421,21 +438,11 @@ namespace JAFDTC.UI.App
             RebuildInterfaceState();
         }
 
-        /// <summary>
-        /// on closing the main app window, close any open aux windows too.
-        /// </summary>
-        private void AppWindow_Closed(object sender, object args)
-        {
-            CloseAuxWindows();
-        }
-
-        /// <summary>
-        /// on closing an aux window, remove it from the aux window list.
-        /// </summary>
-        private void AuxWindow_Closed(object sender, WindowEventArgs args)
-        {
-            _auxWindowList.Remove(sender as Window);
-        }
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // navigation events
+        //
+        // ------------------------------------------------------------------------------------------------------------
 
         /// <summary>
         /// on navigating to/from this page, set up and tear down our internal and ui state based on the configuration
@@ -462,6 +469,9 @@ namespace JAFDTC.UI.App
             //
             uiNavSplitView.Content = new Frame();
 
+            if (CurApp.MapWindow != null)
+                DispatcherQueue.TryEnqueue(DispatcherQueuePriority.Low, () => SetupMapWindow(false, true));
+
             RebuildInterfaceState();
 
             base.OnNavigatedTo(args);
@@ -469,9 +479,7 @@ namespace JAFDTC.UI.App
 
         protected override void OnNavigatedFrom(NavigationEventArgs args)
         {
-            Config.AfterSystemEditorCompletes(EditorPages[uiNavListEditors.SelectedIndex].Tag);
-
-            CloseAuxWindows();
+            ClearMapWindow();
 
             Config.ConfigurationSaved -= ConfigurationSavedHandler;
 

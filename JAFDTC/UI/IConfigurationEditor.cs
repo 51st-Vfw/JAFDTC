@@ -31,8 +31,8 @@ namespace JAFDTC.UI
     public interface IConfigurationEditor
     {
         /// <summary>
-        /// sets the configuration being managed by this editor. this property should be set before any methods
-        /// of an IConfigurationEditor are invoked.
+        /// configuration being managed by this editor. this property should be set before any methods of an
+        /// IConfigurationEditor are invoked.
         /// </summary>
         public IConfiguration Config { get; set; }
 
@@ -61,5 +61,12 @@ namespace JAFDTC.UI
         /// aware of.
         /// </summary>
         public bool HandleAuxCommand(ConfigurationPage configPage, ConfigAuxCommandInfo cmd);
+
+        /// <summary>
+        /// setup the map window for the configuration, creating the window if necessary (see CreateMapWindow()
+        /// from the application). method should fill in all relevant state (routes, threats, markers, etc.).
+        /// MarkerExplainer and verb handler registration are handled outside of configuration editors.
+        /// </summary>
+        public void SetupMapWindow();
     }
 }

@@ -41,7 +41,6 @@ namespace JAFDTC.UI
     /// </summary>
     public abstract class ConfigurationEditorBase : IConfigurationEditor, IMapControlMarkerExplainer
     {
-
         // ------------------------------------------------------------------------------------------------------------
         //
         // IConfigurationEditor instance factory
@@ -76,19 +75,28 @@ namespace JAFDTC.UI
         //
         // ------------------------------------------------------------------------------------------------------------
 
-        // derived classes must override this to provide the correct list of editor page information for the
-        // systems in the configuration.
-        //
+        /// <summary>
+        /// base implementation returns an empty list.
+        /// 
+        /// derived classes must override this to provide the correct list of editor page information for the
+        /// systems in the configuration.
+        /// </summary>
         public virtual ObservableCollection<ConfigEditorPageInfo> ConfigEditorPageInfo => [ ];
 
-        // derived classes must override this to provide the correct list of auxilliary command information for
-        // the configuration.
-        //
+        /// <summary>
+        /// base implementation returns an empty list.
+        /// 
+        /// derived classes must override this to provide the correct list of editor page information for the
+        /// systems in the configuration.
+        /// </summary>
         public virtual ObservableCollection<ConfigAuxCommandInfo> ConfigAuxCommandInfo => [ ];
 
-        // derived classes may override this to provide the information for the update strings suitable for the
-        // configuration.
-        //
+        /// <summary>
+        /// base implementation returns an baseline dictionary suitable for common cases.
+        /// 
+        /// derived classes may override this to provide the information for the update strings suitable for the
+        /// airframe and configuration.
+        /// </summary>
         public virtual Dictionary<string, string> BuildUpdatesStrings(IConfiguration config)
         {
             List<string> sysList = [ ];
@@ -109,9 +117,7 @@ namespace JAFDTC.UI
 
             string infoText = "Default setup, no changes to avionics";
             if (sysList.Count > 0)
-            {
                 infoText = $"Sets up {General.JoinList(sysList)} system" + ((sysList.Count > 1) ? "s" : "");
-            }
 
             return new Dictionary<string, string>()
             {
@@ -121,9 +127,21 @@ namespace JAFDTC.UI
             };
         }
 
-        // derived classes must override this to handle auxilliary commands.
-        //
+        /// <summary>
+        /// base implementation always returns false.
+        /// 
+        /// derived classes for configurations that support aux commands must override this method to correctly
+        /// handle the aux command.
+        /// </summary>
         public virtual bool HandleAuxCommand(ConfigurationPage configPage, ConfigAuxCommandInfo cmd) => false;
+
+        /// <summary>
+        /// base implementation is an empty function.
+        /// 
+        /// derived classes for configurations that support the map window must override this method to correctly
+        /// set up the map window.
+        /// </summary>
+        public virtual void SetupMapWindow() { }
 
         // ------------------------------------------------------------------------------------------------------------
         //

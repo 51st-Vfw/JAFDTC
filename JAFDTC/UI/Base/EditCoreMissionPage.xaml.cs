@@ -228,20 +228,6 @@ namespace JAFDTC.UI.Base
 
         // ---- internal properties
 
-        private MapWindow _mapWindow;
-        private MapWindow MapWindow
-        {
-            get => _mapWindow;
-            set
-            {
-                if (_mapWindow != value)
-                {
-                    _mapWindow = value;
-                    VerbMirror = value;
-                }
-            }
-        }
-
         private IEditCoreMissionPageHelper PageHelper { get; set; }
 
         private bool IsIgnoringSelection { get; set; }
@@ -379,64 +365,6 @@ namespace JAFDTC.UI.Base
                 Config.Save(this, SystemTag);
             }
             UpdateUIFromEditState();
-        }
-
-        // ------------------------------------------------------------------------------------------------------------
-        //
-        // utility
-        //
-        // ------------------------------------------------------------------------------------------------------------
-
-        /// <summary>
-        /// build out the data source and so on necessary for the map window and create it. if there are currently
-        /// no steerpoints defined, we will prompt for a theater and add a single steerpoint to start us off.
-        /// </summary>
-        private async void CoreOpenMap()
-        {
-            if (PageHelper.NumNavpoints(Config) == 0)
-            {
-                // no navpoints: prompt for a theater then locate the new navpoint in the center of the area for
-                // that theater.
-                //
-                GetListDialog theaterDialog = new(Theater.Theaters, "Theater", 0, 0)
-                {
-                    XamlRoot = Content.XamlRoot,
-                    Title = $"Select a Theater for the Mission",
-                    PrimaryButtonText = "OK",
-                    CloseButtonText = "Cancel"
-                };
-                ContentDialogResult result = await theaterDialog.ShowAsync(ContentDialogPlacement.Popup);
-                if (result != ContentDialogResult.Primary)
-                    return;                                     // EXIT: cancelled, no change...
-
-                TheaterInfo info = Theater.TheaterInfo[theaterDialog.SelectedItem];
-                double lat = info.LatMin + ((info.LatMax - info.LatMin) / 2.0);
-                double lon = info.LonMin + ((info.LonMax - info.LonMin) / 2.0);
-
-                PageHelper.AddNavpoint(Config, PageHelper.NavptSystemInfo.RouteNames[0], 0, $"{lat:F10}", $"{lon:F10}");
-                Config.Save(this, SystemTag);
-                NavArgs.ConfigPage.ForceSystemListIconRebuild(PageHelper.NavptSystemInfo.SystemTag);
-            }
-
-            // configure and open the map window with the appropriate content.
-            //
-            bool isLinked = !string.IsNullOrEmpty(Config.SystemLinkedTo(PageHelper.NavptSystemInfo.SystemTag));
-            MapMarkerInfo.MarkerTypeMask editMask = ((isLinked) ? 0 : MapMarkerInfo.MarkerTypeMask.NAV_PT) |
-                                                    ((isLinked) ? 0 : MapMarkerInfo.MarkerTypeMask.PATH_EDIT_HANDLE);
-            MapMarkerInfo.MarkerTypeMask openMask = MapMarkerInfo.MarkerTypeMask.NAV_PT;
-
-            Dictionary<string, List<INavpointInfo>> routes = PageHelper.GetAllNavpoints(Config);
-
-            MapWindow = NavpointUIHelper.OpenMap(this, PageHelper.NavptSystemInfo.NavptMaxCount,
-                                                 PageHelper.NavptSystemInfo.NavptCoordFmt, openMask, editMask, routes,
-                                                 EditMsn.Threats, Config.LastMapMarkerImport, Config.LastMapFilter);
-            //
-            // NOTE: the configuration editor is also assumed to implement IMapControlMarkerExplainer.
-            //
-            MapWindow.MarkerExplainer = (IMapControlMarkerExplainer)NavArgs.ConfigPage.ConfigEditor;
-            MapWindow.Closed += MapWindow_Closed;
-
-            NavArgs.ConfigPage.RegisterAuxWindow(MapWindow);
         }
 
         // ------------------------------------------------------------------------------------------------------------
@@ -679,10 +607,7 @@ namespace JAFDTC.UI.Base
         /// </summary>
         private void BtnMap_Click(object sender, RoutedEventArgs args)
         {
-            if (MapWindow == null)
-                CoreOpenMap();
-            else
-                MapWindow.Activate();
+            NavArgs.ConfigPage.SetupMapWindow(true);
         }
 
         // ---- loadout setup -----------------------------------------------------------------------------------------
@@ -831,6 +756,9 @@ namespace JAFDTC.UI.Base
                 CoreImportThreats(setupDialog.Spec);
                 uiTextThreats.Text = ThreatSummaryString();
                 SaveEditStateToConfig();
+
+                if (NavArgs.ConfigPage.MapWindow != null)
+                    NavArgs.ConfigPage.SetupMapWindow(true, true);
             }
             catch (Exception ex)
             {
@@ -851,6 +779,9 @@ namespace JAFDTC.UI.Base
             EditMsn.ThreatSource = "";
             EditMsn.Threats.Clear();
             SaveEditStateToConfig();
+
+            if (NavArgs.ConfigPage.MapWindow != null)
+                NavArgs.ConfigPage.SetupMapWindow(true, true);
         }
 
         // ---- text fields -------------------------------------------------------------------------------------------
@@ -876,13 +807,11 @@ namespace JAFDTC.UI.Base
 
         // ------------------------------------------------------------------------------------------------------------
         //
-        // IWorldMapControlVerbHandler
+        // IMapControlVerbHandler
         //
         // ------------------------------------------------------------------------------------------------------------
 
         public string VerbHandlerTag => "EditCoreMissionPage";
-
-        public IMapControlVerbMirror VerbMirror { get; set; }
 
         /// <summary>
         /// TODO: document
@@ -947,17 +876,9 @@ namespace JAFDTC.UI.Base
 
         // ------------------------------------------------------------------------------------------------------------
         //
-        // events
+        // navigation events
         //
         // ------------------------------------------------------------------------------------------------------------
-
-        /// <summary>
-        /// map window closing: clear map window instance.
-        /// </summary>
-        private void MapWindow_Closed(object sender, WindowEventArgs args)
-        {
-            MapWindow = null;
-        }
 
         /// <summary>
         /// on navigating to/from this page, set up and tear down our internal and ui state based on the configuration
