@@ -512,8 +512,6 @@ namespace JAFDTC.Models.F16C.Misc
                                                                                   : ExplicitDefaults.TACANChannel);
             mission.Owner.TacanBand = (TACANBandValue.ToString())[0];
             mission.Owner.Joker = int.Parse((!string.IsNullOrEmpty(Bingo)) ? Bingo : ExplicitDefaults.Bingo);
-            Debug.WriteLine($"{LaserTGPCode}");
-            Debug.WriteLine($"{ExplicitDefaults.LaserTGPCode}");
             mission.Owner.Lase = int.Parse((!string.IsNullOrEmpty(LaserTGPCode)) ? LaserTGPCode
                                                                                  : ExplicitDefaults.LaserTGPCode);
             return mission;
