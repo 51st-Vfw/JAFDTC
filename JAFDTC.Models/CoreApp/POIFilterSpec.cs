@@ -36,7 +36,7 @@ namespace JAFDTC.Models.CoreApp
         // ---- public properties
 
         public string Theater { get; set; }
-        public string Campaign { get; set; }
+        public List<string> Campaigns { get; set; }
         public string Tags { get; set; }
         public PointOfInterestTypeMask IncludeTypes { get; set; }
 
@@ -44,7 +44,7 @@ namespace JAFDTC.Models.CoreApp
 
         [JsonIgnore]
         public bool IsDefault => (string.IsNullOrEmpty(Theater) &&
-                                  string.IsNullOrEmpty(Campaign) &&
+                                  ((Campaigns == null) || (Campaigns.Count == 0)) &&
                                   string.IsNullOrEmpty(Tags) &&
                                   (IncludeTypes == PointOfInterestTypeMask.ANY));
 
@@ -58,12 +58,12 @@ namespace JAFDTC.Models.CoreApp
         //
         // ------------------------------------------------------------------------------------------------------------
 
-        public POIFilterSpec() => (Theater, Campaign, Tags, IncludeTypes) = ("", "", "", PointOfInterestTypeMask.ANY);
+        public POIFilterSpec() => (Theater, Campaigns, Tags, IncludeTypes) = ("", [ ], "", PointOfInterestTypeMask.ANY);
 
-        public POIFilterSpec(string theater, string campaign, string tags, PointOfInterestTypeMask includeTypes)
-            => (Theater, Campaign, Tags, IncludeTypes) = (theater, campaign, tags, includeTypes);
+        public POIFilterSpec(string theater, List<string> campaigns, string tags, PointOfInterestTypeMask includeTypes)
+            => (Theater, Campaigns, Tags, IncludeTypes) = (theater, campaigns, tags, includeTypes);
 
         public POIFilterSpec(POIFilterSpec src)
-            => (Theater, Campaign, Tags, IncludeTypes) = (src.Theater, src.Campaign, src.Tags, src.IncludeTypes);
+            => (Theater, Campaigns, Tags, IncludeTypes) = (src.Theater, src.Campaigns, src.Tags, src.IncludeTypes);
     }
 }

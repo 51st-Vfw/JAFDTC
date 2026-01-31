@@ -86,12 +86,14 @@
     <None Remove="UI\App\MapSettingsDialog.xaml" />
     <None Remove="UI\App\MapWindow.xaml" />
     <None Remove="UI\App\PilotFilterDialog.xaml" />
+    <None Remove="UI\App\PoIChooseDialog.xaml" />
     <None Remove="UI\Base\EditCoreMissionPage.xaml" />
     <None Remove="UI\Base\EditNavpointListPage.xaml" />
     <None Remove="UI\Base\EditNavpointPage.xaml" />
     <None Remove="UI\Base\EditRadioPage.xaml" />
     <None Remove="UI\BlankPage1.xaml" />
     <None Remove="UI\Controls\LinkResetBtnsControl.xaml" />
+    <None Remove="UI\Controls\MultipassComboControl.xaml" />
     <None Remove="UI\Controls\PilotComboControl.xaml" />
     <None Remove="UI\F15E\F15EEditMiscPage.xaml" />
     <None Remove="UI\F15E\F15EEditMPDPage.xaml" />
@@ -258,6 +260,12 @@
     <None Update="Images\mk-84hd.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Page Update="UI\App\PoIChooseDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="UI\Controls\MultipassComboControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="UI\Controls\PilotComboControl.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>

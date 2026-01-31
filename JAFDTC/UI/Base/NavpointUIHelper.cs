@@ -226,7 +226,7 @@ namespace JAFDTC.UI.Base
             {
                 IncludeTypes = PointOfInterestTypeMask.ANY
             };
-            PoIFilterDialog filterDialog = new(filter, PoIFilterDialog.Mode.CHOOSE, allowedTheaters)
+            PoIChooseDialog filterDialog = new(filter, allowedTheaters)
             {
                 XamlRoot = root,
                 Title = $"Copy to Points of Interest",
@@ -242,8 +242,12 @@ namespace JAFDTC.UI.Base
 
                 // set common POI properties
                 PointOfInterestType poiType = PointOfInterestType.USER;
-                if (filter.Campaign != null)
+                string campaign = null;
+                if ((filter.Campaigns != null) && (filter.Campaigns.Count > 0))
+                {
                     poiType = PointOfInterestType.CAMPAIGN;
+                    campaign = filter.Campaigns[0];
+                }
 
                 // save POIs
                 List<string> dupes = [ ];
@@ -253,7 +257,7 @@ namespace JAFDTC.UI.Base
                     {
                         Type = poiType,
                         Theater = filter.Theater,
-                        Campaign = filter.Campaign,
+                        Campaign = campaign,
                         Tags = PointOfInterest.SanitizedTags(filter.Tags),
                         Name = nav.Name,
                         Latitude = nav.Lat,
@@ -263,7 +267,7 @@ namespace JAFDTC.UI.Base
                     if (!success)
                         dupes.Add(nav.Name);
                 }
-                PointOfInterestDbase.Instance.Save(filter.Campaign);
+                PointOfInterestDbase.Instance.Save(campaign);
 
                 if (dupes.Count > 0)
                 {

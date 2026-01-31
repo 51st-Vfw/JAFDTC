@@ -2,7 +2,7 @@
 <!--
 **********************************************************************************************************************
     
-PoIFilterDialog.xaml : ui xaml for dialog to grab a poi filter
+PoIChooseDialog.xaml : ui xaml for dialog to grab a poi filter
 
 Copyright(C) 2024-2026 ilominar/raven
 
@@ -19,11 +19,10 @@ https://www.gnu.org/licenses/.
 **********************************************************************************************************************
 -->
 <ContentDialog
-    x:Class="JAFDTC.UI.App.PoIFilterDialog"
+    x:Class="JAFDTC.UI.App.PoIChooseDialog"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:JAFDTC.UI.App"
-    xmlns:controls="using:JAFDTC.UI.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
@@ -46,15 +45,13 @@ https://www.gnu.org/licenses/.
             <RowDefinition Height="*"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
         <!-- theater drop-down selection -->
         <TextBlock Grid.Row="0" Grid.Column="0" Margin="0,12,0,0"
                    VerticalAlignment="Center"
                    HorizontalTextAlignment="Right">
-            Theaters
+            Theater
         </TextBlock>
         <ComboBox Grid.Row="0" Grid.Column="1" Margin="12,12,0,0" x:Name="uiComboTheater"
                   HorizontalAlignment="Stretch" VerticalAlignment="Center">
@@ -64,11 +61,11 @@ https://www.gnu.org/licenses/.
         <TextBlock Grid.Row="1" Grid.Column="0" Margin="0,12,0,0"
                    VerticalAlignment="Center"
                    HorizontalTextAlignment="Right">
-            Campaigns
+            Campaign
         </TextBlock>
-        <controls:MultipassComboControl Grid.Row="1" Grid.Column="1" Margin="12,12,0,0" x:Name="uiComboCampaign"
-                                        HorizontalAlignment="Stretch" VerticalAlignment="Center">
-        </controls:MultipassComboControl>
+        <ComboBox Grid.Row="1" Grid.Column="1" Margin="12,12,0,0" x:Name="uiComboCampaign"
+                  HorizontalAlignment="Stretch" VerticalAlignment="Center">
+        </ComboBox>
 
         <!-- tags text field -->
         <TextBlock Grid.Row="2" Grid.Column="0" Margin="0,12,0,0"
@@ -80,16 +77,5 @@ https://www.gnu.org/licenses/.
                  HorizontalAlignment="Stretch" VerticalAlignment="Center"
                  PlaceholderText="&quot;;&quot; Separated List">
         </TextBox>
-
-        <!-- type checkboxen -->
-        <CheckBox Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="1" Margin="0,18,0,0" x:Name="uiCkbxDCSPoI"
-                  HorizontalAlignment="Left">
-            Shows system points of interest
-        </CheckBox>
-
-        <CheckBox Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="1" x:Name="uiCkbxUserPoI"
-                  HorizontalAlignment="Left">
-            Shows user points of interest
-        </CheckBox>
     </Grid>
 </ContentDialog>

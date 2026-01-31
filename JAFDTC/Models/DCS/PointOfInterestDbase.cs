@@ -131,7 +131,7 @@ namespace JAFDTC.Models.DCS
             bool isTagsAny = flags.HasFlag(PointOfInterestDbaseQueryFlags.TAGS_ANY_MATCH);
             bool isTagsPartial = flags.HasFlag(PointOfInterestDbaseQueryFlags.TAG_PARTIAL_MATCH);
 
-            if ((query.Campaigns != null) && !string.IsNullOrEmpty(query.Campaigns[0]))
+            if ((query.Campaigns != null) && (query.Campaigns.Count > 0))
                 foreach (string campaign in query.Campaigns)
                     campaigns.Add(campaign.ToLower());
 
