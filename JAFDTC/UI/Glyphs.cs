@@ -23,7 +23,13 @@ namespace JAFDTC.UI
     {
         public const string None = "";
 
+        public const string Pencil = "\xE70F";                  // pencil to indicate editable
+
         public const string CfgLinkBadge = "\xF0B6";            // configuration linked badge
+
+        public const string PoISystem = "\xECAF";               // system poi
+        public const string PoIUser = "\xE718";                 // user poi
+        public const string PoICampaign = "\xE7C1";             // campaign poi
 
         public const string Pilot = "\xE77B";                   // single person
         public const string Pilots = "\xE716";                  // multiple people

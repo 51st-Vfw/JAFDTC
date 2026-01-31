@@ -89,8 +89,8 @@ namespace JAFDTC.UI.App
         public string Glyph
             => PoI.Type switch
             {
-                PointOfInterestType.USER => "\xE718",
-                PointOfInterestType.CAMPAIGN => "\xE7C1",
+                PointOfInterestType.USER => Glyphs.PoIUser,
+                PointOfInterestType.CAMPAIGN => Glyphs.PoICampaign,
                 _ => ""
             };
 

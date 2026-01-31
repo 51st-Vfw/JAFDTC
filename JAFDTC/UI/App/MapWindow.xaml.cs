@@ -519,7 +519,7 @@ namespace JAFDTC.UI.App
                     VerticalAlignment = VerticalAlignment.Center,
                     FontFamily = new("Segoe Fluent Icons"),
                     FontSize = 11,
-                    Glyph = "\xE70F"
+                    Glyph = Glyphs.Pencil
                 };
                 pupTitleStack.Children.Add(pupStatusIcon);
             }

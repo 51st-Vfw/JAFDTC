@@ -62,8 +62,12 @@ namespace JAFDTC.UI.Base
             }
         }
 
-        public string Glyph => (PoI.Type == PointOfInterestType.USER)
-                               ? "\xE718" : ((PoI.Type == PointOfInterestType.CAMPAIGN) ? "\xE7C1" : "");
+        public string Glyph => PoI.Type switch
+        {
+            PointOfInterestType.USER => Glyphs.PoIUser,
+            PointOfInterestType.CAMPAIGN => Glyphs.PoICampaign,
+            _ => Glyphs.PoISystem
+        };
 
         public PoIListItem(PointOfInterest poi) => (PoI) = (poi);
     }

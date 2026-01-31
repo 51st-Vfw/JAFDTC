@@ -71,7 +71,7 @@ namespace JAFDTC.UI.App
 
         public string TypeGlyph => Threat.Type switch
         {
-            ThreatType.USER => "\xE718",
+            ThreatType.USER => Glyphs.PoIUser,
             _ => ""
         };
 
