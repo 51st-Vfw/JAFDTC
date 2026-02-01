@@ -160,6 +160,9 @@ namespace JAFDTC.UI.F16C
                 string name = ConfigF16C.STPT.Points[info.TagInt - 1].Name;
                 if (string.IsNullOrEmpty(name))
                     name = $"SP{info.TagInt}";
+                string tos = ConfigF16C.STPT.Points[info.TagInt - 1].TOS;
+                if (!string.IsNullOrEmpty(tos))
+                    name = $"{name} / TOS {tos}";
                 return name;
             }
             return base.MarkerDisplayName(info);
