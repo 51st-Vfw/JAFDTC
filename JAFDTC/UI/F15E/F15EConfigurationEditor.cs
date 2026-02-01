@@ -70,7 +70,8 @@ namespace JAFDTC.UI.F15E
             => (((F15EConfiguration)Config).CrewMember == F15EConfiguration.CrewPositions.PILOT) ? _configAuxCmdPilot
                                                                                                  : _configAuxCmdWSO;
 
-        public F15EConfigurationEditor(IConfiguration config) => (Config) = (config);
+        public F15EConfigurationEditor(IConfiguration config, ConfigurationPage configPage = null)
+            => (Config, ConfigPage) = (config, configPage);
 
         public override bool HandleAuxCommand(ConfigurationPage configPage, ConfigAuxCommandInfo cmd)
         {

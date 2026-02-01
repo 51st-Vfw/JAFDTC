@@ -27,9 +27,11 @@ using JAFDTC.UI.App;
 using JAFDTC.UI.Base;
 using JAFDTC.UI.Controls.Map;
 using Microsoft.UI.Xaml;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Reflection;
 
 namespace JAFDTC.UI.F16C
 {
@@ -51,10 +53,18 @@ namespace JAFDTC.UI.F16C
 
     /// <summary>
     /// instance of a configuration editor for the f-16c viper. this class defines the configuration editor pages
-    /// along with abstracting some access to internal system configuration state.
+    /// along with abstracting some access to internal system configuration state for use by ui editors.
     /// </summary>
-    public class F16CConfigurationEditor : ConfigurationEditorBase
+    public class F16CConfigurationEditor : ConfigurationEditorBase, IMapControlVerbHandler
     {
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // properties
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
+        private F16CConfiguration ConfigF16C => (F16CConfiguration)Config;
+
         // ------------------------------------------------------------------------------------------------------------
         //
         // IConfigurationEditor overrides
@@ -77,18 +87,18 @@ namespace JAFDTC.UI.F16C
                 F16CEditCoreKboardPageHelper.PageInfo,
             ];
 
-        public F16CConfigurationEditor(IConfiguration config) => (Config) = (config);
+        public F16CConfigurationEditor(IConfiguration config, ConfigurationPage configPage = null)
+            => (Config, ConfigPage) = (config, configPage);
 
         public override void SetupMapWindow()
         {
             JAFDTC.App application = Application.Current as JAFDTC.App;
             MapWindow mapWindow = application.CreateMapWindow();
-            F16CConfiguration config = (F16CConfiguration)Config;
 
             // check the theater implied by any threats. default theater is whatever is currently selected.
             //
             string theater = mapWindow.Theater;
-            List<string> theaters = Models.Planning.Threat.TheatersForThreats(config.Mission.Threats);
+            List<string> theaters = Models.Planning.Threat.TheatersForThreats(ConfigF16C.Mission.Threats);
             if (theaters.Count > 0)
                 theater = theaters[0];
 
@@ -97,7 +107,7 @@ namespace JAFDTC.UI.F16C
             //
             Dictionary<string, List<INavpointInfo>> routes = new()
             {
-                [STPTSystem.SystemInfo.RouteNames[0]] = [.. config.STPT.Points ]
+                [STPTSystem.SystemInfo.RouteNames[0]] = [.. ConfigF16C.STPT.Points ]
             };
             List<INavpointInfo> allRoutes = [ ];
             foreach (string route in routes.Keys)
@@ -127,7 +137,8 @@ namespace JAFDTC.UI.F16C
             mapWindow.CoordFormat = STPTSystem.SystemInfo.NavptCoordFmt;
             mapWindow.MaxRouteLength = STPTSystem.SystemInfo.NavptMaxCount;
 
-            mapWindow.SetupMapContent(routes, marks, config.Mission.Threats, config.LastMapMarkerImport, config.LastMapFilter);
+            mapWindow.SetupMapContent(routes, marks, ConfigF16C.Mission.Threats,
+                                      ConfigF16C.LastMapMarkerImport, ConfigF16C.LastMapFilter);
         }
 
         // ------------------------------------------------------------------------------------------------------------
@@ -138,17 +149,15 @@ namespace JAFDTC.UI.F16C
 
         public override string MarkerDisplayType(MapMarkerInfo info)
         {
-            F16CConfiguration config = (F16CConfiguration)Config;
-            return (info.Type == MapMarkerInfo.MarkerType.NAV_PT) ? config.STPT.SysInfo.NavptName
+            return (info.Type == MapMarkerInfo.MarkerType.NAV_PT) ? ConfigF16C.STPT.SysInfo.NavptName
                                                                   : base.MarkerDisplayType(info);
         }
 
         public override string MarkerDisplayName(MapMarkerInfo info)
         {
-            F16CConfiguration config = (F16CConfiguration)Config;
             if (info.Type == MapMarkerInfo.MarkerType.NAV_PT)
             {
-                string name = config.STPT.Points[info.TagInt - 1].Name;
+                string name = ConfigF16C.STPT.Points[info.TagInt - 1].Name;
                 if (string.IsNullOrEmpty(name))
                     name = $"SP{info.TagInt}";
                 return name;
@@ -158,13 +167,71 @@ namespace JAFDTC.UI.F16C
 
         public override string MarkerDisplayElevation(MapMarkerInfo info, string units = "")
         {
-            F16CConfiguration config = (F16CConfiguration)Config;
             if (info.Type == MapMarkerInfo.MarkerType.NAV_PT)
             {
-                string elev = config.STPT.Points[info.TagInt - 1].Alt;
+                string elev = ConfigF16C.STPT.Points[info.TagInt - 1].Alt;
                 return (string.IsNullOrEmpty(elev)) ? "Ground" : $"{elev}{units}";
             }
             return base.MarkerDisplayElevation(info, units);
+        }
+
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // IMapControlVerbHandler
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
+        public string VerbHandlerTag => "F16CConfigurationEditor";
+
+        public void VerbMarkerSelected(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
+        {
+            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerSelected({param}) {info.Type} {info.TagStr}:{info.TagInt}");
+        }
+
+        public void VerbMarkerOpened(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
+        {
+            Debug.WriteLine($"{VerbHandlerTag}:MarkerOpen({param}) {info.Type} {info.TagStr}:{info.TagInt}");
+        }
+
+        public void VerbMarkerMoved(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
+        {
+            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerMoved({param}) {info.Type} {info.TagStr}:{info.TagInt} / {info.Lat}, {info.Lon}");
+            if (info.TagStr == STPTSystem.SystemInfo.RouteNames[0])
+            {
+                ConfigF16C.STPT.Points[info.TagInt - 1].Lat = info.Lat;
+                ConfigF16C.STPT.Points[info.TagInt - 1].Lon = info.Lon;
+// TODO: what about altitude?
+                Config.Save(this, STPTSystem.SystemTag);
+                ConfigPage.ForceSystemListIconRebuild(STPTSystem.SystemTag);
+            }
+// TODO: handle other types of markers (user pois?)
+        }
+
+        public void VerbMarkerAdded(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
+        {
+            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerAdded({param}) {info.Type} {info.TagStr}:{info.TagInt} / {info.Lat}, {info.Lon}");
+            if (info.TagStr == STPTSystem.SystemInfo.RouteNames[0])
+            {
+                SteerpointInfo stpt = ConfigF16C.STPT.Add(null, info.TagInt - 1);
+                stpt.Lat = info.Lat;
+                stpt.Lon = info.Lon;
+// TODO: what about altitude?
+                Config.Save(this, STPTSystem.SystemTag);
+                ConfigPage.ForceSystemListIconRebuild(STPTSystem.SystemTag);
+            }
+// TODO: handle other types of markers (user pois?)
+        }
+
+        public void VerbMarkerDeleted(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
+        {
+            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerDeleted({param}) {info.Type} {info.TagStr}:{info.TagInt}");
+            if (info.TagStr == STPTSystem.SystemInfo.RouteNames[0])
+            {
+                ConfigF16C.STPT.Delete(ConfigF16C.STPT.Points[info.TagInt - 1]);
+                Config.Save(this, STPTSystem.SystemTag);
+                ConfigPage.ForceSystemListIconRebuild(STPTSystem.SystemTag);
+            }
+// TODO: handle other types of markers (user pois?)
         }
     }
 }

@@ -29,6 +29,7 @@ using JAFDTC.UI.Controls.Map;
 using Microsoft.UI.Xaml;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 
 namespace JAFDTC.UI.A10C
 {
@@ -50,15 +51,24 @@ namespace JAFDTC.UI.A10C
     /// <summary>
     /// TODO: document
     /// </summary>
-    public class A10CConfigurationEditor : ConfigurationEditorBase
+    public class A10CConfigurationEditor : ConfigurationEditorBase, IMapControlVerbHandler
     {
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // properties
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
+        private A10CConfiguration ConfigA10C => (A10CConfiguration)Config;
+
         // ------------------------------------------------------------------------------------------------------------
         //
         // IConfigurationEditor
         //
         // ------------------------------------------------------------------------------------------------------------
 
-        public A10CConfigurationEditor(IConfiguration config) => (Config) = (config);
+        public A10CConfigurationEditor(IConfiguration config, ConfigurationPage configPage = null)
+            => (Config, ConfigPage) = (config, configPage);
 
         public override ObservableCollection<ConfigEditorPageInfo> ConfigEditorPageInfo
             => [
@@ -161,6 +171,65 @@ namespace JAFDTC.UI.A10C
                 return (string.IsNullOrEmpty(elev)) ? "Ground" : $"{elev}{units}";
             }
             return base.MarkerDisplayElevation(info, units);
+        }
+
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // IMapControlVerbHandler
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
+        public string VerbHandlerTag => "A10CConfigurationEditor";
+
+        public void VerbMarkerSelected(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
+        {
+            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerSelected({param}) {info.Type} {info.TagStr}:{info.TagInt}");
+        }
+
+        public void VerbMarkerOpened(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
+        {
+            Debug.WriteLine($"{VerbHandlerTag}:MarkerOpen({param}) {info.Type} {info.TagStr}:{info.TagInt}");
+        }
+
+        public void VerbMarkerMoved(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
+        {
+            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerMoved({param}) {info.Type} {info.TagStr}:{info.TagInt} / {info.Lat}, {info.Lon}");
+            if (info.TagStr == WYPTSystem.SystemInfo.RouteNames[0])
+            {
+                ConfigA10C.WYPT.Points[info.TagInt - 1].Lat = info.Lat;
+                ConfigA10C.WYPT.Points[info.TagInt - 1].Lon = info.Lon;
+// TODO: what about altitude?
+                Config.Save(this, WYPTSystem.SystemTag);
+                ConfigPage.ForceSystemListIconRebuild(WYPTSystem.SystemTag);
+            }
+// TODO: handle other types of markers (user pois?)
+        }
+
+        public void VerbMarkerAdded(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
+        {
+            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerAdded({param}) {info.Type} {info.TagStr}:{info.TagInt} / {info.Lat}, {info.Lon}");
+            if (info.TagStr == WYPTSystem.SystemInfo.RouteNames[0])
+            {
+                WaypointInfo wypt = ConfigA10C.WYPT.Add(null, info.TagInt - 1);
+                wypt.Lat = info.Lat;
+                wypt.Lon = info.Lon;
+// TODO: what about altitude?
+                Config.Save(this, WYPTSystem.SystemTag);
+                ConfigPage.ForceSystemListIconRebuild(WYPTSystem.SystemTag);
+            }
+// TODO: handle other types of markers (user pois?)
+        }
+
+        public void VerbMarkerDeleted(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
+        {
+            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerDeleted({param}) {info.Type} {info.TagStr}:{info.TagInt}");
+            if (info.TagStr == WYPTSystem.SystemInfo.RouteNames[0])
+            {
+                ConfigA10C.WYPT.Delete(ConfigA10C.WYPT.Points[info.TagInt - 1]);
+                Config.Save(this, WYPTSystem.SystemTag);
+                ConfigPage.ForceSystemListIconRebuild(WYPTSystem.SystemTag);
+            }
+// TODO: handle other types of markers (user pois?)
         }
     }
 }

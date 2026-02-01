@@ -49,15 +49,24 @@ namespace JAFDTC.UI.FA18C
     /// instance of a configuration editor for the fa-18c hornet. this class defines the configuration editor pages
     /// along with abstracting some access to internal system configuration state.
     /// </summary>
-    public class FA18CConfigurationEditor : ConfigurationEditorBase
+    public class FA18CConfigurationEditor : ConfigurationEditorBase, IMapControlVerbHandler
     {
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // properties
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
+        private FA18CConfiguration ConfigFA18C => (FA18CConfiguration)Config;
+
         // ------------------------------------------------------------------------------------------------------------
         //
         // IConfigurationEditor
         //
         // ------------------------------------------------------------------------------------------------------------
 
-        public FA18CConfigurationEditor(IConfiguration config) => (Config) = (config);
+        public FA18CConfigurationEditor(IConfiguration config, ConfigurationPage configPage = null)
+            => (Config, ConfigPage) = (config, configPage);
 
         public override ObservableCollection<ConfigEditorPageInfo> ConfigEditorPageInfo
             => [
@@ -158,6 +167,65 @@ namespace JAFDTC.UI.FA18C
                 return (string.IsNullOrEmpty(elev)) ? "Ground" : $"{elev}{units}";
             }
             return base.MarkerDisplayElevation(info, units);
+        }
+
+        // ------------------------------------------------------------------------------------------------------------
+        //
+        // IMapControlVerbHandler
+        //
+        // ------------------------------------------------------------------------------------------------------------
+
+        public string VerbHandlerTag => "FA18CConfigurationEditor";
+
+        public void VerbMarkerSelected(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
+        {
+            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerSelected({param}) {info.Type} {info.TagStr}:{info.TagInt}");
+        }
+
+        public void VerbMarkerOpened(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
+        {
+            Debug.WriteLine($"{VerbHandlerTag}:MarkerOpen({param}) {info.Type} {info.TagStr}:{info.TagInt}");
+        }
+
+        public void VerbMarkerMoved(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
+        {
+            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerMoved({param}) {info.Type} {info.TagStr}:{info.TagInt} / {info.Lat}, {info.Lon}");
+            if (info.TagStr == WYPTSystem.SystemInfo.RouteNames[0])
+            {
+                ConfigFA18C.WYPT.Points[info.TagInt - 1].Lat = info.Lat;
+                ConfigFA18C.WYPT.Points[info.TagInt - 1].Lon = info.Lon;
+// TODO: what about altitude?
+                Config.Save(this, WYPTSystem.SystemTag);
+                ConfigPage.ForceSystemListIconRebuild(WYPTSystem.SystemTag);
+            }
+// TODO: handle other types of markers (user pois?)
+        }
+
+        public void VerbMarkerAdded(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
+        {
+            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerAdded({param}) {info.Type} {info.TagStr}:{info.TagInt} / {info.Lat}, {info.Lon}");
+            if (info.TagStr == WYPTSystem.SystemInfo.RouteNames[0])
+            {
+                WaypointInfo wypt = ConfigFA18C.WYPT.Add(null, info.TagInt - 1);
+                wypt.Lat = info.Lat;
+                wypt.Lon = info.Lon;
+// TODO: what about altitude?
+                Config.Save(this, WYPTSystem.SystemTag);
+                ConfigPage.ForceSystemListIconRebuild(WYPTSystem.SystemTag);
+            }
+// TODO: handle other types of markers (user pois?)
+        }
+
+        public void VerbMarkerDeleted(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
+        {
+            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerDeleted({param}) {info.Type} {info.TagStr}:{info.TagInt}");
+            if (info.TagStr == WYPTSystem.SystemInfo.RouteNames[0])
+            {
+                ConfigFA18C.WYPT.Delete(ConfigFA18C.WYPT.Points[info.TagInt - 1]);
+                Config.Save(this, WYPTSystem.SystemTag);
+                ConfigPage.ForceSystemListIconRebuild(WYPTSystem.SystemTag);
+            }
+// TODO: handle other types of markers (user pois?)
         }
     }
 }

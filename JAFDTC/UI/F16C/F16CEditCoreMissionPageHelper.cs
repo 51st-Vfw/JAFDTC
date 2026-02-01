@@ -25,7 +25,6 @@ using JAFDTC.Models.F16C.STPT;
 using JAFDTC.Models.Planning;
 using JAFDTC.UI.App;
 using JAFDTC.UI.Base;
-using System.Collections.Generic;
 
 namespace JAFDTC.UI.F16C
 {
@@ -104,38 +103,6 @@ namespace JAFDTC.UI.F16C
                     },
                     WEZ = threat.WEZ
                 });
-        }
-
-        public int NumNavpoints(IConfiguration config) => ((F16CConfiguration)config).STPT.Points.Count;
-
-        public INavpointInfo GetNavpoint(IConfiguration config, string route, int index)
-            => ((F16CConfiguration)config).STPT.Points[index];
-
-        public Dictionary<string, List<INavpointInfo>> GetAllNavpoints(IConfiguration config)
-            => new()
-            {
-                [ NavptSystemInfo.RouteNames[0] ] = [.. ((F16CConfiguration)config).STPT.Points ]
-            };
-
-        public void AddNavpoint(IConfiguration config, string route, int index, string lat, string lon)
-        {
-            F16CConfiguration viperConfig = (F16CConfiguration)config;
-            SteerpointInfo stpt = viperConfig.STPT.Add(null, index);
-            stpt.Lat = lat;
-            stpt.Lon = lon;
-        }
-
-        public void MoveNavpoint(IConfiguration config, string route, int index, string lat, string lon)
-        {
-            F16CConfiguration viperConfig = (F16CConfiguration)config;
-            viperConfig.STPT.Points[index].Lat = lat;
-            viperConfig.STPT.Points[index].Lon = lon;
-        }
-
-        public void RemoveNavpoint(IConfiguration config, string route, int index)
-        {
-            F16CConfiguration viperConfig = (F16CConfiguration)config;
-            viperConfig.STPT.Delete(viperConfig.STPT.Points[index]);
         }
     }
 }

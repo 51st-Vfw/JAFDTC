@@ -108,6 +108,8 @@ namespace JAFDTC.UI.App
                 CurApp.MapWindow?.MarkerExplainer = (IMapControlMarkerExplainer)ConfigEditor;
                 if (editorPage.GetType().IsAssignableTo(typeof(IMapControlVerbHandler)))
                     CurApp.MapWindow?.RegisterMapControlVerbObserver((IMapControlVerbHandler)editorPage);
+                else if (ConfigEditor.GetType().IsAssignableTo(typeof(IMapControlVerbHandler)))
+                    CurApp.MapWindow?.RegisterMapControlVerbObserver((IMapControlVerbHandler)ConfigEditor);
             }
             if (isWindowActive)
                 CurApp.MapWindow.Activate();
@@ -308,6 +310,8 @@ namespace JAFDTC.UI.App
 
                 if ((editorPage != null) && editorPage.GetType().IsAssignableTo(typeof(IMapControlVerbHandler)))
                     CurApp.MapWindow?.UnregisterMapControlVerbObserver((IMapControlVerbHandler)editorPage);
+                else if ((editorPage != null) && ConfigEditor.GetType().IsAssignableTo(typeof(IMapControlVerbHandler)))
+                    CurApp.MapWindow?.UnregisterMapControlVerbObserver((IMapControlVerbHandler)ConfigEditor);
 
                 if (navFrame.CanGoBack)
                     navFrame.GoBack();
@@ -318,6 +322,8 @@ namespace JAFDTC.UI.App
                 editorPage = navFrame.Content;
                 if ((editorPage != null) && editorPage.GetType().IsAssignableTo(typeof(IMapControlVerbHandler)))
                     CurApp.MapWindow?.RegisterMapControlVerbObserver((IMapControlVerbHandler)editorPage);
+                if ((editorPage != null) && ConfigEditor.GetType().IsAssignableTo(typeof(IMapControlVerbHandler)))
+                    CurApp.MapWindow?.RegisterMapControlVerbObserver((IMapControlVerbHandler)ConfigEditor);
 
                 if (uiNavListEditors.SelectedIndex != Config.LastSystemEdited)
                 {
@@ -460,7 +466,7 @@ namespace JAFDTC.UI.App
             ConfigEditorPageNavArgs navArgs = (ConfigEditorPageNavArgs)args.Parameter;
             Config = navArgs.Config;
             UIDtoConfigMap = navArgs.UIDtoConfigMap;
-            ConfigEditor = ConfigurationEditorBase.Factory(Config);
+            ConfigEditor = ConfigurationEditorBase.Factory(Config, this);
 
             Config.ConfigurationSaved += ConfigurationSavedHandler;
 

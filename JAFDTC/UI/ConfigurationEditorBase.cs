@@ -34,8 +34,10 @@ using System.Diagnostics;
 namespace JAFDTC.UI
 {
     /// <summary>
-    /// abstract base class for a configuration editor that implements IConfigurationEditor. the abstract base
-    /// class provides a factory method to build concrete instances based on airframe.
+    /// abstract base class for a configuration editor that supports editing configurations via the ui. these
+    /// objects implement IConfigurationEditor and IMapControlMarkerExplainer. derived classes may also implement
+    /// IMapControlVerbHandler to provide baseline verb handling for map controls. the abstract base class provides
+    /// a factory method that builds concrete instances to edit a specified IConfiguration instance.
     /// </summary>
     public abstract class ConfigurationEditorBase : IConfigurationEditor, IMapControlMarkerExplainer
     {
@@ -49,13 +51,13 @@ namespace JAFDTC.UI
         /// returns an instance of the configuration editor to use for a particular configuration. null if the
         /// configuration is invalid or for an unsupported airframe.
         /// </summary>
-        public static IConfigurationEditor Factory(IConfiguration config)
+        public static IConfigurationEditor Factory(IConfiguration config, ConfigurationPage configPage = null)
             => config.Airframe switch
             {
-                AirframeTypes.A10C => new A10CConfigurationEditor(config),
-                AirframeTypes.F16C => new F16CConfigurationEditor(config),
-                AirframeTypes.F15E => new F15EConfigurationEditor(config),
-                AirframeTypes.FA18C => new FA18CConfigurationEditor(config),
+                AirframeTypes.A10C => new A10CConfigurationEditor(config, configPage),
+                AirframeTypes.F16C => new F16CConfigurationEditor(config, configPage),
+                AirframeTypes.F15E => new F15EConfigurationEditor(config, configPage),
+                AirframeTypes.FA18C => new FA18CConfigurationEditor(config, configPage),
                 _ => null,
             };
 
@@ -66,6 +68,8 @@ namespace JAFDTC.UI
         // ------------------------------------------------------------------------------------------------------------
 
         public IConfiguration Config { get; set; }
+
+        public ConfigurationPage ConfigPage { get; set; }
 
         // ------------------------------------------------------------------------------------------------------------
         //
@@ -147,12 +151,27 @@ namespace JAFDTC.UI
         //
         // ------------------------------------------------------------------------------------------------------------
 
+        /// <summary>
+        /// base implementation calls the base MarkerExplainerHelper method.
+        /// 
+        /// derived classes may override this method to further customize the return value.
+        /// </summary>
         public virtual string MarkerDisplayType(MapMarkerInfo info)
             => MarkerExplainerHelper.MarkerDisplayType(info);
 
+        /// <summary>
+        /// base implementation calls the base MarkerExplainerHelper method.
+        /// 
+        /// derived classes may override this method to further customize the return value.
+        /// </summary>
         public virtual string MarkerDisplayName(MapMarkerInfo info)
             => MarkerExplainerHelper.MarkerDisplayName(info);
 
+        /// <summary>
+        /// base implementation calls the base MarkerExplainerHelper method.
+        /// 
+        /// derived classes may override this method to further customize the return value.
+        /// </summary>
         public virtual string MarkerDisplayElevation(MapMarkerInfo info, string units = "")
             => MarkerExplainerHelper.MarkerDisplayElevation(info, units);
     }

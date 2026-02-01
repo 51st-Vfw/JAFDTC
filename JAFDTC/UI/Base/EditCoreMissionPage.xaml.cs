@@ -30,7 +30,6 @@ using JAFDTC.Models.Threats;
 using JAFDTC.Models.Units;
 using JAFDTC.UI.App;
 using JAFDTC.UI.Controls;
-using JAFDTC.UI.Controls.Map;
 using JAFDTC.Utilities;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -49,7 +48,7 @@ namespace JAFDTC.UI.Base
     /// page to edit mission fields. this is a general-purpose class that is instatiated in combination with an
     /// IEditCoreMissionPageHelper class to provide airframe-specific specialization.
     /// </summary>
-    public sealed partial class EditCoreMissionPage : SystemEditorPageBase, IMapControlVerbHandler
+    public sealed partial class EditCoreMissionPage : SystemEditorPageBase
     {
         // ------------------------------------------------------------------------------------------------------------
         //
@@ -803,75 +802,6 @@ namespace JAFDTC.UI.Base
             BindsUI.SetLoadout(int.Parse(tbox.Tag as string), tbox.Text);
 
             SaveEditStateToConfig();
-        }
-
-        // ------------------------------------------------------------------------------------------------------------
-        //
-        // IMapControlVerbHandler
-        //
-        // ------------------------------------------------------------------------------------------------------------
-
-        public string VerbHandlerTag => "EditCoreMissionPage";
-
-        /// <summary>
-        /// TODO: document
-        /// </summary>
-        public void VerbMarkerSelected(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
-        {
-            Debug.WriteLine($"ECMP:VerbMarkerSelected({param}) {info.Type}, {info.TagStr}, {info.TagInt}");
-        }
-
-        /// <summary>
-        /// TODO: document
-        /// </summary>
-        public void VerbMarkerOpened(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
-        {
-            Debug.WriteLine($"ECMP:MarkerOpen({param}) {info.Type}, {info.TagStr}, {info.TagInt}");
-        }
-
-        /// <summary>
-        /// TODO: document
-        /// </summary>
-        public void VerbMarkerMoved(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
-        {
-            Debug.WriteLine($"ECMP:VerbMarkerMoved({param}) {info.Type}, {info.TagStr}, {info.TagInt}, {info.Lat}, {info.Lon}");
-            if (info.TagStr == PageHelper.NavptSystemInfo.RouteNames[0])
-            {
-                PageHelper.MoveNavpoint(Config, info.TagStr, info.TagInt - 1, info.Lat, info.Lon);
-                Config.Save(this, SystemTag);
-                NavArgs.ConfigPage.ForceSystemListIconRebuild(PageHelper.NavptSystemInfo.SystemTag);
-            }
-// TODO: handle other types of markers (user pois?)
-        }
-
-        /// <summary>
-        /// TODO: document
-        /// </summary>
-        public void VerbMarkerAdded(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
-        {
-            Debug.WriteLine($"ECMP:VerbMarkerAdded({param}) {info.Type}, {info.TagStr}, {info.TagInt}, {info.Lat}, {info.Lon}");
-            if (info.TagStr == PageHelper.NavptSystemInfo.RouteNames[0])
-            {
-                PageHelper.AddNavpoint(Config, info.TagStr, info.TagInt - 1, info.Lat, info.Lon);
-                Config.Save(this, SystemTag);
-                NavArgs.ConfigPage.ForceSystemListIconRebuild(PageHelper.NavptSystemInfo.SystemTag);
-            }
-// TODO: handle other types of markers (user pois?)
-        }
-
-        /// <summary>
-        /// TODO: document
-        /// </summary>
-        public void VerbMarkerDeleted(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
-        {
-            Debug.WriteLine($"ECMP:VerbMarkerDeleted({param}) {info.Type}, {info.TagStr}, {info.TagInt}");
-            if (info.TagStr == PageHelper.NavptSystemInfo.RouteNames[0])
-            {
-                PageHelper.RemoveNavpoint(Config, info.TagStr, info.TagInt - 1);
-                Config.Save(this, SystemTag);
-                NavArgs.ConfigPage.ForceSystemListIconRebuild(PageHelper.NavptSystemInfo.SystemTag);
-            }
-// TODO: handle other types of markers (user pois?)
         }
 
         // ------------------------------------------------------------------------------------------------------------

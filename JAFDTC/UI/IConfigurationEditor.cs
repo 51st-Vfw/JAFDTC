@@ -37,6 +37,12 @@ namespace JAFDTC.UI
         public IConfiguration Config { get; set; }
 
         /// <summary>
+        /// configuration page that owns this editor. this property should be set before any methods of an
+        /// IConfigurationEditor are invoked.
+        /// </summary>
+        public ConfigurationPage ConfigPage { get; set; }
+
+        /// <summary>
         /// collection of ConfigEditorPageInfo with information on the editor pages for the airframe configuration.
         /// </summary>
         public ObservableCollection<ConfigEditorPageInfo> ConfigEditorPageInfo { get; }
