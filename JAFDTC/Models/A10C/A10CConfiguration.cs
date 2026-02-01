@@ -174,6 +174,7 @@ namespace JAFDTC.Models.A10C
 
         public override void ConfigurationUpdated(string updateSysTag = null)
         {
+// TODO: revisit this use of A10CConfigurationEditor
             A10CConfigurationEditor editor = new(this);
             Dictionary<string, string> updatesStrings = editor.BuildUpdatesStrings(this);
 

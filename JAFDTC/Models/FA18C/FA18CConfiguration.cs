@@ -156,6 +156,7 @@ namespace JAFDTC.Models.FA18C
 
         public override void ConfigurationUpdated(string updateSysTag = null)
         {
+// TODO: revisit this usage of FA18CConfigurationEditor
             FA18CConfigurationEditor editor = new(this);
             Dictionary<string, string> updatesStrings = editor.BuildUpdatesStrings(this);
 

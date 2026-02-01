@@ -377,6 +377,7 @@ namespace JAFDTC.Models.F16C
 
         public override void ConfigurationUpdated(string updateSysTag = null)
         {
+// TODO: revisit this usage of F16CConfigurationEditor
             F16CConfigurationEditor editor = new(this);
             Dictionary<string, string> updatesStrings = editor.BuildUpdatesStrings(this);
 
