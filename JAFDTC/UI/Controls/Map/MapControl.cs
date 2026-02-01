@@ -1058,11 +1058,11 @@ namespace JAFDTC.UI.Controls.Map
         }
 
         /// <summary>
-        /// returns the location to snap the marker at the given point to upon pointer release, null if the marker
-        /// should not snap. to snap, snap mode must be enabled and there must be at most one marker within
-        /// MARKER_SNAP_RADIUS pixels.
+        /// returns the map marker control at the location to snap the marker at the given point to upon pointer
+        /// release, null if the marker should not snap. to snap, snap mode must be enabled and there must be at
+        /// most one marker within MARKER_SNAP_RADIUS pixels.
         /// </summary>
-        private Location SnapMarker(MapMarkerControl snappingMarker, Windows.Foundation.Point centerPoint)
+        private MapMarkerControl SnapMarker(MapMarkerControl snappingMarker, Windows.Foundation.Point centerPoint)
         {
             List<MapMarkerControl> closeByMarks = [ ];
             if (IsSnappingEnabled)
@@ -1096,7 +1096,7 @@ namespace JAFDTC.UI.Controls.Map
                     }
                 }
             }
-            return (closeByMarks.Count == 1) ? closeByMarks[0].Location : null;
+            return (closeByMarks.Count == 1) ? closeByMarks[0] : null;
         }
 
         // ------------------------------------------------------------------------------------------------------------
@@ -1347,9 +1347,9 @@ namespace JAFDTC.UI.Controls.Map
             {
                 // check if we should snap to the location of a nearby marker. if so, twiddle the location.
                 //
-                Location snapLocation = SnapMarker(_selectedMarker, evt.GetCurrentPoint(this).Position);
-                if (snapLocation != null)
-                    MoveMapMarker(_selectedMarker, snapLocation);
+                MapMarkerControl snapMarker = SnapMarker(_selectedMarker, evt.GetCurrentPoint(this).Position);
+                if (snapMarker != null)
+                    MoveMapMarker(_selectedMarker, snapMarker.Location);
 
                 // mark end of drag by sending a moved verb in the final location with a param of 1.
                 //
