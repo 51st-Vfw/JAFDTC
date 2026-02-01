@@ -87,7 +87,6 @@ namespace JAFDTC.UI.A10C
         {
             JAFDTC.App application = Application.Current as JAFDTC.App;
             MapWindow mapWindow = application.CreateMapWindow(true, true);
-            A10CConfiguration config = (A10CConfiguration)Config;
 
             // check the theater implied by any threats. default theater is whatever is currently selected.
             //
@@ -102,7 +101,7 @@ namespace JAFDTC.UI.A10C
             //
             Dictionary<string, List<INavpointInfo>> routes = new()
             {
-                [WYPTSystem.SystemInfo.RouteNames[0]] = [.. config.WYPT.Points ]
+                [WYPTSystem.SystemInfo.RouteNames[0]] = [.. ConfigA10C.WYPT.Points ]
             };
             List<INavpointInfo> allRoutes = [];
             foreach (string route in routes.Keys)
@@ -133,7 +132,7 @@ namespace JAFDTC.UI.A10C
             mapWindow.MaxRouteLength = WYPTSystem.SystemInfo.NavptMaxCount;
 
 // TODO: support threats here
-            mapWindow.SetupMapContent(routes, marks, [ ], config.LastMapMarkerImport, config.LastMapFilter);
+            mapWindow.SetupMapContent(routes, marks, [ ], ConfigA10C.LastMapMarkerImport, ConfigA10C.LastMapFilter);
         }
 
         // ------------------------------------------------------------------------------------------------------------
@@ -144,17 +143,15 @@ namespace JAFDTC.UI.A10C
 
         public override string MarkerDisplayType(MapMarkerInfo info)
         {
-            A10CConfiguration config = (A10CConfiguration)Config;
-            return (info.Type == MapMarkerInfo.MarkerType.NAV_PT) ? config.WYPT.SysInfo.NavptName
+            return (info.Type == MapMarkerInfo.MarkerType.NAV_PT) ? ConfigA10C.WYPT.SysInfo.NavptName
                                                                   : base.MarkerDisplayType(info);
         }
 
         public override string MarkerDisplayName(MapMarkerInfo info)
         {
-            A10CConfiguration config = (A10CConfiguration)Config;
             if (info.Type == MapMarkerInfo.MarkerType.NAV_PT)
             {
-                string name = config.WYPT.Points[info.TagInt - 1].Name;
+                string name = ConfigA10C.WYPT.Points[info.TagInt - 1].Name;
                 if (string.IsNullOrEmpty(name))
                     name = $"SP{info.TagInt}";
                 return name;
@@ -164,10 +161,9 @@ namespace JAFDTC.UI.A10C
 
         public override string MarkerDisplayElevation(MapMarkerInfo info, string units = "")
         {
-            A10CConfiguration config = (A10CConfiguration)Config;
             if (info.Type == MapMarkerInfo.MarkerType.NAV_PT)
             {
-                string elev = config.WYPT.Points[info.TagInt - 1].Alt;
+                string elev = ConfigA10C.WYPT.Points[info.TagInt - 1].Alt;
                 return (string.IsNullOrEmpty(elev)) ? "Ground" : $"{elev}{units}";
             }
             return base.MarkerDisplayElevation(info, units);

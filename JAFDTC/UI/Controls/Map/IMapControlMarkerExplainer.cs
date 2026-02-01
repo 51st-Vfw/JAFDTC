@@ -25,6 +25,13 @@ namespace JAFDTC.UI.Controls.Map
     public interface IMapControlMarkerExplainer
     {
         /// <summary>
+        /// returns the display glyph(s) for the marker with the specified information, null if the glyphs cannot
+        /// be determined. returned string may return up to two glyphs (which will be overlaid), [0] is the
+        /// foreground and [1] (if present) is the background.
+        /// </summary>
+        public string MarkerDisplayGlyphs(MapMarkerInfo info);
+
+        /// <summary>
         /// returns a string for the type of the marker with the specified information for use in the ui, "" if the
         /// display type cannot be determined.
         /// </summary>

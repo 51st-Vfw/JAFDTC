@@ -156,6 +156,14 @@ namespace JAFDTC.UI
         /// 
         /// derived classes may override this method to further customize the return value.
         /// </summary>
+        public virtual string MarkerDisplayGlyphs(MapMarkerInfo info)
+            => MarkerExplainerHelper.MarkerDisplayGlyphs(info);
+
+        /// <summary>
+        /// base implementation calls the base MarkerExplainerHelper method.
+        /// 
+        /// derived classes may override this method to further customize the return value.
+        /// </summary>
         public virtual string MarkerDisplayType(MapMarkerInfo info)
             => MarkerExplainerHelper.MarkerDisplayType(info);
 

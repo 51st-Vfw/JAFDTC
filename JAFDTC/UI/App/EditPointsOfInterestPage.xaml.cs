@@ -1405,6 +1405,11 @@ namespace JAFDTC.UI.App
         // ------------------------------------------------------------------------------------------------------------
 
         /// <summary>
+        /// returns the display glyphs of the marker with the specified information.
+        /// </summary>
+        public string MarkerDisplayGlyphs(MapMarkerInfo info) => MarkerExplainerHelper.MarkerDisplayGlyphs(info);
+
+        /// <summary>
         /// returns the display type of the marker with the specified information.
         /// </summary>
         public string MarkerDisplayType(MapMarkerInfo info) => MarkerExplainerHelper.MarkerDisplayType(info);

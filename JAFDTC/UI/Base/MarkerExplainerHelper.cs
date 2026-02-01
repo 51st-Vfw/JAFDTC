@@ -30,17 +30,45 @@ namespace JAFDTC.UI.Base
     public partial class MarkerExplainerHelper
     {
         /// <summary>
+        /// returns the default display glyph(s) for the marker with the specified information, null if the glyphs
+        /// cannot be determined. returned string may return up to two glyphs (which will be overlaid), [0] is the
+        /// foreground and [1] (if present) is the background.
+        /// </summary>
+        public static string MarkerDisplayGlyphs(MapMarkerInfo info)
+            => info.Type switch
+            {
+                MapMarkerInfo.MarkerType.UNKNOWN => $"{Glyphs.StatusCircle}{Glyphs.StatusQuestion}",
+                MapMarkerInfo.MarkerType.POI_SYSTEM => Glyphs.PoISystem,
+                MapMarkerInfo.MarkerType.POI_USER => Glyphs.PoIUser,
+                MapMarkerInfo.MarkerType.POI_CAMPAIGN => Glyphs.PoICampaign,
+                MapMarkerInfo.MarkerType.NAV_PT => $"{Glyphs.NumberBox}{Glyphs.Number1}",
+                MapMarkerInfo.MarkerType.UNIT_FRIEND => Glyphs.Shield,
+                MapMarkerInfo.MarkerType.UNIT_ENEMY => Glyphs.ShieldExclaim,
+// TODO: USER_PT, BULLSEYE?
+                _ => null
+            };
+
+        /// <summary>
         /// returns the display type of the marker with the specified information. this only handles poi marker
         /// types, reuturning null for other types
         /// </summary>
         public static string MarkerDisplayType(MapMarkerInfo info)
-            => info.Type switch
+        {
+            string campaign = "";
+            PointOfInterest poi = PointOfInterestDbase.Instance.Find(info.TagStr);
+            if (poi != null)
+                campaign = poi.Campaign;
+            return info.Type switch
             {
-                MapMarkerInfo.MarkerType.POI_SYSTEM => $"Core POI",
+                MapMarkerInfo.MarkerType.POI_SYSTEM => $"System POI",
                 MapMarkerInfo.MarkerType.POI_USER => $"User POI",
-                MapMarkerInfo.MarkerType.POI_CAMPAIGN => $"Campaign POI",
+                MapMarkerInfo.MarkerType.POI_CAMPAIGN => $"{campaign} POI",
+                MapMarkerInfo.MarkerType.UNIT_ENEMY => $"REDFOR",
+                MapMarkerInfo.MarkerType.UNIT_FRIEND => $"BLUEFOR",
+                MapMarkerInfo.MarkerType.BULLSEYE => $"BULLS",
                 _ => null
             };
+        }
 
         /// <summary>
         /// returns the display name of the marker with the specified information.
@@ -54,13 +82,16 @@ namespace JAFDTC.UI.Base
             {
                 PointOfInterest poi = PointOfInterestDbase.Instance.Find(info.TagStr);
                 if (poi != null)
-                    name = poi.Type switch
-                    {
-                        PointOfInterestType.SYSTEM => $"POI: {poi.Name}",
-                        PointOfInterestType.USER => $"User: {poi.Name}",
-                        PointOfInterestType.CAMPAIGN => $"{poi.Campaign}: {poi.Name}",
-                        _ => throw new NotImplementedException(),
-                    };
+                    name = poi.Name;
+            }
+            else if (info.Type == MapMarkerInfo.MarkerType.BULLSEYE)
+            {
+                name = "Bullseye";
+            }
+            else if ((info.Type == MapMarkerInfo.MarkerType.PATH_EDIT_HANDLE) ||
+                     (info.Type == MapMarkerInfo.MarkerType.RING_EDIT_HANDLE))
+            {
+                name = "Edit Handle";
             }
             return name;
         }

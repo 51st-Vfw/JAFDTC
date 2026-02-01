@@ -37,13 +37,13 @@ using JAFDTC.Utilities;
 using MapControl;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Input;
-using Microsoft.UI.Text;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Markup;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.Windows.Storage.Pickers;
 using System;
@@ -54,7 +54,6 @@ using System.IO;
 using System.Runtime.InteropServices;
 using Windows.Graphics;
 using Windows.UI;
-using Windows.UI.Text;
 
 namespace JAFDTC.UI.App
 {
@@ -492,86 +491,61 @@ namespace JAFDTC.UI.App
         /// </summary>
         public Popup MarkerPopup(MapMarkerInfo mrkInfo)
         {
-            Popup popup = new()
+            string glyphs = MarkerExplainer?.MarkerDisplayGlyphs(mrkInfo);
+            string title = MarkerExplainer?.MarkerDisplayName(mrkInfo) ?? "Unknown";
+            if (_mapImportMarkerNameDict.TryGetValue(mrkInfo.TagStr, out string markerName))
+                title = markerName;
+            else if (_mapImportThreatNameDict.TryGetValue(mrkInfo.TagStr, out string threatName))
+                title = threatName;
+            string titleStyle = "Normal";
+            if (uiMap.EditMask.HasFlag((MapMarkerInfo.MarkerTypeMask)(1 << (int)mrkInfo.Type)))
+                titleStyle = "Bold";
+
+            string xamlGlyphBg = "";
+            if ((glyphs != null) && (glyphs.Length >= 1))
+                xamlGlyphBg = $"<FontIcon Grid.Column=\"0\"" +
+                              $"          Margin=\"0,0,6,0\"" +
+                              $"          VerticalAlignment=\"Center\"" +
+                              $"          FontFamily=\"Segoe Fluent Icons\"" +
+                              $"          FontSize=\"16\"" +
+                              $"          Glyph=\"{glyphs[0]}\"/>";
+            string xamlGlyphFg = "";
+            if ((glyphs != null) && (glyphs.Length >= 2))
+                xamlGlyphFg = $"<FontIcon Grid.Column=\"0\"" +
+                              $"          Margin=\"0,0,6,0\"" +
+                              $"          VerticalAlignment=\"Center\"" +
+                              $"          FontFamily=\"Segoe Fluent Icons\"" +
+                              $"          FontSize=\"14\"" +
+                              $"          Glyph=\"{glyphs[1]}\"/>";
+
+            string xamlGrid = $"<Grid xmlns=\"http://schemas.microsoft.com/winfx/2006/xaml/presentation\"" +
+                              $"      Margin=\"8,4,8,6\">" +
+                              $"  <Grid.ColumnDefinitions>" +
+                              $"    <ColumnDefinition Width=\"Auto\"/>" +
+                              $"    <ColumnDefinition Width=\"Auto\"/>" +
+                              $"  </Grid.ColumnDefinitions>" +
+                              $"  {xamlGlyphBg}" +
+                              $"  {xamlGlyphFg}" +
+                              $"  <TextBlock Grid.Column=\"1\"" +
+                              $"             Margin=\"0,0,0,2\"" +
+                              $"             VerticalAlignment=\"Center\"" +
+                              $"             FontSize=\"14\"" +
+                              $"             FontWeight=\"{titleStyle}\"" +
+                              $"             Text = \"{title}\"/>" +
+                              $"</Grid>";
+
+            return new Popup()
             {
                 HorizontalOffset = 24,
-                VerticalOffset = -6
-            };
-            StackPanel pupTitleStack = new()
-            {
-                Orientation = Orientation.Horizontal,
-                HorizontalAlignment = HorizontalAlignment.Left,
-                VerticalAlignment = VerticalAlignment.Center
-            };
-            TextBlock pupTextTitle = new()
-            {
-                Margin = new Thickness(0, 0, 0, 2),
-                VerticalAlignment = VerticalAlignment.Center,
-                FontSize = 14,
-                FontWeight = FontWeights.Bold,
-            };
-            pupTitleStack.Children.Add(pupTextTitle);
-            if (uiMap.EditMask.HasFlag((MapMarkerInfo.MarkerTypeMask)(1 << (int)mrkInfo.Type)))
-            {
-                FontIcon pupStatusIcon = new()
+                VerticalOffset = -8,
+                Child = new Border()
                 {
-                    Margin = new Thickness(6, 0, 0, 0),
-                    VerticalAlignment = VerticalAlignment.Center,
-                    FontFamily = new("Segoe Fluent Icons"),
-                    FontSize = 11,
-                    Glyph = Glyphs.Pencil
-                };
-                pupTitleStack.Children.Add(pupStatusIcon);
-            }
-
-            TextBlock pupTextSubtitle = new()
-            {
-                FontSize = 11,
-                FontStyle = FontStyle.Italic
+                    Padding = new Thickness(0, 0, 0, 0),
+                    CornerRadius = new CornerRadius(6),
+                    Background = new SolidColorBrush(Color.FromArgb(192, 0, 0, 0)),
+                    Child = (Grid)XamlReader.Load(xamlGrid)
+                }
             };
-
-            StackPanel pupStack = new()
-            {
-                Margin = new Thickness(8, 4, 8, 8),
-                Orientation = Orientation.Vertical,
-                HorizontalAlignment = HorizontalAlignment.Left,
-                VerticalAlignment = VerticalAlignment.Center
-            };
-            pupStack.Children.Add(pupTitleStack);
-            pupStack.Children.Add(pupTextSubtitle);
-
-            popup.Child = new Border ()
-            {
-                Padding = new Thickness(0, 0, 0, 0),
-                CornerRadius = new CornerRadius(6),
-                Background = new SolidColorBrush(Color.FromArgb(192, 0, 0, 0)),
-                Child = pupStack
-            };
-
-            if (_mapImportMarkerNameDict.TryGetValue(mrkInfo.TagStr, out string markerName))
-                pupTextTitle.Text = markerName;
-            else if (_mapImportThreatNameDict.TryGetValue(mrkInfo.TagStr, out string threatName))
-                pupTextTitle.Text = threatName;
-            else
-                pupTextTitle.Text = MarkerExplainer?.MarkerDisplayName(mrkInfo) ?? "Unknown";
-            string unitType = "Element";
-            if (_mapImportMarkerTypeDict.TryGetValue(mrkInfo.TagStr, out string markerType))
-                unitType = markerType;
-            else if (_mapImportThreatTypeDict.TryGetValue(mrkInfo.TagStr, out string threatType))
-                unitType = threatType;
-            pupTextSubtitle.Text = mrkInfo.Type switch
-            {
-                MapMarkerInfo.MarkerType.POI_SYSTEM => "System POI",
-                MapMarkerInfo.MarkerType.POI_USER => "User POI",
-                MapMarkerInfo.MarkerType.POI_CAMPAIGN => "Campaign POI",
-                MapMarkerInfo.MarkerType.NAV_PT => "Navigation Route",
-                MapMarkerInfo.MarkerType.UNIT_FRIEND => $"Friendly {unitType}",
-                MapMarkerInfo.MarkerType.UNIT_ENEMY => $"Enemy {unitType}",
-                MapMarkerInfo.MarkerType.BULLSEYE => "Bullseye",
-                _ => "Map marker"
-            };
-
-            return popup;
         }
 
         // ------------------------------------------------------------------------------------------------------------
@@ -897,14 +871,23 @@ namespace JAFDTC.UI.App
             }
             else
             {
-                if (mrkInfo.Type == MapMarkerInfo.MarkerType.PATH_EDIT_HANDLE)
-                    uiTxtSelName.Text = "Add Navpoint Handle";
+                string markerType = (MarkerExplainer?.MarkerDisplayType(mrkInfo) ?? "Unknown") + ": ";
+
+                string unitType = "";
+                if (_mapImportMarkerTypeDict.TryGetValue(mrkInfo.TagStr, out string mType))
+                    unitType = $" / {mType}";
+                else if (_mapImportThreatTypeDict.TryGetValue(mrkInfo.TagStr, out string tType))
+                    unitType = $" / {tType}";
+
+                if ((mrkInfo.Type == MapMarkerInfo.MarkerType.PATH_EDIT_HANDLE) ||
+                    (mrkInfo.Type == MapMarkerInfo.MarkerType.RING_EDIT_HANDLE))
+                    uiTxtSelName.Text = "Edit Handle";
                 else if (_mapImportMarkerNameDict.TryGetValue(mrkInfo.TagStr, out string markerName))
-                    uiTxtSelName.Text = markerName;
+                    uiTxtSelName.Text = $"{markerType}{markerName}{unitType}";
                 else if (_mapImportThreatNameDict.TryGetValue(mrkInfo.TagStr, out string threatName))
-                    uiTxtSelName.Text = threatName;
+                    uiTxtSelName.Text = $"{markerType}{threatName}{unitType}";
                 else
-                    uiTxtSelName.Text = MarkerExplainer?.MarkerDisplayName(mrkInfo) ?? "Unknown";
+                    uiTxtSelName.Text = markerType + (MarkerExplainer?.MarkerDisplayName(mrkInfo) ?? "Unknown");
 
                 uiTxtSelAlt.Text = MarkerExplainer?.MarkerDisplayElevation(mrkInfo, "'") ?? "Unknown";
                 uiTxtSelLat.Text = Coord.ConvertFromLatDD(mrkInfo.Lat, CoordFormat);

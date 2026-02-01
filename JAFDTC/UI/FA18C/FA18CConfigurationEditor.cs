@@ -83,7 +83,6 @@ namespace JAFDTC.UI.FA18C
         {
             JAFDTC.App application = Application.Current as JAFDTC.App;
             MapWindow mapWindow = application.CreateMapWindow(true, true);
-            FA18CConfiguration config = (FA18CConfiguration)Config;
 
             // check the theater implied by any threats. default theater is whatever is currently selected.
             //
@@ -98,7 +97,7 @@ namespace JAFDTC.UI.FA18C
             //
             Dictionary<string, List<INavpointInfo>> routes = new()
             {
-                [WYPTSystem.SystemInfo.RouteNames[0]] = [.. config.WYPT.Points ]
+                [WYPTSystem.SystemInfo.RouteNames[0]] = [.. ConfigFA18C.WYPT.Points ]
             };
             List<INavpointInfo> allRoutes = [];
             foreach (string route in routes.Keys)
@@ -129,7 +128,7 @@ namespace JAFDTC.UI.FA18C
             mapWindow.MaxRouteLength = WYPTSystem.SystemInfo.NavptMaxCount;
 
 // TODO: support threats here
-            mapWindow.SetupMapContent(routes, marks, [], config.LastMapMarkerImport, config.LastMapFilter);
+            mapWindow.SetupMapContent(routes, marks, [], ConfigFA18C.LastMapMarkerImport, ConfigFA18C.LastMapFilter);
         }
 
         // ------------------------------------------------------------------------------------------------------------
@@ -140,17 +139,15 @@ namespace JAFDTC.UI.FA18C
 
         public override string MarkerDisplayType(MapMarkerInfo info)
         {
-            FA18CConfiguration config = (FA18CConfiguration)Config;
-            return (info.Type == MapMarkerInfo.MarkerType.NAV_PT) ? config.WYPT.SysInfo.NavptName
+            return (info.Type == MapMarkerInfo.MarkerType.NAV_PT) ? ConfigFA18C.WYPT.SysInfo.NavptName
                                                                   : base.MarkerDisplayType(info);
         }
 
         public override string MarkerDisplayName(MapMarkerInfo info)
         {
-            FA18CConfiguration config = (FA18CConfiguration)Config;
             if (info.Type == MapMarkerInfo.MarkerType.NAV_PT)
             {
-                string name = config.WYPT.Points[info.TagInt - 1].Name;
+                string name = ConfigFA18C.WYPT.Points[info.TagInt - 1].Name;
                 if (string.IsNullOrEmpty(name))
                     name = $"SP{info.TagInt}";
                 return name;
@@ -160,10 +157,9 @@ namespace JAFDTC.UI.FA18C
 
         public override string MarkerDisplayElevation(MapMarkerInfo info, string units = "")
         {
-            FA18CConfiguration config = (FA18CConfiguration)Config;
             if (info.Type == MapMarkerInfo.MarkerType.NAV_PT)
             {
-                string elev = config.WYPT.Points[info.TagInt - 1].Alt;
+                string elev = ConfigFA18C.WYPT.Points[info.TagInt - 1].Alt;
                 return (string.IsNullOrEmpty(elev)) ? "Ground" : $"{elev}{units}";
             }
             return base.MarkerDisplayElevation(info, units);
