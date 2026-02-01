@@ -17,15 +17,29 @@
 //
 // ********************************************************************************************************************
 
+using Windows.Web.AtomPub;
+
 namespace JAFDTC.UI
 {
     public class Glyphs
     {
         public const string None = "";
 
-        public const string Pencil = "\xE70F";                  // pencil to indicate editable
+        public const string Pencil = "\xE70F";                  // pencil
+        public const string Shield = "\xEA18";                  // shield
+        public const string ShieldCross = "\xE72F";             // shield with x mark
+        public const string ShieldExclaim = "\xE730";           // shield with exclamation mark
 
         public const string CfgLinkBadge = "\xF0B6";            // configuration linked badge
+
+        public const string StatusCircle = "\xF138";            // circle border for status
+        public const string StatusQuestion = "\xF142";          // question mark for status circle
+
+        public const string NumberBox = "\xE739";               // box border for numbers
+        public const string Number1 = "\xF146";                 // number "1"
+        public const string Number2 = "\xF147";                 // number "2"
+        public const string Number3 = "\xF148";                 // number "3"
+        public const string Number4 = "\xF149";                 // number "4"
 
         public const string PoISystem = "\xECAF";               // system poi
         public const string PoIUser = "\xE718";                 // user poi
@@ -34,7 +48,7 @@ namespace JAFDTC.UI
         public const string Pilot = "\xE77B";                   // single person
         public const string Pilots = "\xE716";                  // multiple people
 
-        public const string Countermeasures = "\xEA18";         // countermeasure, defensive system
+        public const string Countermeasures = Glyphs.Shield;    // countermeasure, defensive system
         public const string Displays = "\xE950";                // display, mfd systems
         public const string DTC = "\xE77C";                     // core data transfer cartridge system
         public const string Kneeboard = "\xF0E3";               // core kneeboard system
