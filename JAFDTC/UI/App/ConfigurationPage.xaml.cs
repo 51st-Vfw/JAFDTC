@@ -137,23 +137,30 @@ namespace JAFDTC.UI.App
         /// <summary>
         /// force the rebuild of the icon in the system list for the editor identified by ConfigEditorPageInfo.
         /// </summary>
-        public void ForceSystemListIconRebuild(ConfigEditorPageInfo modifiedInfo)
+        public void ForceSystemListIconRebuild(ConfigEditorPageInfo info)
         {
-            // HACK: this is a total hack as bindings don't seem to work the way they are supposed to; e.g.,
-            // HACK: as in
-            // HACK: https://stackoverflow.com/questions/59473945/update-display-of-one-item-in-a-listviews-observablecollection/59506197#59506197
-            // HACK: There appears to be some kinda race going on though, so put the reinsert on the dispatch
-            // HACK: queue with low priority.
-            //
-            DispatcherQueue.TryEnqueue(DispatcherQueuePriority.Low, () =>
+            Color iconFg = ((SolidColorBrush)info.EditorPageIconFg).Color;
+            Color badgeFg = ((SolidColorBrush)info.EditorPageBadgeFg).Color;
+            RebuildIconForeground(info);
+
+            if ((((SolidColorBrush)info.EditorPageIconFg).Color != iconFg) ||
+                (((SolidColorBrush)info.EditorPageBadgeFg).Color != badgeFg))
             {
-                RebuildIconForeground(modifiedInfo);
-                IsRefreshingNavList = true;
-                int index = uiNavListEditors.SelectedIndex;
-                EditorPages[EditorPages.IndexOf(modifiedInfo)] = modifiedInfo;
-                uiNavListEditors.SelectedIndex = index;
-                IsRefreshingNavList = false;
-            });
+                // HACK: this is a total hack as bindings don't seem to work the way they are supposed to; e.g.,
+                // HACK: as in
+                // HACK: https://stackoverflow.com/questions/59473945/update-display-of-one-item-in-a-listviews-observablecollection/59506197#59506197
+                // HACK: There appears to be some kinda race going on though, so put the reinsert on the dispatch
+                // HACK: queue with low priority.
+                //
+                DispatcherQueue.TryEnqueue(DispatcherQueuePriority.Low, () =>
+                {
+                    IsRefreshingNavList = true;
+                    int index = uiNavListEditors.SelectedIndex;
+                    EditorPages[EditorPages.IndexOf(info)] = info;
+                    uiNavListEditors.SelectedIndex = index;
+                    IsRefreshingNavList = false;
+                });
+            }
         }
 
         /// <summary>
