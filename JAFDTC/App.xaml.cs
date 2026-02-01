@@ -393,11 +393,11 @@ namespace JAFDTC
         /// <summary>
         /// returns the map window if it exists, creating it if not. caller is responsible for activation.
         /// </summary>
-        public MapWindow CreateMapWindow()
+        public MapWindow CreateMapWindow(bool isThreatsEnabled = false, bool isFilterEnabled = false)
         {
             if (MapWindow == null)
             {
-                MapWindow = new MapWindow();
+                MapWindow = new MapWindow(isThreatsEnabled, isFilterEnabled);
                 MapWindow.Closed += MapWindow_Closed;
             }
             return MapWindow;

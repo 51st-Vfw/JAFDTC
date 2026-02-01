@@ -86,7 +86,7 @@ namespace JAFDTC.UI.A10C
         public override void SetupMapWindow()
         {
             JAFDTC.App application = Application.Current as JAFDTC.App;
-            MapWindow mapWindow = application.CreateMapWindow();
+            MapWindow mapWindow = application.CreateMapWindow(true, true);
             A10CConfiguration config = (A10CConfiguration)Config;
 
             // check the theater implied by any threats. default theater is whatever is currently selected.

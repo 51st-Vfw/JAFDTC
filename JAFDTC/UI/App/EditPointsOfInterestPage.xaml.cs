@@ -1018,7 +1018,7 @@ namespace JAFDTC.UI.App
         /// </summary>
         private void CmdMap_Click(object sender, RoutedEventArgs args)
         {
-            MapWindow = (Application.Current as JAFDTC.App)?.CreateMapWindow();
+            MapWindow = (Application.Current as JAFDTC.App)?.CreateMapWindow(false, false);
             SetupMapWindow(true);
         }
 
