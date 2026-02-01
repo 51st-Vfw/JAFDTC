@@ -598,7 +598,7 @@ namespace JAFDTC.Utilities
                                                    : Path.Combine(_settingsDirPath, "Kneeboards");
 
         /// <summary>
-        /// returns the path to the kneeboard template package.
+        /// returns the path to the kneeboard template package. the default package is returned when name is empty.
         /// </summary>
         private static string KBTemplatePackagePath(AirframeTypes airframe, string name)
         {
@@ -761,6 +761,27 @@ namespace JAFDTC.Utilities
                 Log($"FileManager:ExtractKBTemplatePackage exception loading from {srcPath}, {ex}");
             }
             return paths;
+        }
+
+        /// <summary>
+        /// delete any temporary directories created by ExtractKBTemplatePackage. this should only be called once
+        /// the caller is finished using any templates extracted by ExtractKBTemplatePackage.
+        /// </summary>
+        public static void CleanUpKBTemplateTempFiles()
+        {
+            try
+            {
+                IEnumerable<string> dirPaths = Directory.EnumerateDirectories(Path.GetTempPath(), "JAFDTC-KBB-*");
+                foreach (string path in dirPaths)
+                {
+                    Log($"FileManager:CleanUpKBTemplateTempFiles deletes {path}");
+                    System.IO.Directory.Delete(path, true);
+                }
+            }
+            catch (Exception ex)
+            {
+                Log($"FileManager:CleanUpKBTemplateTempFiles exception during clean up, {ex}");
+            }
         }
 
         /// <summary>

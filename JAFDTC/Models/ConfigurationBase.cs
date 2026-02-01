@@ -362,6 +362,8 @@ namespace JAFDTC.Models
                     IReadOnlyList<string> kbPaths = builder.GenerateKneeboards(criteria);
                     foreach (string path in kbPaths)
                         FileManager.Log($"Successfully generated kneeboard {path}");
+
+                    FileManager.CleanUpKBTemplateTempFiles();
                 }
                 catch (Exception ex)
                 {

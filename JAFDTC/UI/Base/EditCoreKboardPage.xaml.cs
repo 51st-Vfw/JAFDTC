@@ -213,6 +213,12 @@ namespace JAFDTC.UI.Base
             List<string> kboards = FileManager.ListKBTemplates(Config.Airframe, EditKboard.Template);
             if (kboards.Count == 0)
                 kboards = FileManager.ListKBTemplates(AirframeTypes.UNKNOWN, EditKboard.Template);
+            if (kboards.Count == 0)
+            {
+                kboards = FileManager.ListKBTemplates(AirframeTypes.UNKNOWN, null);
+                EditKboard.Template = null;
+                isResetSelection = true;
+            }
             if (isResetSelection)
             {
                 EditKboard.KneeboardTags.Clear();
@@ -336,8 +342,9 @@ namespace JAFDTC.UI.Base
                     }
                     if (result == ContentDialogResult.Primary)
                     {
-                        FileManager.ExtractKBTemplatePackage(type, resultPick.Path);
+                        FileManager.ImportKBTemplatePackage(type, resultPick.Path);
                         EditKboard.Template = name;
+                        EditKboard.KneeboardTags.Clear();
                         SaveEditStateToConfig();
                         RebuildKneeboardList();
                     }
