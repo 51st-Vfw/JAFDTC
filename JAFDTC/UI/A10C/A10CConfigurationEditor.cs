@@ -187,6 +187,11 @@ namespace JAFDTC.UI.A10C
             Debug.WriteLine($"{VerbHandlerTag}:MarkerOpen({param}) {info.Type} {info.TagStr}:{info.TagInt}");
         }
 
+        public void VerbMarkerUpdated(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
+        {
+            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerUpdated({param}) {info.Type} {info.TagStr}:{info.TagInt}");
+        }
+
         public void VerbMarkerMoved(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
             Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerMoved({param}) {info.Type} {info.TagStr}:{info.TagInt} / {info.Lat}, {info.Lon}");

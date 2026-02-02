@@ -1438,7 +1438,7 @@ namespace JAFDTC.UI.App
         /// </summary>
         public void VerbMarkerSelected(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
-            Debug.WriteLine($"EPP:VerbMarkerSelected({param}) {info.Type}, {info.TagStr}, {info.TagInt}");
+            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerSelected({param}) {info.Type} {info.TagStr}:{info.TagInt}");
             if (info.Type == MapMarkerInfo.MarkerType.UNKNOWN)
             {
                 IsVerbEvent = true;
@@ -1457,14 +1457,25 @@ namespace JAFDTC.UI.App
         /// <summary>
         /// TODO: document
         /// </summary>
-        public void VerbMarkerOpened(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0) { }
+        public void VerbMarkerOpened(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
+        {
+            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerOpened({param}) {info.Type} {info.TagStr}:{info.TagInt}");
+        }
+
+        /// <summary>
+        /// TODO: document
+        /// </summary>
+        public void VerbMarkerUpdated(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
+        {
+            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerUpdated({param}) {info.Type} {info.TagStr}:{info.TagInt}");
+        }
 
         /// <summary>
         /// TODO: document
         /// </summary>
         public void VerbMarkerMoved(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
-            Debug.WriteLine($"EPP:VerbMarkerMoved({param}) {info.Type}, {info.TagStr}, {info.TagInt}, {info.Lat}, {info.Lon}");
+            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerMoved({param}) {info.Type} {info.TagStr}:{info.TagInt} / {info.Lat}, {info.Lon}");
             PointOfInterest poi = PointOfInterestDbase.Instance.Find(info.TagStr);
             if ((poi != null) && (poi.UniqueID == EditPoI.SourceUID))
             {
@@ -1503,7 +1514,7 @@ namespace JAFDTC.UI.App
         /// </summary>
         public void VerbMarkerAdded(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
-            Debug.WriteLine($"EPP:VerbMarkerAdded({param}) {info.Type}, {info.TagStr}, {info.TagInt}, {info.Lat}, {info.Lon}");
+            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerAdded({param}) {info.Type} {info.TagStr}:{info.TagInt} / {info.Lat}, {info.Lon}");
 // TODO: nothing to do here until we support add via map window
         }
 
@@ -1512,7 +1523,7 @@ namespace JAFDTC.UI.App
         /// </summary>
         public void VerbMarkerDeleted(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
-            Debug.WriteLine($"EPP:VerbMarkerDeleted({param}) {info.Type}, {info.TagStr}, {info.TagInt}");
+            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerDeleted({param}) {info.Type} {info.TagStr}:{info.TagInt}");
             PointOfInterest poi = PointOfInterestDbase.Instance.Find(info.TagStr);
 
             if (PointOfInterestDbase.Instance.CountPoIInCampaign(poi.Campaign) == 1)

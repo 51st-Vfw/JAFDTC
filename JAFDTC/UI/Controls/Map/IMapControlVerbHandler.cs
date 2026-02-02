@@ -53,6 +53,12 @@ namespace JAFDTC.UI.Controls.Map
         public void VerbMarkerMoved(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0);
 
         /// <summary>
+        /// sender object has updated (made a change to state other than lat/lon) the indicated marker,
+        /// replicate this change in the handler object.
+        /// </summary>
+        public void VerbMarkerUpdated(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0);
+
+        /// <summary>
         /// sender object has added a new marker, replicate this change in the handler object.
         /// </summary>
         public void VerbMarkerAdded(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0);

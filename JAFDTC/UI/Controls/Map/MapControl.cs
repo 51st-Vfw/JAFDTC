@@ -1167,7 +1167,7 @@ namespace JAFDTC.UI.Controls.Map
         /// </summary>
         public void VerbMarkerSelected(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
-            Debug.WriteLine($"MC:MarkerSelect({param}) {info.Type}, {info.TagStr} {info.TagInt}");
+            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerSelected({param}) {info.Type} {info.TagStr}:{info.TagInt}");
             if (_selectedMarker != null)
                 UnselectMarker(_selectedMarker);
             _selectedMarker = null;
@@ -1187,14 +1187,25 @@ namespace JAFDTC.UI.Controls.Map
         /// <summary>
         /// map does not have anything to do on opens originating from other senders.
         /// </summary>
-        public void VerbMarkerOpened(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0) { }
+        public void VerbMarkerOpened(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
+        {
+            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerOpened({param}) {info.Type} {info.TagStr}:{info.TagInt}");
+        }
+
+        /// <summary>
+        /// TODO: document
+        /// </summary>
+        public void VerbMarkerUpdated(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
+        {
+            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerUpdated({param}) {info.Type} {info.TagStr}:{info.TagInt}");
+        }
 
         /// <summary>
         /// handle the change of a marker location.
         /// </summary>
         public void VerbMarkerMoved(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
-            Debug.WriteLine($"MC:VerbMarkerMoved({param}) {info.Type}, {info.TagStr}, {info.TagInt}, {info.Lat}, {info.Lon}");
+            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerMoved({param}) {info.Type} {info.TagStr}:{info.TagInt} / {info.Lat}, {info.Lon}");
             if ((info.TagStr == null) || !CanEdit(info.Type))
                 return;
             else if (_paths.TryGetValue(info.TagStr, out PathInfo pathInfo))
@@ -1208,7 +1219,7 @@ namespace JAFDTC.UI.Controls.Map
         /// </summary>
         public void VerbMarkerAdded(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
-            Debug.WriteLine($"MC:VerbMarkerAdded({param}) {info.Type}, {info.TagStr}, {info.TagInt}, {info.Lat}, {info.Lon}");
+            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerAdded({param}) {info.Type} {info.TagStr}:{info.TagInt} / {info.Lat}, {info.Lon}");
             if ((info.TagStr == null) || !CanEdit(info.Type))
                 return;
             else if (_paths.TryGetValue(info.TagStr, out PathInfo pathInfo))
@@ -1228,7 +1239,7 @@ namespace JAFDTC.UI.Controls.Map
         /// </summary>
         public void VerbMarkerDeleted(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
-            Debug.WriteLine($"MC:VerbMarkerDeleted({param}) {info.Type}, {info.TagStr}, {info.TagInt}");
+            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerDeleted({param}) {info.Type} {info.TagStr}:{info.TagInt}");
             if (info.TagStr == null)
                 return;
 

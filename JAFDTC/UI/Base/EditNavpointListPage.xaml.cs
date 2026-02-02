@@ -470,7 +470,7 @@ namespace JAFDTC.UI.Base
         /// </summary>
         public void VerbMarkerSelected(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
-            Debug.WriteLine($"ENLP:VerbMarkerSelected({param}) {info.Type}, {info.TagStr}, {info.TagInt}");
+            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerSelected({param}) {info.Type} {info.TagStr}:{info.TagInt}");
             if ((info.TagStr != PageHelper.SystemInfo.RouteNames[0]) ||
                 (info.Type == MapMarkerInfo.MarkerType.UNKNOWN))
             {
@@ -495,7 +495,7 @@ namespace JAFDTC.UI.Base
         /// </summary>
         public void VerbMarkerOpened(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
-            Debug.WriteLine($"ENLP:MarkerOpen({param}) {info.Type}, {info.TagStr}, {info.TagInt}");
+            Debug.WriteLine($"{VerbHandlerTag}:MarkerOpen({param}) {info.Type} {info.TagStr}:{info.TagInt}");
             if (info.TagStr == PageHelper.SystemInfo.RouteNames[0])
             {
                 if (EditNavptDetailPage == null)
@@ -509,9 +509,17 @@ namespace JAFDTC.UI.Base
         /// <summary>
         /// TODO: document
         /// </summary>
+        public void VerbMarkerUpdated(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
+        {
+            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerUpdated({param}) {info.Type} {info.TagStr}:{info.TagInt}");
+        }
+
+        /// <summary>
+        /// TODO: document
+        /// </summary>
         public void VerbMarkerMoved(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
-            Debug.WriteLine($"ENLP:VerbMarkerMoved({param}) {info.Type}, {info.TagStr}, {info.TagInt}, {info.Lat}, {info.Lon}");
+            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerMoved({param}) {info.Type} {info.TagStr}:{info.TagInt} / {info.Lat}, {info.Lon}");
             if (info.TagStr == PageHelper.SystemInfo.RouteNames[0])
             {
                 EditNavpt[info.TagInt - 1].Lat = info.Lat;
@@ -528,7 +536,7 @@ namespace JAFDTC.UI.Base
         /// </summary>
         public void VerbMarkerAdded(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
-            Debug.WriteLine($"ENLP:VerbMarkerAdded({param}) {info.Type}, {info.TagStr}, {info.TagInt}, {info.Lat}, {info.Lon}");
+            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerAdded({param}) {info.Type} {info.TagStr}:{info.TagInt} / {info.Lat}, {info.Lon}");
             if (info.TagStr == PageHelper.SystemInfo.RouteNames[0])
             {
                 _isVerbEvent = true;
@@ -549,7 +557,7 @@ namespace JAFDTC.UI.Base
         /// </summary>
         public void VerbMarkerDeleted(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
-            Debug.WriteLine($"ENLP:VerbMarkerDeleted({param}) {info.Type}, {info.TagStr}, {info.TagInt}");
+            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerDeleted({param}) {info.Type} {info.TagStr}:{info.TagInt}");
             if (info.TagStr == PageHelper.SystemInfo.RouteNames[0])
             {
                 _isVerbEvent = true;
