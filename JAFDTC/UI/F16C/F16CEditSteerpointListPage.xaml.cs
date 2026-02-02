@@ -248,8 +248,7 @@ namespace JAFDTC.UI.F16C
                 SteerpointInfo stpt = new()
                 {
                     Lat = ll.Item1,
-                    Lon = ll.Item2,
-                    Alt = "10000"
+                    Lon = ll.Item2
                 };
                 EditSTPT.Add(stpt);
                 int index = EditSTPT.Points.IndexOf(stpt);
