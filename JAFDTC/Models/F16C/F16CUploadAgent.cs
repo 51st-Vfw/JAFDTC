@@ -26,9 +26,7 @@ using JAFDTC.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Reflection.Emit;
 using System.Text;
-using System.Text.RegularExpressions;
 
 namespace JAFDTC.Models.F16C
 {
@@ -171,7 +169,7 @@ namespace JAFDTC.Models.F16C
             NavptAltitudeQueryBuilder queryAlt = new(_dm, null);
             Dictionary<string, object> state = queryAlt.QueryNavpointAltitudes([.. _cfg.STPT.Points ], true);
             if (Convert.ToInt32(state.GetValueOrDefault("NavPtElev.conversions", 0)) > 0)
-                _cfg.Save(this);
+                ConfigurationUpdated(_cfg);
 
             // perform state queries to capture current avionics state that we are interested in including the mfd
             // format setup and the munitions on jet according to sms pages.

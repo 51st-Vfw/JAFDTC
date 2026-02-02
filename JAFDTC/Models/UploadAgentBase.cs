@@ -27,8 +27,9 @@
 #define noDEBUG_USES_DEBUG_BUILDER
 
 using JAFDTC.Models.DCS;
-using JAFDTC.Utilities;
 using JAFDTC.Utilities.Networking;
+using Microsoft.UI.Dispatching;
+using Microsoft.UI.Xaml;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
@@ -106,6 +107,19 @@ namespace JAFDTC.Models
         // methods
         //
         // ------------------------------------------------------------------------------------------------------------
+
+        /// <summary>
+        /// persist the configuration associated with the upload agent when it changes during the upload process.
+        /// the work is done on the main thread as the save may trigger ui updates.
+        /// </summary>
+        public void ConfigurationUpdated(IConfiguration config)
+        {
+            JAFDTC.App application = Application.Current as JAFDTC.App;
+            application.Window.DispatcherQueue.TryEnqueue(DispatcherQueuePriority.Normal, () =>
+            {
+                config.Save(this);
+            });
+        }
 
         /// <summary>
         /// open the dcs dtc editor interface, see IUploadAgent.
