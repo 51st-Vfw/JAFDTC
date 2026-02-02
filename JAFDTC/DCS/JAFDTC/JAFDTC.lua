@@ -27,6 +27,7 @@ JAFDTC_LogFile = io.open(lfs.writedir() .. [[Logs\JAFDTC.log]], "w")
 
 local socket = require("socket")
 local JSON = loadfile("Scripts\\JSON.lua")()
+local terrain = require('terrain')
 
 dofile(lfs.writedir() .. 'Scripts/JAFDTC/CommonFunctions.lua')
 dofile(lfs.writedir() .. 'Scripts/JAFDTC/A10CFunctions.lua')
@@ -68,6 +69,19 @@ local upstreamLuaExportBeforeNextFrame = LuaExportBeforeNextFrame
 -- core functions (global)
 --
 -- --------------------------------------------------------------------------------------------------------------------
+
+-- core function to find altitude (in m) at specified lat/lon.
+--
+function JAFDTC_Core_QueryAltAtLatLon(lat, lon)
+    local numLat = tonumber(lat)
+    local numLon = tonumber(lon)
+    local v3PosLo = LoGeoCoordinatesToLoCoordinates(lon, lat)
+
+    local numX = tonumber(v3PosLo.x)
+    local numZ = tonumber(v3PosLo.z)
+
+    return terrain.GetSurfaceHeightWithSeabed(numX, numZ)
+end
 
 -- core function to perform clickable action. expected to be called from main processing loop as it will yield
 -- the current co-routine to handle the down-up delay.
@@ -424,7 +438,7 @@ function LuaExportStart()
         JAFDTC_Log("ERROR: Unable to open TCP rx socket")
     end
 
-    JAFDTC_Log(string.format("Export hooks starts at %.3f", socket.gettime()))
+    JAFDTC_Log(string.format("JAFDTC.lua export hooks start at %.3f", socket.gettime()))
 end
 
 -- receive incoming command streams from jafdtc, crack, and execute them. commands are run as co-routines so a stream
