@@ -149,18 +149,18 @@ namespace JAFDTC.UI.F16C
 
         public override string MarkerDisplayType(MapMarkerInfo info)
         {
-            return (info.Type == MapMarkerInfo.MarkerType.NAV_PT) ? ConfigF16C.STPT.SysInfo.NavptName
-                                                                  : base.MarkerDisplayType(info);
+            return (info.Tag.Type == MapMarkerInfo.MarkerType.NAV_PT) ? ConfigF16C.STPT.SysInfo.NavptName
+                                                                      : base.MarkerDisplayType(info);
         }
 
         public override string MarkerDisplayName(MapMarkerInfo info)
         {
-            if (info.Type == MapMarkerInfo.MarkerType.NAV_PT)
+            if (info.Tag.Type == MapMarkerInfo.MarkerType.NAV_PT)
             {
-                string name = ConfigF16C.STPT.Points[info.TagInt - 1].Name;
+                string name = ConfigF16C.STPT.Points[info.Tag.Int - 1].Name;
                 if (string.IsNullOrEmpty(name))
-                    name = $"SP{info.TagInt}";
-                string tos = ConfigF16C.STPT.Points[info.TagInt - 1].TOS;
+                    name = $"SP{info.Tag.Int}";
+                string tos = ConfigF16C.STPT.Points[info.Tag.Int - 1].TOS;
                 if (!string.IsNullOrEmpty(tos))
                     name = $"{name} / TOS {tos}";
                 return name;
@@ -170,9 +170,9 @@ namespace JAFDTC.UI.F16C
 
         public override string MarkerDisplayElevation(MapMarkerInfo info, string units = "")
         {
-            if (info.Type == MapMarkerInfo.MarkerType.NAV_PT)
+            if (info.Tag.Type == MapMarkerInfo.MarkerType.NAV_PT)
             {
-                string elev = ConfigF16C.STPT.Points[info.TagInt - 1].Alt;
+                string elev = ConfigF16C.STPT.Points[info.Tag.Int - 1].Alt;
                 return (string.IsNullOrEmpty(elev)) ? "Ground" : $"{elev}{units}";
             }
             return base.MarkerDisplayElevation(info, units);
@@ -188,26 +188,26 @@ namespace JAFDTC.UI.F16C
 
         public void VerbMarkerSelected(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
-            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerSelected({param}) {info.Type} {info.TagStr}:{info.TagInt}");
+            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerSelected({param}) {info.Tag}");
         }
 
         public void VerbMarkerOpened(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
-            Debug.WriteLine($"{VerbHandlerTag}:MarkerOpen({param}) {info.Type} {info.TagStr}:{info.TagInt}");
+            Debug.WriteLine($"{VerbHandlerTag}:MarkerOpen({param}) {info.Tag}");
         }
 
         public void VerbMarkerUpdated(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
-            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerUpdated({param}) {info.Type} {info.TagStr}:{info.TagInt}");
+            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerUpdated({param}) {info.Tag}");
         }
 
         public void VerbMarkerMoved(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
-            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerMoved({param}) {info.Type} {info.TagStr}:{info.TagInt} / {info.Lat}, {info.Lon}");
-            if (info.TagStr == STPTSystem.SystemInfo.RouteNames[0])
+            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerMoved({param}) {info.Tag} / {info.Lat}, {info.Lon}");
+            if (info.Tag.Str == STPTSystem.SystemInfo.RouteNames[0])
             {
-                ConfigF16C.STPT.Points[info.TagInt - 1].Lat = info.Lat;
-                ConfigF16C.STPT.Points[info.TagInt - 1].Lon = info.Lon;
+                ConfigF16C.STPT.Points[info.Tag.Int - 1].Lat = info.Lat;
+                ConfigF16C.STPT.Points[info.Tag.Int - 1].Lon = info.Lon;
 // TODO: what about altitude?
                 Config.Save(this, STPTSystem.SystemTag);
                 ConfigPage.ForceSystemListIconRebuild(STPTSystem.SystemTag);
@@ -217,10 +217,10 @@ namespace JAFDTC.UI.F16C
 
         public void VerbMarkerAdded(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
-            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerAdded({param}) {info.Type} {info.TagStr}:{info.TagInt} / {info.Lat}, {info.Lon}");
-            if (info.TagStr == STPTSystem.SystemInfo.RouteNames[0])
+            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerAdded({param}) {info.Tag} / {info.Lat}, {info.Lon}");
+            if (info.Tag.Str == STPTSystem.SystemInfo.RouteNames[0])
             {
-                SteerpointInfo stpt = ConfigF16C.STPT.Add(null, info.TagInt - 1);
+                SteerpointInfo stpt = ConfigF16C.STPT.Add(null, info.Tag.Int - 1);
                 stpt.Lat = info.Lat;
                 stpt.Lon = info.Lon;
 // TODO: what about altitude?
@@ -232,10 +232,10 @@ namespace JAFDTC.UI.F16C
 
         public void VerbMarkerDeleted(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
-            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerDeleted({param}) {info.Type} {info.TagStr}:{info.TagInt}");
-            if (info.TagStr == STPTSystem.SystemInfo.RouteNames[0])
+            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerDeleted({param}) {info.Tag}");
+            if (info.Tag.Str == STPTSystem.SystemInfo.RouteNames[0])
             {
-                ConfigF16C.STPT.Delete(ConfigF16C.STPT.Points[info.TagInt - 1]);
+                ConfigF16C.STPT.Delete(ConfigF16C.STPT.Points[info.Tag.Int - 1]);
                 Config.Save(this, STPTSystem.SystemTag);
                 ConfigPage.ForceSystemListIconRebuild(STPTSystem.SystemTag);
             }

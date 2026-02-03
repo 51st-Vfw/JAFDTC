@@ -470,23 +470,23 @@ namespace JAFDTC.UI.Base
         /// </summary>
         public void VerbMarkerSelected(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
-            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerSelected({param}) {info.Type} {info.TagStr}:{info.TagInt}");
-            if ((info.TagStr != PageHelper.SystemInfo.RouteNames[0]) ||
-                (info.Type == MapMarkerInfo.MarkerType.UNKNOWN))
+            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerSelected({param}) {info.Tag}");
+            if ((info.Tag.Str != PageHelper.SystemInfo.RouteNames[0]) ||
+                (info.Tag.Type == MapMarkerInfo.MarkerType.UNKNOWN))
             {
                 _isVerbEvent = true;
                 uiNavptListView.SelectedIndex = -1;
                 _isVerbEvent = false;
             }
-            else if ((info.TagStr == PageHelper.SystemInfo.RouteNames[0]) &&
-                     (info.Type == MapMarkerInfo.MarkerType.NAV_PT))
+            else if ((info.Tag.Str == PageHelper.SystemInfo.RouteNames[0]) &&
+                     (info.Tag.Type == MapMarkerInfo.MarkerType.NAV_PT))
             {
                 _isVerbEvent = true;
-                uiNavptListView.SelectedIndex = info.TagInt - 1;
+                uiNavptListView.SelectedIndex = info.Tag.Int - 1;
                 uiNavptListView.ScrollIntoView(uiNavptListView.SelectedItem);
                 _isVerbEvent = false;
 
-                EditNavptDetailPage?.ChangeToEditNavpointAtIndex(info.TagInt - 1);
+                EditNavptDetailPage?.ChangeToEditNavpointAtIndex(info.Tag.Int - 1);
             }
         }
 
@@ -495,13 +495,13 @@ namespace JAFDTC.UI.Base
         /// </summary>
         public void VerbMarkerOpened(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
-            Debug.WriteLine($"{VerbHandlerTag}:MarkerOpen({param}) {info.Type} {info.TagStr}:{info.TagInt}");
-            if (info.TagStr == PageHelper.SystemInfo.RouteNames[0])
+            Debug.WriteLine($"{VerbHandlerTag}:MarkerOpen({param}) {info.Tag}");
+            if (info.Tag.Str == PageHelper.SystemInfo.RouteNames[0])
             {
                 if (EditNavptDetailPage == null)
-                    EditNavpoint(EditNavpt[info.TagInt - 1]);
+                    EditNavpoint(EditNavpt[info.Tag.Int - 1]);
                 else
-                    EditNavptDetailPage?.ChangeToEditNavpointAtIndex(info.TagInt - 1);
+                    EditNavptDetailPage?.ChangeToEditNavpointAtIndex(info.Tag.Int - 1);
             }
 // TODO: handle other types of markers (user pois?)
         }
@@ -511,7 +511,7 @@ namespace JAFDTC.UI.Base
         /// </summary>
         public void VerbMarkerUpdated(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
-            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerUpdated({param}) {info.Type} {info.TagStr}:{info.TagInt}");
+            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerUpdated({param}) {info.Tag}");
         }
 
         /// <summary>
@@ -519,14 +519,14 @@ namespace JAFDTC.UI.Base
         /// </summary>
         public void VerbMarkerMoved(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
-            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerMoved({param}) {info.Type} {info.TagStr}:{info.TagInt} / {info.Lat}, {info.Lon}");
-            if (info.TagStr == PageHelper.SystemInfo.RouteNames[0])
+            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerMoved({param}) {info.Tag} / {info.Lat}, {info.Lon}");
+            if (info.Tag.Str == PageHelper.SystemInfo.RouteNames[0])
             {
-                EditNavpt[info.TagInt - 1].Lat = info.Lat;
-                EditNavpt[info.TagInt - 1].Lon = info.Lon;
+                EditNavpt[info.Tag.Int - 1].Lat = info.Lat;
+                EditNavpt[info.Tag.Int - 1].Lon = info.Lon;
                 SaveEditStateToConfig();
 
-                EditNavptDetailPage?.CopyConfigToEditIfEditingNavpointAtIndex(info.TagInt - 1);
+                EditNavptDetailPage?.CopyConfigToEditIfEditingNavpointAtIndex(info.Tag.Int - 1);
             }
 // TODO: handle other types of markers (user pois?)
         }
@@ -536,11 +536,11 @@ namespace JAFDTC.UI.Base
         /// </summary>
         public void VerbMarkerAdded(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
-            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerAdded({param}) {info.Type} {info.TagStr}:{info.TagInt} / {info.Lat}, {info.Lon}");
-            if (info.TagStr == PageHelper.SystemInfo.RouteNames[0])
+            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerAdded({param}) {info.Tag} / {info.Lat}, {info.Lon}");
+            if (info.Tag.Str == PageHelper.SystemInfo.RouteNames[0])
             {
                 _isVerbEvent = true;
-                int index = PageHelper.AddNavpoint(Config, info.TagInt - 1);
+                int index = PageHelper.AddNavpoint(Config, info.Tag.Int - 1);
                 CopyConfigToEditState();
                 EditNavpt[index].Lat = info.Lat;
                 EditNavpt[index].Lon = info.Lon;
@@ -557,16 +557,16 @@ namespace JAFDTC.UI.Base
         /// </summary>
         public void VerbMarkerDeleted(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
-            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerDeleted({param}) {info.Type} {info.TagStr}:{info.TagInt}");
-            if (info.TagStr == PageHelper.SystemInfo.RouteNames[0])
+            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerDeleted({param}) {info.Tag}");
+            if (info.Tag.Str == PageHelper.SystemInfo.RouteNames[0])
             {
                 _isVerbEvent = true;
                 uiNavptListView.SelectedIndex = -1;
 
-                EditNavpt.RemoveAt(info.TagInt - 1);
+                EditNavpt.RemoveAt(info.Tag.Int - 1);
                 SaveEditStateToConfig();
 
-                EditNavptDetailPage?.CancelIfEditingNavpointAtIndex(info.TagInt - 1);
+                EditNavptDetailPage?.CancelIfEditingNavpointAtIndex(info.Tag.Int - 1);
 
                 UpdateUIFromEditState();
                 _isVerbEvent = false;

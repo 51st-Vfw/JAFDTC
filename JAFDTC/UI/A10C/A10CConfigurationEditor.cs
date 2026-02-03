@@ -143,17 +143,17 @@ namespace JAFDTC.UI.A10C
 
         public override string MarkerDisplayType(MapMarkerInfo info)
         {
-            return (info.Type == MapMarkerInfo.MarkerType.NAV_PT) ? ConfigA10C.WYPT.SysInfo.NavptName
-                                                                  : base.MarkerDisplayType(info);
+            return (info.Tag.Type == MapMarkerInfo.MarkerType.NAV_PT) ? ConfigA10C.WYPT.SysInfo.NavptName
+                                                                      : base.MarkerDisplayType(info);
         }
 
         public override string MarkerDisplayName(MapMarkerInfo info)
         {
-            if (info.Type == MapMarkerInfo.MarkerType.NAV_PT)
+            if (info.Tag.Type == MapMarkerInfo.MarkerType.NAV_PT)
             {
-                string name = ConfigA10C.WYPT.Points[info.TagInt - 1].Name;
+                string name = ConfigA10C.WYPT.Points[info.Tag.Int - 1].Name;
                 if (string.IsNullOrEmpty(name))
-                    name = $"SP{info.TagInt}";
+                    name = $"SP{info.Tag.Int}";
                 return name;
             }
             return base.MarkerDisplayName(info);
@@ -161,9 +161,9 @@ namespace JAFDTC.UI.A10C
 
         public override string MarkerDisplayElevation(MapMarkerInfo info, string units = "")
         {
-            if (info.Type == MapMarkerInfo.MarkerType.NAV_PT)
+            if (info.Tag.Type == MapMarkerInfo.MarkerType.NAV_PT)
             {
-                string elev = ConfigA10C.WYPT.Points[info.TagInt - 1].Alt;
+                string elev = ConfigA10C.WYPT.Points[info.Tag.Int - 1].Alt;
                 return (string.IsNullOrEmpty(elev)) ? "Ground" : $"{elev}{units}";
             }
             return base.MarkerDisplayElevation(info, units);
@@ -179,26 +179,26 @@ namespace JAFDTC.UI.A10C
 
         public void VerbMarkerSelected(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
-            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerSelected({param}) {info.Type} {info.TagStr}:{info.TagInt}");
+            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerSelected({param}) {info.Tag}");
         }
 
         public void VerbMarkerOpened(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
-            Debug.WriteLine($"{VerbHandlerTag}:MarkerOpen({param}) {info.Type} {info.TagStr}:{info.TagInt}");
+            Debug.WriteLine($"{VerbHandlerTag}:MarkerOpen({param}) {info.Tag}");
         }
 
         public void VerbMarkerUpdated(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
-            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerUpdated({param}) {info.Type} {info.TagStr}:{info.TagInt}");
+            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerUpdated({param}) {info.Tag}");
         }
 
         public void VerbMarkerMoved(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
-            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerMoved({param}) {info.Type} {info.TagStr}:{info.TagInt} / {info.Lat}, {info.Lon}");
-            if (info.TagStr == WYPTSystem.SystemInfo.RouteNames[0])
+            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerMoved({param}) {info.Tag} / {info.Lat}, {info.Lon}");
+            if (info.Tag.Str == WYPTSystem.SystemInfo.RouteNames[0])
             {
-                ConfigA10C.WYPT.Points[info.TagInt - 1].Lat = info.Lat;
-                ConfigA10C.WYPT.Points[info.TagInt - 1].Lon = info.Lon;
+                ConfigA10C.WYPT.Points[info.Tag.Int - 1].Lat = info.Lat;
+                ConfigA10C.WYPT.Points[info.Tag.Int - 1].Lon = info.Lon;
 // TODO: what about altitude?
                 Config.Save(this, WYPTSystem.SystemTag);
                 ConfigPage.ForceSystemListIconRebuild(WYPTSystem.SystemTag);
@@ -208,10 +208,10 @@ namespace JAFDTC.UI.A10C
 
         public void VerbMarkerAdded(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
-            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerAdded({param}) {info.Type} {info.TagStr}:{info.TagInt} / {info.Lat}, {info.Lon}");
-            if (info.TagStr == WYPTSystem.SystemInfo.RouteNames[0])
+            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerAdded({param}) {info.Tag} / {info.Lat}, {info.Lon}");
+            if (info.Tag.Str == WYPTSystem.SystemInfo.RouteNames[0])
             {
-                WaypointInfo wypt = ConfigA10C.WYPT.Add(null, info.TagInt - 1);
+                WaypointInfo wypt = ConfigA10C.WYPT.Add(null, info.Tag.Int - 1);
                 wypt.Lat = info.Lat;
                 wypt.Lon = info.Lon;
 // TODO: what about altitude?
@@ -223,10 +223,10 @@ namespace JAFDTC.UI.A10C
 
         public void VerbMarkerDeleted(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
-            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerDeleted({param}) {info.Type} {info.TagStr}:{info.TagInt}");
-            if (info.TagStr == WYPTSystem.SystemInfo.RouteNames[0])
+            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerDeleted({param}) {info.Tag}");
+            if (info.Tag.Str == WYPTSystem.SystemInfo.RouteNames[0])
             {
-                ConfigA10C.WYPT.Delete(ConfigA10C.WYPT.Points[info.TagInt - 1]);
+                ConfigA10C.WYPT.Delete(ConfigA10C.WYPT.Points[info.Tag.Int - 1]);
                 Config.Save(this, WYPTSystem.SystemTag);
                 ConfigPage.ForceSystemListIconRebuild(WYPTSystem.SystemTag);
             }

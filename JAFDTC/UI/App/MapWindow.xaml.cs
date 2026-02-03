@@ -493,12 +493,12 @@ namespace JAFDTC.UI.App
         {
             string glyphs = MarkerExplainer?.MarkerDisplayGlyphs(mrkInfo);
             string title = MarkerExplainer?.MarkerDisplayName(mrkInfo) ?? "Unknown";
-            if (_mapImportMarkerNameDict.TryGetValue(mrkInfo.TagStr, out string markerName))
+            if (_mapImportMarkerNameDict.TryGetValue(mrkInfo.Tag.Str, out string markerName))
                 title = markerName;
-            else if (_mapImportThreatNameDict.TryGetValue(mrkInfo.TagStr, out string threatName))
+            else if (_mapImportThreatNameDict.TryGetValue(mrkInfo.Tag.Str, out string threatName))
                 title = threatName;
             string titleStyle = "Normal";
-            if (uiMap.EditMask.HasFlag((MapMarkerInfo.MarkerTypeMask)(1 << (int)mrkInfo.Type)))
+            if (uiMap.EditMask.HasFlag((MapMarkerInfo.MarkerTypeMask)(1 << (int)mrkInfo.Tag.Type)))
                 titleStyle = "Bold";
 
             string xamlGlyphBg = "";
@@ -865,7 +865,7 @@ namespace JAFDTC.UI.App
             {
                 uiTxtSelName.Text = "No Selection";
             }
-            else if (mrkInfo.Type == MapMarkerInfo.MarkerType.UNKNOWN)
+            else if (mrkInfo.Tag.Type == MapMarkerInfo.MarkerType.UNKNOWN)
             {
                 uiTxtSelName.Text = "Unknown Selection";
             }
@@ -874,17 +874,17 @@ namespace JAFDTC.UI.App
                 string markerType = (MarkerExplainer?.MarkerDisplayType(mrkInfo) ?? "Unknown") + ": ";
 
                 string unitType = "";
-                if (_mapImportMarkerTypeDict.TryGetValue(mrkInfo.TagStr, out string mType))
+                if (_mapImportMarkerTypeDict.TryGetValue(mrkInfo.Tag.Str, out string mType))
                     unitType = $" / {mType}";
-                else if (_mapImportThreatTypeDict.TryGetValue(mrkInfo.TagStr, out string tType))
+                else if (_mapImportThreatTypeDict.TryGetValue(mrkInfo.Tag.Str, out string tType))
                     unitType = $" / {tType}";
 
-                if ((mrkInfo.Type == MapMarkerInfo.MarkerType.PATH_EDIT_HANDLE) ||
-                    (mrkInfo.Type == MapMarkerInfo.MarkerType.RING_EDIT_HANDLE))
+                if ((mrkInfo.Tag.Type == MapMarkerInfo.MarkerType.PATH_EDIT_HANDLE) ||
+                    (mrkInfo.Tag.Type == MapMarkerInfo.MarkerType.RING_EDIT_HANDLE))
                     uiTxtSelName.Text = "Edit Handle";
-                else if (_mapImportMarkerNameDict.TryGetValue(mrkInfo.TagStr, out string markerName))
+                else if (_mapImportMarkerNameDict.TryGetValue(mrkInfo.Tag.Str, out string markerName))
                     uiTxtSelName.Text = $"{markerType}{markerName}{unitType}";
-                else if (_mapImportThreatNameDict.TryGetValue(mrkInfo.TagStr, out string threatName))
+                else if (_mapImportThreatNameDict.TryGetValue(mrkInfo.Tag.Str, out string threatName))
                     uiTxtSelName.Text = $"{markerType}{threatName}{unitType}";
                 else
                     uiTxtSelName.Text = markerType + (MarkerExplainer?.MarkerDisplayName(mrkInfo) ?? "Unknown");
@@ -894,7 +894,7 @@ namespace JAFDTC.UI.App
                 uiTxtSelLon.Text = Coord.ConvertFromLonDD(mrkInfo.Lon, CoordFormat);
 
                 isMarkerSelected = true;
-                isMarkerEditable = EditMask.HasFlag((MapMarkerInfo.MarkerTypeMask)(1 << (int)mrkInfo.Type));
+                isMarkerEditable = EditMask.HasFlag((MapMarkerInfo.MarkerTypeMask)(1 << (int)mrkInfo.Tag.Type));
             }
 
             uiIconEditStatus.Visibility = (isMarkerEditable) ? Visibility.Visible : Visibility.Collapsed;
@@ -911,8 +911,8 @@ namespace JAFDTC.UI.App
         {
             MapMarkerInfo mkrInfo = uiMap.SelectedMarkerInfo;
             bool isOpenable = ((mkrInfo != null) &&
-                               (mkrInfo.Type != MapMarkerInfo.MarkerType.UNKNOWN) &&
-                               OpenMask.HasFlag((MapMarkerInfo.MarkerTypeMask)(1 << (int)mkrInfo.Type)));
+                               (mkrInfo.Tag.Type != MapMarkerInfo.MarkerType.UNKNOWN) &&
+                               OpenMask.HasFlag((MapMarkerInfo.MarkerTypeMask)(1 << (int)mkrInfo.Tag.Type)));
 
 // TODO: correctly set enable when add implemented
             Utilities.SetEnableState(uiBarBtnAdd, false);

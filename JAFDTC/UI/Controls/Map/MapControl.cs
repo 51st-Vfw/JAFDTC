@@ -774,7 +774,7 @@ namespace JAFDTC.UI.Controls.Map
 
         /// <summary>
         /// break or create a tag object from a MapMarkerControl into it's constituent pieces. marker tags (navpoints
-        /// and handles) are a tuple of the form: { [type], [integer], [string] }.
+        /// and handles) are a instances of MapMarkerControlTag with a type, string, and integer field.
         ///
         /// navpoints        [type]      MapMarkerInfo.MarkerType.NAVPT
         ///                  [string]    path tag for this._paths
@@ -794,7 +794,7 @@ namespace JAFDTC.UI.Controls.Map
         private static void CrackMarkerTag(MapMarkerControl marker,
                                            out MapMarkerInfo.MarkerType type, out string tagStr, out int tagInt)
         {
-            if ((marker == null) || (marker.Tag as Tuple<MapMarkerInfo.MarkerType, string, int> == null))
+            if ((marker == null) || (marker.Tag as MapMarkerControlTag == null))
             {
                 type = MapMarkerInfo.MarkerType.UNKNOWN;
                 tagStr = null;
@@ -802,18 +802,17 @@ namespace JAFDTC.UI.Controls.Map
             }
             else
             {
-                Tuple<MapMarkerInfo.MarkerType, string, int> tuple = marker.Tag as Tuple<MapMarkerInfo.MarkerType, string, int>;
-                type = tuple.Item1;
-                tagStr = tuple.Item2;
-                tagInt = tuple.Item3;
+                MapMarkerControlTag tag = marker.Tag as MapMarkerControlTag;
+                type = tag.Type;
+                tagStr = tag.Str;
+                tagInt = tag.Int;
             }
         }
 
         /// <summary>
-        /// return tag used to identify MapMarkerControl, tags are tuples of the form: { [type], [integer], [string] }.
+        /// return tag used to identify MapMarkerControl, tags are instances of MapMarkerControlTag.
         /// </summary>
-        private static Tuple<MapMarkerInfo.MarkerType, string, int> TagForMarkerOfKind(MapMarkerInfo.MarkerType type,
-                                                                                       string tagStr, int tagInt)
+        private static MapMarkerControlTag TagForMarkerOfKind(MapMarkerInfo.MarkerType type, string tagStr, int tagInt)
             => new(type, tagStr, tagInt);
 
         /// <summary>
@@ -1038,8 +1037,7 @@ namespace JAFDTC.UI.Controls.Map
         /// shows an edit handle via its visibility. optionally update the tag and/or location of the handle prior
         /// to showing.
         /// </summary>
-        private static void ShowEditHandleAtLocation(MapMarkerControl marker,
-                                                     Tuple<MapMarkerInfo.MarkerType, string, int> tag = null,
+        private static void ShowEditHandleAtLocation(MapMarkerControl marker, MapMarkerControlTag tag = null,
                                                      Location location = null)
         {
             marker.Tag = tag ?? marker.Tag;
@@ -1167,17 +1165,17 @@ namespace JAFDTC.UI.Controls.Map
         /// </summary>
         public void VerbMarkerSelected(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
-            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerSelected({param}) {info.Type} {info.TagStr}:{info.TagInt}");
+            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerSelected({param}) {info.Tag}");
             if (_selectedMarker != null)
                 UnselectMarker(_selectedMarker);
             _selectedMarker = null;
 
-            if ((info.TagStr != null) && (_paths.TryGetValue(info.TagStr, out PathInfo pathInfo)))
+            if ((info.Tag.Str != null) && (_paths.TryGetValue(info.Tag.Str, out PathInfo pathInfo)))
             {
-                _selectedMarker = pathInfo.Points[info.TagInt - 1];
+                _selectedMarker = pathInfo.Points[info.Tag.Int - 1];
                 SelectMarker(_selectedMarker);
             }
-            else if ((info.TagStr != null) && (_marks.TryGetValue(info.TagStr, out MarkerInfo markerInfo)))
+            else if ((info.Tag.Str != null) && (_marks.TryGetValue(info.Tag.Str, out MarkerInfo markerInfo)))
             {
                 _selectedMarker = markerInfo.Marker;
                 SelectMarker(_selectedMarker);
@@ -1189,7 +1187,7 @@ namespace JAFDTC.UI.Controls.Map
         /// </summary>
         public void VerbMarkerOpened(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
-            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerOpened({param}) {info.Type} {info.TagStr}:{info.TagInt}");
+            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerOpened({param}) {info.Tag}");
         }
 
         /// <summary>
@@ -1197,7 +1195,7 @@ namespace JAFDTC.UI.Controls.Map
         /// </summary>
         public void VerbMarkerUpdated(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
-            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerUpdated({param}) {info.Type} {info.TagStr}:{info.TagInt}");
+            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerUpdated({param}) {info.Tag}");
         }
 
         /// <summary>
@@ -1205,12 +1203,12 @@ namespace JAFDTC.UI.Controls.Map
         /// </summary>
         public void VerbMarkerMoved(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
-            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerMoved({param}) {info.Type} {info.TagStr}:{info.TagInt} / {info.Lat}, {info.Lon}");
-            if ((info.TagStr == null) || !CanEdit(info.Type))
+            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerMoved({param}) {info.Tag} / {info.Lat}, {info.Lon}");
+            if ((info.Tag.Str == null) || !CanEdit(info.Tag.Type))
                 return;
-            else if (_paths.TryGetValue(info.TagStr, out PathInfo pathInfo))
-                MoveMapMarker(pathInfo.Points[info.TagInt - 1], Location(info.Lat, info.Lon));
-            else if (_marks.TryGetValue(info.TagStr, out MarkerInfo markerInfo))
+            else if (_paths.TryGetValue(info.Tag.Str, out PathInfo pathInfo))
+                MoveMapMarker(pathInfo.Points[info.Tag.Int - 1], Location(info.Lat, info.Lon));
+            else if (_marks.TryGetValue(info.Tag.Str, out MarkerInfo markerInfo))
                 MoveMapMarker(markerInfo.Marker, Location(info.Lat, info.Lon));
         }
 
@@ -1219,18 +1217,18 @@ namespace JAFDTC.UI.Controls.Map
         /// </summary>
         public void VerbMarkerAdded(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
-            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerAdded({param}) {info.Type} {info.TagStr}:{info.TagInt} / {info.Lat}, {info.Lon}");
-            if ((info.TagStr == null) || !CanEdit(info.Type))
+            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerAdded({param}) {info.Tag} / {info.Lat}, {info.Lon}");
+            if ((info.Tag.Str == null) || !CanEdit(info.Tag.Type))
                 return;
-            else if (_paths.TryGetValue(info.TagStr, out PathInfo pathInfo))
+            else if (_paths.TryGetValue(info.Tag.Str, out PathInfo pathInfo))
             {
                 HideEditHandle(pathInfo.EditHandlePos);
                 HideEditHandle(pathInfo.EditHandleNeg);
-                AddMarkerToPath(info.TagStr, info.TagInt, Location(info.Lat, info.Lon));
+                AddMarkerToPath(info.Tag.Str, info.Tag.Int, Location(info.Lat, info.Lon));
             }
             else
             {
-                AddMarker(info.Type, info.TagStr, Location(info.Lat, info.Lon));
+                AddMarker(info.Tag.Type, info.Tag.Str, Location(info.Lat, info.Lon));
             }
         }
 
@@ -1239,31 +1237,31 @@ namespace JAFDTC.UI.Controls.Map
         /// </summary>
         public void VerbMarkerDeleted(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
-            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerDeleted({param}) {info.Type} {info.TagStr}:{info.TagInt}");
-            if (info.TagStr == null)
+            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerDeleted({param}) {info.Tag}");
+            if (info.Tag.Str == null)
                 return;
 
             CrackMarkerTag(_selectedMarker, out MapMarkerInfo.MarkerType _, out string tagStr, out int _);
-            if (tagStr == info.TagStr)
+            if (tagStr == info.Tag.Str)
             {
                 UnselectMarker(_selectedMarker);
                 _selectedMarker = null;
             }
 
-            if (CanEdit(info.Type) && _paths.TryGetValue(info.TagStr, out PathInfo pathInfo))
+            if (CanEdit(info.Tag.Type) && _paths.TryGetValue(info.Tag.Str, out PathInfo pathInfo))
             {
-                MapMarkerControl marker = pathInfo.Points[info.TagInt - 1];
+                MapMarkerControl marker = pathInfo.Points[info.Tag.Int - 1];
                 Children.Remove(marker);
 
-                pathInfo.Points.RemoveAt(info.TagInt - 1);
+                pathInfo.Points.RemoveAt(info.Tag.Int - 1);
                 for (int i = 0; i < pathInfo.Points.Count; i++)
-                    pathInfo.Points[i].Tag = TagForMarkerOfKind(info.Type, info.TagStr, i + 1);
-                pathInfo.Path.Paths[0].Locations.RemoveAt(info.TagInt - 1);
+                    pathInfo.Points[i].Tag = TagForMarkerOfKind(info.Tag.Type, info.Tag.Str, i + 1);
+                pathInfo.Path.Paths[0].Locations.RemoveAt(info.Tag.Int - 1);
             }
-            else if (CanEdit(info.Type) && _marks.TryGetValue(info.TagStr, out MarkerInfo markerInfo))
+            else if (CanEdit(info.Tag.Type) && _marks.TryGetValue(info.Tag.Str, out MarkerInfo markerInfo))
             {
                 markerInfo.Remove(this);
-                _marks.Remove(info.TagStr);
+                _marks.Remove(info.Tag.Str);
             }
 // TODO: handle delete of markers w/ threat rings?
         }

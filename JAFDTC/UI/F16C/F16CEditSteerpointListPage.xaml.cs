@@ -567,23 +567,23 @@ namespace JAFDTC.UI.F16C
         /// </summary>
         public void VerbMarkerSelected(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
-            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerSelected({param}) {info.Type} {info.TagStr}:{info.TagInt}");
-            if ((info.TagStr != STPTSystem.SystemInfo.RouteNames[0]) ||
-                (info.Type == MapMarkerInfo.MarkerType.UNKNOWN))
+            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerSelected({param}) {info.Tag}");
+            if ((info.Tag.Str != STPTSystem.SystemInfo.RouteNames[0]) ||
+                (info.Tag.Type == MapMarkerInfo.MarkerType.UNKNOWN))
             {
                 _isVerbEvent = true;
                 uiStptListView.SelectedIndex = -1;
                 _isVerbEvent = false;
             }
-            else if ((info.TagStr == STPTSystem.SystemInfo.RouteNames[0]) &&
-                     (info.Type == MapMarkerInfo.MarkerType.NAV_PT))
+            else if ((info.Tag.Str == STPTSystem.SystemInfo.RouteNames[0]) &&
+                     (info.Tag.Type == MapMarkerInfo.MarkerType.NAV_PT))
             {
                 _isVerbEvent = true;
-                uiStptListView.SelectedIndex = info.TagInt - 1;
+                uiStptListView.SelectedIndex = info.Tag.Int - 1;
                 uiStptListView.ScrollIntoView(uiStptListView.SelectedItem);
                 _isVerbEvent = false;
 
-                EditStptDetailPage?.ChangeToEditNavpointAtIndex(info.TagInt - 1);
+                EditStptDetailPage?.ChangeToEditNavpointAtIndex(info.Tag.Int - 1);
             }
         }
 
@@ -592,13 +592,13 @@ namespace JAFDTC.UI.F16C
         /// </summary>
         public void VerbMarkerOpened(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
-            Debug.WriteLine($"{VerbHandlerTag}:MarkerOpen({param}) {info.Type} {info.TagStr}:{info.TagInt}");
-            if (info.TagStr == STPTSystem.SystemInfo.RouteNames[0])
+            Debug.WriteLine($"{VerbHandlerTag}:MarkerOpen({param}) {info.Tag}");
+            if (info.Tag.Str == STPTSystem.SystemInfo.RouteNames[0])
             {
                 if (EditStptDetailPage == null)
-                    EditSteerpoint(EditSTPT.Points[info.TagInt - 1]);
+                    EditSteerpoint(EditSTPT.Points[info.Tag.Int - 1]);
                 else
-                    EditStptDetailPage?.ChangeToEditNavpointAtIndex(info.TagInt - 1);
+                    EditStptDetailPage?.ChangeToEditNavpointAtIndex(info.Tag.Int - 1);
             }
             // TODO: handle other types of markers (user pois?)
         }
@@ -608,7 +608,7 @@ namespace JAFDTC.UI.F16C
         /// </summary>
         public void VerbMarkerUpdated(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
-            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerUpdated({param}) {info.Type} {info.TagStr}:{info.TagInt}");
+            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerUpdated({param}) {info.Tag}");
         }
 
         /// <summary>
@@ -616,14 +616,14 @@ namespace JAFDTC.UI.F16C
         /// </summary>
         public void VerbMarkerMoved(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
-            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerMoved({param}) {info.Type} {info.TagStr}:{info.TagInt} / {info.Lat}, {info.Lon}");
-            if (info.TagStr == STPTSystem.SystemInfo.RouteNames[0])
+            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerMoved({param}) {info.Tag} / {info.Lat}, {info.Lon}");
+            if (info.Tag.Str == STPTSystem.SystemInfo.RouteNames[0])
             {
-                EditSTPT.Points[info.TagInt - 1].Lat = info.Lat;
-                EditSTPT.Points[info.TagInt - 1].Lon = info.Lon;
+                EditSTPT.Points[info.Tag.Int - 1].Lat = info.Lat;
+                EditSTPT.Points[info.Tag.Int - 1].Lon = info.Lon;
                 CopyEditToConfig(true);
 
-                EditStptDetailPage?.CopyConfigToEditIfEditingNavpointAtIndex(info.TagInt - 1);
+                EditStptDetailPage?.CopyConfigToEditIfEditingNavpointAtIndex(info.Tag.Int - 1);
             }
             // TODO: handle other types of markers (user pois?)
         }
@@ -633,11 +633,11 @@ namespace JAFDTC.UI.F16C
         /// </summary>
         public void VerbMarkerAdded(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
-            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerAdded({param}) {info.Type} {info.TagStr}:{info.TagInt} / {info.Lat}, {info.Lon}");
-            if (info.TagStr == STPTSystem.SystemInfo.RouteNames[0])
+            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerAdded({param}) {info.Tag} / {info.Lat}, {info.Lon}");
+            if (info.Tag.Str == STPTSystem.SystemInfo.RouteNames[0])
             {
                 _isVerbEvent = true;
-                SteerpointInfo stpt = EditSTPT.Add(null, info.TagInt - 1);
+                SteerpointInfo stpt = EditSTPT.Add(null, info.Tag.Int - 1);
                 int index = EditSTPT.Points.IndexOf(stpt);
                 CopyConfigToEdit();
                 EditSTPT.Points[index].Lat = info.Lat;
@@ -655,16 +655,16 @@ namespace JAFDTC.UI.F16C
         /// </summary>
         public void VerbMarkerDeleted(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
-            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerDeleted({param}) {info.Type} {info.TagStr}:{info.TagInt}");
-            if (info.TagStr == STPTSystem.SystemInfo.RouteNames[0])
+            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerDeleted({param}) {info.Tag}");
+            if (info.Tag.Str == STPTSystem.SystemInfo.RouteNames[0])
             {
                 _isVerbEvent = true;
                 uiStptListView.SelectedIndex = -1;
 
-                EditSTPT.Points.RemoveAt(info.TagInt - 1);
+                EditSTPT.Points.RemoveAt(info.Tag.Int - 1);
                 CopyEditToConfig(true);
 
-                EditStptDetailPage?.CancelIfEditingNavpointAtIndex(info.TagInt - 1);
+                EditStptDetailPage?.CancelIfEditingNavpointAtIndex(info.Tag.Int - 1);
 
                 RebuildInterfaceState();
                 _isVerbEvent = false;

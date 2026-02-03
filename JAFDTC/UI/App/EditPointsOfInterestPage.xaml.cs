@@ -1438,8 +1438,8 @@ namespace JAFDTC.UI.App
         /// </summary>
         public void VerbMarkerSelected(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
-            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerSelected({param}) {info.Type} {info.TagStr}:{info.TagInt}");
-            if (info.Type == MapMarkerInfo.MarkerType.UNKNOWN)
+            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerSelected({param}) {info.Tag}");
+            if (info.Tag.Type == MapMarkerInfo.MarkerType.UNKNOWN)
             {
                 IsVerbEvent = true;
                 uiPoIListView.SelectedIndex = -1;
@@ -1448,7 +1448,7 @@ namespace JAFDTC.UI.App
             else
             {
                 IsVerbEvent = true;
-                uiPoIListView.SelectedIndex = FindIndexOfPoIByUID(info.TagStr);
+                uiPoIListView.SelectedIndex = FindIndexOfPoIByUID(info.Tag.Str);
                 uiPoIListView.ScrollIntoView(uiPoIListView.SelectedItem);
                 IsVerbEvent = false;
             }
@@ -1459,7 +1459,7 @@ namespace JAFDTC.UI.App
         /// </summary>
         public void VerbMarkerOpened(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
-            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerOpened({param}) {info.Type} {info.TagStr}:{info.TagInt}");
+            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerOpened({param}) {info.Tag}");
         }
 
         /// <summary>
@@ -1467,7 +1467,7 @@ namespace JAFDTC.UI.App
         /// </summary>
         public void VerbMarkerUpdated(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
-            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerUpdated({param}) {info.Type} {info.TagStr}:{info.TagInt}");
+            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerUpdated({param}) {info.Tag}");
         }
 
         /// <summary>
@@ -1475,8 +1475,8 @@ namespace JAFDTC.UI.App
         /// </summary>
         public void VerbMarkerMoved(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
-            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerMoved({param}) {info.Type} {info.TagStr}:{info.TagInt} / {info.Lat}, {info.Lon}");
-            PointOfInterest poi = PointOfInterestDbase.Instance.Find(info.TagStr);
+            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerMoved({param}) {info.Tag} / {info.Lat}, {info.Lon}");
+            PointOfInterest poi = PointOfInterestDbase.Instance.Find(info.Tag.Str);
             if ((poi != null) && (poi.UniqueID == EditPoI.SourceUID))
             {
                 SetEditObjectLatLon(info.Lat, info.Lon);
@@ -1499,8 +1499,8 @@ namespace JAFDTC.UI.App
                                                         $" Restoring previous position.");
 
                         SetEditObjectLatLon(LastLat, LastLon);
-                        MapWindow?.MirrorVerbMarkerMoved(this, new((MapMarkerInfo.MarkerType) poi.Type, info.TagStr,
-                                                                   info.TagInt, LastLat, LastLon), 1);
+                        MapWindow?.MirrorVerbMarkerMoved(this, new((MapMarkerInfo.MarkerType) poi.Type, info.Tag.Str,
+                                                                   info.Tag.Int, LastLat, LastLon), 1);
                         LastLat = null;
                         LastLon = null;
                         PointOfInterestDbase.Instance.Save(poi.Campaign);
@@ -1514,7 +1514,7 @@ namespace JAFDTC.UI.App
         /// </summary>
         public void VerbMarkerAdded(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
-            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerAdded({param}) {info.Type} {info.TagStr}:{info.TagInt} / {info.Lat}, {info.Lon}");
+            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerAdded({param}) {info.Tag} / {info.Lat}, {info.Lon}");
 // TODO: nothing to do here until we support add via map window
         }
 
@@ -1523,8 +1523,8 @@ namespace JAFDTC.UI.App
         /// </summary>
         public void VerbMarkerDeleted(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
-            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerDeleted({param}) {info.Type} {info.TagStr}:{info.TagInt}");
-            PointOfInterest poi = PointOfInterestDbase.Instance.Find(info.TagStr);
+            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerDeleted({param}) {info.Tag}");
+            PointOfInterest poi = PointOfInterestDbase.Instance.Find(info.Tag.Str);
 
             if (PointOfInterestDbase.Instance.CountPoIInCampaign(poi.Campaign) == 1)
                 PointOfInterestDbase.Instance.DeleteCampaign(poi.Campaign);

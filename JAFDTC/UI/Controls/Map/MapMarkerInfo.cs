@@ -87,9 +87,7 @@ namespace JAFDTC.UI.Controls.Map
 
         // ---- public properties
 
-        public readonly MapMarkerInfo.MarkerType Type;
-        public readonly string TagStr;
-        public readonly int TagInt;
+        public readonly MapMarkerControlTag Tag;
         public readonly string Lat;
         public readonly string Lon;
 
@@ -100,20 +98,18 @@ namespace JAFDTC.UI.Controls.Map
         // ------------------------------------------------------------------------------------------------------------
 
         public MapMarkerInfo()
-            => (Type, TagStr, TagInt, Lat, Lon) = (MapMarkerInfo.MarkerType.UNKNOWN, null, -1, null, null);
+            => (Tag, Lat, Lon) = (new(MapMarkerInfo.MarkerType.UNKNOWN, null, -1), null, null);
 
         public MapMarkerInfo(MapMarkerInfo.MarkerType type, string tagStr = null, int tagInt = -1, string lat = null,
                              string lon = null)
-            => (Type, TagStr, TagInt, Lat, Lon) = (type, tagStr, tagInt, lat, lon);
+            => (Tag, Lat, Lon) = (new(type, tagStr, tagInt), lat, lon);
 
         internal MapMarkerInfo(MapMarkerControl marker)
         {
-            Tuple<MapMarkerInfo.MarkerType, string, int> tuple = marker.Tag as Tuple<MapMarkerInfo.MarkerType, string, int>;
-            Type = tuple.Item1;
-            TagStr = (Type != MapMarkerInfo.MarkerType.UNKNOWN) ? tuple.Item2 : "<unknown>";
-            TagInt = (Type != MapMarkerInfo.MarkerType.UNKNOWN) ? tuple.Item3 : -1;
-            Lat = (Type != MapMarkerInfo.MarkerType.UNKNOWN) ? $"{marker.Location.Latitude:F8}" : null;
-            Lon = (Type != MapMarkerInfo.MarkerType.UNKNOWN) ? $"{marker.Location.Longitude:F8}" : null;
+            MapMarkerControlTag tag = marker.Tag as MapMarkerControlTag;
+            Tag = new(tag.Type, tag.Str, tag.Int);
+            Lat = (tag.Type != MapMarkerInfo.MarkerType.UNKNOWN) ? $"{marker.Location.Latitude:F8}" : null;
+            Lon = (tag.Type != MapMarkerInfo.MarkerType.UNKNOWN) ? $"{marker.Location.Longitude:F8}" : null;
         }
     }
 }

@@ -35,7 +35,7 @@ namespace JAFDTC.UI.Base
         /// foreground and [1] (if present) is the background.
         /// </summary>
         public static string MarkerDisplayGlyphs(MapMarkerInfo info)
-            => info.Type switch
+            => info.Tag.Type switch
             {
                 MapMarkerInfo.MarkerType.UNKNOWN => $"{Glyphs.StatusCircle}{Glyphs.StatusQuestion}",
                 MapMarkerInfo.MarkerType.POI_SYSTEM => Glyphs.PoISystem,
@@ -55,10 +55,10 @@ namespace JAFDTC.UI.Base
         public static string MarkerDisplayType(MapMarkerInfo info)
         {
             string campaign = "";
-            PointOfInterest poi = PointOfInterestDbase.Instance.Find(info.TagStr);
+            PointOfInterest poi = PointOfInterestDbase.Instance.Find(info.Tag.Str);
             if (poi != null)
                 campaign = poi.Campaign;
-            return info.Type switch
+            return info.Tag.Type switch
             {
                 MapMarkerInfo.MarkerType.POI_SYSTEM => $"System POI",
                 MapMarkerInfo.MarkerType.POI_USER => $"User POI",
@@ -76,20 +76,20 @@ namespace JAFDTC.UI.Base
         public static string MarkerDisplayName(MapMarkerInfo info)
         {
             string name = null;
-            if ((info.Type == MapMarkerInfo.MarkerType.POI_SYSTEM) ||
-                (info.Type == MapMarkerInfo.MarkerType.POI_USER) ||
-                (info.Type == MapMarkerInfo.MarkerType.POI_CAMPAIGN))
+            if ((info.Tag.Type == MapMarkerInfo.MarkerType.POI_SYSTEM) ||
+                (info.Tag.Type == MapMarkerInfo.MarkerType.POI_USER) ||
+                (info.Tag.Type == MapMarkerInfo.MarkerType.POI_CAMPAIGN))
             {
-                PointOfInterest poi = PointOfInterestDbase.Instance.Find(info.TagStr);
+                PointOfInterest poi = PointOfInterestDbase.Instance.Find(info.Tag.Str);
                 if (poi != null)
                     name = poi.Name;
             }
-            else if (info.Type == MapMarkerInfo.MarkerType.BULLSEYE)
+            else if (info.Tag.Type == MapMarkerInfo.MarkerType.BULLSEYE)
             {
                 name = "Bullseye";
             }
-            else if ((info.Type == MapMarkerInfo.MarkerType.PATH_EDIT_HANDLE) ||
-                     (info.Type == MapMarkerInfo.MarkerType.RING_EDIT_HANDLE))
+            else if ((info.Tag.Type == MapMarkerInfo.MarkerType.PATH_EDIT_HANDLE) ||
+                     (info.Tag.Type == MapMarkerInfo.MarkerType.RING_EDIT_HANDLE))
             {
                 name = "Edit Handle";
             }
@@ -102,11 +102,11 @@ namespace JAFDTC.UI.Base
         public static string MarkerDisplayElevation(MapMarkerInfo info, string units = "")
         {
             string elev = null;
-            if ((info.Type == MapMarkerInfo.MarkerType.POI_SYSTEM) ||
-                (info.Type == MapMarkerInfo.MarkerType.POI_USER) ||
-                (info.Type == MapMarkerInfo.MarkerType.POI_CAMPAIGN))
+            if ((info.Tag.Type == MapMarkerInfo.MarkerType.POI_SYSTEM) ||
+                (info.Tag.Type == MapMarkerInfo.MarkerType.POI_USER) ||
+                (info.Tag.Type == MapMarkerInfo.MarkerType.POI_CAMPAIGN))
             {
-                PointOfInterest poi = PointOfInterestDbase.Instance.Find(info.TagStr);
+                PointOfInterest poi = PointOfInterestDbase.Instance.Find(info.Tag.Str);
                 if (poi != null)
                     elev = $"{poi.Elevation}{units}";
             }
