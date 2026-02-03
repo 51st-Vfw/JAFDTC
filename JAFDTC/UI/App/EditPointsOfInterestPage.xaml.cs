@@ -1475,10 +1475,11 @@ namespace JAFDTC.UI.App
         /// </summary>
         public void VerbMarkerMoved(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
-            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerMoved({param}) {info.Tag} / {info.Lat}, {info.Lon}");
+            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerMoved({param}) {info.Tag} {info.TagAux} / {info.Lat}, {info.Lon}");
             PointOfInterest poi = PointOfInterestDbase.Instance.Find(info.Tag.Str);
             if ((poi != null) && (poi.UniqueID == EditPoI.SourceUID))
             {
+// TODO: handle snap to?
                 SetEditObjectLatLon(info.Lat, info.Lon);
 
                 if (param == -1)

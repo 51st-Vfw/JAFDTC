@@ -20,8 +20,10 @@
 using JAFDTC.Models;
 using JAFDTC.Models.Base;
 using JAFDTC.Models.Core;
+using JAFDTC.Models.DCS;
 using JAFDTC.Models.F16C;
 using JAFDTC.Models.F16C.STPT;
+using JAFDTC.Models.POI;
 using JAFDTC.UI.App;
 using JAFDTC.UI.Base;
 using JAFDTC.UI.Controls.Map;
@@ -600,7 +602,7 @@ namespace JAFDTC.UI.F16C
                 else
                     EditStptDetailPage?.ChangeToEditNavpointAtIndex(info.Tag.Int - 1);
             }
-            // TODO: handle other types of markers (user pois?)
+// TODO: handle other types of markers (user pois?)
         }
 
         /// <summary>
@@ -616,16 +618,31 @@ namespace JAFDTC.UI.F16C
         /// </summary>
         public void VerbMarkerMoved(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
-            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerMoved({param}) {info.Tag} / {info.Lat}, {info.Lon}");
+            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerMoved({param}) {info.Tag} {info.TagAux} / {info.Lat}, {info.Lon}");
             if (info.Tag.Str == STPTSystem.SystemInfo.RouteNames[0])
             {
+                string alt = "";
+                if (!info.TagAux.IsUnknown)
+                {
+                    PointOfInterest poi = PointOfInterestDbase.Instance.Find(info.TagAux.Str);
+                    if (poi != null)
+                    {
+                        alt = poi.Elevation;
+                    }
+                    else
+                    {
+// TODO: handle other snap targets (threats?)
+                    }
+                }
+
                 EditSTPT.Points[info.Tag.Int - 1].Lat = info.Lat;
                 EditSTPT.Points[info.Tag.Int - 1].Lon = info.Lon;
+                EditSTPT.Points[info.Tag.Int - 1].Alt = alt;
                 CopyEditToConfig(true);
 
                 EditStptDetailPage?.CopyConfigToEditIfEditingNavpointAtIndex(info.Tag.Int - 1);
             }
-            // TODO: handle other types of markers (user pois?)
+// TODO: handle other types of markers (user pois?)
         }
 
         /// <summary>
@@ -647,7 +664,7 @@ namespace JAFDTC.UI.F16C
                 RebuildInterfaceState();
                 _isVerbEvent = false;
             }
-            // TODO: handle other types of markers (user pois?)
+// TODO: handle other types of markers (user pois?)
         }
 
         /// <summary>
@@ -669,7 +686,7 @@ namespace JAFDTC.UI.F16C
                 RebuildInterfaceState();
                 _isVerbEvent = false;
             }
-            // TODO: handle other types of markers (user pois?)
+// TODO: handle other types of markers (user pois?)
         }
 
         // ------------------------------------------------------------------------------------------------------------

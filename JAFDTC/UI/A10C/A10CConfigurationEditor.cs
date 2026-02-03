@@ -194,12 +194,26 @@ namespace JAFDTC.UI.A10C
 
         public void VerbMarkerMoved(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
-            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerMoved({param}) {info.Tag} / {info.Lat}, {info.Lon}");
+            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerMoved({param}) {info.Tag} {info.TagAux} / {info.Lat}, {info.Lon}");
             if (info.Tag.Str == WYPTSystem.SystemInfo.RouteNames[0])
             {
+                string alt = "";
+                if (!info.TagAux.IsUnknown)
+                {
+                    PointOfInterest poi = PointOfInterestDbase.Instance.Find(info.TagAux.Str);
+                    if (poi != null)
+                    {
+                        alt = poi.Elevation;
+                    }
+                    else
+                    {
+// TODO: handle other snap targets (threats?)
+                    }
+                }
+
                 ConfigA10C.WYPT.Points[info.Tag.Int - 1].Lat = info.Lat;
                 ConfigA10C.WYPT.Points[info.Tag.Int - 1].Lon = info.Lon;
-// TODO: what about altitude?
+                ConfigA10C.WYPT.Points[info.Tag.Int - 1].Alt = alt;
                 Config.Save(this, WYPTSystem.SystemTag);
                 ConfigPage.ForceSystemListIconRebuild(WYPTSystem.SystemTag);
             }

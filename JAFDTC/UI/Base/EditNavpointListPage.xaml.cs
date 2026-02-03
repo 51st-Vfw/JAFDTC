@@ -19,6 +19,8 @@
 
 using JAFDTC.Models;
 using JAFDTC.Models.Base;
+using JAFDTC.Models.DCS;
+using JAFDTC.Models.POI;
 using JAFDTC.UI.App;
 using JAFDTC.UI.Controls.Map;
 using JAFDTC.Utilities;
@@ -38,7 +40,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text.Json;
 using Windows.ApplicationModel.DataTransfer;
-
 using static JAFDTC.Utilities.Networking.WyptCaptureDataRx;
 
 namespace JAFDTC.UI.Base
@@ -519,11 +520,26 @@ namespace JAFDTC.UI.Base
         /// </summary>
         public void VerbMarkerMoved(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
-            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerMoved({param}) {info.Tag} / {info.Lat}, {info.Lon}");
+            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerMoved({param}) {info.Tag} {info.TagAux} / {info.Lat}, {info.Lon}");
             if (info.Tag.Str == PageHelper.SystemInfo.RouteNames[0])
             {
+                string alt = "";
+                if (!info.TagAux.IsUnknown)
+                {
+                    PointOfInterest poi = PointOfInterestDbase.Instance.Find(info.TagAux.Str);
+                    if (poi != null)
+                    {
+                        alt = poi.Elevation;
+                    }
+                    else
+                    {
+// TODO: handle other snap targets (threats?)
+                    }
+                }
+
                 EditNavpt[info.Tag.Int - 1].Lat = info.Lat;
                 EditNavpt[info.Tag.Int - 1].Lon = info.Lon;
+                EditNavpt[info.Tag.Int - 1].Alt = alt;
                 SaveEditStateToConfig();
 
                 EditNavptDetailPage?.CopyConfigToEditIfEditingNavpointAtIndex(info.Tag.Int - 1);

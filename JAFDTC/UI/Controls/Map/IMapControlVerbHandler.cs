@@ -49,6 +49,7 @@ namespace JAFDTC.UI.Controls.Map
 
         /// <summary>
         /// sender object has moved the indicated marker, replicate this change in the handler object.
+        /// the aux tag may identify the marker the moved marker is snapping to.
         /// </summary>
         public void VerbMarkerMoved(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0);
 

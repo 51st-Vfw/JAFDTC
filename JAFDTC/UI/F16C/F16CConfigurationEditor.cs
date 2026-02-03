@@ -32,6 +32,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Reflection;
+using WinRT;
 
 namespace JAFDTC.UI.F16C
 {
@@ -203,12 +204,26 @@ namespace JAFDTC.UI.F16C
 
         public void VerbMarkerMoved(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
-            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerMoved({param}) {info.Tag} / {info.Lat}, {info.Lon}");
+            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerMoved({param}) {info.Tag} {info.TagAux} / {info.Lat}, {info.Lon}");
             if (info.Tag.Str == STPTSystem.SystemInfo.RouteNames[0])
             {
+                string alt = "";
+                if (!info.TagAux.IsUnknown)
+                {
+                    PointOfInterest poi = PointOfInterestDbase.Instance.Find(info.TagAux.Str);
+                    if (poi != null)
+                    {
+                        alt = poi.Elevation;
+                    }
+                    else
+                    {
+// TODO: handle other snap targets (threats?)
+                    }
+                }
+
                 ConfigF16C.STPT.Points[info.Tag.Int - 1].Lat = info.Lat;
                 ConfigF16C.STPT.Points[info.Tag.Int - 1].Lon = info.Lon;
-// TODO: what about altitude?
+                ConfigF16C.STPT.Points[info.Tag.Int - 1].Alt = alt;
                 Config.Save(this, STPTSystem.SystemTag);
                 ConfigPage.ForceSystemListIconRebuild(STPTSystem.SystemTag);
             }

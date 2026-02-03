@@ -24,8 +24,8 @@ namespace JAFDTC.UI.Controls.Map
 {
     /// <summary>
     /// information for a map marker (route point, poi, etc.) edited by the WorldMapControl. this includes the
-    /// type, string tag, and integer tag that uniquely identify the marker along with the current lat/lon position
-    /// of the marker on the map. instances are read-only.
+    /// marker tag that uniquely identifies the marker, the current lat/lon position of the marker on the map and
+    /// a tag for a related marker. instances are read-only.
     /// </summary>
     public sealed partial class MapMarkerInfo
     {
@@ -88,6 +88,7 @@ namespace JAFDTC.UI.Controls.Map
         // ---- public properties
 
         public readonly MapMarkerControlTag Tag;
+        public readonly MapMarkerControlTag TagAux;
         public readonly string Lat;
         public readonly string Lon;
 
@@ -98,18 +99,28 @@ namespace JAFDTC.UI.Controls.Map
         // ------------------------------------------------------------------------------------------------------------
 
         public MapMarkerInfo()
-            => (Tag, Lat, Lon) = (new(MapMarkerInfo.MarkerType.UNKNOWN, null, -1), null, null);
+            => (Tag, Lat, Lon, TagAux) = (new(), null, null, new());
 
         public MapMarkerInfo(MapMarkerInfo.MarkerType type, string tagStr = null, int tagInt = -1, string lat = null,
                              string lon = null)
-            => (Tag, Lat, Lon) = (new(type, tagStr, tagInt), lat, lon);
+            => (Tag, Lat, Lon, TagAux) = (new(type, tagStr, tagInt), lat, lon, new());
 
-        internal MapMarkerInfo(MapMarkerControl marker)
+        internal MapMarkerInfo(MapMarkerControl marker, MapMarkerControl markerAux = null)
         {
             MapMarkerControlTag tag = marker.Tag as MapMarkerControlTag;
             Tag = new(tag.Type, tag.Str, tag.Int);
             Lat = (tag.Type != MapMarkerInfo.MarkerType.UNKNOWN) ? $"{marker.Location.Latitude:F8}" : null;
             Lon = (tag.Type != MapMarkerInfo.MarkerType.UNKNOWN) ? $"{marker.Location.Longitude:F8}" : null;
+
+            if (markerAux == null)
+            {
+                TagAux = new();
+            }
+            else
+            {
+                MapMarkerControlTag tagAux = markerAux.Tag as MapMarkerControlTag;
+                TagAux = new(tagAux.Type, tagAux.Str, tagAux.Int);
+            }
         }
     }
 }

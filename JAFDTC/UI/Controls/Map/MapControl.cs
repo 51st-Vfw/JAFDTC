@@ -1058,7 +1058,8 @@ namespace JAFDTC.UI.Controls.Map
         /// <summary>
         /// returns the map marker control at the location to snap the marker at the given point to upon pointer
         /// release, null if the marker should not snap. to snap, snap mode must be enabled and there must be at
-        /// most one marker within MARKER_SNAP_RADIUS pixels.
+        /// most one marker within MARKER_SNAP_RADIUS pixels. navpoints on routes cannot snap to another navpoint
+        /// on the route.
         /// </summary>
         private MapMarkerControl SnapMarker(MapMarkerControl snappingMarker, Windows.Foundation.Point centerPoint)
         {
@@ -1066,9 +1067,7 @@ namespace JAFDTC.UI.Controls.Map
             if (IsSnappingEnabled)
             {
                 foreach (MarkerInfo info in _marks.Values)
-                {
                     if (info.Marker.IsLoaded && !info.Marker.Tag.Equals(snappingMarker.Tag))
-                    {
                         try
                         {
                             // Get element's position relative to container
@@ -1091,8 +1090,6 @@ namespace JAFDTC.UI.Controls.Map
                         {
                             // Ignore elements that can't be transformed
                         }
-                    }
-                }
             }
             return (closeByMarks.Count == 1) ? closeByMarks[0] : null;
         }
@@ -1203,7 +1200,7 @@ namespace JAFDTC.UI.Controls.Map
         /// </summary>
         public void VerbMarkerMoved(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
-            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerMoved({param}) {info.Tag} / {info.Lat}, {info.Lon}");
+            Debug.WriteLine($"{VerbHandlerTag}:VerbMarkerMoved({param}) {info.Tag} {info.TagAux} / {info.Lat}, {info.Lon}");
             if ((info.Tag.Str == null) || !CanEdit(info.Tag.Type))
                 return;
             else if (_paths.TryGetValue(info.Tag.Str, out PathInfo pathInfo))
@@ -1362,7 +1359,7 @@ namespace JAFDTC.UI.Controls.Map
 
                 // mark end of drag by sending a moved verb in the final location with a param of 1.
                 //
-                VerbMirror?.MirrorVerbMarkerMoved(this, new(_selectedMarker), 1);
+                VerbMirror?.MirrorVerbMarkerMoved(this, new(_selectedMarker, snapMarker), 1);
 
                 _dragState = DragStateEnum.IDLE;                // force SelectMarker() to restore handles...
                 SelectMarker(_selectedMarker);

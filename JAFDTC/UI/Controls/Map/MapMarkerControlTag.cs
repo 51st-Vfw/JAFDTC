@@ -37,12 +37,15 @@ namespace JAFDTC.UI.Controls.Map
     ///
     /// properties are read-only
     /// </summary>
-    public sealed class MapMarkerControlTag(MapMarkerInfo.MarkerType type, string tagStr, int tagInt)
+    public sealed class MapMarkerControlTag(MapMarkerInfo.MarkerType type = MapMarkerInfo.MarkerType.UNKNOWN,
+                                            string tagStr = null, int tagInt = -1)
     {
         public readonly MapMarkerInfo.MarkerType Type = type;
         public readonly string Str = tagStr;
         public readonly int Int = tagInt;
 
-        public override string ToString() => $"<{Type}:{Str}:{Int}>";
+        public bool IsUnknown => (Type == MapMarkerInfo.MarkerType.UNKNOWN);
+
+        public override string ToString() => (IsUnknown) ? "<unknown>" : $"<{Type}:{Str}:{Int}>";
     }
 }
