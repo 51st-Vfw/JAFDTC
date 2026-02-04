@@ -411,7 +411,7 @@ namespace JAFDTC.UI.App
         /// </summary>
         public void SetupMapContent(Dictionary<string, List<INavpointInfo>> paths = null,
                                     Dictionary<string, PointOfInterest> marks = null,
-                                    List<Models.Planning.Threat> threats = null,
+                                    Dictionary<string, Models.Planning.Threat> threats = null,
                                     MapImportSpec mapImport = null, MapFilterSpec mapFilter = null)
         {
             paths ??= [ ];
@@ -623,25 +623,27 @@ namespace JAFDTC.UI.App
 
         /// <summary>
         /// import markers according to the import specification and add them to the map control updating internal
-        /// state as necessary. throws an exception on issues.
+        /// state as necessary.
         /// </summary>
-        void CoreImportThreats(List<Models.Planning.Threat> threats)
+        void CoreImportThreats(Dictionary<string, Models.Planning.Threat> threats)
         {
             bool isSummaryOnly = true;
-            foreach (Models.Planning.Threat threat in threats)
-                if (!string.IsNullOrEmpty(threat.Type))
+            foreach (KeyValuePair<string, Models.Planning.Threat> kvp in threats)
+                if (!string.IsNullOrEmpty(kvp.Value.Type))
                 {
                     isSummaryOnly = false;
                     break;
                 }
 
             int marker = 0;
-            foreach (Models.Planning.Threat threat in threats)
+            foreach (KeyValuePair<string, Models.Planning.Threat> kvp in threats)
             {
+                string uid = kvp.Key;
+                Models.Planning.Threat threat = kvp.Value;
+
                 MapMarkerInfo.MarkerType type = (threat.Coalition == CoalitionType.BLUE)
                                                 ? MapMarkerInfo.MarkerType.UNIT_FRIEND
                                                 : MapMarkerInfo.MarkerType.UNIT_ENEMY;
-                string uid = $"<threat_{marker}>";
 
                 if (string.IsNullOrEmpty(threat.Type))
                 {

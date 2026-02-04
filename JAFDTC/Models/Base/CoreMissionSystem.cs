@@ -206,6 +206,28 @@ namespace JAFDTC.Models.Base
             return Loadouts[dash - 1];
         }
 
+        /// <summary>
+        /// returns the threats as a dictionary keyed by a unique string key. the string is unique for a particular
+        /// load of the threat source.
+        /// </summary>
+        public Dictionary<string, Planning.Threat> ThreatDict()
+        {
+            Dictionary<string, Models.Planning.Threat> threatDict = [];
+            for (int index = 0; index < Threats.Count; index++)
+                threatDict[$"threat.{index}"] = Threats[index];
+            return threatDict;
+        }
+
+        /// <summary>
+        /// return the threat with the given unique id, null if no such threat exists.
+        /// </summary>
+        public Planning.Threat FindThreat(string uid)
+        {
+            if (uid.StartsWith("threat.") && (uid.Length > 7) && int.TryParse(uid[7..], out int index))
+                return ((index >= 0) && (index < Threats.Count)) ? Threats[index] : null;
+            return null;
+        }
+
         // ------------------------------------------------------------------------------------------------------------
         //
         // ISystem overrides

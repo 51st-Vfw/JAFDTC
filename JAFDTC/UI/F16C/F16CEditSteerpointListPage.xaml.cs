@@ -631,7 +631,9 @@ namespace JAFDTC.UI.F16C
                     }
                     else
                     {
-// TODO: handle other snap targets (threats?)
+                        Models.Planning.Threat threat = Config.Mission.FindThreat(info.TagAux.Str);
+                        if (threat != null)
+                            alt = threat.Location.Altitude;
                     }
                 }
 

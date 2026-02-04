@@ -31,8 +31,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Reflection;
-using WinRT;
 
 namespace JAFDTC.UI.F16C
 {
@@ -127,6 +125,10 @@ namespace JAFDTC.UI.F16C
                     marks[poi.UniqueID] = poi;
             }
 
+            // collect threats and assign a uid.
+            //
+            Dictionary<string, Models.Planning.Threat> threats = ConfigF16C.Mission.ThreatDict();
+
             // configure the map window with the appropriate content.
             //
             bool isLinked = !string.IsNullOrEmpty(Config.SystemLinkedTo(STPTSystem.SystemTag));
@@ -138,8 +140,7 @@ namespace JAFDTC.UI.F16C
             mapWindow.CoordFormat = STPTSystem.SystemInfo.NavptCoordFmt;
             mapWindow.MaxRouteLength = STPTSystem.SystemInfo.NavptMaxCount;
 
-            mapWindow.SetupMapContent(routes, marks, ConfigF16C.Mission.Threats,
-                                      ConfigF16C.LastMapMarkerImport, ConfigF16C.LastMapFilter);
+            mapWindow.SetupMapContent(routes, marks, threats, ConfigF16C.LastMapMarkerImport, ConfigF16C.LastMapFilter);
         }
 
         // ------------------------------------------------------------------------------------------------------------
@@ -217,7 +218,9 @@ namespace JAFDTC.UI.F16C
                     }
                     else
                     {
-// TODO: handle other snap targets (threats?)
+                        Models.Planning.Threat threat = ConfigF16C.Mission.FindThreat(info.TagAux.Str);
+                        if (threat != null)
+                            alt = threat.Location.Altitude;
                     }
                 }
 
