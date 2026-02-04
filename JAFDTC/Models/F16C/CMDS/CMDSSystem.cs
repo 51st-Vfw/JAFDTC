@@ -181,9 +181,9 @@ namespace JAFDTC.Models.F16C.CMDS
         {
             if (int.TryParse((string.IsNullOrEmpty(prog.BQ)) ? dflt.BQ : prog.BQ, out int bq))
                 progRoot["BurstQuantity"] = bq;
-            if (int.TryParse((string.IsNullOrEmpty(prog.SQ)) ? dflt.BQ : prog.SQ, out int sq))
+            if (int.TryParse((string.IsNullOrEmpty(prog.SQ)) ? dflt.SQ : prog.SQ, out int sq))
                 progRoot["SalvoQuantity"] = sq;
-            if (double.TryParse((string.IsNullOrEmpty(prog.BI)) ? dflt.SI : prog.SI, out double bi))
+            if (double.TryParse((string.IsNullOrEmpty(prog.BI)) ? dflt.BI : prog.BI, out double bi))
                 progRoot["BurstInterval"] = Math.Truncate(bi * 1000.0) / 1000.0;
             if (double.TryParse((string.IsNullOrEmpty(prog.SI)) ? dflt.SI : prog.SI, out double si))
                 progRoot["SalvoInterval"] = Math.Truncate(si * 100.0) / 100.0;
