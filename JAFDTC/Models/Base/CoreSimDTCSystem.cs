@@ -127,6 +127,7 @@ namespace JAFDTC.Models.Base
         public override void Sanitize()
         {
             OutputPath = "";
+            EnableRebuild = false.ToString();
         }
 
         /// <summary>
