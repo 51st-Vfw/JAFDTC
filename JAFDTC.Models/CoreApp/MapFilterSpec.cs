@@ -54,14 +54,14 @@ namespace JAFDTC.Models.CoreApp
         public bool ShowPOIDCS { get; set; }
         public bool ShowPOIUsr { get; set; }
         public bool ShowPOICamp { get; set; }
-        public string ShowCampaign { get; set; }                // null => no campaigns, "" => all campaigns, else name
+        public List<string> Campaigns { get; set; }                 // null, "" => all campaigns, else name(s)
 
         // ---- constructed properties
 
         [JsonIgnore]
         public bool IsDefault => ((ShowUnits == ImportFilter.ALL) &&
                                   (ShowThreatRings == ImportFilter.ALL) &&
-                                  (!string.IsNullOrEmpty(ShowCampaign) && ShowCampaign.Equals("*")) &&
+                                  ((Campaigns == null) || (Campaigns.Count == 0)) &&
                                   ShowNavRoutes && ShowPOIDCS && ShowPOIUsr && ShowPOICamp);
 
         [JsonIgnore]
@@ -74,12 +74,12 @@ namespace JAFDTC.Models.CoreApp
         // ------------------------------------------------------------------------------------------------------------
 
         public MapFilterSpec()
-            => (ShowUnits, ShowThreatRings, ShowCampaign, ShowPOIDCS, ShowPOIUsr, ShowPOICamp, ShowNavRoutes)
-                = (ImportFilter.ALL, ImportFilter.ALL, "*", true, true, true, true);
+            => (ShowUnits, ShowThreatRings, Campaigns, ShowPOIDCS, ShowPOIUsr, ShowPOICamp, ShowNavRoutes)
+                = (ImportFilter.ALL, ImportFilter.ALL, [ ], true, true, true, true);
 
-        public MapFilterSpec(ImportFilter showUnits, ImportFilter showThreatRings, string showCampaign, bool showPOIDCS,
-                             bool showPOIUsr, bool showPOICamp, bool showNavRoutes)
-            => (ShowUnits, ShowThreatRings, ShowCampaign, ShowPOIDCS, ShowPOIUsr, ShowPOICamp, ShowNavRoutes)
-                = (showUnits, showThreatRings, showCampaign, showPOIDCS, showPOIUsr, showPOICamp, showNavRoutes);
+        public MapFilterSpec(ImportFilter showUnits, ImportFilter showThreatRings, List<string> campaigns,
+                             bool showPOIDCS, bool showPOIUsr, bool showPOICamp, bool showNavRoutes)
+            => (ShowUnits, ShowThreatRings, Campaigns, ShowPOIDCS, ShowPOIUsr, ShowPOICamp, ShowNavRoutes)
+                = (showUnits, showThreatRings, campaigns, showPOIDCS, showPOIUsr, showPOICamp, showNavRoutes);
     }
 }

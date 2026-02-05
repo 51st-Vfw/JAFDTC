@@ -18,6 +18,7 @@
 // ********************************************************************************************************************
 
 using JAFDTC.Models.CoreApp;
+using JAFDTC.Models.DCS;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System.Collections.Generic;
@@ -39,15 +40,12 @@ namespace JAFDTC.UI.App
 
         public MapFilterSpec Filter => new((MapFilterSpec.ImportFilter)uiComboUnitImport.SelectedIndex,
                                            (MapFilterSpec.ImportFilter)uiComboRingImport.SelectedIndex,
-                                           uiComboCampaign.SelectedIndex switch
-                                           {
-                                               0 => null,
-                                               1 => "*",
-                                               _ => uiComboCampaign.SelectedItem as string,
-                                           },
+                                           (uiComboCampaign.SelectedItems.Count == uiComboCampaign.Items.Count)
+                                                ? null
+                                                : [.. uiComboCampaign.SelectedItems ],
                                            (bool)uiCkbxPoIDCS.IsChecked,
                                            (bool)uiCkbxPoIUsr.IsChecked,
-                                           (bool)uiCkbxPoICamp.IsChecked,
+                                           (bool)(uiComboCampaign.SelectedItems.Count > 0),
                                            (bool)uiCkbxNavRoutes.IsChecked);
 
         // ------------------------------------------------------------------------------------------------------------
@@ -56,28 +54,32 @@ namespace JAFDTC.UI.App
         //
         // ------------------------------------------------------------------------------------------------------------
 
-        public MapFilterDialog(MapFilterSpec filter, List<string> campaigns)
+        public MapFilterDialog(MapFilterSpec filter, List<string> campaigns = null)
         {
             InitializeComponent();
 
             uiComboUnitImport.SelectedIndex = (int)filter.ShowUnits;
             uiComboRingImport.SelectedIndex = (int)filter.ShowThreatRings;
 
-            List<string> items = [ "No campaigns", "All campaigns" ];
-            items.AddRange(campaigns);
-            uiComboCampaign.ItemsSource = items;
-            int index = campaigns.IndexOf(filter.ShowCampaign);
-            if (index != -1)
-                uiComboCampaign.SelectedIndex = index + 2;
-            else if (filter.ShowCampaign == "*")
-                uiComboCampaign.SelectedIndex = 1;
-            else
-                uiComboCampaign.SelectedIndex = 0;
+            uiComboCampaign.SelectAllText = "Any campaign";
+            uiComboCampaign.SelectNoneText = "No campaigns";
+            uiComboCampaign.ItemDescription = "campaign";
+            if ((campaigns == null) || (campaigns.Count == 0))
+                campaigns = PointOfInterestDbase.Instance.KnownCampaigns;
+            foreach (string name in campaigns)
+                uiComboCampaign.Items.Add(name);
+            if (filter.ShowPOICamp && ((filter.Campaigns == null) || (filter.Campaigns.Count == 0)))
+                uiComboCampaign.SelectAllItems();
+            else if ((filter.Campaigns != null) && (filter.Campaigns.Count > 0))
+                uiComboCampaign.SelectedItems = filter.Campaigns;
 
             uiCkbxPoIDCS.IsChecked = filter.ShowPOIDCS;
             uiCkbxPoIUsr.IsChecked = filter.ShowPOIUsr;
             uiCkbxPoICamp.IsChecked = filter.ShowPOICamp;
             uiCkbxNavRoutes.IsChecked = filter.ShowNavRoutes;
+
+            if (!uiCkbxPoICamp.IsChecked.GetValueOrDefault(false))
+                uiComboCampaign.IsEnabled = false;
 
             IsSecondaryButtonEnabled = !filter.IsDefault;
         }
@@ -90,11 +92,6 @@ namespace JAFDTC.UI.App
 
         public void Combo_SelectionChanged(object sender, SelectionChangedEventArgs args)
         {
-            if (uiComboCampaign.SelectedIndex == 0)
-            {
-                uiComboCampaign.IsEnabled = false;
-                uiCkbxPoICamp.IsChecked = false;
-            }
             IsSecondaryButtonEnabled = !Filter.IsDefault;
         }
 
@@ -102,12 +99,12 @@ namespace JAFDTC.UI.App
         {
             if (!(bool)uiCkbxPoICamp.IsChecked)
             {
-                uiComboCampaign.SelectedIndex = 0;
+                uiComboCampaign.SelectNoItems();
                 uiComboCampaign.IsEnabled = false;
             }
             else
             {
-                uiComboCampaign.SelectedIndex = 1;
+                uiComboCampaign.SelectAllItems();
                 uiComboCampaign.IsEnabled = true;
             }
             IsSecondaryButtonEnabled = !Filter.IsDefault;

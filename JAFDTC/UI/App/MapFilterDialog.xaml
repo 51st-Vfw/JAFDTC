@@ -23,6 +23,7 @@ https://www.gnu.org/licenses/.
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:JAFDTC.UI.App"
+    xmlns:controls="using:JAFDTC.UI.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
@@ -109,18 +110,9 @@ https://www.gnu.org/licenses/.
                       Click="CheckBox_Click">
                 Show campaign points of interest for
             </CheckBox>
-            <ComboBox MinWidth="232" Margin="8,0,0,0"
-                      x:Name="uiComboCampaign"
-                      HorizontalAlignment="Stretch"
-                      VerticalAlignment="Center"
-                      SelectionChanged="Combo_SelectionChanged">
-                <!-- items are built programaticaly -->
-                <ComboBoxItem>No campaigns</ComboBoxItem>
-                <ComboBoxItem>All campaigns</ComboBoxItem>
-                <ComboBoxItem>Foo bar</ComboBoxItem>
-                <ComboBoxItem>Foo bar</ComboBoxItem>
-                <ComboBoxItem>Foo bar</ComboBoxItem>
-            </ComboBox>
+            <controls:MultipassComboControl MinWidth="232" Margin="8,0,0,0" x:Name="uiComboCampaign"
+                                            HorizontalAlignment="Stretch" VerticalAlignment="Center">
+            </controls:MultipassComboControl>
         </StackPanel>
 
         <!-- show nav routes -->

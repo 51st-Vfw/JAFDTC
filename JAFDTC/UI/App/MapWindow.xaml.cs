@@ -745,11 +745,18 @@ namespace JAFDTC.UI.App
         /// </summary>
         private void RebuildElementsForFilter()
         {
-            List<string> campMarkTags = [];
-            if (!string.IsNullOrEmpty(MapSetup.Filter.ShowCampaign) &&
-                _mappedCampaigns.TryGetValue(MapSetup.Filter.ShowCampaign, out List<string> value))
+            List<string> campFilter = MapSetup.Filter.Campaigns;
+            List<string> campMarkTags = [ ];
+            if (MapSetup.Filter.ShowPOICamp && (campFilter != null) && (campFilter.Count > 0))
             {
-                campMarkTags = value;
+                foreach (string camp in campFilter)
+                    if (_mappedCampaigns.TryGetValue(camp, out List<string> tags))
+                        campMarkTags.AddRange(tags);
+            }
+            else if (MapSetup.Filter.ShowPOICamp && ((campFilter == null) || (campFilter.Count == 0)))
+            {
+                foreach (List<string> tags in _mappedCampaigns.Values)
+                    campMarkTags.AddRange(tags);
             }
 
             uiMap.PathVisibility(( _ ) => MapSetup.Filter.ShowNavRoutes);
@@ -759,10 +766,6 @@ namespace JAFDTC.UI.App
                     return new(MapSetup.Filter.ShowPOIDCS, MapSetup.Filter.ShowPOIDCS);
                 else if (type == MapMarkerInfo.MarkerType.POI_USER)
                     return new(MapSetup.Filter.ShowPOIUsr, MapSetup.Filter.ShowPOIUsr);
-                else if ((type == MapMarkerInfo.MarkerType.POI_CAMPAIGN) && string.IsNullOrEmpty(MapSetup.Filter.ShowCampaign))
-                    return new(false, false);
-                else if ((type == MapMarkerInfo.MarkerType.POI_CAMPAIGN) && MapSetup.Filter.ShowCampaign.Equals("*"))
-                    return new(true, true);
                 else if (type == MapMarkerInfo.MarkerType.POI_CAMPAIGN)
                     return new(campMarkTags.Contains(tag), campMarkTags.Contains(tag));
                 else if ((type != MapMarkerInfo.MarkerType.UNIT_FRIEND) && (type != MapMarkerInfo.MarkerType.UNIT_ENEMY))
