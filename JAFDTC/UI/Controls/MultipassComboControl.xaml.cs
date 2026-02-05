@@ -20,6 +20,7 @@
 using JAFDTC.Utilities;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -151,10 +152,13 @@ namespace JAFDTC.UI.Controls
         public MultipassComboControl()
         {
             _items.CollectionChanged += Items_CollectionChanged;
+            IsEnabledChanged += MultipassComboControl_IsEnabledChanged;
 
             ItemDescription = "item";
 
             InitializeComponent();
+
+            UpdateItemForeground();
         }
 
         // ------------------------------------------------------------------------------------------------------------
@@ -183,11 +187,26 @@ namespace JAFDTC.UI.Controls
             RebuildPlaceholder(uiComboBox);
         }
 
+        /// <summary>
+        /// TODO: document
+        /// </summary>
+        private void MultipassComboControl_IsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            UpdateItemForeground();
+        }
+
         // ------------------------------------------------------------------------------------------------------------
         //
         // utility
         //
         // ------------------------------------------------------------------------------------------------------------
+
+        private void UpdateItemForeground()
+        {
+            string resource = (IsEnabled) ? "TextFillColorPrimary" : "TextFillColorDisabled";
+            if (Application.Current.Resources.TryGetValue(resource, out object value))
+                uiComboBox.PlaceholderForeground = (Brush)new SolidColorBrush((Windows.UI.Color)value);
+        }
 
         private void Items_CollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
         {
@@ -199,6 +218,8 @@ namespace JAFDTC.UI.Controls
 
         private void ClearItemsUI()
         {
+            UpdateItemForeground();
+
             ItemsUI.Clear();
             CallerItemIndex = 0;
             if (!string.IsNullOrEmpty(SelectAllText))
