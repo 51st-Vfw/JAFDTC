@@ -189,9 +189,7 @@ namespace JAFDTC.UI.App
 
         public bool CanOpenMarker { get; set; }
 
-        public MapFilterSpec MapFilterSpec { get; private set; }
-
-        public MapImportSpec MapImportSpec { get; private set; }
+        public MapSetupData MapSetup { get; private set; }
 
         // ---- private properties
 
@@ -227,7 +225,7 @@ namespace JAFDTC.UI.App
 
         // ---- constructed properties
 
-        private bool IsFiltered => ((MapFilterSpec != null) && !MapFilterSpec.IsDefault);
+        private bool IsFiltered => ((MapSetup != null) && !MapSetup.Filter.IsDefault);
 
         // ------------------------------------------------------------------------------------------------------------
         //
@@ -253,8 +251,7 @@ namespace JAFDTC.UI.App
             EditMask = MapMarkerInfo.MarkerTypeMask.NONE;
             MaxRouteLength = 0;
             CanOpenMarker = true;
-            MapFilterSpec = new();
-            MapImportSpec = new();
+            MapSetup = new();
 
             Closed += MapWindow_Closed;
             SizeChanged += MapWindow_SizeChanged;
@@ -412,16 +409,18 @@ namespace JAFDTC.UI.App
         public void SetupMapContent(Dictionary<string, List<INavpointInfo>> paths = null,
                                     Dictionary<string, PointOfInterest> marks = null,
                                     Dictionary<string, Models.Planning.Threat> threats = null,
-                                    MapImportSpec mapImport = null, MapFilterSpec mapFilter = null)
+                                    MapSetupData mapSetup = null)
         {
             paths ??= [ ];
             marks ??= [ ];
             threats ??= [ ];
-            mapImport ??= new();
 
-            MapFilterSpec = mapFilter ?? new();
+            MapSetup = mapSetup ?? new();
             if (uiBarBtnFilter.IsChecked != IsFiltered)
                 uiBarBtnFilter.IsChecked = IsFiltered;
+
+            uiBarBtnSnap.IsChecked = MapSetup.IsSnapMode;
+            uiMap.IsSnappingEnabled = MapSetup.IsSnapMode;
 
             uiTxtTheater.Text = Theater;
             uiMap.SetTheater(Theater);
@@ -454,12 +453,8 @@ namespace JAFDTC.UI.App
             CoreImportThreats(threats);
             try
             {
-                MapImportSpec = null;
-                if (!string.IsNullOrEmpty(mapImport.Path) && System.IO.File.Exists(mapImport.Path))
-                {
-                    CoreImportMarkers(mapImport);
-                    MapImportSpec = mapImport;
-                }
+                if (!string.IsNullOrEmpty(MapSetup.Import.Path) && System.IO.File.Exists(MapSetup.Import.Path))
+                    CoreImportMarkers(MapSetup.Import);
             }
             catch (Exception ex)
             {
@@ -751,22 +746,22 @@ namespace JAFDTC.UI.App
         private void RebuildElementsForFilter()
         {
             List<string> campMarkTags = [];
-            if (!string.IsNullOrEmpty(MapFilterSpec.ShowCampaign) &&
-                _mappedCampaigns.TryGetValue(MapFilterSpec.ShowCampaign, out List<string> value))
+            if (!string.IsNullOrEmpty(MapSetup.Filter.ShowCampaign) &&
+                _mappedCampaigns.TryGetValue(MapSetup.Filter.ShowCampaign, out List<string> value))
             {
                 campMarkTags = value;
             }
 
-            uiMap.PathVisibility(( _ ) => MapFilterSpec.ShowNavRoutes);
+            uiMap.PathVisibility(( _ ) => MapSetup.Filter.ShowNavRoutes);
 
             uiMap.MarkerVisibility((type, tag, hasRing) => {
                 if (type == MapMarkerInfo.MarkerType.POI_SYSTEM)
-                    return new(MapFilterSpec.ShowPOIDCS, MapFilterSpec.ShowPOIDCS);
+                    return new(MapSetup.Filter.ShowPOIDCS, MapSetup.Filter.ShowPOIDCS);
                 else if (type == MapMarkerInfo.MarkerType.POI_USER)
-                    return new(MapFilterSpec.ShowPOIUsr, MapFilterSpec.ShowPOIUsr);
-                else if ((type == MapMarkerInfo.MarkerType.POI_CAMPAIGN) && string.IsNullOrEmpty(MapFilterSpec.ShowCampaign))
+                    return new(MapSetup.Filter.ShowPOIUsr, MapSetup.Filter.ShowPOIUsr);
+                else if ((type == MapMarkerInfo.MarkerType.POI_CAMPAIGN) && string.IsNullOrEmpty(MapSetup.Filter.ShowCampaign))
                     return new(false, false);
-                else if ((type == MapMarkerInfo.MarkerType.POI_CAMPAIGN) && MapFilterSpec.ShowCampaign.Equals("*"))
+                else if ((type == MapMarkerInfo.MarkerType.POI_CAMPAIGN) && MapSetup.Filter.ShowCampaign.Equals("*"))
                     return new(true, true);
                 else if (type == MapMarkerInfo.MarkerType.POI_CAMPAIGN)
                     return new(campMarkTags.Contains(tag), campMarkTags.Contains(tag));
@@ -797,27 +792,27 @@ namespace JAFDTC.UI.App
 
                 bool isMarkVis = true;
                 if (type == MapMarkerInfo.MarkerType.UNIT_FRIEND)
-                    isMarkVis = (MapFilterSpec.ShowUnits == MapFilterSpec.ImportFilter.ALL);
+                    isMarkVis = (MapSetup.Filter.ShowUnits == MapFilterSpec.ImportFilter.ALL);
                 else if (type == MapMarkerInfo.MarkerType.UNIT_ENEMY)
-                    isMarkVis = (MapFilterSpec.ShowUnits != MapFilterSpec.ImportFilter.NONE);
+                    isMarkVis = (MapSetup.Filter.ShowUnits != MapFilterSpec.ImportFilter.NONE);
                 bool isRingVis = isMarkVis;
 
                 if (hasRing && (type == MapMarkerInfo.MarkerType.UNIT_FRIEND))
                 {
-                    if ((MapFilterSpec.ShowUnits == MapFilterSpec.ImportFilter.ALL) &&
-                        (MapFilterSpec.ShowThreatRings == MapFilterSpec.ImportFilter.ALL))
+                    if ((MapSetup.Filter.ShowUnits == MapFilterSpec.ImportFilter.ALL) &&
+                        (MapSetup.Filter.ShowThreatRings == MapFilterSpec.ImportFilter.ALL))
                     {
                         isMarkVis = false;
                         isRingVis = true;
                     }
-                    else if ((MapFilterSpec.ShowUnits == MapFilterSpec.ImportFilter.ALL) &&
-                             (MapFilterSpec.ShowThreatRings != MapFilterSpec.ImportFilter.ALL))
+                    else if ((MapSetup.Filter.ShowUnits == MapFilterSpec.ImportFilter.ALL) &&
+                             (MapSetup.Filter.ShowThreatRings != MapFilterSpec.ImportFilter.ALL))
                     {
                         isMarkVis = false;
                         isRingVis = false;
                     }
-                    else if ((MapFilterSpec.ShowUnits != MapFilterSpec.ImportFilter.ALL) &&
-                             (MapFilterSpec.ShowThreatRings == MapFilterSpec.ImportFilter.ALL))
+                    else if ((MapSetup.Filter.ShowUnits != MapFilterSpec.ImportFilter.ALL) &&
+                             (MapSetup.Filter.ShowThreatRings == MapFilterSpec.ImportFilter.ALL))
                     {
                         isMarkVis = true;
                         isRingVis = true;
@@ -825,23 +820,23 @@ namespace JAFDTC.UI.App
                 }
                 else if (hasRing && (type == MapMarkerInfo.MarkerType.UNIT_ENEMY))
                 {
-                    if ((MapFilterSpec.ShowUnits == MapFilterSpec.ImportFilter.ALL) &&
-                        (MapFilterSpec.ShowThreatRings != MapFilterSpec.ImportFilter.NONE))
+                    if ((MapSetup.Filter.ShowUnits == MapFilterSpec.ImportFilter.ALL) &&
+                        (MapSetup.Filter.ShowThreatRings != MapFilterSpec.ImportFilter.NONE))
                     {
                         isMarkVis = false;
                     }
-                    else if ((MapFilterSpec.ShowUnits == MapFilterSpec.ImportFilter.ALL) &&
-                             (MapFilterSpec.ShowThreatRings == MapFilterSpec.ImportFilter.NONE))
+                    else if ((MapSetup.Filter.ShowUnits == MapFilterSpec.ImportFilter.ALL) &&
+                             (MapSetup.Filter.ShowThreatRings == MapFilterSpec.ImportFilter.NONE))
                     {
                         isMarkVis = false;
                         isRingVis = false;
                     }
-                    else if (MapFilterSpec.ShowUnits == MapFilterSpec.ImportFilter.OPPOSING)
+                    else if (MapSetup.Filter.ShowUnits == MapFilterSpec.ImportFilter.OPPOSING)
                     {
                         isMarkVis = false;
                     }
-                    else if ((MapFilterSpec.ShowUnits == MapFilterSpec.ImportFilter.NONE) &&
-                             (MapFilterSpec.ShowThreatRings != MapFilterSpec.ImportFilter.NONE))
+                    else if ((MapSetup.Filter.ShowUnits == MapFilterSpec.ImportFilter.NONE) &&
+                             (MapSetup.Filter.ShowThreatRings != MapFilterSpec.ImportFilter.NONE))
                     {
                         isMarkVis = true;
                         isRingVis = true;
@@ -1033,7 +1028,7 @@ namespace JAFDTC.UI.App
             try
             {
                 CoreImportMarkers(setupDialog.Spec);
-                MapImportSpec = setupDialog.Spec;
+                MapSetup.Import = setupDialog.Spec;
                 RebuildInterfaceState();
             }
             catch (Exception ex)
@@ -1053,7 +1048,7 @@ namespace JAFDTC.UI.App
                 "Remove Markers");
             if (result == ContentDialogResult.Primary)
             {
-                MapImportSpec = null;
+                MapSetup.Import = new();
                 uiMap.ClearMarkers((t, s) => (((t == MapMarkerInfo.MarkerType.UNIT_FRIEND) ||
                                                (t == MapMarkerInfo.MarkerType.UNIT_ENEMY)) && !s.StartsWith("<threat_")));
                 _mapImportMarkerNameDict.Clear();
@@ -1069,6 +1064,7 @@ namespace JAFDTC.UI.App
         public async void CmdSnap_Click(object sender, RoutedEventArgs args)
         {
             AppBarToggleButton button = (AppBarToggleButton)sender;
+            MapSetup.IsSnapMode = button.IsChecked.GetValueOrDefault(false);
             uiMap.IsSnappingEnabled = button.IsChecked.GetValueOrDefault(false);
         }
 
@@ -1083,15 +1079,15 @@ namespace JAFDTC.UI.App
 
             List<string> campaigns = [.. _mappedCampaigns.Keys ];
             campaigns.Sort();
-            MapFilterDialog filterDialog = new(MapFilterSpec, campaigns)
+            MapFilterDialog filterDialog = new(MapSetup.Filter, campaigns)
             {
                 XamlRoot = Content.XamlRoot,
             };
             ContentDialogResult result = await filterDialog.ShowAsync(ContentDialogPlacement.Popup);
             if (result == ContentDialogResult.Primary)
-                MapFilterSpec = filterDialog.Filter;
+                MapSetup.Filter = filterDialog.Filter;
             else if (result == ContentDialogResult.Secondary)
-                MapFilterSpec = MapFilterSpec.Default;
+                MapSetup.Filter = MapFilterSpec.Default;
             else
                 return;                                         // EXIT: cancelled, no change...
 

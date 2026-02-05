@@ -132,7 +132,7 @@ namespace JAFDTC.UI.A10C
             mapWindow.MaxRouteLength = WYPTSystem.SystemInfo.NavptMaxCount;
 
 // TODO: support threats here
-            mapWindow.SetupMapContent(routes, marks, [ ], ConfigA10C.LastMapMarkerImport, ConfigA10C.LastMapFilter);
+            mapWindow.SetupMapContent(routes, marks, [ ], ConfigA10C.LastMapSetup);
         }
 
         // ------------------------------------------------------------------------------------------------------------

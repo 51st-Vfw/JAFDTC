@@ -128,7 +128,7 @@ namespace JAFDTC.UI.FA18C
             mapWindow.MaxRouteLength = WYPTSystem.SystemInfo.NavptMaxCount;
 
 // TODO: support threats here
-            mapWindow.SetupMapContent(routes, marks, [], ConfigFA18C.LastMapMarkerImport, ConfigFA18C.LastMapFilter);
+            mapWindow.SetupMapContent(routes, marks, [], ConfigFA18C.LastMapSetup);
         }
 
         // ------------------------------------------------------------------------------------------------------------

@@ -126,6 +126,8 @@ namespace JAFDTC.UI.App
             if ((editorPage != null) && editorPage.GetType().IsAssignableTo(typeof(IMapControlVerbHandler)))
                 mapWind?.UnregisterMapControlVerbObserver((IMapControlVerbHandler)editorPage);
 
+            Config.LastMapSetup = mapWind?.MapSetup;
+
             mapWind?.ClearMapContent();
             mapWind?.MarkerExplainer = null;
         }
@@ -495,6 +497,8 @@ namespace JAFDTC.UI.App
             ClearMapWindow();
 
             Config.ConfigurationSaved -= ConfigurationSavedHandler;
+
+            Config.AfterSystemEditorCompletes(EditorPages[Config.LastSystemEdited].Tag);
 
             base.OnNavigatedFrom(args);
         }

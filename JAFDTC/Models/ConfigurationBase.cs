@@ -94,9 +94,7 @@ namespace JAFDTC.Models
 
         public int LastSystemEdited { get; set; }
 
-        public MapFilterSpec LastMapFilter { get; set; }
-
-        public MapImportSpec LastMapMarkerImport { get; set; }
+        public MapSetupData LastMapSetup { get; set; }
 
         // ---- public properties, posts change/validation events
 
@@ -409,8 +407,7 @@ namespace JAFDTC.Models
             IsFavorite = false;
             UnlinkSystem(null);
             LastSystemEdited = 0;
-            LastMapFilter = null;
-            LastMapMarkerImport = null;
+            LastMapSetup = null;
 
             if (isResetUID)
                 ResetUID();

@@ -140,7 +140,7 @@ namespace JAFDTC.UI.F16C
             mapWindow.CoordFormat = STPTSystem.SystemInfo.NavptCoordFmt;
             mapWindow.MaxRouteLength = STPTSystem.SystemInfo.NavptMaxCount;
 
-            mapWindow.SetupMapContent(routes, marks, threats, ConfigF16C.LastMapMarkerImport, ConfigF16C.LastMapFilter);
+            mapWindow.SetupMapContent(routes, marks, threats, ConfigF16C.LastMapSetup);
         }
 
         // ------------------------------------------------------------------------------------------------------------

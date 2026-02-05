@@ -90,14 +90,9 @@ namespace JAFDTC.Models
         public int LastSystemEdited { get; set; }
 
         /// <summary>
-        /// last map filter applied to a map window used when editing the configuration.
+        /// last map setup applied to a map window used when editing the configuration.
         /// </summary>
-        public MapFilterSpec LastMapFilter { get; set; }
-
-        /// <summary>
-        /// last import specification for file imported for map window markers used when editing the configuration.
-        /// </summary>
-        public MapImportSpec LastMapMarkerImport { get; set; }
+        public MapSetupData LastMapSetup { get; set; }
 
         /// <summary>
         /// returns list of system tags for all systems that can be merged to build a dcs dtc tape or kneeboard.
