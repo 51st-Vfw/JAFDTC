@@ -62,8 +62,8 @@ namespace JAFDTC.UI.A10C
                                       IConfiguration config, int indexNavpt)
         {
             bool isUnlinked = string.IsNullOrEmpty(config.SystemLinkedTo(SystemInfo.SystemTag));
-            return new EditNavptPageNavArgs(parentEditor, verbMirror, config, indexNavpt, isUnlinked,
-                                            typeof(A10CEditWaypointHelper));
+            return new EditNavpointPageNavArgs(parentEditor, verbMirror, config, indexNavpt, isUnlinked,
+                                               typeof(A10CEditWaypointHelper));
         }
 
         public override void CopyConfigToEdit(IConfiguration config, ObservableCollection<INavpointInfo> edit)
