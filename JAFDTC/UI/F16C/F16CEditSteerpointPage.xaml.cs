@@ -44,31 +44,6 @@ using static JAFDTC.Utilities.Networking.WyptCaptureDataRx;
 namespace JAFDTC.UI.F16C
 {
     /// <summary>
-    /// navigation argument to pass from pages that navigate to the steerpoint editor (F16CEditSteerpointPage). this
-    /// provides the configuration being edited along with the specific steerpoint within the configuration that
-    /// should be edited.
-    /// </summary>
-    public sealed class F16CEditStptPageNavArgs
-    {
-        public F16CEditSteerpointListPage ParentEditor { get; set; }
-
-        public IMapControlVerbMirror VerbMirror { get; set; }   // map window (may be null)
-
-        public F16CConfiguration Config { get; set; }
-
-        public int IndexStpt { get; set; }
-
-        public bool IsUnlinked { get; set; }
-
-        public F16CEditStptPageNavArgs(F16CEditSteerpointListPage parent, IMapControlVerbMirror mirror,
-                                       F16CConfiguration config, int indexStpt, bool isUnlinked)
-            => (ParentEditor, VerbMirror,
-                Config, IndexStpt, IsUnlinked) = (parent, mirror, config, indexStpt, isUnlinked);
-    }
-
-    // ================================================================================================================
-
-    /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
     public sealed partial class F16CEditSteerpointPage : Page
@@ -102,7 +77,7 @@ namespace JAFDTC.UI.F16C
         //
         // ------------------------------------------------------------------------------------------------------------
 
-        public F16CEditStptPageNavArgs NavArgs { get; set; }
+        public F16CEditSteerpointPageNavArgs NavArgs { get; set; }
 
         // NOTE: changes to the Config object may only occur through the marshall methods. edits by the ui are usually
         // NOTE: directed at the EditStpt/EditStptIndex properties (exceptions occur when the edit requires changes
@@ -971,7 +946,7 @@ namespace JAFDTC.UI.F16C
         /// </summary>
         protected override void OnNavigatedTo(NavigationEventArgs args)
         {
-            NavArgs = (F16CEditStptPageNavArgs)args.Parameter;
+            NavArgs = (F16CEditSteerpointPageNavArgs)args.Parameter;
 
             Config = NavArgs.Config;
 

@@ -156,7 +156,7 @@ namespace JAFDTC.UI.F16C
             NavArgs.BackButton.IsEnabled = false;
             bool isUnlinked = string.IsNullOrEmpty(Config.SystemLinkedTo(STPTSystem.SystemTag));
             Frame.Navigate(typeof(F16CEditSteerpointPage),
-                           new F16CEditStptPageNavArgs(this, verbMirror, Config, EditSTPT.IndexOf(stpt), isUnlinked),
+                           new F16CEditSteerpointPageNavArgs(this, verbMirror, Config, EditSTPT.IndexOf(stpt), isUnlinked),
                            new SlideNavigationTransitionInfo() { Effect = SlideNavigationTransitionEffect.FromRight });
         }
 
