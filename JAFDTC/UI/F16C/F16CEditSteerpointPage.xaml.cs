@@ -886,8 +886,16 @@ namespace JAFDTC.UI.F16C
             else
             {
                 SetFieldValidState(uiStptValueMGRS, true);
-                uiStptValueMGRS.Text = CoordMGRS.LLtoMGRS(EditStpt.Lat, EditStpt.Lon, 5);
-                uiStptMGRSRezText.Text = "1m";
+                if (!string.IsNullOrEmpty(EditStpt.Lat) && !string.IsNullOrEmpty(EditStpt.Lon))
+                {
+                    uiStptValueMGRS.Text = CoordMGRS.LLtoMGRS(EditStpt.Lat, EditStpt.Lon, 5);
+                    uiStptMGRSRezText.Text = "1m";
+                }
+                else
+                {
+                    uiStptValueMGRS.Text = "";
+                    uiStptMGRSRezText.Text = "";
+                }
             }
         }
 
