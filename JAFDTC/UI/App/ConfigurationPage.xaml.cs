@@ -181,6 +181,19 @@ namespace JAFDTC.UI.App
         }
 
         /// <summary>
+        /// switch the editor over to the system with the specified tag.
+        /// </summary>
+        public void SwitchToEditorForSystem(string systemTag)
+        {
+            for (int index = 0; index < EditorPages.Count; index++)
+                if (EditorPages[index].Tag == systemTag)
+                {
+                    uiNavListEditors.SelectedIndex = index;
+                    break;
+                }
+        }
+
+        /// <summary>
         /// rebuild the editor icon foregrounds to implement the link/unlink badge on the editor icon.
         /// </summary>
         private void RebuildIconForeground(ConfigEditorPageInfo info)
@@ -324,7 +337,7 @@ namespace JAFDTC.UI.App
                 editorPage = navFrame.Content;
                 if ((editorPage != null) && editorPage.GetType().IsAssignableTo(typeof(IMapControlVerbHandler)))
                     CurApp.MapWindow?.RegisterMapControlVerbObserver((IMapControlVerbHandler)editorPage);
-                if ((editorPage != null) && ConfigEditor.GetType().IsAssignableTo(typeof(IMapControlVerbHandler)))
+                else if ((editorPage != null) && ConfigEditor.GetType().IsAssignableTo(typeof(IMapControlVerbHandler)))
                     CurApp.MapWindow?.RegisterMapControlVerbObserver((IMapControlVerbHandler)ConfigEditor);
 
                 if (uiNavListEditors.SelectedIndex != Config.LastSystemEdited)

@@ -26,6 +26,7 @@ using JAFDTC.Models.POI;
 using JAFDTC.UI.App;
 using JAFDTC.UI.Base;
 using JAFDTC.UI.Controls.Map;
+using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -181,6 +182,15 @@ namespace JAFDTC.UI.FA18C
         public void VerbMarkerOpened(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
         {
             Debug.WriteLine($"{VerbHandlerTag}:MarkerOpen({param}) {info.Tag}");
+            JAFDTC.App application = Application.Current as JAFDTC.App;
+            application.Window.DispatcherQueue.TryEnqueue(DispatcherQueuePriority.Low, () =>
+            {
+                ConfigPage.SwitchToEditorForSystem(WYPTSystem.SystemTag);
+                application.Window.DispatcherQueue.TryEnqueue(DispatcherQueuePriority.Low, () =>
+                {
+                    application.MapWindow?.MirrorVerbMarkerOpened(sender, info, param);
+                });
+            });
         }
 
         public void VerbMarkerUpdated(IMapControlVerbHandler sender, MapMarkerInfo info, int param = 0)
