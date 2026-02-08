@@ -69,7 +69,7 @@ namespace JAFDTC.UI.Base
 
         private NavpointInfoBase EditNavpt { get; set; }
 
-        private NavpointInfoBase ValidateNavpt { get; set; }
+        private NavpointInfoBase EditNavptInitial { get; set; }
 
         private int EditNavptIndex { get; set; }
 
@@ -103,6 +103,7 @@ namespace JAFDTC.UI.Base
             EditNavpt = null;
             CurSelectedPoI = null;
 
+            IsCancelInFlight = false;
             IsRebuildPending = false;
             IsRebuildMGRS = false;
 
@@ -363,6 +364,8 @@ namespace JAFDTC.UI.Base
         /// </summary>
         private void AcceptBtnCancel_Click(object sender, RoutedEventArgs args)
         {
+            PageHelper.CopyEditToEdit(EditNavptInitial, EditNavpt);
+            CopyEditToConfig(EditNavptIndex, true);
             IsCancelInFlight = false;
             Frame.GoBack();
         }
@@ -722,9 +725,10 @@ namespace JAFDTC.UI.Base
             UpdateLatLonTextBoxFormat(uiNavptValueLon, PageHelper.LonExtProperties);
 
             EditNavpt ??= PageHelper.CreateEditNavpt(EditField_PropertyChanged, EditNavpt_DataValidationError);
-            ValidateNavpt ??= PageHelper.CreateEditNavpt(null, null);
-
             EditNavpt.PropertyChanged += EditNavpt_PropertyChanged;
+
+            EditNavptInitial = PageHelper.CreateEditNavpt(null, null);
+            PageHelper.CopyEditToEdit(EditNavpt, EditNavptInitial);
 
             Config = NavArgs.Config;
 

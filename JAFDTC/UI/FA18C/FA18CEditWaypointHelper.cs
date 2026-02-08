@@ -75,8 +75,10 @@ namespace JAFDTC.UI.FA18C
                                                 EventHandler<DataErrorsChangedEventArgs> dataErr)
         {
             WaypointInfo wypt = new();
-            wypt.PropertyChanged += propChanged;
-            wypt.ErrorsChanged += dataErr;
+            if (propChanged != null)
+                wypt.PropertyChanged += propChanged;
+            if (dataErr != null)
+                wypt.ErrorsChanged += dataErr;
             return wypt;
         }
 
@@ -105,6 +107,15 @@ namespace JAFDTC.UI.FA18C
                 return true;
             }
             return false;
+        }
+
+        public void CopyEditToEdit(INavpointInfo src, INavpointInfo dst)
+        {
+            dst.Number = src.Number;
+            dst.Name = new(src.Name);
+            dst.Lat = new(src.Lat);
+            dst.Lon = new(src.Lon);
+            dst.Alt = new(src.Alt);
         }
 
         public List<string> GetErrors(INavpointInfo edit, string propertyName)

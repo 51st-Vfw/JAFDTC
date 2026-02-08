@@ -69,6 +69,35 @@ namespace JAFDTC.UI.F16C
                     _tosUI = TOS;
                 }
             }
+
+            public SteerpointInfoUI()
+                : base()
+            {
+                TOSUI = "";
+            }
+
+            public SteerpointInfoUI(SteerpointInfoUI srcStpt)
+            {
+                Number = srcStpt.Number;
+                Name = new(srcStpt.Name);
+                Lat = new(srcStpt.Lat);
+                Lon = new(srcStpt.Lon);
+                Alt = new(srcStpt.Alt);
+                TOSUI = new(srcStpt.TOS);
+
+                for (int i = 0; i < srcStpt.OAP.Length; i++)
+                {
+                    OAP[i].Type = srcStpt.OAP[i].Type;
+                    OAP[i].Range = new(srcStpt.OAP[i].Range);
+                    OAP[i].Brng = new(srcStpt.OAP[i].Brng);
+                    OAP[i].Elev = new(srcStpt.OAP[i].Elev);
+
+                    VxP[i].Type = srcStpt.VxP[i].Type;
+                    VxP[i].Range = new(srcStpt.VxP[i].Range);
+                    VxP[i].Brng = new(srcStpt.VxP[i].Brng);
+                    VxP[i].Elev = new(srcStpt.VxP[i].Elev);
+                }
+            }
         }
 
         // ------------------------------------------------------------------------------------------------------------
@@ -86,6 +115,8 @@ namespace JAFDTC.UI.F16C
         private F16CConfiguration Config { get; set; }
 
         private SteerpointInfoUI EditStpt { get; set; }
+
+        private SteerpointInfoUI EditStptInitial { get; set; }
 
         private int EditStptIndex { get; set; }
 
@@ -559,6 +590,8 @@ namespace JAFDTC.UI.F16C
         /// </summary>
         private void AcceptBtnCancel_Click(object sender, RoutedEventArgs args)
         {
+            EditStpt = new(EditStptInitial);
+            CopyEditToConfig(EditStptIndex, true);
             IsCancelInFlight = false;
             Frame.GoBack();
         }
@@ -960,6 +993,7 @@ namespace JAFDTC.UI.F16C
 
             EditStptIndex = NavArgs.IndexStpt;
             CopyConfigToEdit(EditStptIndex);
+            EditStptInitial = new(EditStpt);
 
             IsCancelInFlight = false;
 
