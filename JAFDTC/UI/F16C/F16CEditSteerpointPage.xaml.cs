@@ -66,7 +66,7 @@ namespace JAFDTC.UI.F16C
                 set
                 {
                     TOS = (value != "––:––:––") ? value : "";
-                    _tosUI = TOS;
+                    SetProperty(ref _tosUI, TOS);
                 }
             }
 
