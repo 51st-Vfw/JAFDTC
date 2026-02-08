@@ -418,10 +418,10 @@ namespace JAFDTC.UI.F16C
         {
             if ((uiStptListView.Items.Count > 0) && (uiStptListView.SelectedItems.Count == 0))
                 NavpointUIHelper.CopyNavpointsAsPoIs(Content.XamlRoot,
-                                                     [.. uiStptListView.SelectedItems.OfType<INavpointInfo>() ], true);
+                                                     [.. uiStptListView.Items.OfType<INavpointInfo>() ], false);
             else if (uiStptListView.Items.Count > 0)
                 NavpointUIHelper.CopyNavpointsAsPoIs(Content.XamlRoot,
-                                                     [.. uiStptListView.Items.OfType<INavpointInfo>() ], false);
+                                                     [.. uiStptListView.SelectedItems.OfType<INavpointInfo>() ], true);
         }
 
         /// <summary>
