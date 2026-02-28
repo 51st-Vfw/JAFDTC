@@ -10,6 +10,11 @@ namespace JAFDTC.Core.IO
             return System.IO.File.ReadAllText(filePath);
         }
 
+        public static void WriteAllText(string text, string filePath)
+        {
+            System.IO.File.WriteAllText(filePath, text);
+        }
+
         public static string ReadAllText(string filePath, string zipEntryName)
         {
             using var archive = ZipFile.Open(filePath, ZipArchiveMode.Read);
