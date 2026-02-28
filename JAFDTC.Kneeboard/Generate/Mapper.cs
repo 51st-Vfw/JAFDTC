@@ -45,7 +45,7 @@ namespace JAFDTC.Kneeboard.Generate
         {
             var name = Clean(criteria.Mission?.Name, "Untitled");
             var theater = Clean(criteria.Mission?.Theater, "Unknown");
-            var creator = Clean(criteria.Mission?.Owner?.Name, "Reaper");
+            var creator = Clean(criteria.Mission?.Owner?.Name, "Unknown");
 
             _data.Add(Keys.HEADER, name);
             _data.Add(Keys.FOOTER, $"{name}, by {creator} @ {DateTime.Now:MM/dd/yyyy}");

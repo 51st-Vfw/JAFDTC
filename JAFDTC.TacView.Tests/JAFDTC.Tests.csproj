@@ -38,10 +38,12 @@
 
   <ItemGroup>
     <Content Include="AppData\kb\.gitignore" />
+    <Content Include="AppData\stp\.gitignore" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="AppData\kb\output\" />
+    <Folder Include="AppData\stp\output\" />
   </ItemGroup>
 
 </Project>
