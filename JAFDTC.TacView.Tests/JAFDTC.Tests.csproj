@@ -41,7 +41,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="AppData\dtc\output\" />
     <Folder Include="AppData\kb\output\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\JAFDTC.Tests\DTCMergeHelperTest.cs" />
   </ItemGroup>
 
 </Project>
